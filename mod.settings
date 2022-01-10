@@ -1,0 +1,18 @@
+name        = "CN Localization"
+source_dir  = "source"
+output_dir  = "output"
+description = [=[字体与汉化文本贡献者@Ladjic
+
+运行时汉化MOD
+1.提供最基础的字体覆盖保证打字聊天运行
+2.游戏相关的文本汉化
+3.小地图的汉化
+
+完整汉化包(绝大多数游戏内文字)
+请加群获取1049324510
+
+Chinese localization ,for runtime(during play) only.]=]
+image       = "preview.jpg"
+tag_modtype = ""
+tag_support = ""
+publish_id = 2713502929

@@ -1,0 +1,4 @@
+modEntry = {
+    Client = "lua/CNLocalize/Client.lua",
+    Priority = 1
+}
