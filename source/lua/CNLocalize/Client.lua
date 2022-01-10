@@ -20,7 +20,19 @@ Locale.ResolveString = CNLocalizeResolve
 
 ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "post")
 
-Shared.Message("Shine SHine SHINE")
-function Locale:GetLocalisedString( Source, Lang, Key )
-    return CNLocalizeResolve(Key)
-end
+-- if Shine then
+--     local oldGetPharse = Shine.Locale.GetPhrase
+
+--     local function GetPhrase( Source, Key )
+--         Shared.Message("Shine" .. Key)
+--         return oldGetPharse(Source,Key)
+--     end
+
+--     local function GetInterpolatedPhrase( Source, Key, FormatArgs )
+--         Shared.Message("Interpolated" .. Key)
+--         return StringInterpolate( GetPhrase( Source, Key ), FormatArgs,  Shine.Locale:GetLanguageDefinition() )
+--     end
+
+--     Shine.Locale.GetPhrase = GetPhrase
+--     Shine.Locale.GetInterpolatedPhrase = GetInterpolatedPhrase
+-- end

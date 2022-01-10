@@ -61,7 +61,7 @@ function GUIMinimap:InitializeLocationNames()
         locationText:SetColor(Color(1.0, 1.0, 1.0, 0.65))
         local locationName=kTranslateLocations[location.Name]
         if not locationName then
-            Shared.Message("Untranslated:{" .. location.Name .. "}@Ladjic")
+            Shared.Message("Location:{" .. location.Name .. "} Untranslated")
             locationName=location.Name
         end
 
