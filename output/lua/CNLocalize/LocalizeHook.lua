@@ -9,7 +9,7 @@ function CNLocalizeResolve(input)
     if resolvedString  then
         return resolvedString
     end
-    return input
+    return baseResolveString(input)
 
 end
 Locale.ResolveString = CNLocalizeResolve
