@@ -20,18 +20,24 @@ if Shine then
 
     Script.Load("lua/CNLocalize/ShineStrings.lua")
     function Shine.Locale:GetLocalisedString( Source, Lang, Key )
+        
+        local finalValue = kShineTranslations[Key]
+        if finalValue then
+            return finalValue
+        end
+
+
         local LanguageStrings = Shine.Locale:GetLanguageStrings( Source, Lang )
         if not LanguageStrings or not LanguageStrings[ Key ] then
             LanguageStrings = Shine.Locale:GetLanguageStrings( Source, Shine.Locale.DefaultLanguage )
         end
-        
-        local finalKey=LanguageStrings and LanguageStrings[Key] or Key
+        local finalKey = LanguageStrings and LanguageStrings[ Key ] or Key
         local finalValue=kShineTranslations[finalKey]
-        if not finalValue then
-            Shared.Message("Shine:{" .. finalKey .."} Untranslated")
-            finalValue=finalKey
+        if finalValue then
+            return finalValue
         end
-        return finalValue
+        Shared.Message("Shine:|".. Key .. "|" .. finalKey .. "|Untranslated")
+        return finalKey
     end
     
 end
