@@ -1,4 +1,0 @@
-modEntry = {
-    Client = "lua/CNLocalize/LocalizeHook.lua",
-    Priority = 1
-}
