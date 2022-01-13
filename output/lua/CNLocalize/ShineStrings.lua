@@ -51,6 +51,8 @@ kShineTranslations["ALLTALK_NOTIFY_DISABLED"]="全局语音已关闭"
 
 kShineTranslations["ACCEPT_FRIEND_GROUP_INVITE"]="接受组队"
 kShineTranslations["DECLINE_FRIEND_GROUP_INVITE"]="拒绝组队"
+
+kShineTranslations["ERROR_NOT_ENOUGH_PLAYERS"]="当前人数不足,无法洗牌分队."
 -- Map Vote
 kShineTranslations["VOTE"]="投票进行中"
 kShineTranslations["RTV_STARTED"]="投票正在进行中!"
@@ -67,7 +69,7 @@ kShineTranslations["NOMINATIONS_FULL"]= "提名已满."
 kShineTranslations["NOMINATED_MAP"]= "{TargetName}为换图投票提名了{MapName}."
 kShineTranslations["PLAYER_VOTED"]= "{TargetName}{Revote:BoolToPhrase:又投给了|投给了}{MapName}. （目前有{Votes}{Votes:Pluralise:票|票},总共有{TotalVotes}人参与了投票）"
 kShineTranslations["PLAYER_VOTED_PRIVATE"]= "你{Revote:BoolToPhrase:又投给了|投给了}{MapName}. （目前有{Votes}{Votes:Pluralise:票|票},总共有{TotalVotes}人参与了投票)"
-kShineTranslations["WINNER_VOTES"]= "{MapName}以{Votes}/{TotalVotes}张票数赢得了投票"
+kShineTranslations["WINNER_VOTES"]= "{MapName} 以 {Votes}/{TotalVotes} 张票数赢得了投票"
 kShineTranslations["EXTENDING_TIME"]= "当前地图时间延长{Duration:Duration}"
 
 kShineTranslations["TIME_LEFT"]= "此地图还剩下{Duration:Duration}"

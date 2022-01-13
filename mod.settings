@@ -1,7 +1,7 @@
 name        = "CN Localization"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[暴力汉化注入.
+description = [=[请注意暴力汉化注入.
 字体与汉化文本贡献者@Ladjic
 1.提供最基础的字体覆盖
 2.游戏相关的文本汉化
