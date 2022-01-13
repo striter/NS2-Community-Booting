@@ -9,7 +9,7 @@ function CNLocalizeResolve(input)
     if resolvedString  then
         return resolvedString
     end
-    return baseResolveString(input)
+    return input
 
 end
 Locale.ResolveString = CNLocalizeResolve
@@ -21,7 +21,7 @@ if Shine then
     Script.Load("lua/CNLocalize/ShineStrings.lua")
     function Shine.Locale:GetLocalisedString( Source, Lang, Key )
         
-        local finalValue = kShineTranslations[Key]
+        local finalValue = rawget(kShineTranslations,Key)
         if finalValue then
             return finalValue
         end
@@ -32,7 +32,7 @@ if Shine then
             LanguageStrings = Shine.Locale:GetLanguageStrings( Source, Shine.Locale.DefaultLanguage )
         end
         local finalKey = LanguageStrings and LanguageStrings[ Key ] or Key
-        local finalValue=kShineTranslations[finalKey]
+        local finalValue = rawget(kShineTranslations,finalKey)
         if finalValue then
             return finalValue
         end
