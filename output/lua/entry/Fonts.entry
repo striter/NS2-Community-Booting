@@ -1,4 +1,0 @@
-modEntry = {
-    FileHooks = "lua/CNLocalize/FontsHook.lua",
-    Priority = 51
-}
