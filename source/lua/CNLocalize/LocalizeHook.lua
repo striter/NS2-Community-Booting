@@ -9,9 +9,9 @@ function CNLocalizeResolve(input)
     if resolvedString  then
         return resolvedString
     end
-    return input
-
+    return baseResolveString(input)
 end
+
 Locale.ResolveString = CNLocalizeResolve
 
 ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "post")
