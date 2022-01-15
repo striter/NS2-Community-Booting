@@ -19,9 +19,47 @@ Fonts.kArial_Medium = PrecacheAsset("fontsOverride/Arial_Medium.fnt")
 Fonts.kStamp_Large = PrecacheAsset("fontsOverride/Stamp_large.fnt")
 Fonts.kStamp_Medium = PrecacheAsset("fontsOverride/Stamp_medium.fnt")
 Fonts.kStamp_Huge = PrecacheAsset("fontsOverride/Stamp_huge.fnt")
--- Fonts.kMicrogrammaDMedExt_Large = PrecacheAsset("fontsOverride/MicrogrammaDMedExt_large.fnt")
--- Fonts.kMicrogrammaDMedExt_Medium = PrecacheAsset("fontsOverride/MicrogrammaDMedExt_medium.fnt")
+Fonts.kMicrogrammaDMedExt_Large = PrecacheAsset("fontsOverride/MicrogrammaDMedExt_large.fnt")
+Fonts.kMicrogrammaDMedExt_Medium = PrecacheAsset("fontsOverride/MicrogrammaDMedExt_medium.fnt")
 -- Fonts.kMicrogrammaDMedExt_Medium2 = PrecacheAsset("fontsOverride/MicrogrammaDMedExt_medium2.fnt")
--- Fonts.kMicrogrammaDMedExt_Small = PrecacheAsset("fontsOverride/MicrogrammaDMedExt_small.fnt")
+Fonts.kMicrogrammaDMedExt_Small = PrecacheAsset("fontsOverride/MicrogrammaDMedExt_small.fnt")
 -- Fonts.kMicrogrammaDBolExt_Huge = PrecacheAsset("fontsOverride/MicrogrammaDBolExt_huge.fnt")
+
+FontFamilies = {"kAgencyFBBold", "kAgencyFB", "kArial", "kKartika", "kStamp", "kMicrogrammaDMedExt"}
+
+FontFamilies["kAgencyFBBold"] = {}
+FontFamilies["kAgencyFBBold"][Fonts.kAgencyFB_Huge_Bold] = 96
+FontFamilies["kAgencyFBBold"][Fonts.kAgencyFB_Large_Bold] = 41
+
+FontFamilies["kAgencyFB"] = {}
+FontFamilies["kAgencyFB"][Fonts.kAgencyFB_Huge] = 96
+FontFamilies["kAgencyFB"][Fonts.kAgencyFB_Large] = 41
+FontFamilies["kAgencyFB"][Fonts.kAgencyFB_Medium] = 33
+FontFamilies["kAgencyFB"][Fonts.kAgencyFB_Small] = 27
+FontFamilies["kAgencyFB"][Fonts.kAgencyFB_Tiny] = 20
+
+FontFamilies["kArial"] = {}
+FontFamilies["kArial"][Fonts.kArial_Medium] = 33
+FontFamilies["kArial"][Fonts.kArial_Small] = 27
+FontFamilies["kArial"][Fonts.kArial_Tiny] = 20
+FontFamilies["kArial"][Fonts.kArial_17] = 17
+FontFamilies["kArial"][Fonts.kArial_15] = 15
+FontFamilies["kArial"][Fonts.kArial_13] = 13
+
+FontFamilies["kKartika"] = {}
+FontFamilies["kKartika"][Fonts.kKartika_Medium] = 33
+FontFamilies["kKartika"][Fonts.kKartika_Small] = 27
+
+FontFamilies["kStamp"] = {}
+FontFamilies["kStamp"][Fonts.kStamp_Huge] = 96
+FontFamilies["kStamp"][Fonts.kStamp_Large] = 41
+FontFamilies["kStamp"][Fonts.kStamp_Medium] = 33
+
+-- This one is only used for weapon displays and only has numbers...
+FontFamilies["kMicrogrammaDMedExt"] = {}
+FontFamilies["kMicrogrammaDMedExt"][Fonts.kMicrogrammaDMedExt_Large] = 93
+FontFamilies["kMicrogrammaDMedExt"][Fonts.kMicrogrammaDMedExt_Medium] = 80
+FontFamilies["kMicrogrammaDMedExt"][Fonts.kMicrogrammaDMedExt_Medium2] = 80
+FontFamilies["kMicrogrammaDMedExt"][Fonts.kMicrogrammaDMedExt_Small] = 35
+
 Shared.Message("CN Localize Fonts Hooked")
