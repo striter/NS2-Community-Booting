@@ -4,11 +4,11 @@ local baseResolveString = Locale.ResolveString
 function CNLocalizeResolve(input)
     if not input then return "" end
 
-    local lang = Locale.GetLocale()
-    local resolvedString = kTranslateMessage[input] 
+    local resolvedString = rawget(kTranslateMessage,input) 
     if resolvedString  then
         return resolvedString
     end
+
     return baseResolveString(input)
 end
 
