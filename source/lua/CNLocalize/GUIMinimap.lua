@@ -1,4 +1,4 @@
-Script.Load("lua/CNLocalize/CNLocations.lua")
+
 local kLocationNameLayer = 4
 local kLocationFontName = Fonts.kAgencyFB_Smaller_Bordered
 
@@ -59,13 +59,8 @@ function GUIMinimap:InitializeLocationNames()
         local locationText = GUIManager:CreateTextItem()
         SetupLocationTextItem(locationText)
         locationText:SetColor(Color(1.0, 1.0, 1.0, 0.65))
-        local locationName=kTranslateLocations[location.Name]
-        if not locationName then
-            Shared.Message("Location:{" .. location.Name .. "} Untranslated")
-            locationName=location.Name
-        end
 
-        locationText:SetText(locationName)
+        locationText:SetText(Locale.ResolveLocation( location.Name))
         locationText:SetPosition( Vector(posX, posY, 0) )
 
         self.minimap:AddChild(locationText)

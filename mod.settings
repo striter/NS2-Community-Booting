@@ -1,4 +1,4 @@
-name        = "[CN] Community Localization"
+name        = "[CN] Community Extension"
 source_dir  = "source"
 output_dir  = "output"
 description = [=[请注意暴力汉化注入.
@@ -10,6 +10,8 @@ description = [=[请注意暴力汉化注入.
 5.保证打字聊天功能正常运行
 完整汉化包(绝大多数游戏内文字)
 请加群获取1049324510
+
+ BRUTAL MOD Warning
 Chinese localization ,for runtime(during play) only.
 Since builtin fonts pack didnt support chinese characters,So i decide to do something BRUTAL.
 Mode Created by @StriteR.
@@ -18,4 +20,4 @@ Fonts provider/creater by @Ladjic]=]
 image       = "preview.jpg"
 tag_modtype = ""
 tag_support = ""
-publish_id = 2719927546
+publish_id = 2724929490
