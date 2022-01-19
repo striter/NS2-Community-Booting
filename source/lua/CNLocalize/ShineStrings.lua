@@ -1,6 +1,6 @@
 kShineTranslations={}
+-- Menu
 kShineTranslations["Map Vote"]="换图投票"
-kShineTranslations["MOTD"]="服务器信息"
 kShineTranslations["Shuffle"]="洗牌分队"
 kShineTranslations["Surrender"]="投降"
 kShineTranslations["Unstuck"]="尝试脱困"
@@ -9,10 +9,14 @@ kShineTranslations["Vote to Draw"]="投票平局"
 kShineTranslations["CLIENT_CONFIG_MENU"]="Shine本地设置"
 kShineTranslations["ADMIN_MENU"]="管理菜单"
 
+kShineTranslations["TIME_VALUE"]= "{Value} {TimeUnit}"
+kShineTranslations["TIME_SENTENCE"]= "{Before}{After}"
+kShineTranslations["TIME_SEPARATOR"]= ","
+
 kShineTranslations["SECOND"] = "{Value:Pluralise:秒|秒}"
-kShineTranslations["MINUTE"] = "{Value:Pluralise:分钟|分钟}"
-kShineTranslations["HOUR"] = "{Value:Pluralise:小时|小时}"
-kShineTranslations["DAY"] = "{Value:Pluralise:天|days}"
+kShineTranslations["MINUTE"] = "{Value:Pluralise:分|分}"
+kShineTranslations["HOUR"] = "{Value:Pluralise:时|时}"
+kShineTranslations["DAY"] = "{Value:Pluralise:天|天}"
 kShineTranslations["WEEK"] ="{Value:Pluralise:星期|星期}"
 
 kShineTranslations["MARINE"]="边境拓荒者部队"
@@ -21,13 +25,18 @@ kShineTranslations["SAY_ALL"]="对所有人发言"
 kShineTranslations["SAY_TEAM"]="对队伍内发言"
 
 kShineTranslations["ERROR_TAG"]="[错误]"
+--MOTD
+kShineTranslations["MOTD"]="日常信息"
+kShineTranslations["MESSAGE_OF_THE_DAY"]= "本服文档"
+kShineTranslations["OPEN_IN_STEAM"]= "在Steam中打开"
+kShineTranslations["LOADING"]= "加载文档中."
+
 --Unstuck
 kShineTranslations["[Unstuck]"]="[脱困]"
 kShineTranslations["SUCCESS"]="成功!"
 kShineTranslations["ERROR_NOT_ALIVE"]="你无法在你死了的时候卡墙自救."
 kShineTranslations["ERROR_WAIT"]= "必须等待{TimeLeft:Duration}后才能再次使用脱困"
 kShineTranslations["ERROR_FAIL"]= "脱困失败,请于{TimeLeft:Duration}后再次尝试."
-
 
 kShineTranslations["TEAM_PREFERENCE_SET_MARINE"]="队伍偏好已设置为:陆战队"
 kShineTranslations["TEAM_PREFERENCE_SET_ALIEN"]="队伍偏好已设置为:卡拉异形"
@@ -59,6 +68,13 @@ kShineTranslations["MOD_CHANGED"]= "MOD |{ModName}| 已经更新了."
 kShineTranslations["MAY_BE_UNABLE_TO_CONNECT"]= "在换图之前,其他玩家们将无法连接进入服务器."
 kShineTranslations["MAP_CYCLE"]= "地图将 {TimeLeft:NonZero:于} {TimeLeft:Duration:现在} 后强制更换."
 
+--Set Team
+kShineTranslations["Ready Room"]= "预备室"
+kShineTranslations["CHANGE_TEAM_ALIEN"]= "将 {TargetCount} {TargetCount:Pluralise:玩家|玩家} 分配到卡拉异形."
+kShineTranslations["CHANGE_TEAM_READY_ROOM"]= "将 {TargetCount} {TargetCount:Pluralise:玩家|玩家} 分配到预备室."
+kShineTranslations["CHANGE_TEAM_SPECTATOR"]= "将 {TargetCount} {TargetCount:Pluralise:玩家|玩家} 分配到到观战."
+kShineTranslations["CHANGE_TEAM_MARINE"]="将 {TargetCount} {TargetCount:Pluralise:玩家|玩家} 分配到边境拓荒者部队."
+
 -- Shuffle 
 kShineTranslations["[Shuffle]"]="[洗牌]"
 kShineTranslations["ACCEPT_FRIEND_GROUP_INVITE"]="接受组队"
@@ -71,10 +87,6 @@ kShineTranslations["PLAYER_VOTED_HIVE_BASED"] = "{PlayerName} 投票洗牌分队
 
 kShineTranslations["SHUFFLING_TEAMS_SHUFFLE_HIVE"] = "基于玩家的战力洗牌."
 
-kShineTranslations["CHANGE_TEAM_ALIEN"]= "将 {TargetCount} {TargetCount:Pluralise:玩家|玩家} 分配到卡拉异形."
-kShineTranslations["CHANGE_TEAM_READY_ROOM"]= "将 {TargetCount} {TargetCount:Pluralise:玩家|玩家} 分配到预备室."
-kShineTranslations["CHANGE_TEAM_SPECTATOR"]= "将 {TargetCount} {TargetCount:Pluralise:玩家|玩家} 分配到到观战."
-kShineTranslations["CHANGE_TEAM_MARINE"]="将 {TargetCount} {TargetCount:Pluralise:玩家|玩家} 分配到边境拓荒者部队."
 -- PreGame
 kShineTranslations["[Pre Game]"]= "[游戏开局]"
 kShineTranslations["GAME_START"]= "战局即将开始...%s"
@@ -98,6 +110,8 @@ kShineTranslations["MAP_VOTE_MENU_SINGLE_CHOICE_DESCRIPTION"]="给你想玩的�
 kShineTranslations["NOT_ENOUGH_VOTES"]="投票数不足,换图投票失败."
 kShineTranslations["MAP_VOTE_MENU_CURRENT_MAP"]= "当前地图: {MapName}"
 kShineTranslations["MAP_VOTE_MENU_EXTEND_MAP"]= "延续 - {MapName}"
+kShineTranslations["NEXT_MAP_STARTED"]= "换图投票开始了."
+kShineTranslations["WINNER_CYCLING"]= "{MapName}赢得了投票,开始换图."
 
 kShineTranslations["NOMINATE_FAIL"]= "你不能提名当前地图."
 kShineTranslations["NOMINATE_DENIED"]= "已达到了允许提名次数的上限."
@@ -128,7 +142,7 @@ kShineTranslations["VOTE_FAIL_INVALID_MAP"]= "{MapName}并不是一个有效的�
 kShineTranslations["VOTE_FAIL_VOTED_MAP"]= "你已经投过{MapName}的票了."
 
 --Readyroom Queue
-kShineTranslations["Ready Room"]= "[入场队列]"
+kShineTranslations["[PlayerSlotQueue]"]= "[入场队列]"
 kShineTranslations["QUEUE_CHANGED"]= "在你前面的玩家离开了队列. 目前的排队序号为 {Position}."
 kShineTranslations["QUEUE_CHANGED_VIP"]= "一个特权玩家插队了. 目前的排队序号为 {Position}."
 kShineTranslations["PIORITY_QUEUE_CHANGED"]= "A player in front of you left the reservered slot queue. You are the {Position} spectator in the reserved slot queue."

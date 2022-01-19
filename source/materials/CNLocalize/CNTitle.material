@@ -1,0 +1,9 @@
+shader = "shaders/Model_emissive_alpha.surface_shader"
+albedoMap = "materials/CNLocalize/CNTitle.dds"
+specularMap = "materials/CNLocalize/CNTitle.dds"
+opacityMap = "materials/CNLocalize/CNTitle_opacity.dds"
+emissiveMap = "materials/CNLocalize/CNTitle.dds"
+normalMap = "materials/dev/dev_normal.dds"
+specularMap = "materials/dev/black.dds"
+
+surface = "thin_metal"
