@@ -31,7 +31,7 @@ ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "
 
 Script.Load("lua/CNLocalize/ChatFilters.lua")
 function CNChatFilter(input)
-    return string.gsub(input, "%w", kChatFilters) 
+    return string.gsub(input, "%w+", kChatFilters) 
 end
 Locale.ChatFilter = CNChatFilter
 
