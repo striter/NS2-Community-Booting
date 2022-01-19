@@ -14,8 +14,7 @@ Chinese localization ,for runtime(during play) only.
 Since builtin fonts pack didnt support chinese characters,So i decide to do something BRUTAL.
 Mode Created by @StriteR.
 Text refined by @StriteR.
-Fonts provider/creater by @Lajic
-Part of |ModPanel| by @Nin]=]
+Fonts provider/creater by @Ladjic]=]
 image       = "preview.jpg"
 tag_modtype = ""
 tag_support = ""
