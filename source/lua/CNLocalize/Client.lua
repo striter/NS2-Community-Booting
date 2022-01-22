@@ -46,22 +46,24 @@ if Shine then
         if finalValue then
             return finalValue
         end
+        
+        local pluginStrings=  kShinePluginsTranslations[Source]
+        if pluginStrings then
+            finalValue = rawget(pluginStrings,Key)
+            if finalValue then
+                return finalValue
+            end
+        end
 
+        Shared.Message("Shine:|"..Source .. "|".. Key .. "|Untranslated")
 
         local LanguageStrings = Shine.Locale:GetLanguageStrings( Source, Lang )
         if not LanguageStrings or not LanguageStrings[ Key ] then
             LanguageStrings = Shine.Locale:GetLanguageStrings( Source, Shine.Locale.DefaultLanguage )
         end
-        local finalKey = LanguageStrings and LanguageStrings[ Key ] or Key
-        local finalValue = rawget(kShineTranslations,finalKey)
-        if finalValue then
-            return finalValue
-        end
-        Shared.Message("Shine:|".. Key .. "|" .. finalKey .. "|Untranslated")
-        return finalKey
+        return LanguageStrings and LanguageStrings[ Key ] or Key
     end
     
-
     --Chat Filter
     local Plugin = Shine.Plugins["improvedchat"]
     local ChatAPI = require "shine/core/shared/chat/chat_api"
