@@ -20,6 +20,9 @@ kTranslateMessage["WELCOME_TO_READY_ROOM"]="欢迎光临预备室"
 kTranslateMessage["WELCOME_TO_READY_ROOM_HALLOWEEN"]="欢迎光临预备室\n按BIND_Use键可以扔糖果"
 kTranslateMessage["WELCOME_TO_READY_ROOM_HOLIDAY"]="欢迎光临预备室\n按BIND_Use键可以扔雪球"
 
+kTranslateMessage["TEAM"]="队内"
+kTranslateMessage["ALL"]="全局"
+
 kTranslateMessage["AFK_WARNING"]="你已经一动不动了%{timeAFK}d秒钟，达到%{maxAFKTime}d秒时你将会被服务器自动踢出。"
 kTranslateMessage["AIR_PURIFIER"]="空气净化器"
 kTranslateMessage["ALERT"]="警告"

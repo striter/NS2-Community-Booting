@@ -1,0 +1,6 @@
+ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "post")
+
+if AddHintModPanel then
+    local cnTitleMaterial = PrecacheAsset("materials/CNLocalize/Banner.material")
+    AddHintModPanel(cnTitleMaterial, "https://docs.qq.com/doc/DUFlBR0ZJeFRiRnRi","阅读服务器事宜")
+end
