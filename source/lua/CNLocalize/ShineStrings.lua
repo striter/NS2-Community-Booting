@@ -1,5 +1,5 @@
+--Common
 kShineTranslations={}
-kShineTranslations["ERROR_TAG"]="[错误]"
 kShineTranslations["TIME_VALUE"]= "{Value} {TimeUnit}"
 kShineTranslations["TIME_SENTENCE"]= "{Before}{After}"
 kShineTranslations["TIME_SEPARATOR"]= ","
@@ -11,8 +11,13 @@ kShineTranslations["DAY"] = "{Value:Pluralise:天|天}"
 kShineTranslations["WEEK"] ="{Value:Pluralise:星期|星期}"
 
 
+kShineTranslations["MARINE"]="边境拓荒者部队"
+kShineTranslations["ALIEN"]="卡拉异型"
+kShineTranslations["ERROR_TAG"]="[错误]"
+kShineTranslations["BACK"]="上一级"
+
+--Plugins
 kShinePluginsTranslations={}
--- Menu
 kShinePluginsTranslations["Core"]={}
 kShinePluginsTranslations["Core"]["Map Vote"]="换图投票"
 kShinePluginsTranslations["Core"]["Shuffle"]="洗牌分队"
@@ -37,8 +42,6 @@ kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_LEVEL_WARNING"]= "启动
 kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_LEVEL_ERROR"]= "启动时出现报错"
 
 kShinePluginsTranslations["chatbox"]={}
-kShinePluginsTranslations["chatbox"]["MARINE"]="边境拓荒者部队"
-kShinePluginsTranslations["chatbox"]["ALIEN"]="卡拉异型"
 kShinePluginsTranslations["chatbox"]["SAY_ALL"]="对所有人发言"
 kShinePluginsTranslations["chatbox"]["SAY_TEAM"]="对队伍内发言"
 
@@ -57,11 +60,11 @@ kShinePluginsTranslations["unstuck"]["ERROR_FAIL"]= "脱困失败,请于{TimeLef
 kShinePluginsTranslations["votedraw"]={}
 kShinePluginsTranslations["votedraw"]["NOTIFY_PREFIX"]="[平局]"
 kShinePluginsTranslations["votedraw"]["VOTEMENU_BUTTON"]="投票平局"
-kShinePluginsTranslations["votedraw"]["PLAYER_VOTED"]= "{PlayerName} 已经经受不住折磨想要平局了 (共需 ({VotesNeeded} 票 ,还需 {VotesNeeded:Pluralise: 票| 票})",
-kShinePluginsTranslations["votedraw"]["PLAYER_VOTED_PRIVATE"]= "你选择投票平局 (共需 ({VotesNeeded} 票 ,还需 {VotesNeeded:Pluralise: 票| 票})",
-kShinePluginsTranslations["votedraw"]["ERROR_ALREADY_VOTED"]= "你已经投过平局票.",
-kShinePluginsTranslations["votedraw"]["ERROR_MUST_WAIT"]= "必须等待 {SecondsToWait:Duration} 才能开始投票平局.",
-kShinePluginsTranslations["votedraw"]["ERROR_CANNOT_VOTE_ON_CURRENT_TEAM"]= "你无法在当前队伍发起平局投票.",
+kShinePluginsTranslations["votedraw"]["PLAYER_VOTED"]= "{PlayerName} 已经经受不住折磨想要平局了 (共需 {VotesNeeded} 票 ,还需 {VotesNeeded:Pluralise: 票| 票})"
+kShinePluginsTranslations["votedraw"]["PLAYER_VOTED_PRIVATE"]= "你选择投票平局 (还需 {VotesNeeded:Pluralise: 票| 票})"
+kShinePluginsTranslations["votedraw"]["ERROR_ALREADY_VOTED"]= "你已经投过平局票."
+kShinePluginsTranslations["votedraw"]["ERROR_MUST_WAIT"]= "必须等待 {SecondsToWait:Duration} 才能开始投票平局."
+kShinePluginsTranslations["votedraw"]["ERROR_CANNOT_VOTE_ON_CURRENT_TEAM"]= "你无法在当前队伍发起平局投票."
 kShinePluginsTranslations["votedraw"]["ERROR_ROUND_NOT_STARTED"]= "必须开局才能开始投票平局."
 
 kShinePluginsTranslations["ban"]={}
@@ -95,6 +98,7 @@ kShinePluginsTranslations["basecommands"]["KICK_LANGUAGE"]="不当言论"
 kShinePluginsTranslations["basecommands"]["KICK_MIC_SPAM"]="炸麦"
 kShinePluginsTranslations["basecommands"]["KICK_AFK"]="挂机"
 kShinePluginsTranslations["basecommands"]["KICK_CUSTOM"]="填写理由"
+kShinePluginsTranslations["basecommands"]["RESET_GAME"]="重置了对局."
 kShinePluginsTranslations["basecommands"]["GAG"]="禁言与禁麦"
 kShinePluginsTranslations["basecommands"]["GAG_TIP"]="无法打字与开麦交流,且叫不了血包"
 kShinePluginsTranslations["basecommands"]["UNGAG"]="解除禁言与禁麦"
@@ -158,7 +162,7 @@ kShinePluginsTranslations["serverswitch"]["VOTEMENU_BUTTON"]="服务器列表"
 
 kShinePluginsTranslations["workshopupdater"]={}
 kShinePluginsTranslations["workshopupdater"]["NOTIFY_PREFIX"]= "[创意工坊]"
-kShinePluginsTranslations["workshopupdater"]["MOD_CHANGED"]= "MOD |{ModName}| 已经更新了."
+kShinePluginsTranslations["workshopupdater"]["MOD_CHANGED"]= "插件 |{ModName}| 已经更新了."
 kShinePluginsTranslations["workshopupdater"]["MAY_BE_UNABLE_TO_CONNECT"]= "在换图之前,其他玩家们将无法连接进入服务器."
 kShinePluginsTranslations["workshopupdater"]["MAP_CYCLE"]= "地图将 {TimeLeft:NonZero:于} {TimeLeft:Duration:现在} 后强制更换."
 
@@ -167,6 +171,9 @@ kShinePluginsTranslations["votesurrender"]["ERROR_WRONG_TEAM"]="无法在当前�
 kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_TIME"]="现在太早无法发起投降."
 kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_NOT_STARTED"]="对局还未开始,无法发起投票."
 kShinePluginsTranslations["votesurrender"]["ERROR_CANNOT_VOTE_ON_CURRENT_TEAM"]="无法在当前队伍发起投票."
+
+kShinePluginsTranslations["votealltalk"]={}
+kShinePluginsTranslations["votealltalk"]["NOTIFY_PREFIX"]="[全局语音投票]"
 
 kShinePluginsTranslations["voterandom"]={}
 kShinePluginsTranslations["voterandom"]["NOTIFY_PREFIX"]="[洗牌]"
@@ -196,6 +203,7 @@ kShinePluginsTranslations["pregame"]["WAITING_FOR_MARINES"]= "等待边境拓荒
 -- Map Vote
 kShinePluginsTranslations["mapvote"]={}
 kShinePluginsTranslations["mapvote"]["NOTIFY_PREFIX"]="[换图]"
+kShinePluginsTranslations["mapvote"]["TIME_LEFT_NOTIFY"]="{Duration:Duration} 后将会切换到下一张地图."
 kShinePluginsTranslations["mapvote"]["VOTE"]="投票进行中"
 kShinePluginsTranslations["mapvote"]["MAP_VOTE_MENU_TITLE"]="正在进行换图投票"
 kShinePluginsTranslations["mapvote"]["RTV_STARTED"]="投票正在进行中!"

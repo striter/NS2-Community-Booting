@@ -64,6 +64,36 @@ if Shine then
         return LanguageStrings and LanguageStrings[ Key ] or Key
     end
     
+    --Plugin , Undone
+    -- local ETSPlugin = Shine.Plugins["enforceteamsizes"]
+    -- if ETSPlugin then
+    --     Shared.Message("Enforce Team Size Localize Hooked")
+    --     local kETSMessage={}
+    --     kETSMessage[1]="边境拓荒者部队 玩家已满,请观战等待空位."
+    --     kETSMessage[2]="卡拉异形 玩家已满,请观战等待空位."
+    --     kETSMessage[3]="观战 已满,请尽快加入对局."
+
+    --     function ETSPlugin:Notify(Player, Message, OldTeam)
+    --         Shine:NotifyDualColour( Player, self.Config.MessageNameColor[1], self.Config.MessageNameColor[2],
+    --             self.Config.MessageNameColor[3], "[人数限制]", 255, 255, 255,
+    --         Message, true, Shine:GetTeamName(OldTeam, true) )
+    --     end
+
+    --     function ETSPlugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
+    --         if self.Config.IgnoreBots and Player:GetIsVirtual() then return end
+        
+    --         local TeamIndex = string.format("Team%s", NewTeam)
+    --         if ShineForce or NewTeam == kTeamReadyRoom or not self.Config.Teams[TeamIndex] then return end
+        
+    --         --Check if team is above MaxPlayers
+    --         if self:GetNumPlayers(Gamerules:GetTeam(NewTeam)) >= self.Config.Teams[TeamIndex].MaxPlayers then
+    --             --Inform player
+    --             self:Notify(Player, kETSMessage[NewTeam], NewTeam)
+    --             return false
+    --         end
+    --     end
+    -- end
+
     --Chat Filter
     local Plugin = Shine.Plugins["improvedchat"]
     local ChatAPI = require "shine/core/shared/chat/chat_api"
