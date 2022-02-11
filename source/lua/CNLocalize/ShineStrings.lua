@@ -5,8 +5,8 @@ kShineTranslations["TIME_SENTENCE"]= "{Before}{After}"
 kShineTranslations["TIME_SEPARATOR"]= ","
 
 kShineTranslations["SECOND"] = "{Value:Pluralise:秒|秒}"
-kShineTranslations["MINUTE"] = "{Value:Pluralise:分|分}"
-kShineTranslations["HOUR"] = "{Value:Pluralise:时|时}"
+kShineTranslations["MINUTE"] = "{Value:Pluralise:分钟|分钟}"
+kShineTranslations["HOUR"] = "{Value:Pluralise:小时|小时}"
 kShineTranslations["DAY"] = "{Value:Pluralise:天|天}"
 kShineTranslations["WEEK"] ="{Value:Pluralise:星期|星期}"
 
@@ -48,7 +48,7 @@ kShinePluginsTranslations["chatbox"]["SAY_TEAM"]="对队伍内发言"
 kShinePluginsTranslations["motd"]={}
 kShinePluginsTranslations["motd"]["MESSAGE_OF_THE_DAY"]= "本服文档"
 kShinePluginsTranslations["motd"]["OPEN_IN_STEAM"]= "在Steam中打开"
-kShinePluginsTranslations["motd"]["LOADING"]= "加载文档中."
+kShinePluginsTranslations["motd"]["LOADING"]= "加载文档中..."
 
 kShinePluginsTranslations["unstuck"]={}
 kShinePluginsTranslations["unstuck"]["NOTIFY_PREFIX"]="[卡墙自救]"
@@ -60,7 +60,7 @@ kShinePluginsTranslations["unstuck"]["ERROR_FAIL"]= "脱困失败,请于{TimeLef
 kShinePluginsTranslations["votedraw"]={}
 kShinePluginsTranslations["votedraw"]["NOTIFY_PREFIX"]="[平局]"
 kShinePluginsTranslations["votedraw"]["VOTEMENU_BUTTON"]="投票平局"
-kShinePluginsTranslations["votedraw"]["PLAYER_VOTED"]= "{PlayerName} 已经经受不住折磨想要平局了 (共需 {VotesNeeded} 票 ,还需 {VotesNeeded:Pluralise: 票| 票})"
+kShinePluginsTranslations["votedraw"]["PLAYER_VOTED"]= "{PlayerName} 已经经受不住折磨想要平局了 (还需 {VotesNeeded} 票)"
 kShinePluginsTranslations["votedraw"]["PLAYER_VOTED_PRIVATE"]= "你选择投票平局 (还需 {VotesNeeded:Pluralise: 票| 票})"
 kShinePluginsTranslations["votedraw"]["ERROR_ALREADY_VOTED"]= "你已经投过平局票."
 kShinePluginsTranslations["votedraw"]["ERROR_MUST_WAIT"]= "必须等待 {SecondsToWait:Duration} 才能开始投票平局."
@@ -162,8 +162,8 @@ kShinePluginsTranslations["serverswitch"]["VOTEMENU_BUTTON"]="服务器列表"
 
 kShinePluginsTranslations["workshopupdater"]={}
 kShinePluginsTranslations["workshopupdater"]["NOTIFY_PREFIX"]= "[创意工坊]"
-kShinePluginsTranslations["workshopupdater"]["MOD_CHANGED"]= "插件 |{ModName}| 已经更新了."
-kShinePluginsTranslations["workshopupdater"]["MAY_BE_UNABLE_TO_CONNECT"]= "在换图之前,其他玩家们将无法连接进入服务器."
+kShinePluginsTranslations["workshopupdater"]["MOD_CHANGED"]= "插件 <{ModName}> 已经更新了."
+kShinePluginsTranslations["workshopupdater"]["MAY_BE_UNABLE_TO_CONNECT"]= "在换图之前,部分玩家将无法连接进入服务器."
 kShinePluginsTranslations["workshopupdater"]["MAP_CYCLE"]= "地图将 {TimeLeft:NonZero:于} {TimeLeft:Duration:现在} 后强制更换."
 
 kShinePluginsTranslations["votesurrender"]={}
@@ -176,7 +176,7 @@ kShinePluginsTranslations["votealltalk"]={}
 kShinePluginsTranslations["votealltalk"]["NOTIFY_PREFIX"]="[全局语音投票]"
 
 kShinePluginsTranslations["voterandom"]={}
-kShinePluginsTranslations["voterandom"]["NOTIFY_PREFIX"]="[洗牌]"
+kShinePluginsTranslations["voterandom"]["NOTIFY_PREFIX"]="[洗牌分队]"
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_MARINE"]="队伍偏好已设置为:陆战队"
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_ALIEN"]="队伍偏好已设置为:卡拉异形"
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_NONE"]="队伍偏好已重置"
@@ -187,6 +187,8 @@ kShinePluginsTranslations["voterandom"]["TEAM_ENFORCING_TIMELIMIT_HIVE_BASED"]= 
 kShinePluginsTranslations["voterandom"]["ERROR_NOT_ENOUGH_PLAYERS"] ="当前人数不足,无法洗牌分队."
 kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_HIVE_BASED"] = "{PlayerName} 投票洗牌分队 (还需  {VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
 kShinePluginsTranslations["voterandom"]["SHUFFLING_TEAMS_SHUFFLE_HIVE"] = "基于玩家的战力洗牌."
+kShinePluginsTranslations["voterandom"]["SHUFFLE_AND_RESTART_SHUFFLE_HIVE"] = "基于玩家的战力洗牌,对局已重启."
+kShinePluginsTranslations["voterandom"]["ERROR_CONSTRAINTS"]="当前分数已平衡."
 
 -- PreGame
 kShinePluginsTranslations["pregame"]={}

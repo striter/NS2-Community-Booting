@@ -7,7 +7,7 @@ Fonts.kAgencyFB_Medium = PrecacheAsset("fontsOverride/AgencyFB_medium.fnt")
 Fonts.kAgencyFB_Small = PrecacheAsset("fontsOverride/AgencyFB_small.fnt")
 Fonts.kAgencyFB_Smaller_Bordered = PrecacheAsset("fontsOverride/AgencyFB_smaller_bordered.fnt")
 Fonts.kAgencyFB_Tiny = PrecacheAsset("fontsOverride/AgencyFB_tiny.fnt")
--- Fonts.kInsight = PrecacheAsset("fontsOverride/insight.fnt")
+Fonts.kInsight = PrecacheAsset("fontsOverride/insight.fnt")
 Fonts.kArial_13 = PrecacheAsset("fontsOverride/Arial_13.fnt")
 Fonts.kArial_15 = PrecacheAsset("fontsOverride/Arial_15.fnt")
 Fonts.kArial_17 = PrecacheAsset("fontsOverride/Arial_17.fnt")
@@ -61,5 +61,3 @@ FontFamilies["kMicrogrammaDMedExt"][Fonts.kMicrogrammaDMedExt_Large] = 93
 FontFamilies["kMicrogrammaDMedExt"][Fonts.kMicrogrammaDMedExt_Medium] = 80
 FontFamilies["kMicrogrammaDMedExt"][Fonts.kMicrogrammaDMedExt_Medium2] = 80
 FontFamilies["kMicrogrammaDMedExt"][Fonts.kMicrogrammaDMedExt_Small] = 35
-
-Shared.Message("CN Localize Fonts Hooked")

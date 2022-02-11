@@ -25,10 +25,6 @@ function CNResolveLocation(input)
 end
 Locale.ResolveLocation = CNResolveLocation
 
-ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "post")
-
-
-
 Script.Load("lua/CNLocalize/ChatFilters.lua")
 function CNChatFilter(input)
     return string.gsub(input, "%w+", kChatFilters) 

@@ -1,5 +1,6 @@
 kTranslateLocations = {}
 -- Contributed by @ladjic
+kTranslateLocations["Computer Control"]="计算机控制"
 kTranslateLocations["Warehouse"]="仓库"
 kTranslateLocations["Platform"]="平台"
 kTranslateLocations["Server Room"]="服务器机房"
@@ -184,7 +185,7 @@ kTranslateLocations["Stability"]="稳定性检测室"
 kTranslateLocations["DAT-1"]="DAT-1"
 kTranslateLocations["Generator"]="发电机房"
 kTranslateLocations["Shortcut"]="近道"
-kTranslateLocations["Santiation Control"]="卫生控制室"
+kTranslateLocations["Sanitation Control"]="卫生控制室"
 kTranslateLocations["Central Processing"]="中央处理区"
 kTranslateLocations["Auxiliary Generator"]="备用发电机"
 kTranslateLocations["Access"]="通道"
