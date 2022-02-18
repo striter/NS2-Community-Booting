@@ -1,4 +1,4 @@
 modEntry = {
-    FileHooks = "lua/CNLocalize/FileHooks.lua",
-    Priority = 51
+    FileHooks = "lua/CNLocalize/Booting.lua",
+    Priority = 49
 }

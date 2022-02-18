@@ -188,6 +188,7 @@ kShinePluginsTranslations["voterandom"]["ERROR_NOT_ENOUGH_PLAYERS"] ="当前人�
 kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_HIVE_BASED"] = "{PlayerName} 投票洗牌分队 (还需  {VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
 kShinePluginsTranslations["voterandom"]["SHUFFLING_TEAMS_SHUFFLE_HIVE"] = "基于玩家的战力洗牌."
 kShinePluginsTranslations["voterandom"]["SHUFFLE_AND_RESTART_SHUFFLE_HIVE"] = "基于玩家的战力洗牌,对局已重启."
+kShinePluginsTranslations["voterandom"]["ERROR_ALREADY_VOTED_HIVE_BASED"] = "你已经投过洗牌分队了."
 kShinePluginsTranslations["voterandom"]["ERROR_CONSTRAINTS"]="当前分数已平衡."
 
 -- PreGame
