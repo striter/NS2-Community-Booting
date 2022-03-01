@@ -160,6 +160,9 @@ kShineTranslations["ERROR_CANNOT_VOTE_IN_SPECTATE"]= "观察者不允许参与�
 kShinePluginsTranslations["serverswitch"]={}
 kShinePluginsTranslations["serverswitch"]["VOTEMENU_BUTTON"]="服务器列表"
 
+kShinePluginsTranslations["serverswitchvote"]={}
+kShinePluginsTranslations["serverswitchvote"]["VOTEMENU_BUTTON"]="投票换服"
+
 kShinePluginsTranslations["workshopupdater"]={}
 kShinePluginsTranslations["workshopupdater"]["NOTIFY_PREFIX"]= "[创意工坊]"
 kShinePluginsTranslations["workshopupdater"]["MOD_CHANGED"]= "插件 <{ModName}> 已经更新了."

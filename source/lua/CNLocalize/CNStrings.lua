@@ -1,4 +1,5 @@
-kTranslateMessage = {}
+
+kTranslateMessage["SWITCH_SERVER_TO"] = "将服务器切换至<%s>?"
 
 kTranslateMessage["SKILLTIER_TOOLTIP"]="<%s> (T%s)"
 kTranslateMessage["SKILLTIER_ROOKIE"]="新人上路"

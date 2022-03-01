@@ -1,4 +1,4 @@
-name        = "[CN] Community Extension"
+name        = "[CN] Community Extension/Localization"
 source_dir  = "source"
 output_dir  = "output"
 description = [=[请注意:暴力汉化注入.
