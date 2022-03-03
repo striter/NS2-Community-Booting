@@ -1,6 +1,3 @@
-kTranslateMessage["VOTE_MUTE_PLAYER"] = "禁言玩家"
-kTranslateMessage["VOTE_FORCE_SPECTATE"] = "强制观战"
-
 --Loading
 kTranslateMessage["LOADING_VAC"] = "服务器受到<VAC>保护.\n作弊将导致永久封禁."
 kTranslateMessage["LOADING_MODLIST"] = "正在运行的MOD:\n"

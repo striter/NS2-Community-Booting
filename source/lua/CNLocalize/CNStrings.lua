@@ -1,8 +1,3 @@
-
-kTranslateMessage["SWITCH_SERVER_TO"] = "将服务器切换至<%s>?"
-kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言半小时?"
-kTranslateMessage["VOTE_FORCE_SPECTATE_QUERY"] = "将<%s>强制移到观战?"
-
 kTranslateMessage["SKILLTIER_TOOLTIP"]="<%s> (T%s)"
 kTranslateMessage["SKILLTIER_ROOKIE"]="新人上路"
 kTranslateMessage["SKILLTIER_BOT"]="机器人"
@@ -16,7 +11,7 @@ kTranslateMessage["SKILLTIER_SQUADLEADER"]="小队长"
 kTranslateMessage["SKILLTIER_UNKNOWN"]="未知"
 
 kTranslateMessage["WELCOME_TO"]="欢迎来到"
-kTranslateMessage["WELCOME_TO_READY_ROOM"]="欢迎来到物竞天择2中国社区\n对公告板按按BIND_Use键查看详情"
+kTranslateMessage["WELCOME_TO_READY_ROOM"]="欢迎来到<物竞天择2中国社区>服务器\n对公告板按BIND_Use键查看详情"
 kTranslateMessage["WELCOME_TO_READY_ROOM_HALLOWEEN"]="欢迎来到物竞天择2中国社区\n对公告板按BIND_Use键查看详情\n按BIND_Use键可以扔糖果"
 kTranslateMessage["WELCOME_TO_READY_ROOM_HOLIDAY"]="欢迎来到物竞天择2中国社区\n对公告板按BIND_Use键看详情\n按BIND_Use键可以扔雪球"
 

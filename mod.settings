@@ -1,15 +1,18 @@
 name        = "[CN] Community Extension/Localization"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[请注意:暴力汉化注入.
+description = [=[可以随意订阅
+请注意:暴力汉化注入.
 请加群了解更多信息1049324510
 字体与汉化文本贡献者@Ladjic
 1.提供最基础的字体覆盖
-2.游戏内相关的文本汉化
+2.多数文本汉化
 3.小地图的汉化
 4.Shine(服务器管理)的所有插件汉化
 5.保证打字聊天功能正常运行
 6.提供非英文名支持
+
+Bug/汉化/润色 联系@StriteR.
 
  BRUTAL INJECTION MOD Warning
 Chinese localization ,for runtime(during play) only.
