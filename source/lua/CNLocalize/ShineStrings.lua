@@ -128,6 +128,9 @@ kShinePluginsTranslations["basecommands"]["PLUGIN"]="插件名"
 kShinePluginsTranslations["basecommands"]["STATE"]="状态"
 kShinePluginsTranslations["basecommands"]["UNLOAD_PLUGIN"]="卸载"
 kShinePluginsTranslations["basecommands"]["LOAD_PLUGIN"]="安装"
+kShinePluginsTranslations["basecommands"]["ERROR_NOT_GAGGED"]="<{TargetName}>未被禁言"
+kShinePluginsTranslations["basecommands"]["PLAYER_GAGGED"]="将<{TargetName}>禁言{Duration:Duration:REST_OF_MAP}."
+kShinePluginsTranslations["basecommands"]["PLAYER_UNGAGGED"]="解除<{TargetName}>的禁言."
 
 -- Fun commands
 kShinePluginsTranslations["funcommands"]={}

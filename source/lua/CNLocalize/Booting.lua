@@ -5,8 +5,11 @@ ModLoader.SetupFileHook( "lua/ConfigFileUtility.lua", "lua/CNLocalize/ShineExten
 
 
 if Client then
-    kTranslateMessage = {}
+    if not kTranslateMessage then
+        kTranslateMessage = {}
+    end
     Script.Load("lua/CNLocalize/CNStrings.lua")
+    Script.Load("lua/CNLocalize/CNStringsMenu.lua")
     Script.Load("lua/CNLocalize/CNBadges.lua")
     local baseResolveString = Locale.ResolveString
 

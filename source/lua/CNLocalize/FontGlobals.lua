@@ -115,12 +115,12 @@ end
 -- Font size measured based on height of 'O' character.
 RegisterFontFamily("Arial",
 {
-    { font = PrecacheAsset("fonts/Arial_Medium.fnt"),               size = 21,  },
-    { font = PrecacheAsset("fonts/Arial_Small.fnt"),                size = 17,  },
-    { font = PrecacheAsset("fonts/Arial_Tiny.fnt"),                 size = 12,  },
-    { font = PrecacheAsset("fonts/Arial_17.fnt"),                   size = 11,  },
-    { font = PrecacheAsset("fonts/Arial_15.fnt"),                   size = 10,  },
-    { font = PrecacheAsset("fonts/Arial_13.fnt"),                   size = 7,   },
+    { font = PrecacheAsset("fontsOverride/Arial_Medium.fnt"),               size = 21,  },
+    { font = PrecacheAsset("fontsOverride/Arial_Small.fnt"),                size = 17,  },
+    { font = PrecacheAsset("fontsOverride/Arial_Tiny.fnt"),                 size = 12,  },
+    { font = PrecacheAsset("fontsOverride/Arial_17.fnt"),                   size = 11,  },
+    { font = PrecacheAsset("fontsOverride/Arial_15.fnt"),                   size = 10,  },
+    { font = PrecacheAsset("fontsOverride/Arial_13.fnt"),                   size = 7,   },
 })
 
 -- Font size measured based on height of 'O' character.
@@ -136,12 +136,14 @@ RegisterFontFamily("Agency",
 -- Font size measured based on height of 'O' character.
 RegisterFontFamily("AgencyBold",
 {
-    { font = PrecacheAsset("fonts/AgencyFBExtendedBold_distfield.fnt"), size = 50.5, },
+    { font = PrecacheAsset("fontsOverride/AgencyFBExtendedBold_distfield.fnt"), size = 50.5, },
     distanceField = true,
     
     fallbackFamily = "Arial",
     fallbackScale = Vector(0.67, 1, 0),
 })
+
+
 
 -- Font size measured based on height of '0' number character.
 RegisterFontFamily("Microgramma",
@@ -155,7 +157,7 @@ RegisterFontFamily("Microgramma",
 -- Font size measured based on height of 'O' character.
 RegisterFontFamily("MicrogrammaBold",
 {
-    { font = PrecacheAsset("fonts/MicrogrammaDBolExt_distfield.fnt"),   size = 21 },
+    { font = PrecacheAsset("fontsOverride/MicrogrammaDBolExt_distfield.fnt"),   size = 21 },
     distanceField = true,
     
     fallbackFamily = "Arial",
