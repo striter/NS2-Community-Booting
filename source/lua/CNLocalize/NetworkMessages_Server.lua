@@ -17,7 +17,7 @@ local function OnSetNameMessage(client, message)
             if not hasBeenSet then
                 local playerName = player:GetName()
                 Server.Broadcast(nil, string.format("%s connected.", playerName))
-                Server.SendNetworkMessage("Chat", BuildChatMessage(false, "", -1, kTeamReadyRoom, kNeutralTeamType, string.format(">>>> %s",playerName)), true)
+                Server.SendNetworkMessage("Chat", BuildChatMessage(false, "[通知] ", -1, kTeamReadyRoom, kNeutralTeamType, string.format("<%s> 加入了游戏",playerName)), true)
             elseif prevName ~= player:GetName() then
                 Server.Broadcast(nil, string.format("%s is now known as %s.", prevName, player:GetName()))
             end
