@@ -11,9 +11,9 @@ kTranslateMessage["SKILLTIER_SQUADLEADER"]="小队长"
 kTranslateMessage["SKILLTIER_UNKNOWN"]="未知"
 
 kTranslateMessage["WELCOME_TO"]="欢迎来到"
-kTranslateMessage["WELCOME_TO_READY_ROOM"]="欢迎来到<物竞天择2中国社区>服务器\n对公告板按BIND_Use键查看详情"
-kTranslateMessage["WELCOME_TO_READY_ROOM_HALLOWEEN"]="欢迎来到物竞天择2中国社区\n对公告板按BIND_Use键查看详情\n按BIND_Use键可以扔糖果"
-kTranslateMessage["WELCOME_TO_READY_ROOM_HOLIDAY"]="欢迎来到物竞天择2中国社区\n对公告板按BIND_Use键看详情\n按BIND_Use键可以扔雪球"
+kTranslateMessage["WELCOME_TO_READY_ROOM"]="欢迎来到<物竞天择2中国社区>服务器"
+kTranslateMessage["WELCOME_TO_READY_ROOM_HALLOWEEN"]="欢迎来到物竞天择2中国社区\n按BIND_Use键可以扔糖果"
+kTranslateMessage["WELCOME_TO_READY_ROOM_HOLIDAY"]="欢迎来到物竞天择2中国社区\n按BIND_Use键可以扔雪球"
 
 kTranslateMessage["TEAM"]="队内"
 kTranslateMessage["ALL"]="全局"
@@ -21,7 +21,6 @@ kTranslateMessage["ALL"]="全局"
 kTranslateMessage["AFK_WARNING"]="你已经一动不动了%{timeAFK}d秒钟，达到%{maxAFKTime}d秒时你将会被服务器自动踢出。"
 kTranslateMessage["AIR_PURIFIER"]="空气净化器"
 kTranslateMessage["ALERT"]="警告"
-
 
 kTranslateMessage["ABM_EVOLVE_FOR"]="进化需要资源"
 kTranslateMessage["ABM_GAME_NOT_STARTED"]="战局尚未开始"

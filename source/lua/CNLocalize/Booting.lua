@@ -1,6 +1,6 @@
 
 Shared.Message("[CNCE] CN Localize Version 2022.2.12.1")
-ModLoader.SetupFileHook("lua/NetworkMessages_Server.lua", "lua/CNLocalize/NetworkMessages_Server.lua", "replace")
+ModLoader.SetupFileHook("lua/NetworkMessages_Server.lua", "lua/CNLocalize/NetworkMessages_Server.lua", "post")
 ModLoader.SetupFileHook( "lua/ConfigFileUtility.lua", "lua/CNLocalize/ShineExtensions.lua", "post" )
 
 
