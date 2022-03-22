@@ -55,7 +55,7 @@ if Shine then
                 end
             end
 
-            Shared.Message("[CNCE] Shine:|"..Source .. "|".. Key .. "|Untranslated")
+            Shared.Message("[CNCE] ERROR Shine:|"..Source .. "|".. Key .. "|Untranslated")
 
             local LanguageStrings = Shine.Locale:GetLanguageStrings( Source, Lang )
             if not LanguageStrings or not LanguageStrings[ Key ] then

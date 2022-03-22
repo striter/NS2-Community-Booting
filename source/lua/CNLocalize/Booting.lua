@@ -57,10 +57,16 @@ if Client then
 end
 
 if AddHintModPanel then
-    local cnTitleMaterial = PrecacheAsset("materials/CNLocalize/Banner.material")
+    math.randomseed(tostring(os.time()):reverse():sub(1, 6))
+    for i = 1, 100 do math.random() end
+    
+    local titleRandom = math.random(1, 2)
+    Shared.Message("[CNCE] Banner Welcome:" .. tostring(titleRandom))
+    local cnTitleMaterial = PrecacheAsset(string.format("materials/CNLocalize/Banner_Welcome%d.material",titleRandom))
     AddHintModPanel(cnTitleMaterial, "https://docs.qq.com/doc/DUFlBR0ZJeFRiRnRi","阅读服务器事宜")
 
-    local muteKickMaterial = PrecacheAsset("materials/CNLocalize/Banner_MuteKick.material")
+    local mutekick = math.random(1, 2)
+    Shared.Message("[CNCE] Banner MuteKick:" .. tostring(mutekick))
+    local muteKickMaterial = PrecacheAsset(string.format("materials/CNLocalize/Banner_MuteKick%d.material",mutekick))
     AddHintModPanel(muteKickMaterial, "https://docs.qq.com/doc/DWUVmb3FEemlBaFBB","阅读语音净化指南")
 end
-

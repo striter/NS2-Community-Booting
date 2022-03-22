@@ -28,6 +28,8 @@ kShinePluginsTranslations["Core"]["MOTD"]="日常信息"
 kShinePluginsTranslations["Core"]["CLIENT_CONFIG_MENU"]="Shine本地设置"
 kShinePluginsTranslations["Core"]["ADMIN_MENU"]="管理菜单"
 
+kShinePluginsTranslations["Core"]["NS2_MENU_OPTIONS_TITLE"]="SHINE 设置"
+kShinePluginsTranslations["Core"]["NS2_MENU_OPEN_CLIENT_CONFIG"]="打开客户端设置界面"
 kShinePluginsTranslations["Core"]["NAME"]="名字"
 kShinePluginsTranslations["Core"]["TEAM"]="队伍"
 kShinePluginsTranslations["Core"]["ADMIN_MENU_COMMANDS_TAB"]="玩家指令"
@@ -44,6 +46,7 @@ kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_LEVEL_ERROR"]= "启动�
 kShinePluginsTranslations["chatbox"]={}
 kShinePluginsTranslations["chatbox"]["SAY_ALL"]="对所有人发言"
 kShinePluginsTranslations["chatbox"]["SAY_TEAM"]="对队伍内发言"
+kShinePluginsTranslations["chatbox"]["SETTINGS_TOOLTIP"]="切换窗口可见性."
 
 kShinePluginsTranslations["motd"]={}
 kShinePluginsTranslations["motd"]["MESSAGE_OF_THE_DAY"]= "本服文档"
@@ -86,6 +89,7 @@ kShinePluginsTranslations["ban"]["DURATION_HINT"]= "输入封禁时间"
 kShinePluginsTranslations["ban"]["REASON"]= "理由"
 
 kShinePluginsTranslations["basecommands"]={}
+kShinePluginsTranslations["basecommands"]["FORCE_START"]="强制对局开启."
 kShinePluginsTranslations["basecommands"]["ALL_TALK_TAG"]="[全局语音]"
 kShinePluginsTranslations["basecommands"]["CATEGORY"]="玩家操作目录"
 kShinePluginsTranslations["basecommands"]["EJECT"]="罢免指挥"
@@ -184,6 +188,7 @@ kShinePluginsTranslations["votealltalk"]["NOTIFY_PREFIX"]="[全局语音投票]"
 kShinePluginsTranslations["voterandom"]={}
 kShinePluginsTranslations["voterandom"]["NOTIFY_PREFIX"]="[洗牌分队]"
 
+kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_SHUFFLE_HIVE"]="基于服务器设置,根据段位分自动洗牌."
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_MARINE"]="队伍偏好已设置为:陆战队"
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_ALIEN"]="队伍偏好已设置为:卡拉异形"
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_NONE"]="队伍偏好已重置"
