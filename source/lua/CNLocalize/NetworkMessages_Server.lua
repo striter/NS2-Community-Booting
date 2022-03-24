@@ -1,3 +1,15 @@
+local AdvertPlugin = nil
+if Shine then
+    AdvertPlugin = Shine.Plugins["communityadverts"]
+    if AdvertPlugin then
+        if AdvertPlugin.Enabled then
+            Shared.Message("[CNCE] Community Adverts Plugin Inserted")
+        else
+            AdvertPlugin = nil
+        end
+    end
+end
+
 local function OnSetNameMessage(client, message)
 
     local name = message.name
@@ -17,7 +29,11 @@ local function OnSetNameMessage(client, message)
             if not hasBeenSet then
                 local playerName = player:GetName()
                 Server.Broadcast(nil, string.format("%s connected.", playerName))
-                Server.SendNetworkMessage("Chat", BuildChatMessage(false, "[通知] ", -1, kTeamReadyRoom, kNeutralTeamType, string.format("<%s> 加入了游戏",playerName)), true)
+                if AdvertPlugin then
+                    AdvertPlugin:PlayerEnter(client)
+                else
+                    Server.SendNetworkMessage("Chat", BuildChatMessage(false, "[通知] ", -1, kTeamReadyRoom, kNeutralTeamType, string.format("<%s> 加入了游戏",playerName)), true)
+                end
             elseif prevName ~= player:GetName() then
                 Server.Broadcast(nil, string.format("%s is now known as %s.", prevName, player:GetName()))
             end

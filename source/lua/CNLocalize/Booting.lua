@@ -1,5 +1,5 @@
 
-Shared.Message("[CNCE] CN Localize Version 2022.2.12.1")
+Shared.Message("[CNCE] CN Localize Version 2022.3.24")
 ModLoader.SetupFileHook("lua/NetworkMessages_Server.lua", "lua/CNLocalize/NetworkMessages_Server.lua", "post")
 ModLoader.SetupFileHook( "lua/ConfigFileUtility.lua", "lua/CNLocalize/ShineExtensions.lua", "post" )
 
@@ -69,4 +69,7 @@ if AddHintModPanel then
     Shared.Message("[CNCE] Banner MuteKick:" .. tostring(mutekick))
     local muteKickMaterial = PrecacheAsset(string.format("materials/CNLocalize/Banner_MuteKick%d.material",mutekick))
     AddHintModPanel(muteKickMaterial, "https://docs.qq.com/doc/DWUVmb3FEemlBaFBB","阅读语音净化指南")
+
+    local communityTierMaterial = PrecacheAsset("materials/CNLocalize/Banner_CommunityTier.material")
+    AddHintModPanel(communityTierMaterial, "https://docs.qq.com/doc/DUHhYQlhDaGFTYVZ5","进行浓度查询")
 end
