@@ -1,25 +1,11 @@
-name        = "[CN] Community Extension/Localization"
+name        = "[CN] Community Booting"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[可以随意订阅
-请注意:暴力汉化注入.
-请加群了解更多信息1049324510
-字体与汉化文本贡献者@Ladjic
-1.提供最基础的字体覆盖
-2.多数文本汉化
-3.小地图的汉化
-4.Shine(服务器管理)的所有插件汉化
-5.保证打字聊天功能正常运行
-6.提供非英文名支持
-
-Bug/汉化/润色 联系@StriteR.
-
- BRUTAL INJECTION MOD Warning
-Chinese localization ,for runtime(during play) only.
-Since builtin fonts pack didnt support chinese characters,So i decide to do something BRUTAL.
-Modifcation Created/Coded by @StriteR.
-Text refined by @StriteR.
-Fonts provider/creater by @Ladjic]=]
+description = [=[用于社区服务器的正常运营.
+包括汉化/服务器管理/bug修复等等.
+请勿直接订阅!.
+代码/中文/润色/插件@StriteR.
+字体@Ladjic]=]
 image       = "preview.jpg"
 tag_modtype = ""
 tag_support = ""

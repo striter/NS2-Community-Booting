@@ -15,14 +15,16 @@ local Plugin = Shine.Plugin( ... )
 Plugin.Version = "1.0"
 Plugin.PrintName = "communityadverts"
 Plugin.HasConfig = true
-Plugin.ConfigName = "CommunityAdverst.json"
+Plugin.ConfigName = "CommunityAdverts.json"
 Plugin.DefaultConfig = {
-	["5502211"]={
-		enter = "萌新 <%s> 已加入战局.",
-		leave = "奥义很爽.",
-		prefixColor = {225,255,255},
-		enterColor = {200,200,200},
-		leaveColor = {200,252005,200},
+	UserAdverts = {
+		["5502211"]={
+			enter = "萌新 <%s> 已加入战局.",
+			leave = "奥义很爽.",
+			prefixColor = {225,255,255},
+			enterColor = {200,200,200},
+			leaveColor = {200,200,200},
+		}
 	}
 }
 Plugin.CheckConfig = true
@@ -38,7 +40,7 @@ function Plugin:ResetState()
 	TableEmpty( self.groupData )
 end
 
-Plugin.KDefaultGroup = "Default"
+Plugin.KDefaultGroup = "DefaultGroup"
 Plugin.kDefaultData = {
 	enter = "玩家 <%s> 加入了战局",
 	leave = "一名玩家离开了战局",
@@ -74,11 +76,10 @@ function Plugin:GetUserData(Client)
 	local id=tostring(Client:GetUserId())
 	-- Shared.Message("[CNCA] Community Adverts:" .. id)
 
-	-- To be continued
-	-- local userData = self.Config[id]
-	-- if userData then
-	-- 	return userData
-	-- end
+	local userData = self.Config.UserAdverts[tostring(id)]
+	if userData then
+		return userData
+	end
 
 	local userData = Shine:GetUserData(Client)
 	return self:BuildGroupAdverts(userData and userData.Group or nil)
@@ -100,7 +101,9 @@ function Plugin:ClientDisconnect( Client )
 	local userData=self:GetUserData(Client)
 	if #userData.leave == 0 then return end
 
-	Shine:NotifyColour( Shine.GetAllClients(), userData.leaveColor[1], userData.leaveColor[3],userData.leaveColor[3], userData.leave)
+	Shine:NotifyDualColour( Shine.GetAllClients(),
+	userData.prefixColor[1], userData.prefixColor[2], userData.prefixColor[3],"[社区通知]",
+	userData.leaveColor[1], userData.leaveColor[2], userData.leaveColor[3], string.format(userData.leave,player:GetName()))
 	-- Shared.Message("[CNCA] Member Exit:" .. tostring(Client:GetId()))
 end
 

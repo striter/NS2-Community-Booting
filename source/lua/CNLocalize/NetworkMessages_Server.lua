@@ -3,7 +3,7 @@ if Shine then
     AdvertPlugin = Shine.Plugins["communityadverts"]
     if AdvertPlugin then
         if AdvertPlugin.Enabled then
-            Shared.Message("[CNCE] Community Adverts Plugin Inserted")
+            Shared.Message("[CNCA] Community Adverts Plugin Migerated")
         else
             AdvertPlugin = nil
         end
