@@ -26,23 +26,23 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                     sumPlayers = sumPlayers + 1
                 end
                 
-                if playerRecord.Skill < 0 then  --Fake BOT
+                local skillIcon = player.SkillIcon
+                if playerRecord.FakeBot then  --Fake BOT
+                    skillIcon:SetTexturePixelCoordinates(0, 1 * 32, 100, 2 * 32 - 1)
                     player["Ping"]:SetText(kZeroStr)
                 end
 
                 if MouseTracker_GetIsVisible() then
                     local mouseX, mouseY = Client.GetCursorPosScreen()
-                    local skillIcon = player.SkillIcon
                     if skillIcon:GetIsVisible() and GUIItemContainsPoint(skillIcon, mouseX, mouseY) then
-
-                        for _, pie in ientitylist(Shared.GetEntitiesWithClassname("PlayerInfoEntity")) do
-                            if pie.clientId == clientIndex and pie.clientId > 0 and pie.playerSkill >= 0 then
-                                local description = skillIcon.tooltipText
-                                description = string.format("%s \n社区:%s \nNS2ID: %i\n\n段位分: %i",description , Locale.ResolveString(pie.group),pie.steamId, pie.playerSkill)
-                                scoreboard.badgeNameTooltip:SetText(description)
-                                break
-                            end
+                        local description
+                        if playerRecord.FakeBot then
+                            description = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString("SKILLTIER_BOT"))
+                        else
+                            description = skillIcon.tooltipText
+                            description = string.format("%s \n社区%s \n段位分: %i\nNS2ID: %i",description , Locale.ResolveString(playerRecord.Group), playerRecord.Skill,playerRecord.SteamId)
                         end
+                        scoreboard.badgeNameTooltip:SetText(description)
                     end
                 end
             end

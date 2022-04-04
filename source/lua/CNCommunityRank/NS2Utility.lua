@@ -1,5 +1,5 @@
 function GetPlayerSkillTier(skill, isRookie, adagradSum, isBot)
-    if isBot or skill < 0 then return -1, "SKILLTIER_BOT" end
+    if isBot then return -1, "SKILLTIER_BOT" end
     if skill <= 100 then return 0, "SKILLTIER_ROOKIE", skill end
     if skill <= 400 then return 1, "SKILLTIER_RECRUIT", skill end
     if skill <= 850 then return 2, "SKILLTIER_FRONTIERSMAN", skill end

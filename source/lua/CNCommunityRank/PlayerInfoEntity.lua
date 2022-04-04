@@ -45,8 +45,8 @@ local networkVars =
     playerSkill = "integer",
 ---------------
     hiveskill = "integer" ,
-    communityRank = "integer",
     group = string.format("string (%d)", kMaxGroupName ),
+    fakeBot = "boolean",
 -----------
     adagradSum = "float",
     currentTech = "integer",
@@ -126,8 +126,8 @@ function PlayerInfoEntity:UpdateScore()
                 self.playerSkill = scorePlayer:GetPlayerSkill()
             -------------
                 self.hiveskill = scorePlayer.skill
-                self.communityRank = scorePlayer:GetCommunityRank()
                 self.group = scorePlayer.group
+                self.fakeBot = scorePlayer.fakeBot
             -------------
                 self.adagradSum = scorePlayer:GetAdagradSum()
                 playerSkillOffset = scorePlayer:GetPlayerSkillOffset()

@@ -23,5 +23,6 @@ ModLoader.SetupFileHook( "lua/ServerAdminCommands.lua", "lua/CNBooting/ServerAdm
 ModLoader.SetupFileHook( "lua/GUIWebView.lua", "lua/CNBooting/GUIWebView.lua", "replace" )
 ModLoader.SetupFileHook( "lua/Badges_Shared.lua", "lua/CNBooting/Badges_Shared.lua", "replace")
 ModLoader.SetupFileHook( "lua/Badges_Client.lua", "lua/CNBooting/Badges_Client.lua", "replace")
+
 ModLoader.SetupFileHook( "lua/GUIScoreboard.lua", "lua/CNBooting/GUIScoreboard.lua", "replace")
 ModLoader.SetupFileHook( "lua/Voting.lua", "lua/CNBooting/Voting.lua", "post")

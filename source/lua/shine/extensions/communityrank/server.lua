@@ -5,8 +5,11 @@ Plugin.PrintName = "communityrank"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityRank.json"
 Plugin.DefaultConfig = {
-    ["Ranks"] = {
-        ["55022511"] = -2000,
+    UserData = {
+        ["55022511"] = {
+            rank = -2000,
+            fakeBot = true,
+        }
     }
 }
 Plugin.CheckConfig = true
@@ -26,7 +29,7 @@ end
 
 local function ReadPersistent(self)
     -- Shared.Message("[CNCR] Read Persistent:")
-    for k,v in pairs(self.Config.Ranks) do
+    for k,v in pairs(self.Config.UserData) do
         -- Shared.Message(k .. ":" .. tostring(v))
         self.PlayerRanks[tonumber(k)] = v
     end
@@ -35,22 +38,27 @@ end
 local function SavePersistent(self)
     -- Shared.Message("[CNCR] Save Persistent:")
     for k,v in pairs(self.PlayerRanks) do
-        self.Config.Ranks[tostring(k)] = v
+        self.Config.UserData[tostring(k)] = v
     end
     self:SaveConfig()
 end
 
-local function RankPlayerDelta(self,steamId,delta)
-    
-    local rank = self.PlayerRanks[steamId]
-    if not rank then
-        rank = 0
-        self.PlayerRanks[steamId] = rank
+local function GetPlayerData(self,steamId)
+    if not self.PlayerRanks[steamId] then
+        self.PlayerRanks[steamId] = {
+            rank = 0,
+            fakeBot = false,
+        }
     end
+    
+    return self.PlayerRanks[steamId]
+end
 
-    rank = rank + delta
-
-    local target = Shine.GetClientByNS2ID(steamId)
+local function RankPlayerDelta(self,_steamId,_delta)
+    
+    local rank = GetPlayerData(self,_steamId).rank + _delta
+    
+    local target = Shine.GetClientByNS2ID(_steamId)
     if target then 
         local player = target:GetControllingPlayer()
         
@@ -58,7 +66,7 @@ local function RankPlayerDelta(self,steamId,delta)
         player:SetCommunityRank(rank)
     end
     
-    self.PlayerRanks[steamId] = rank
+    self.PlayerRanks[_steamId].rank = rank
 end
 
 function Plugin:OnFirstThink()
@@ -171,7 +179,7 @@ function Plugin:CreateMessageCommands()
         local preRank = player.skill
 
         local rank = _rank - preRank
-        self.PlayerRanks[_id] = rank
+        GetPlayerData(self,_id).rank = rank
         player:SetCommunityRank(rank)
     
         Shine:AdminPrint( nil, "%s set %s rank to %s", true,  Shine.GetClientInfo( _client ), Shine.GetClientInfo( target ), _rank )
@@ -189,7 +197,7 @@ function Plugin:CreateMessageCommands()
             return 
         end
 
-        self.PlayerRanks[_id] = 0
+        GetPlayerData(self,_id).rank = 0 
         target:GetControllingPlayer():SetCommunityRank(0)
         
         Shine:AdminPrint( nil, "%s reset %s rank", true,  Shine.GetClientInfo( _client ), _id )
@@ -215,6 +223,17 @@ function Plugin:CreateMessageCommands()
     deltaCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
     deltaCommand:Help( "增减ID对应玩家的社区段位." )
 
+    local function PlayerBotSwitch(_client)
+
+        local data = GetPlayerData(self,_client:GetUserId())
+        
+        data.fakeBot = not data.fakeBot
+        _client:GetControllingPlayer():SetFakeBot(data.fakeBot)
+        Shine:AdminPrint( nil, "%s switch fakeBot to <%s>", true, Shine.GetClientInfo( _client ),data.fakeBot )
+        SavePersistent(self)
+    end
+    local botCommand = self:BindCommand( "sh_fakebot", "fakebot", PlayerBotSwitch )
+    botCommand:Help( "假装自己是个BOT." )
 end
 
 function Plugin:GetUserGroup(Client)
@@ -226,13 +245,12 @@ end
 function Plugin:ClientConnect( _client )
     local clientID = _client:GetUserId()
     if clientID == 0 then return end
-    if not self.PlayerRanks[clientID] then
-        self.PlayerRanks[clientID] = 0
-    end
-    local rank = self.PlayerRanks[clientID]
+    
+    local data = GetPlayerData(self,clientID)
 
     local player = _client:GetControllingPlayer()
-    player:SetCommunityRank(rank)
+    player:SetCommunityRank(data.rank)
+    player:SetFakeBot(data.fakeBot)
     player:SetGroup(self:GetUserGroup(_client))
-    -- Shared.Message("[CNCR] Client Rank:" .. tostring(clientID) .. ":" .. tostring(rank))
+    Shared.Message("[CNCR] Client Rank:" .. tostring(clientID) .. ":" .. tostring(data.rank) .. "," .. tostring(data.fakeBot))
 end

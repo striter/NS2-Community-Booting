@@ -42,6 +42,10 @@ kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_OK"]="良好"
 kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_NOTIFICATION_LEVEL_DESCRIPTION"]="在此刻通知:"
 kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_LEVEL_WARNING"]= "启动时出现警告与错误"
 kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_LEVEL_ERROR"]= "启动时出现报错"
+kShinePluginsTranslations["Core"]["INFO_OBS"]= "玩家数据 - Observatory"
+kShinePluginsTranslations["Core"]["INFO_NS2PANEL"]= "玩家数据 -NS2Panel"
+kShinePluginsTranslations["Core"]["OPEN_IN_STEAM"]= "用Steam页面打开"
+kShinePluginsTranslations["Core"]["LOADING"]= "加载中"
 
 kShinePluginsTranslations["chatbox"]={}
 kShinePluginsTranslations["chatbox"]["SAY_ALL"]="对所有人发言"

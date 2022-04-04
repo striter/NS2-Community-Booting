@@ -4,18 +4,16 @@ local baseInitMixin = ScoringMixin.__initmixin
 function ScoringMixin:__initmixin()
     baseInitMixin(self)
     self.communityRank = 0
-end
-
-function ScoringMixin:GetCommunityRank()
-    return self.communityRank
+    self.fakeBot = false
+    self.group = "RANK_INVALID"
 end
 
 function ScoringMixin:GetPlayerSkill()
-    return self.skill + self.communityRank
+    return math.max(0,self.skill + self.communityRank)
 end
 
 function ScoringMixin:GetCommanderSkill()
-    return self.commSkill + self.communityRank
+    return math.max(0,self.commSkill + self.communityRank)
 end
 
 if Server then
@@ -57,15 +55,20 @@ if Server then
 ----------
         self.communityRank = player.communityRank
         self.group = player.group
+        self.fakeBot = player.fakeBot
 ---------
     end
 
-    function ScoringMixin:SetCommunityRank(rank)
-        self.communityRank = rank
+    function ScoringMixin:SetCommunityRank(_rank)
+        self.communityRank = _rank
     end
 
     function ScoringMixin:SetGroup(_group)
         self.group = _group
+    end
+
+    function ScoringMixin:SetFakeBot(_fakeBot)
+        self.fakeBot = _fakeBot
     end
 end --End-Server
 

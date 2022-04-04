@@ -49,11 +49,12 @@ Plugin.kDefaultData = {
 	leaveColor = {128,128,128},
 }
 function Plugin:BuildGroupAdverts(_groupName)
+	local Group = _groupName and Shine:GetGroupData(_groupName) or Shine:GetDefaultGroup()
+	_groupName = _groupName or Plugin.KDefaultGroup 
+	
 	local targetData = self.groupData[_groupName]
 	if targetData then return targetData end
 
-	local Group = _groupName and Shine:GetGroupData(_groupName) or Shine:GetDefaultGroup()
-	_groupName = _groupName or Plugin.KDefaultGroup 
 	local GroupData = Group.Adverts
 	if not GroupData then
 		targetData = Plugin.kDefaultData
