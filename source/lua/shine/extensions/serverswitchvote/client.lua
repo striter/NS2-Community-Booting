@@ -19,14 +19,19 @@ local ZeroVec = Vector( 0, 0, 0 )
 
 function Plugin:Initialise()
 	self.Enabled = true
-	self.ServerList = {}
-
+	self.QueryServers = {}
+	self.ValidServers = {}
 	return true
 end
 
+function Plugin:Cleanup()
+	self.QueryServers = nil
+	self.ValidServers = nil
+	return self.BaseClass.Cleanup( self )
+end
 
 VoteMenu:AddPage( "ServerSwitchVote", function( self )
-	local Servers = Plugin.ServerList
+	local Servers = Plugin.QueryServers
 	if not Plugin.Enabled or not Servers then
 		self:SetPage( "Main" )
 		return
@@ -36,8 +41,8 @@ VoteMenu:AddPage( "ServerSwitchVote", function( self )
 		self:SetPage( "Main" )
 	end )
 
-	local function ClickServer( ID )
-		if self.GetCanSendVote() then
+	local function ClickServer(self,ID )
+		if self.GetCanSendVote() and self.ValidServers[ID] then
 			Shared.ConsoleCommand( "sh_switchservervote "..ID )
 			self:SetPage( "Main" )
 			return true
@@ -47,8 +52,8 @@ VoteMenu:AddPage( "ServerSwitchVote", function( self )
 	end
 
 	for ID, Server in pairs( Servers ) do
-		local Button = self:AddSideButton( Server.Name, function()
-			return ClickServer( ID )
+		local Button = self:AddSideButton(string.format("%s(未响应)",Server.Name), function()
+			return ClickServer(self,ID )
 		end )
 
 		Shine.QueryServer( Server.IP, tonumber( Server.Port ) + 1, function( Data )
@@ -73,13 +78,14 @@ VoteMenu:AddPage( "ServerSwitchVote", function( self )
 				end
 			end
 
-			Button:SetText( StringFormat( "%s (%i/%i)", Server.Name, Connected, Max ) )
+			self.ValidServers[ID] = true
+			Button:SetText( StringFormat( "%s(%i/%i)", Server.Name, Connected, Max ) )
 		end )
 	end
 end )
 
 VoteMenu:EditPage( "Main", function( self )
-	if Plugin.Enabled and next( Plugin.ServerList ) then
+	if Plugin.Enabled and next( Plugin.QueryServers ) then
 		self:AddSideButton( Plugin:GetPhrase( "VOTEMENU_BUTTON" ), function()
 			self:SetPage( "ServerSwitchVote" )
 		end )
@@ -87,18 +93,14 @@ VoteMenu:EditPage( "Main", function( self )
 end )
 
 function Plugin:ReceiveServerList( Data )
-	if self.ServerList[ Data.ID ] then -- We're refreshing the data.
-		TableEmpty( self.ServerList )
+	if self.QueryServers[ Data.ID ] then -- We're refreshing the data.
+		TableEmpty( self.QueryServers )
 	end
 
-	self.ServerList[ Data.ID ] = {
+	self.QueryServers[ Data.ID ] = {
 		IP = Data.IP,
 		Port = Data.Port,
 		Name = Data.Name
 	}
 end
 
-function Plugin:Cleanup()
-	self.ServerList = nil
-	return self.BaseClass.Cleanup( self )
-end
