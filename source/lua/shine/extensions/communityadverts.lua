@@ -17,15 +17,7 @@ Plugin.PrintName = "communityadverts"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityAdverts.json"
 Plugin.DefaultConfig = {
-	UserAdverts = {
-		["5502211"]={
-			enter = "萌新 <%s> 已加入战局.",
-			leave = "奥义很爽.",
-			prefixColor = {225,255,255},
-			enterColor = {200,200,200},
-			leaveColor = {200,200,200},
-		}
-	}
+
 }
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
@@ -77,12 +69,12 @@ function Plugin:GetUserData(Client)
 	local id=tostring(Client:GetUserId())
 	-- Shared.Message("[CNCA] Community Adverts:" .. id)
 
-	local userData = self.Config.UserAdverts[tostring(id)]
-	if userData then
-		return userData
+	local userData = Shine:GetUserData(Client)
+	local advert = userData and userData.Adverts
+	if advert then
+		return advert
 	end
 
-	local userData = Shine:GetUserData(Client)
 	return self:BuildGroupAdverts(userData and userData.Group or nil)
 end
 

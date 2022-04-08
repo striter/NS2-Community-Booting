@@ -99,11 +99,11 @@ function Plugin:OnFirstThink()
             playerCount = playerCount + 1
         end
         
-        -- Shared.Message(string.format("[CNCR] End Game Resulting|Mode:%s Length:%i Players:%i WinTeam: %s|", gameMode , gameLength,playerCount , winningTeam))
-        -- if (gameMode ~= "ns2" and gameMode ~= "ns2large") or gameLength < 600 or playerCount < 12 then
-        --     Shared.Message(string.format("[CNCR] End Game Restricted"))
-        --     return
-        -- end
+        Shared.Message(string.format("[CNCR] End Game Resulting|Mode:%s Length:%i Players:%i WinTeam: %s|", gameMode , gameLength,playerCount , winningTeam))
+        if (gameMode ~= "ns2" and gameMode ~= "ns2large") or gameLength < 600 or playerCount < 12 then
+            Shared.Message(string.format("[CNCR] End Game Restricted"))
+            return
+        end
 
         local function RankCompare(a,b) return a.score > b.score end
         table.sort(team1Table,RankCompare)
@@ -126,9 +126,9 @@ function Plugin:OnFirstThink()
         end
         local rankTable = {}
         local rankScoreStatus = {}
-        rankScoreStatus[-1] = { eloStart = -20 , eloEnd = -80 }
+        rankScoreStatus[-1] = { eloStart = -20 , eloEnd = -40 }
         rankScoreStatus[0] = { eloStart = 0 , eloEnd = 40 }
-        rankScoreStatus[1] = { eloStart = 100 , eloEnd = 60 }
+        rankScoreStatus[1] = { eloStart = 50 , eloEnd = 30 }
 
         local team1Status,team2Status
         if winningTeam == kMarineTeamType then

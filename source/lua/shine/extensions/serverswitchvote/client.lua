@@ -20,13 +20,11 @@ local ZeroVec = Vector( 0, 0, 0 )
 function Plugin:Initialise()
 	self.Enabled = true
 	self.QueryServers = {}
-	self.ValidServers = {}
 	return true
 end
 
 function Plugin:Cleanup()
 	self.QueryServers = nil
-	self.ValidServers = nil
 	return self.BaseClass.Cleanup( self )
 end
 
@@ -41,8 +39,8 @@ VoteMenu:AddPage( "ServerSwitchVote", function( self )
 		self:SetPage( "Main" )
 	end )
 
-	local function ClickServer(self,ID )
-		if self.GetCanSendVote() and self.ValidServers[ID] then
+	local function ClickServer(ID )
+		if self.GetCanSendVote() and Plugin.QueryServers[ID] and Plugin.QueryServers[ID].Valid then
 			Shared.ConsoleCommand( "sh_switchservervote "..ID )
 			self:SetPage( "Main" )
 			return true
@@ -53,13 +51,12 @@ VoteMenu:AddPage( "ServerSwitchVote", function( self )
 
 	for ID, Server in pairs( Servers ) do
 		local Button = self:AddSideButton(string.format("%s(未响应)",Server.Name), function()
-			return ClickServer(self,ID )
+			return ClickServer(ID )
 		end )
 
 		Shine.QueryServer( Server.IP, tonumber( Server.Port ) + 1, function( Data )
 			if not Data then return end
 			if not SGUI.IsValid( Button ) then return end
-			if Button:GetText() ~= Server.Name then return end
 
 			local Connected = Data.numberOfPlayers
 			local Max = Data.maxPlayers
@@ -78,7 +75,7 @@ VoteMenu:AddPage( "ServerSwitchVote", function( self )
 				end
 			end
 
-			self.ValidServers[ID] = true
+			Plugin.QueryServers[ID].Valid = true
 			Button:SetText( StringFormat( "%s(%i/%i)", Server.Name, Connected, Max ) )
 		end )
 	end
@@ -100,7 +97,8 @@ function Plugin:ReceiveServerList( Data )
 	self.QueryServers[ Data.ID ] = {
 		IP = Data.IP,
 		Port = Data.Port,
-		Name = Data.Name
+		Name = Data.Name,
+		Valid = false,
 	}
 end
 

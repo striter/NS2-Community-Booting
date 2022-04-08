@@ -21,9 +21,9 @@ Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     Plugin.playerCommunityTier = Message.Tier or 0
 
     Shine.Hook.SetupGlobalHook( "GetOwnsItem", "CheckCommunityGadgets", "Replace" )
-    GetCustomizeScene():RefreshOwnedItems()
     GetGlobalEventDispatcher():FireEvent("OnUserStatsAndItemsRefreshed")
     SendPlayerVariantUpdate()
+    GetCustomizeScene():RefreshOwnedItems()
     Shared.Message(string.format("[CNCT] Tier Set %i",Plugin.playerCommunityTier ))
 end )
 
