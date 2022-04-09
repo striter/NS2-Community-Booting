@@ -833,8 +833,8 @@ kTranslateMessage["WEB_TOOLTIP"]="*敌方单位触碰时减速\n*放置后隐身
 kTranslateMessage["CLOG"]="泥团"
 kTranslateMessage["CLOG_TOOLTIP"]="卡拉沙袋.Gorge借由此快速搭建前线阵地."
 kTranslateMessage["BABBLER"]="虫群"
-kTranslateMessage["BABBLER_MINE"]="建造者"
-kTranslateMessage["BABBLER_MINE_TOOLTIP"]="放置建筑,构建前线阵地.\n*刺花(造成远程伤害)\n*泥团(构建基础阵地)\n*酸液地雷(爆炸造成护甲伤害)\n*拌网(减缓敌方单位速度)"
+kTranslateMessage["BABBLER_MINE"]="酸液地雷"
+kTranslateMessage["BABBLER_MINE_TOOLTIP"]="探测到敌方单位后释放酸液爆炸.\n*伤害敌方单位的护甲."
 kTranslateMessage["BILEBOMB"]="胆汁炸弹"
 kTranslateMessage["BILEBOMB_TOOLTIP"]="使Gorge能够抛射胆汁炸弹\n*胆汁炸弹具有溅射伤害\n*专门用于破甲和拆除建筑物。"
 
