@@ -816,6 +816,7 @@ kTranslateMessage["BUYMENU_ERROR_UNAVAILABLE"]="需要研发解锁"
 
 --BUY MENU ALIEN
 kTranslateMessage["SKULK"]="Skulk"
+kTranslateMessage["BITE"]="撕咬"
 kTranslateMessage["SKULK_EGG"]="蛹(Skulk)"
 kTranslateMessage["SKULK_TOOLTIP"]="基础单位,小巧且灵活.\n*通过撕咬攻击敌人\n*能在墙壁和天花板上行走\n*使用寄生虫标记敌人.\n*(进化)进行长距离的飞扑.\n*(进化)自爆以造成大范围高额伤害."
 kTranslateMessage["LEAP"]="飞扑"
@@ -828,6 +829,8 @@ kTranslateMessage["XENOCIDE_TOOLTIP"]="引爆自身对造成大范围打击.\n*�
 kTranslateMessage["GORGE"]="Gorge"
 kTranslateMessage["GORGE_EGG"]="蛹(Gorge)"
 kTranslateMessage["GORGE_TOOLTIP"]="团队的核心.\n*唾击远程攻击.\n*治疗液建造,修复建筑物与治疗同伴.\n*常借由肚皮滑行加速\n*迅速搭建前线阵地.\n*(进化)胆汁炸弹造成范围护甲伤害\n# 卡拉异形颜值担当."
+kTranslateMessage["SPIT"]="唾击"
+kTranslateMessage["SPRAY"]="治疗液"
 kTranslateMessage["WEB"]="绊网"
 kTranslateMessage["WEB_TOOLTIP"]="*敌方单位触碰时减速\n*放置后隐身\n-多次生效后或被伤害后失能"
 kTranslateMessage["CLOG"]="泥团"
@@ -840,6 +843,7 @@ kTranslateMessage["BILEBOMB_TOOLTIP"]="使Gorge能够抛射胆汁炸弹\n*胆汁
 
 kTranslateMessage["LERK"]="Lerk"
 kTranslateMessage["LERK_TOOLTIP"]="战场万金油.\n*悬空飞行与滑翔.\n*撕咬较轻但具有毒性伤害.\n*喷射毒刺远程攻击.\n*(进化)施放毒云造成伤害.\n*(进化)避弹云降低敌方伤害."
+kTranslateMessage["SPIKE"]="钉刺"
 kTranslateMessage["UMBRA"]="避弹云"
 kTranslateMessage["UMBRA_TOOLTIP"]="施放避弹云.\n*朝目标喷放一片持续区域.\n*降低穿过的弹道伤害.\n*给经过的友军增加一层减伤粘膜."
 kTranslateMessage["SPORES"]="毒云"
@@ -848,6 +852,7 @@ kTranslateMessage["SPORES_TOOLTIP"]="施放孢子毒气.\n*朝目标喷放一片
 kTranslateMessage["FADE"]="Fade"
 kTranslateMessage["FADE_EGG"]="蛹(Fade)"
 kTranslateMessage["FADE_TOOLTIP"]="致命的刺客\n*使用刀状骨骼挥砍\n*通过闪烁快速切入切出战场.\n*(进化)新陈代谢在战斗中回复\n*(进化)蓄力一击造成双倍伤害\n# ProDDDDDDD"
+kTranslateMessage["SWIPE"]="劈砍"
 kTranslateMessage["BLINK"]="闪现"
 kTranslateMessage["BLINK_TOOLTIP"]="*快速切入切出战场.\n*朝任意方向加速.\n*持续释放保持高速."
 kTranslateMessage["STAB_BLINK"]="蓄力一击"

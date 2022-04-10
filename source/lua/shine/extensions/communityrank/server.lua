@@ -186,9 +186,9 @@ function Plugin:CreateMessageCommands()
         SavePersistent(self)
     end
 
-    local setCommand = self:BindCommand( "sh_rank", "rank", AdminRankPlayer )
+    local setCommand = self:BindCommand( "sh_rank_set", "rank_set", AdminRankPlayer )
     setCommand:AddParam{ Type = "steamid" }
-    setCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
+    setCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 9999999, Optional = true, Default = 0 }
     setCommand:Help( "设置ID对应玩家的社区段位." )
 
     local function AdminRankReset( _client, _id )
@@ -204,7 +204,7 @@ function Plugin:CreateMessageCommands()
         SavePersistent(self)
     end
 
-    local resetCommand = self:BindCommand( "sh_rankreset", "rankreset", AdminRankReset )
+    local resetCommand = self:BindCommand( "sh_rank_reset", "rank_reset", AdminRankReset )
     resetCommand:AddParam{ Type = "steamid" }
     resetCommand:Help( "重置玩家的段位(还原至NS2段位)." )
 
@@ -218,7 +218,7 @@ function Plugin:CreateMessageCommands()
         Shine:AdminPrint( nil, "%s delta %s rank with %s", true,  Shine.GetClientInfo( _client ), _id, _offset )
         SavePersistent(self)
     end
-    local deltaCommand = self:BindCommand( "sh_rankdelta", "rankdelta", AdminRankPlayerDelta )
+    local deltaCommand = self:BindCommand( "sh_rank_delta", "rank_delta", AdminRankPlayerDelta )
     deltaCommand:AddParam{ Type = "steamid" }
     deltaCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
     deltaCommand:Help( "增减ID对应玩家的社区段位." )

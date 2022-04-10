@@ -191,9 +191,9 @@ kShinePluginsTranslations["votealltalk"]["NOTIFY_PREFIX"]="[全局语音投票]"
 kShinePluginsTranslations["voterandom"]={}
 kShinePluginsTranslations["voterandom"]["NOTIFY_PREFIX"]="[洗牌分队]"
 kShinePluginsTranslations["voterandom"]["DISABLE_AUTO_SHUFFLE"]="关闭自动洗牌"
-kShinePluginsTranslations["voterandom"]["DISABLE_AUTO_SHUFFLE_TOOLTIP"]="投票尝试关闭自动洗牌"
+kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLE_TOOLTIP"]="投票关闭自动洗牌"
 kShinePluginsTranslations["voterandom"]["ENABLE_AUTO_SHUFFLE"]="开启自动洗牌"
-kShinePluginsTranslations["voterandom"]["ENABLE_AUTO_SHUFFLE_TOOLTIP"]="投票尝试开启自动洗牌"
+kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_ENABLE_TOOLTIP"]="投票开启自动洗牌"
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_SHUFFLE_HIVE"]="基于服务器设置,根据段位分自动洗牌."
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_MARINE"]="队伍偏好已设置为:陆战队"
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_ALIEN"]="队伍偏好已设置为:卡拉异形"
@@ -207,6 +207,7 @@ kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_HIVE_BASED"] = "{PlayerNam
 kShinePluginsTranslations["voterandom"]["SHUFFLING_TEAMS_SHUFFLE_HIVE"] = "基于玩家的战力洗牌."
 kShinePluginsTranslations["voterandom"]["SHUFFLE_AND_RESTART_SHUFFLE_HIVE"] = "基于玩家的战力洗牌,对局已重启."
 kShinePluginsTranslations["voterandom"]["ERROR_ALREADY_VOTED_HIVE_BASED"] = "你已经投过洗牌分队了."
+kShinePluginsTranslations["voterandom"]["ERROR_CANNOT_START_HIVE_BASED"] = "当前无法投票."
 kShinePluginsTranslations["voterandom"]["ERROR_CONSTRAINTS"]="当前分数已平衡."
 
 -- PreGame

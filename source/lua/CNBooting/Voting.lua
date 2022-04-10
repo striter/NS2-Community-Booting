@@ -92,7 +92,7 @@ if Server then
     SetVoteSuccessfulCallback("VoteRankPlayer", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)
         if not client then return end
-        Shared.ConsoleCommand(string.format("sh_rankdelta %s %s", client:GetUserId(), 100))
+        Shared.ConsoleCommand(string.format("sh_rank_delta %s %s", client:GetUserId(), 100))
     end)
 
     SetVoteSuccessfulCallback("VoteForceSpectator", 1, function( msg )

@@ -76,7 +76,7 @@ VoteMenu:AddPage( "ServerSwitchVote", function( self )
 			end
 
 			Plugin.QueryServers[ID].Valid = true
-			Button:SetText( StringFormat( "%s(%i/%i)", Server.Name, Connected, Max ) )
+			Button:SetText( StringFormat( "[%i]%s(%i/%i)", ID, Server.Name, Connected, Max ) )
 		end )
 	end
 end )

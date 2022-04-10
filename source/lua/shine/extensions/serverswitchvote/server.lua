@@ -117,35 +117,69 @@ do
 	Plugin.ConfigValidator = Validator
 end
 
+local function GetConnectIP(_index)
+	local data = Plugin.Config.Servers[_index]
+	return string.format("%s:%s",data.IP,data.Port)
+end
+
 function Plugin:Initialise()
 	self:CreateCommands()
 	self.Enabled = true
-    local function AdminRedirSpectate( _client, _ip )
+
+	local function AdminRedirPlayers(_client,_serverIndex,_count)
+		local clients = {}
+		for Client in Shine.IterateClients() do
+			
+            local player = Client:GetControllingPlayer()
+            if player then
+				table.insert(clients,{client =Client,priority = player:GetPlayerSkill()})
+			end
+		end
+
+		table.sort(clients,function (a,b) return a.priority < b.priority end)
+		local count = _count
+		for index,data in ipairs(clients) do
+			
+			Server.SendNetworkMessage(data.client, "Redirect",{ ip = GetConnectIP(_serverIndex) }, true)
+
+			count = count - 1
+			if count == 0 then
+				break
+			end
+		end
+	end
+    local redirPlayersCommand = self:BindCommand( "sh_redir_count", "redir_count", AdminRedirPlayers )
+    redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 6, Default=1 }
+    redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Optional = true, Default = 16 }
+    redirPlayersCommand:Help( "将<指定数量的玩家(分数从低到高)>迁移至服务器(示例: !redir_spec 192.168.0.1:27015 20)." )
+
+
+    local function AdminRedirSpectate( _client, _index )
 		for Client in Shine.IterateClients() do
             local player = Client:GetControllingPlayer()
             if player and player:GetIsSpectator() then
-				Server.SendNetworkMessage(Client, "Redirect",{ ip = _ip }, true)
+				Server.SendNetworkMessage(Client, "Redirect",{ ip = GetConnectIP(_index) }, true)
 			end
 		end
     end
 
     local redirSpectateCommand = self:BindCommand( "sh_redir_spec", "redir_spec", AdminRedirSpectate )
-    redirSpectateCommand:AddParam{ Type = "string" }
-    redirSpectateCommand:Help( "将所有观战迁移至指定服务器(示例: !redir_spec 192.168.0.1:27015)." )
+    redirSpectateCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 6, Default=1 }
+    redirSpectateCommand:Help( "将<所有观战>迁移至指定服务器(示例: !redir_spec 192.168.0.1:27015)." )
 
-	local function AdminRedirSkill( _client, _ip , _maxSkill )
+	local function AdminRedirSkill( _client, _index , _maxSkill )
 		for Client in Shine.IterateClients() do
             local player = Client:GetControllingPlayer()
             if player and player:GetPlayerSkill() < _maxSkill then
-				Server.SendNetworkMessage(Client, "Redirect",{ ip = _ip }, true)
+				Server.SendNetworkMessage(Client, "Redirect",{ ip = GetConnectIP(_index) }, true)
 			end
 		end
     end
 
     local redirSkillCommand = self:BindCommand( "sh_redir_skill", "redir_skill", AdminRedirSkill )
-    redirSkillCommand:AddParam{ Type = "string" }
+    redirSkillCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 6, Default=1 }
     redirSkillCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 3000, Optional = true, Default = 0 }
-    redirSkillCommand:Help( "小于分数的玩家将迁移至指定服务器(示例: !redir_skill 192.168.0.1:27015 1000)." )
+    redirSkillCommand:Help( "将<小于分数的玩家>迁移至指定服务器(示例: !redir_skill 192.168.0.1:27015 1000)." )
 	return true
 end
 
