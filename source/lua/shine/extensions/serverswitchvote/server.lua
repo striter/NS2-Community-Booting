@@ -149,9 +149,9 @@ function Plugin:Initialise()
 		end
 	end
     local redirPlayersCommand = self:BindCommand( "sh_redir_count", "redir_count", AdminRedirPlayers )
-    redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 6, Default=1 }
+    redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
     redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Optional = true, Default = 16 }
-    redirPlayersCommand:Help( "将<指定数量的玩家(分数从低到高)>迁移至服务器(示例: !redir_spec 192.168.0.1:27015 20)." )
+    redirPlayersCommand:Help( "将<指定数量的玩家(分数从低到高)>迁移至服务器(示例: !redir_spec 1 20)." )
 
 
     local function AdminRedirSpectate( _client, _index )
@@ -164,8 +164,8 @@ function Plugin:Initialise()
     end
 
     local redirSpectateCommand = self:BindCommand( "sh_redir_spec", "redir_spec", AdminRedirSpectate )
-    redirSpectateCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 6, Default=1 }
-    redirSpectateCommand:Help( "将<所有观战>迁移至指定服务器(示例: !redir_spec 192.168.0.1:27015)." )
+    redirSpectateCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
+    redirSpectateCommand:Help( "将<所有观战>迁移至指定服务器(示例: !redir_spec 1)." )
 
 	local function AdminRedirSkill( _client, _index , _maxSkill )
 		for Client in Shine.IterateClients() do
@@ -177,9 +177,9 @@ function Plugin:Initialise()
     end
 
     local redirSkillCommand = self:BindCommand( "sh_redir_skill", "redir_skill", AdminRedirSkill )
-    redirSkillCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 6, Default=1 }
+    redirSkillCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
     redirSkillCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 3000, Optional = true, Default = 0 }
-    redirSkillCommand:Help( "将<小于分数的玩家>迁移至指定服务器(示例: !redir_skill 192.168.0.1:27015 1000)." )
+    redirSkillCommand:Help( "将<小于分数的玩家>迁移至指定服务器(示例: !redir_skill 1 1000)." )
 	return true
 end
 

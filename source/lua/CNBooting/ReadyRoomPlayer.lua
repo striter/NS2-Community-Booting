@@ -39,28 +39,51 @@ function ReadyRoomPlayer:OnPostUpdateCamera()
     self:SetCameraYOffset(kPlayerHeight*(self.scale-1) + offset *self.scale)
 end
 
+local baseGetMaxSpeed =  ReadyRoomPlayer.GetMaxSpeed
+function ReadyRoomPlayer:GetMaxSpeed(possible)
+    return baseGetMaxSpeed(self,possible)* ( 0.5 +  self.scale * 0.5)
+end
+
+local baseModifyGravityForce = ReadyRoomPlayer.ModifyGravityForce
+function ReadyRoomPlayer:ModifyGravityForce(gravityTable)
+    baseModifyGravityForce(self,gravityTable)
+    gravityTable.gravity = gravityTable.gravity* (self.scale == 1 and 1 or 0.35)
+end
+
+
 if Server then
     local function SwitchScale(self,estimateScale, thirdpersonOffset)
         local reset =  self.estimateScale == estimateScale
         self.estimateScale = reset and 1 or estimateScale
-        -- self:SetIsThirdPerson( reset and 0 or thirdpersonOffset)
+        self:SetIsThirdPerson(self.isThirdPerson and self.estimateScale or 0)
     end
+    
+    local function SwitchThirdPerson(self)
+        self.isThirdPerson = not self.isThirdPerson
+        self:SetIsThirdPerson(self.isThirdPerson and self.estimateScale or 0)
+    end
+
     local baseHandleButtons = ReadyRoomPlayer.HandleButtons
     function ReadyRoomPlayer:HandleButtons(input)
         baseHandleButtons(self,input)
-        if not self.scalePressed and bit.band(input.commands, Move.Weapon1 + Move.Weapon2 + Move.Weapon3) ~= 0 then
+        if not self.scalePressed and bit.band(input.commands, Move.Weapon1 + Move.Weapon2 + Move.Weapon3 + Move.Reload) ~= 0 then
             self.scalePressed=true
             if bit.band(input.commands,Move.Weapon1) ~= 0 then
-                SwitchScale(self,0.3,0.5)
+                SwitchScale(self,0.3)
             end
             
             if bit.band(input.commands,Move.Weapon2) ~= 0 then
-                SwitchScale(self,2,2)
+                SwitchScale(self,2)
             end
 
             if bit.band(input.commands,Move.Weapon3) ~= 0 then
-                SwitchScale(self,3,3)
+                SwitchScale(self,3)
             end
+
+            if bit.band(input.commands,Move.Reload) ~= 0 then
+                SwitchThirdPerson(self)
+            end
+
         else
             self.scalePressed=false
         end
