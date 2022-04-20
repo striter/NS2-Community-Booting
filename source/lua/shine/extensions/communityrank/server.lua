@@ -5,7 +5,7 @@ Plugin.PrintName = "communityrank"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityRank.json"
 Plugin.DefaultConfig = {
-    UserData = {
+    ["UserData"] = {
         ["55022511"] = {
             rank = -2000,
             fakeBot = true,
@@ -17,7 +17,7 @@ Plugin.CheckConfigTypes = true
 
 do
 	local Validator = Shine.Validator()
-	Validator:AddFieldRule( "Ranks",  Validator.IsType( "table", {} ))
+	Validator:AddFieldRule( "UserData",  Validator.IsType( "table", {} ))
 	Plugin.ConfigValidator = Validator
 end
 
@@ -100,7 +100,7 @@ function Plugin:OnFirstThink()
         end
         
         Shared.Message(string.format("[CNCR] End Game Resulting|Mode:%s Length:%i Players:%i WinTeam: %s|", gameMode , gameLength,playerCount , winningTeam))
-        if (gameMode ~= "ns2" and gameMode ~= "ns2large") or gameLength < 600 or playerCount < 12 then
+        if gameLength < 300 or playerCount < 16 then
             Shared.Message(string.format("[CNCR] End Game Restricted"))
             return
         end

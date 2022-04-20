@@ -17,8 +17,29 @@ Plugin.PrintName = "newcomerprotection"
 Plugin.HasConfig = true
 Plugin.ConfigName = "NewcomerProtection.json"
 Plugin.DefaultConfig = {
-
+	["Tier"] ={100,300,500},
+	["MarineGears"] = false,
+	["Refund"] = true,
+	["RefundLookup"] = {
+		["Skulk"] = 		{1,		0.5,	0.25},
+		["Gorge"] = 		{6,		4,		2.5},
+		["Prowler"] = 		{8,		5.5,	3.25},
+		["Lerk"] = 			{10.5,	7,		4.25},
+		["Fade"] = 			{18.5,	12.25,	7.25},
+		["Onos"] = 			{31,	20.5,	12.25},
+	
+		["Marine"]=			{1, 0.5,	0.25},
+		["JetpackMarine"]=	{6,		4,		2.25},
+		["Exo"] = 			{27.5,	18.25,	11.25},
+	}
 }
+
+Plugin.EnabledGamemodes = {
+	["ns2"] = true,
+    ["NS2.0"] = true,
+    ["siege++"] = true,
+}
+
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 Plugin.ConfigMigrationSteps = { }
@@ -32,28 +53,6 @@ function Plugin:OnFirstThink()
     Shine.Hook.SetupClassHook("Player", "OnKill", "OnPlayerKill", "PassivePost")
 end
 
-local kTier={100,300,500}
-
-local kMarineRespawnEquipment = {
-	{map = LayMines.kMapName,info = "地雷[4] ",slot = 4 },
-	{map = PulseGrenadeThrower.kMapName ,info = "电磁手雷[5] ",slot = 5},
-	{map = Welder.kMapName,info = "焊枪[3] "}
-}
-
-local kPlayerRefund = {
-	["Skulk"] = 		{1,		0.5,	0.25},
-	["Gorge"] = 		{6,		4,		2.5},
-	["Prowler"] = 		{8,		5.5,	3.25},
-	["Lerk"] = 			{10.5,	7,		4.25},
-	["Fade"] = 			{18.5,	12.25,	7.25},
-	["Onos"] = 			{31,	20.5,	12.25},
-
-	["Marine"]=			{0.5,	0.25,	0.125},
-	["JetpackMarine"]=	{6,		4,		2.25},
-	["Exo"] = 			{27.5,	18.25,	11.25},
-}
-
-
 local function GetClientAndTier(player)
 	local client = player:GetClient()
 	if client and client:GetIsVirtual() then
@@ -63,7 +62,7 @@ local function GetClientAndTier(player)
 	local tier = 0
 	if client then
 		local skill = player:GetPlayerSkill()
-		for k,v in ipairs(kTier) do
+		for k,v in ipairs(Plugin.Config.Tier) do
 			if skill < v then
 				tier = k
 				break
@@ -73,7 +72,16 @@ local function GetClientAndTier(player)
 
 	return client,tier
 end
+
+local kMarineRespawnEquipment = {
+	{map = LayMines.kMapName,info = "地雷[4] ",slot = 4 , refill=1, },
+	{map = PulseGrenadeThrower.kMapName ,info = "电磁手雷[5] ",slot = 5},
+	{map = Welder.kMapName,info = "焊枪[3] "}
+}
+
 function Plugin:OnPlayerRespawn(playingTeam,player, origin, angles)
+	if not Plugin.Config.MarineGears then return end
+
 	local client,tier = GetClientAndTier(player)
 	if not client or tier == 0 then return end
 
@@ -85,6 +93,13 @@ function Plugin:OnPlayerRespawn(playingTeam,player, origin, angles)
 			local equipment = kMarineRespawnEquipment[i]
 			if not equipment.slot or not player:GetWeaponInHUDSlot(equipment.slot) then
 				player:GiveItem(equipment.map)
+				if equipment.refill then
+					local giveWeapon = player:GetWeapon(equipment.map)
+					if giveWeapon then
+						giveWeapon:Refill(equipment.refill)
+					end
+				end
+
 				result = (result or "") .. equipment.info
 			end
 		end
@@ -104,11 +119,13 @@ function Plugin:OnPlayerRespawn(playingTeam,player, origin, angles)
 end
 
 function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
+	if not Plugin.Config.Refund then return end
+
 	local client,tier = GetClientAndTier(player)
 	if not client or tier == 0 then return end
 
 	local name = player:GetClassName()
-	local refundTable = kPlayerRefund[name]
+	local refundTable = Plugin.Config.RefundLookup[name]
 	if not refundTable then return end
 
 	

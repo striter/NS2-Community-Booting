@@ -22,7 +22,7 @@ kShinePluginsTranslations["Core"]={}
 kShinePluginsTranslations["Core"]["Map Vote"]="换图投票"
 kShinePluginsTranslations["Core"]["Shuffle"]="洗牌分队"
 
-kShinePluginsTranslations["Core"]["Surrender"]="发起投降(/remake)"
+kShinePluginsTranslations["Core"]["Surrender"]="投降 /remake"
 kShinePluginsTranslations["Core"]["Unstuck"]="尝试脱困"
 kShinePluginsTranslations["Core"]["MOTD"]="日常信息"
 kShinePluginsTranslations["Core"]["CLIENT_CONFIG_MENU"]="Shine本地设置"
