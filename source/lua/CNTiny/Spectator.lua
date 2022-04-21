@@ -27,7 +27,7 @@ Script.Load("lua/Mixins/GroundMoveMixin.lua")
 Script.Load("lua/Mixins/JumpMoveMixin.lua")
 Script.Load("lua/Mixins/CrouchMoveMixin.lua")
 Script.Load("lua/Mixins/LadderMoveMixin.lua")
-Script.Load("lua/CNBooting/TinymanSpectatorMode.lua")
+Script.Load("lua/CNTiny/TinymanSpectatorMode.lua")
 ---------------
 
 class 'Spectator' (Player)
@@ -186,7 +186,7 @@ function Spectator:OnCreate()
     InitMixin(self, CrouchMoveMixin)
     InitMixin(self, LadderMoveMixin)
     -- InitMixin(self, RagdollMixin)
-    self.scale = 0.2
+    Player.SetScale(self,0.2)
 -------------
     -- Default all move mixins to off.
     self:SetFreeLookMoveEnabled(false)
@@ -698,8 +698,6 @@ end
 
 Shared.LinkClassToMap("Spectator", Spectator.kMapName, networkVars)
 
-
-
 function Spectator:GetIsVisible()
     return self.specMode == kSpectatorMode.Tinyman
 end
@@ -708,50 +706,16 @@ function Spectator:GetHasController()
     return true
 end
 
-function Spectator:OnAdjustModelCoords(modelCoords)
-    local coords = modelCoords
-    coords.xAxis = coords.xAxis * self.scale
-    coords.yAxis = coords.yAxis * self.scale
-    coords.zAxis = coords.zAxis * self.scale
-    return coords
-end
-
-local baseGetTraceCapsule = Spectator.GetTraceCapsule
-function Spectator:GetTraceCapsule()
-    local height,radius = baseGetTraceCapsule(self)
-    height = height * self.scale
-    radius = radius * self.scale
-    return height,radius
-end
-
-local baseGetControllerSize = Spectator.GetControllerSize
-function Spectator:GetControllerSize()
-    local height,radius = baseGetControllerSize(self)
-    height = height * self.scale
-    radius = radius * self.scale
-    return height,radius
-end
-
--- function Spectator:GetCanDieOverride()
---     return self.specMode == kSpectatorMode.Tinyman
--- end
-
-local kPlayerHeight = Player.kYExtents * 2 - 0.2
-function Spectator:OnPostUpdateCamera()
-    local offset = -self:GetCrouchShrinkAmount() * self:GetCrouchAmount()
-    self:SetCameraYOffset(kPlayerHeight*(self.scale-1) + offset *self.scale)
-end
-
 local baseGetMaxSpeed =  Spectator.GetMaxSpeed
 function Spectator:GetMaxSpeed(possible)
     local activating = self.specMode == kSpectatorMode.Tinyman
-    return activating and (Player.kWalkMaxSpeed  * ( 0.5 +  self.scale * 0.5))  or baseGetMaxSpeed(self,possible) 
+    return activating and Player.GetMaxSpeed(self,possible)  or baseGetMaxSpeed(self,possible) 
 end
 
 local baseGetAcceleration = Spectator.GetAcceleration
 function Spectator:GetAcceleration()
     local activating = self.specMode == kSpectatorMode.Tinyman
-    return activating and (13 * self:GetSlowSpeedModifier()) or baseGetAcceleration(self)
+    return activating and Player.GetAcceleration(self) or baseGetAcceleration(self)
 end
 
 -- local baseModifyGravityForce = Spectator.ModifyGravityForce
