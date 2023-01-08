@@ -1,10 +1,13 @@
 --Server Switch
-RegisterVoteType( "VoteSwitchServer", { ip = "string (25)", name = "string(20)" } )
+RegisterVoteType("VoteSwitchServer", { ip = "string (25)", name = "string(20)" } )
 RegisterVoteType("VoteMutePlayer", { targetClient = "integer" })
 RegisterVoteType("VoteForceSpectator", { targetClient = "integer" })
 RegisterVoteType("VoteKillPlayer", { targetClient = "integer" })
 RegisterVoteType("VoteRankPlayer", { targetClient = "integer" })
 RegisterVoteType("VoteKillAll", { })
+RegisterVoteType("VoteBotsCount", {count = "integer"})
+RegisterVoteType("VoteBotsDoom", {team = "integer"})
+RegisterVoteType("VoteRandomScale", {})
     
 if Client then
     local function GetPlayerList()
@@ -24,6 +27,21 @@ if Client then
 
     end
 
+    local kBotDoomTeam = {
+        {title = "取消增幅",team = 0},
+        {title = "<边境拓荒者部队>",team = 1},
+        {title = "<卡拉异形>",team = 2},
+    }
+    local function GetBotsDoomList()
+        local menuItems = { }
+        for p = 1, #kBotDoomTeam do
+            local data = kBotDoomTeam[p]
+            table.insert(menuItems, { text = data.title, extraData = {title=data.title , team = data.team } })
+        end
+
+        return menuItems
+    end
+
     local function SetupAdditionalVotes(voteMenu)
 
         AddVoteStartListener( "VoteSwitchServer", function( msg )
@@ -38,14 +56,15 @@ if Client then
             return string.format(Locale.ResolveString("VOTE_MUTE_PLAYER_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
         end)
 
-        voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_RANK_PLAYER"), GetPlayerList, function( msg )
-            AttemptToStartVote("VoteRankPlayer", { targetClient = msg.targetClient })
-        end)
+--         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_RANK_PLAYER"), GetPlayerList, function( msg )
+--             AttemptToStartVote("VoteRankPlayer", { targetClient = msg.targetClient })
+--         end)
         
-        AddVoteStartListener("VoteRankPlayer", function(msg)
-            return string.format(Locale.ResolveString("VOTE_RANK_PLAYER_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
-        end)
+        -- AddVoteStartListener("VoteRankPlayer", function(msg)
+        --     return string.format(Locale.ResolveString("VOTE_RANK_PLAYER_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
+        -- end)
 
+        
         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_FORCE_SPECTATE"), GetPlayerList, function( msg )
             AttemptToStartVote("VoteForceSpectator", { targetClient = msg.targetClient })
         end)
@@ -72,6 +91,15 @@ if Client then
             local random = math.random(1,5)
             return Locale.ResolveString(string.format("VOTE_KILL_ALL_QUERY%i",random))
         end)
+
+   
+        AddVoteStartListener("VoteRandomScale", function(msg)
+            return Locale.ResolveString("VOTE_RANDOM_SCALE_QUERY")
+        end)
+
+        voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_RANDOM_SCALE"),nil, function( msg )
+            AttemptToStartVote("VoteRandomScale", { })
+        end)
     end
     AddVoteSetupCallback(SetupAdditionalVotes)
     
@@ -89,11 +117,11 @@ if Server then
         Shared.ConsoleCommand(string.format("sh_gagid %s %s", client:GetUserId(), 30 * 60))
     end)
 
-    SetVoteSuccessfulCallback("VoteRankPlayer", 1, function( msg )
-        local client = Server.GetClientById(msg.targetClient)
-        if not client then return end
-        Shared.ConsoleCommand(string.format("sh_rank_delta %s %s", client:GetUserId(), 100))
-    end)
+--     SetVoteSuccessfulCallback("VoteRankPlayer", 1, function( msg )
+--         local client = Server.GetClientById(msg.targetClient)
+--         if not client then return end
+--         Shared.ConsoleCommand(string.format("sh_rank_delta %s %s", client:GetUserId(), 100))
+--     end)
 
     SetVoteSuccessfulCallback("VoteForceSpectator", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)
@@ -114,6 +142,22 @@ if Server then
     SetVoteSuccessfulCallback("VoteKillAll", 1, function( msg )
         for _, player in ientitylist(Shared.GetEntitiesWithClassname("Player")) do
             player:Kill(nil,nil,player:GetOrigin())
+        end
+    end)
+
+    SetVoteSuccessfulCallback("VoteKillAll", 1, function( msg )
+        for _, player in ientitylist(Shared.GetEntitiesWithClassname("Player")) do
+            player:Kill(nil,nil,player:GetOrigin())
+        end
+    end)
+        
+    SetVoteSuccessfulCallback("VoteRandomScale", 1, function( msg )
+        if not Player.SetScale then
+            return
+        end
+        for _, player in ientitylist(Shared.GetEntitiesWithClassname("Player")) do
+            local random = 0.25 + math.random() * 1.5
+            player:SetScale(random)
         end
     end)
 end

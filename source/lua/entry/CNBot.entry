@@ -1,0 +1,4 @@
+﻿modEntry = {
+    FileHooks = "lua/CNBot/FileHooks.lua",
+    Priority = 500
+}

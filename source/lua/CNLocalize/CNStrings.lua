@@ -785,7 +785,7 @@ kTranslateMessage["CLUSTERGRENADE_BUYDESCRIPTION"]="陆战队士兵常用的投�
 kTranslateMessage["MINES_BUYDESCRIPTION"]="针对卡拉异形研发的智能感应地雷.\n*可以安放在任意墙体上.\n*当敌方单位靠近时爆炸造成高额伤害."
 
 kTranslateMessage["FLAMETHROWER_BUYDESCRIPTION"]="抑制异形建筑物的生长,同时也具备其战场适用性.\n*喷射长束火焰点燃敌方单位\n*灼烧地面形成死亡区域.\n*无护甲防护的单位受到高额伤害.\n-对护甲防护单位伤害有限."
-kTranslateMessage["GRENADELAUNCHER_BUYDESCRIPTION"]="应对卡拉异形群以及恼人的异性建筑而研发的抛射武器.\n*抛物线弹道,高额的爆炸范围伤害.\n*对建筑物造成巨额伤害.\n-四发填装式弹仓."
+kTranslateMessage["GRENADELAUNCHER_BUYDESCRIPTION"]="应对卡拉异形群以及恼人的衍生建筑而研发的抛射武器.\n*抛物线弹道,高额的爆炸范围伤害.\n*对建筑物造成巨额伤害.\n-四发填装式弹仓."
 kTranslateMessage["HMG_BUYDESCRIPTION"]="阵地战使用的重型单兵机枪,造成高额的持续伤害.\n*容量高弹仓.\n*特制子弹带来的额外单位杀伤力.\n-射击精度较差.\n-装弹速度较慢."
 kTranslateMessage["SHOTGUN_BUYDESCRIPTION"]="霰弹枪是常规卡拉异形的克星,注重近距离交火的武器.\n*造成高额近距离伤害.\n-过高的散布及远距离衰减.\n-六发填装式弹仓."
 

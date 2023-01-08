@@ -71,7 +71,4 @@ if AddHintModPanel then
 
     local communityTierMaterial = PrecacheAsset("materials/CNLocalize/Banner_CommunityTier.material")
     AddHintModPanel(communityTierMaterial, "https://docs.qq.com/doc/DUHhYQlhDaGFTYVZ5","进行浓度查询")
-
-    local communityTierMaterial = PrecacheAsset("materials/CNLocalize/Banner_Minecraft.material")
-    AddHintModPanel(communityTierMaterial, "https://docs.qq.com/doc/DUFBaRk5WcUtiQ2hU","我好想炸老屁股家啊")
 end

@@ -40,44 +40,44 @@ VoteMenu:AddPage( "ServerSwitchVote", function( self )
 	end )
 
 	local function ClickServer(ID )
-		if self.GetCanSendVote() and Plugin.QueryServers[ID] and Plugin.QueryServers[ID].Valid then
+		-- if self.GetCanSendVote() and Plugin.QueryServers[ID] and Plugin.QueryServers[ID].Valid then
 			Shared.ConsoleCommand( "sh_switchservervote "..ID )
 			self:SetPage( "Main" )
 			return true
-		end
+		-- end
 
-		return false
+		-- return false
 	end
 
 	for ID, Server in pairs( Servers ) do
-		local Button = self:AddSideButton(string.format("%s(未响应)",Server.Name), function()
+		local Button = self:AddSideButton(string.format("%s",Server.Name), function()
 			return ClickServer(ID )
 		end )
 
-		Shine.QueryServer( Server.IP, tonumber( Server.Port ) + 1, function( Data )
-			if not Data then return end
-			if not SGUI.IsValid( Button ) then return end
+		-- Shine.QueryServer( Server.IP, tonumber( Server.Port ) + 1, function( Data )
+		-- 	if not Data then return end
+		-- 	if not SGUI.IsValid( Button ) then return end
 
-			local Connected = Data.numberOfPlayers
-			local Max = Data.maxPlayers
-			local Tags = Data.serverTags
+		-- 	local Connected = Data.numberOfPlayers
+		-- 	local Max = Data.maxPlayers
+		-- 	local Tags = Data.serverTags
 
-			local TagTable = StringExplode( Tags, "|", true )
+		-- 	local TagTable = StringExplode( Tags, "|", true )
 
-			for i = 1, #TagTable do
-				local Tag = TagTable[ i ]
+		-- 	for i = 1, #TagTable do
+		-- 		local Tag = TagTable[ i ]
 
-				local Match = Tag:match( "R_S(%d+)" )
+		-- 		local Match = Tag:match( "R_S(%d+)" )
 
-				if Match then
-					Max = Max - tonumber( Match )
-					break
-				end
-			end
+		-- 		if Match then
+		-- 			Max = Max - tonumber( Match )
+		-- 			break
+		-- 		end
+		-- 	end
 
-			Plugin.QueryServers[ID].Valid = true
-			Button:SetText( StringFormat( "[%i]%s(%i/%i)", ID, Server.Name, Connected, Max ) )
-		end )
+		-- 	Plugin.QueryServers[ID].Valid = true
+		-- 	Button:SetText( StringFormat( "[%i]%s(%i/%i)", ID, Server.Name, Connected, Max ) )
+		-- end )
 	end
 end )
 
@@ -98,7 +98,7 @@ function Plugin:ReceiveServerList( Data )
 		IP = Data.IP,
 		Port = Data.Port,
 		Name = Data.Name,
-		Valid = false,
+		-- Valid = false,
 	}
 end
 
