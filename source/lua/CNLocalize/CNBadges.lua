@@ -46,6 +46,13 @@ kTranslateMessage["T4VirtuousEmo"]="¿"
 
 kTranslateMessage["CBigBro"]="不是我针对谁\n我是说在座的各位都是垃圾."
 
+kTranslateMessage["KCCTV0"]="CCTV 5 - 动物世界"
+kTranslateMessage["KCCTV1"]="CCTV 5 - 动物世界"
+kTranslateMessage["KCCTV2"]="CCTV 5 - 动物世界"
+kTranslateMessage["KCCTV3"]="CCTV 5 - 动物世界"
+kTranslateMessage["KCCTV4"]="CCTV 5 - 动物世界"
+kTranslateMessage["KCCTV5"]="CCTV 5 - 动物世界"
+
 kTranslateMessage["KLuo"]="萝萝萝萝萝萝萝萝萝萝萝萝萝萝萝萝"
 kTranslateMessage["KBei"]="北北北北北北北北北北北北北北北北"
 
