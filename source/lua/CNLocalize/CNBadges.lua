@@ -25,10 +25,10 @@ kTranslateMessage["T0DMeltdown"]="高压锅"
 kTranslateMessage["T0DStress"]="压力"
 kTranslateMessage["T0DVirtuous"]="英勇"
 
-kTranslateMessage["T1IDDD"]="滴滴地的粉丝<CNC.T1>"
-kTranslateMessage["T1IWelder"]="Welder标志<CNC.T1>"
-kTranslateMessage["T1IBabbler"]="Babbler徽章<CNC.T1>"
-kTranslateMessage["T1IGorgeToy"]="Gorger玩偶<CNC.T1>"
+kTranslateMessage["T1IDDD"]="滴滴地"
+kTranslateMessage["T1IWelder"]="Welder标志"
+kTranslateMessage["T1IBabbler"]="Babbler徽章"
+kTranslateMessage["T1IGorgeToy"]="Gorger玩偶"
 kTranslateMessage["T1FLork"]="QwQ"
 kTranslateMessage["T1FBabblerSucks"]="打得不错 下把别打了"
 kTranslateMessage["T1FGorge"]="Gorger"
@@ -38,10 +38,14 @@ kTranslateMessage["T1FLerk"]="Lerker"
 kTranslateMessage["T1FLerkPro"]="电光毒龙钻"
 kTranslateMessage["T1FLerkTired"]="一般"
 
-kTranslateMessage["T3BigBro"]="不是我针对谁\n我是说在座的各位都是垃圾."
-
 kTranslateMessage["T4BabyMarine"]="纯新人"
 kTranslateMessage["T4OnosHappy"]="你们是成熟的社区玩家\n有较强的自我管理意识"
 kTranslateMessage["T4Skulk"]="大家都好能杀啊"
 kTranslateMessage["T4MeltdownEmo"]="?"
 kTranslateMessage["T4VirtuousEmo"]="¿"
+
+kTranslateMessage["CBigBro"]="不是我针对谁\n我是说在座的各位都是垃圾."
+
+kTranslateMessage["KLuo"]="萝萝萝萝萝萝萝萝萝萝萝萝萝萝萝萝"
+kTranslateMessage["KBei"]="北北北北北北北北北北北北北北北北"
+

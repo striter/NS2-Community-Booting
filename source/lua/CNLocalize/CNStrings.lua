@@ -21,6 +21,7 @@ kTranslateMessage["ALL"]="全局"
 kTranslateMessage["AFK_WARNING"]="你已经一动不动了%{timeAFK}d秒钟，达到%{maxAFKTime}d秒时你将会被服务器自动踢出。"
 kTranslateMessage["AIR_PURIFIER"]="空气净化器"
 kTranslateMessage["ALERT"]="警告"
+kTranslateMessage["RESTART"]="重启"
 
 kTranslateMessage["ABM_EVOLVE_FOR"]="进化需要资源"
 kTranslateMessage["ABM_GAME_NOT_STARTED"]="战局尚未开始"
@@ -843,6 +844,7 @@ kTranslateMessage["BILEBOMB_TOOLTIP"]="使Gorge能够抛射胆汁炸弹\n*胆汁
 
 kTranslateMessage["LERK"]="Lerk"
 kTranslateMessage["LERK_TOOLTIP"]="战场万金油.\n*悬空飞行与滑翔.\n*撕咬较轻但具有毒性伤害.\n*喷射毒刺远程攻击.\n*(进化)施放毒云造成伤害.\n*(进化)避弹云降低敌方伤害."
+kTranslateMessage["LERKBITE"]="毒咬"
 kTranslateMessage["SPIKE"]="钉刺"
 kTranslateMessage["UMBRA"]="避弹云"
 kTranslateMessage["UMBRA_TOOLTIP"]="施放避弹云.\n*朝目标喷放一片持续区域.\n*降低穿过的弹道伤害.\n*给经过的友军增加一层减伤粘膜."
@@ -947,6 +949,7 @@ kTranslateMessage["POWER_SURGE_TOOLTIP"]="*为目标建筑应急供电\n*应用�
 kTranslateMessage["NANO_SHIELD"]="纳米防护罩科技"
 kTranslateMessage["NANO_SHIELD_TOOLTIP"]="*降低目标短时间内的承受伤害"
 
+kTranslateMessage["HEAVYMACHINEGUN"]="重机枪"
 kTranslateMessage["HEAVY_MACHINE_GUN"]="重机枪"
 kTranslateMessage["HEAVY_MACHINE_GUN_DROP"]="发放重机枪"
 kTranslateMessage["HEAVY_MACHINE_GUN_TOOLTIP"]="擅长阵地战."
@@ -955,6 +958,7 @@ kTranslateMessage["FLAMETHROWER"]="喷火器"
 kTranslateMessage["FLAMETHROWER_DROP"]="发放喷火器"
 kTranslateMessage["FLAMETHROWER_TOOLTIP"]="能够施加点燃伤害，点燃会降低敌人的体力恢复速率，还能使敌方的一些建筑物暂时失效。对付易燃目标时有伤害加成。"
 
+kTranslateMessage["GRENADE"]="榴弹"
 kTranslateMessage["GRENADE_LAUNCHER"]="榴弹枪"
 kTranslateMessage["GRENADE_LAUNCHER_DROP"]="发放榴弹枪"
 kTranslateMessage["GRENADE_LAUNCHER_TOOLTIP"]="范围伤害,对建筑有毁灭效果."
