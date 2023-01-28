@@ -21,7 +21,7 @@ function Badges_FetchBadges(_, response)
         end
     end
 
-    Badges_ApplyHive1Badges(response)
+    --Badges_ApplyHive1Badges(response)
 end
 
 --Returns lookup table of by the client owned badges
@@ -56,7 +56,6 @@ Client.HookNetworkMessage("DisplayBadge",
     end)
 --------------------
 
---Converts column bitmask into a list
 function Badges_GetBadgeColumns(bitmask)
     local columns = {}
     local acc = 1
@@ -75,69 +74,68 @@ end
 local selectedRows = {}
 
 Client.HookNetworkMessage("BadgeRows",
-    function(msg)
-    
-        PROFILE("Badges_Client:BadgeRows")
-        
-        if msg.columns == 0 then
-            ownedBadges[msg.badge] = nil
-        else
-            ownedBadges[msg.badge] = msg.columns
-            
-            --Check for empty columns and autoselect available badge
-            local columns = Badges_GetBadgeColumns(msg.columns)
-            for i = 1, #columns do
-                local column = columns[i]
-                if not selectedRows[column] then
-                    local badge = Client.GetOptionString( string.format("Badge%s", column), "" )
-                    if badge == "" or badge == "none" then
-                        SelectBadge(msg.badge, column)
-                        break
-                    else
-                        selectedRows[column] = true
+        function(msg)
+
+            PROFILE("Badges_Client:BadgeRows")
+
+            if msg.columns == 0 then
+                ownedBadges[msg.badge] = nil
+            else
+                ownedBadges[msg.badge] = msg.columns
+
+                --Check for empty columns and autoselect available badge
+                local columns = Badges_GetBadgeColumns(msg.columns)
+                for i = 1, #columns do
+                    local column = columns[i]
+                    if not selectedRows[column] then
+                        local badge = Client.GetOptionString( string.format("Badge%s", column), "" )
+                        if badge == "" or badge == "none" then
+                            SelectBadge(msg.badge, column)
+                            break
+                        else
+                            selectedRows[column] = true
+                        end
                     end
                 end
             end
-        end
-        
-        -- Inform the badge customizer that the owned badges set might have changed.
-        -- Attempt to update the associated badge object, if available.
-        local badgeCustomizer = GetBadgeCustomizer()
-        if badgeCustomizer then
-            badgeCustomizer:UpdateOwnedBadges()
-            
-            local badgeName = gBadges[msg.badge]
-            if badgeName then
-                local badgeObj = badgeCustomizer:GetBadgeObjByName(badgeName)
-                if badgeObj then
-                    badgeObj:SetColumns(msg.columns)
+
+            -- Inform the badge customizer that the owned badges set might have changed.
+            -- Attempt to update the associated badge object, if available.
+            local badgeCustomizer = GetBadgeCustomizer()
+            if badgeCustomizer then
+                badgeCustomizer:UpdateOwnedBadges()
+
+                local badgeName = gBadges[msg.badge]
+                if badgeName then
+                    local badgeObj = badgeCustomizer:GetBadgeObjByName(badgeName)
+                    if badgeObj then
+                        badgeObj:SetColumns(msg.columns)
+                    end
                 end
+
+                badgeCustomizer:UpdateActiveBadges()
             end
-            
-            badgeCustomizer:UpdateActiveBadges()
-        end
-        
-    end)
+
+        end)
 
 Client.HookNetworkMessage("BadgeName",
-    function(msg)
-    
-        PROFILE("Badges_Client:BadgeName")
-        
-        Badges_SetName(msg.badge, msg.name)
-    end)
+        function(msg)
+
+            PROFILE("Badges_Client:BadgeName")
+
+            Badges_SetName(msg.badge, msg.name)
+        end)
 
 function Badges_GetBadgeTextures( clientId, usecase )
 
     PROFILE("Badges_GetBadgeTextures")
-    
+
     local badges = ClientId2Badges[clientId]
     if badges then
         if not textures[clientId] then
             textures[clientId] = {}
             badgeNames[clientId] = {}
             badgeColumns[clientId] = {}
-            
             local column = 0
             local count = 0
             for _, badge in ipairs(badges) do
@@ -153,7 +151,7 @@ function Badges_GetBadgeTextures( clientId, usecase )
             end
         end
 
-        return textures[clientId], badgeNames[clientId] , badgeColumns[clientId]
+        return textures[clientId], badgeNames[clientId], badgeColumns[clientId]
     else
         return {}, {}
     end
@@ -165,13 +163,13 @@ local StringFormat = string.format
 
 local badgeSentValueCache = {}
 function SelectBadge(badgeId, column)
-    
+
     -- Check a cache of badge values to ensure we don't send unnecessary network messages.
     if badgeSentValueCache[column] == badgeId then
         return
     end
     badgeSentValueCache[column] = badgeId
-    
+
     Client.SetOptionString( StringFormat( "Badge%s", column ), gBadges[badgeId] )
     if Client.GetIsConnected() then
         Client.SendNetworkMessage( "SelectBadge", BuildSelectBadgeMessage(badgeId, column), true)
@@ -219,8 +217,9 @@ end
 
 --requests the in the config selected badges from the server
 local function OnLoadComplete()
-    
+
     local badges = {}
+    badges = Badges_FetchBadgesFromDLC(badges)
     badges = Badges_FetchBadgesFromItems(badges)
     badges = Badges_FetchBadgesFromStats(badges)
 
@@ -245,6 +244,6 @@ local function OnLoadComplete()
             end
         end
     end
-    
+
 end
 Event.Hook( "LoadComplete", OnLoadComplete )

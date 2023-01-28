@@ -20,8 +20,8 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_RANDOM_SCALE"]="随机大小"
     kTranslateMessage["VOTE_RANDOM_SCALE_QUERY"]="给所有人随机大小?"
 
-    kTranslateMessage["VOTE_RANK_PLAYER"] = "投票上分"
-    kTranslateMessage["VOTE_RANK_PLAYER_QUERY"] = "增加<%s>社区段位分?"
+    --kTranslateMessage["VOTE_RANK_PLAYER"] = "投票上分"
+    --kTranslateMessage["VOTE_RANK_PLAYER_QUERY"] = "增加<%s>社区段位分?"
 
     kTranslateMessage["RANK_HOST"] = "(C6):<萌新>"
     kTranslateMessage["RANK_T5"] = "(C5):<管理员>"
@@ -30,5 +30,6 @@ if kTranslateMessage then
     kTranslateMessage["RANK_T2"] = "(C2):<Lerk>"
     kTranslateMessage["RANK_T1"] = "(C1):<Gorge>"
     kTranslateMessage["RANK_DEFAULT"] = "(C0):<Skulk>"
+    kTranslateMessage["RANK_LIVER"] = "(C3):<Vokex>"
     kTranslateMessage["RANK_INVALID"] = ":<未知>"
 end

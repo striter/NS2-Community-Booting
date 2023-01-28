@@ -108,7 +108,7 @@ do
         return {
             name = string.upper(string.format("BADGE_%s", name)),
             unitStatusTexture = string.format("ui/badges/%s.dds", ddsPrefix),
-            scoreboardTexture = string.format("ui/badges/%s.dds", ddsPrefix),
+            scoreboardTexture = string.format("ui/badges/%s_20.dds", ddsPrefix),
             columns = 960, --column 7,8,9,10
             isOfficial = true,
         }
@@ -142,6 +142,31 @@ do
         return data
     end
 
+    -- Someone was VERY lazy when they added these badges... sigh
+    local function MakeItemBadgeDataENSLI(name, ddsPrefix, itemId)
+        local data = MakeBadgeData3(name, ddsPrefix)
+
+        if ddsPrefix:sub(-1, -1) == "_" then
+            data.scoreboardTexture = string.format("ui/badges/%s20x20.dds", ddsPrefix)
+        else
+            data.scoreboardTexture = string.format("ui/badges/%s_20x20.dds", ddsPrefix)
+        end
+
+        data.itemId = itemId
+
+        return data
+    end
+
+    local function MakeItemBadgeDataENSLNC17(name, ddsPrefix, itemId)
+        local data = MakeBadgeData3(name, ddsPrefix)
+
+        data.scoreboardTexture = string.format("ui/badges/%s.dds", ddsPrefix)
+
+        data.itemId = itemId
+
+        return data
+    end
+
     -- Creates a badge whose availability is tied to which player stats.
     -- badgeName is name of badge and prefix for badge file name.
     -- statName is the api name of the steam user stat associated with the badge.
@@ -160,35 +185,35 @@ do
     end
 
     --vanilla badges data
-    badgeData["dev"] = MakeBadgeData("dev")
-    badgeData["dev_retired"] = MakeBadgeData("dev_retired")
-    badgeData["maptester"] = MakeBadgeData("maptester")
-    badgeData["playtester"] = MakeBadgeData("playtester")
-    badgeData["ns1_playtester"] = MakeBadgeData("ns1_playtester")
-    badgeData["constellation"] = MakeBadgeData2("constellation", "constelation")
-    badgeData["hughnicorn"] = MakeBadgeData("hughnicorn")
-    badgeData["squad5_blue"] = MakeBadgeData("squad5_blue")
-    badgeData["squad5_silver"] = MakeBadgeData("squad5_silver")
-    badgeData["squad5_gold"] = MakeBadgeData("squad5_gold")
-    badgeData["commander"] = MakeBadgeData("commander")
-    badgeData["community_dev"] = MakeBadgeData("community_dev")
-    badgeData["reinforced1"] = MakeBadgeData2("reinforced1", "game_tier1_blue")
-    badgeData["reinforced2"] = MakeBadgeData2("reinforced2", "game_tier2_silver")
-    badgeData["reinforced3"] = MakeBadgeData2("reinforced3", "game_tier3_gold")
-    badgeData["reinforced4"] = MakeBadgeData2("reinforced4", "game_tier4_diamond")
-    badgeData["reinforced5"] = MakeBadgeData2("reinforced5", "game_tier5_shadow")
-    badgeData["reinforced6"] = MakeBadgeData2("reinforced6", "game_tier6_onos")
-    badgeData["reinforced7"] = MakeBadgeData2("reinforced7", "game_tier7_Insider")
-    badgeData["reinforced8"] = MakeBadgeData2("reinforced8", "game_tier8_GameDirector")
-    badgeData["wc2013_supporter"] = MakeBadgeData("wc2013_supporter")
-    badgeData["wc2013_silver"] = MakeBadgeData("wc2013_silver")
-    badgeData["wc2013_gold"] = MakeBadgeData("wc2013_gold")
-    badgeData["wc2013_shadow"] = MakeBadgeData("wc2013_shadow")
+    badgeData["dev"] = MakeItemBadgeData("dev", kBadges_DeveloperItemId)
+    badgeData["dev_retired"] = MakeItemBadgeData("dev_retired", kBadges_DeveloperRetiredItemId)
+    badgeData["maptester"] = MakeItemBadgeData("maptester", kBadges_MaptesterItemId)
+    badgeData["playtester"] = MakeItemBadgeData("playtester", kBadges_PlaytesterItemId)
+    badgeData["ns1_playtester"] = MakeItemBadgeData("ns1_playtester", kBadges_Ns1PlaytesterItemId)
+    badgeData["constellation"] = MakeItemBadgeData2("constellation", "constelation", kBadges_ConstellationItemId)
+    badgeData["hughnicorn"] = MakeItemBadgeData("hughnicorn", kBadges_HughnicornItemId)
+    badgeData["squad5_blue"] = MakeItemBadgeData("squad5_blue", kBadges_Squad5BlueItemId)
+    badgeData["squad5_silver"] = MakeItemBadgeData("squad5_silver", kBadges_Squad5SilverItemId)
+    badgeData["squad5_gold"] = MakeItemBadgeData("squad5_gold", kBadges_Squad5GoldItemId)
+    badgeData["commander"] = MakeItemBadgeData("commander", kBadges_CommanderItemId)
+    badgeData["community_dev"] = MakeItemBadgeData("community_dev", kBadges_CommunityDevItemId)
+    badgeData["reinforced1"] = MakeItemBadgeData2("reinforced1", "game_tier1_blue", kBadges_ReinforcedBlueItemId)
+    badgeData["reinforced2"] = MakeItemBadgeData2("reinforced2", "game_tier2_silver", kBadges_ReinforcedSilverItemId)
+    badgeData["reinforced3"] = MakeItemBadgeData2("reinforced3", "game_tier3_gold", kBadges_ReinforcedGoldItemId)
+    badgeData["reinforced4"] = MakeItemBadgeData2("reinforced4", "game_tier4_diamond", kBadges_ReinforcedDiamondItemId)
+    badgeData["reinforced5"] = MakeItemBadgeData2("reinforced5", "game_tier5_shadow", kBadges_ReinforcedShadowItemId)
+    badgeData["reinforced6"] = MakeItemBadgeData2("reinforced6", "game_tier6_onos", kBadges_ReinforcedOnosItemId)
+    badgeData["reinforced7"] = MakeItemBadgeData2("reinforced7", "game_tier7_Insider", kBadges_ReinforcedInsiderItemId)
+    badgeData["reinforced8"] = MakeItemBadgeData2("reinforced8", "game_tier8_GameDirector", kBadges_ReinforcedDirectorItemId)
+    badgeData["wc2013_supporter"] = MakeItemBadgeData("wc2013_supporter", kBadges_Wc2013SupportItemId)
+    badgeData["wc2013_silver"] = MakeItemBadgeData("wc2013_silver", kBadges_Wc2013SilverItemId)
+    badgeData["wc2013_gold"] = MakeItemBadgeData("wc2013_gold", kBadges_Wc2013GoldItemId)
+    badgeData["wc2013_shadow"] = MakeItemBadgeData("wc2013_shadow", kBadges_Wc2013ShadowItemId)
     badgeData["pax2012"] = MakeDLCBadgeInfo("pax2012", "badge_pax2012", 4931)
     badgeData["ensl_2017"] = MakeItemBadgeData("ensl_2017", 1001)
-    badgeData["ensl_nc_2017_blue"] = MakeItemBadgeData("ensl_nc_2017_blue", 1004)
-    badgeData["ensl_nc_2017_silver"] = MakeItemBadgeData("ensl_nc_2017_silver", 1003)
-    badgeData["ensl_nc_2017_gold"] = MakeItemBadgeData("ensl_nc_2017_gold", 1002)
+    badgeData["ensl_nc_2017_blue"] = MakeItemBadgeDataENSLNC17("ensl_nc_2017_blue", "ensl_nc_2017_blue", 1004)
+    badgeData["ensl_nc_2017_silver"] = MakeItemBadgeDataENSLNC17("ensl_nc_2017_silver", "ensl_nc_2017_silver", 1003)
+    badgeData["ensl_nc_2017_gold"] = MakeItemBadgeDataENSLNC17("ensl_nc_2017_gold", "ensl_nc_2017_gold", 1002)
     badgeData["ensl_wc_gold"] = MakeItemBadgeData("ensl_wc_gold", 1005)
     badgeData["ensl_wc_silver"] = MakeItemBadgeData("ensl_wc_silver", 1006)
     badgeData["ensl_wc_bronze"] = MakeItemBadgeData("ensl_wc_bronze", 1007)
@@ -197,9 +222,9 @@ do
     badgeData["tournament_mm_gold"] = MakeItemBadgeData("tournament_mm_gold", 1010)
     badgeData["ensl_s11_gold"] = MakeItemBadgeData("ensl_s11_gold", 1011)
     badgeData["ensl_s11_silver"] = MakeItemBadgeData("ensl_s11_silver", 1012)
-    badgeData["ensl_nc_2017_late_blue"] = MakeItemBadgeData2("ensl_nc_2017_late_blue", "ensl_nc_2017_blue", 1015)
-    badgeData["ensl_nc_2017_late_silver"] = MakeItemBadgeData2("ensl_nc_2017_late_silver", "ensl_nc_2017_silver", 1014)
-    badgeData["ensl_nc_2017_late_gold"] = MakeItemBadgeData2("ensl_nc_2017_late_gold", "ensl_nc_2017_gold", 1013)
+    badgeData["ensl_nc_2017_late_blue"] = MakeItemBadgeDataENSLNC17("ensl_nc_2017_late_blue", "ensl_nc_2017_blue", 1015)
+    badgeData["ensl_nc_2017_late_silver"] = MakeItemBadgeDataENSLNC17("ensl_nc_2017_late_silver", "ensl_nc_2017_silver", 1014)
+    badgeData["ensl_nc_2017_late_gold"] = MakeItemBadgeDataENSLNC17("ensl_nc_2017_late_gold", "ensl_nc_2017_gold", 1013)
     badgeData["ensl_s12_d1_gold"] = MakeItemBadgeData2("ensl_s12_d1_gold", "ensl_2018_gold", 1016)
     badgeData["ensl_s12_d1_silver"] = MakeItemBadgeData2("ensl_s12_d1_silver", "ensl_2018_silver", 1017)
     badgeData["ensl_s12_d1_bronze"] = MakeItemBadgeData2("ensl_s12_d1_bronze", "ensl_2018_bronze", 1018)
@@ -215,9 +240,9 @@ do
     badgeData["ensl_community_champion_2019_bronze"] = MakeItemBadgeData("ensl_community_champion_2019_bronze", 1028)
     badgeData["ensl_community_champion_2019_silver"] = MakeItemBadgeData("ensl_community_champion_2019_silver", 1029)
     badgeData["ensl_community_champion_2019_gold"] = MakeItemBadgeData("ensl_community_champion_2019_gold", 1030)
-    badgeData["ensl_intermediate_tournament_2019_bronze"] = MakeItemBadgeData2("ensl_intermediate_tournament_2019_bronze", "nsl_badge_intermediate_bronze_2019", 1031)
-    badgeData["ensl_intermediate_tournament_2019_silver"] = MakeItemBadgeData2("ensl_intermediate_tournament_2019_silver", "nsl_badge_intermediate_silver_2019_", 1032)
-    badgeData["ensl_intermediate_tournament_2019_gold"] = MakeItemBadgeData2("ensl_intermediate_tournament_2019_gold", "nsl_badge_intermediate_gold_2019", 1033)
+    badgeData["ensl_intermediate_tournament_2019_bronze"] = MakeItemBadgeDataENSLI("ensl_intermediate_tournament_2019_bronze", "nsl_badge_intermediate_bronze 2019", 1031)
+    badgeData["ensl_intermediate_tournament_2019_silver"] = MakeItemBadgeDataENSLI("ensl_intermediate_tournament_2019_silver", "nsl_badge_intermediate_silver 2019_", 1032)
+    badgeData["ensl_intermediate_tournament_2019_gold"] = MakeItemBadgeDataENSLI("ensl_intermediate_tournament_2019_gold", "nsl_badge_intermediate_gold 2019", 1033)
     badgeData["ensl_s16_gold"] = MakeItemBadgeData("ensl_s16_gold", 1034)
     badgeData["ensl_s16_silver"] = MakeItemBadgeData("ensl_s16_silver", 1035)
     badgeData["ensl_s16_bronze"] = MakeItemBadgeData("ensl_s16_bronze", 1036)
@@ -237,21 +262,21 @@ do
 
     -- stats badges
     badgeData["skulk_challenge_1_bronze"] = MakeStatsBadgeData("skulk_challenge_1_bronze", "skulk_challenge_1", "INT",
-        function(value)
-            return value ~= nil and value >= 1
-        end)
+            function(value)
+                return value ~= nil and value >= 1
+            end)
     badgeData["skulk_challenge_1_silver"] = MakeStatsBadgeData("skulk_challenge_1_silver", "skulk_challenge_1", "INT",
-        function(value)
-            return value ~= nil and value >= 2
-        end)
+            function(value)
+                return value ~= nil and value >= 2
+            end)
     badgeData["skulk_challenge_1_gold"] = MakeStatsBadgeData("skulk_challenge_1_gold", "skulk_challenge_1", "INT",
-        function(value)
-            return value ~= nil and value >= 3
-        end)
+            function(value)
+                return value ~= nil and value >= 3
+            end)
     badgeData["skulk_challenge_1_shadow"] = MakeStatsBadgeData("skulk_challenge_1_shadow", "skulk_challenge_1", "INT",
-        function(value)
-            return value ~= nil and value >= 4
-        end)
+            function(value)
+                return value ~= nil and value >= 4
+            end)
 
     --custom badges
     local badgeFiles = {}
@@ -277,6 +302,7 @@ do
             if not officialFiles[badgeName] and not badgeData[badgeName] then --avoid custom badges named like official badges
                 local badgeId = #gBadges + 1
 
+                Log("adding custom badgeid %s for badge file %s.dds", badgeId, badgeName)
                 gBadges[badgeId] = badgeName
 
                 badgeData[badgeName] = {
@@ -289,7 +315,7 @@ do
         end
     end
 
---------------------------------
+    --------------------------------
     -- Shared.Message("Offical Badges:" .. #gBadges)
     for i = #gBadges , 127 do     --Since server/client have different ui/badges/*.dds(wtf was that) just fill a empty proper value to make both enum match.
         -- Shared.Message("Empty Badges:" .. i)

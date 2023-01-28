@@ -25,7 +25,7 @@ if Shine then
             end
             return LanguageStrings and LanguageStrings[ Key ] or Key
         end
-
+        
         --Chat Filter
         local ICPlugin = Shine.Plugins["improvedchat"]
         if ICPlugin then
@@ -62,6 +62,11 @@ if Shine then
                 return "(队伍) "
             end
 
+            local function IsVisibleToLocalPlayer( Player, TeamNumber )
+                local PlayerTeam = Player.GetTeamNumber and Player:GetTeamNumber()
+                return PlayerTeam == TeamNumber or PlayerTeam == kSpectatorIndex or PlayerTeam == kTeamReadyRoom
+            end
+            
             -- Overrides the default chat behaviour, adding chat tags and turning the contents into rich text.
             function ICPlugin:OnChatMessageReceived( Data )
                 local Player = Client.GetLocalPlayer()

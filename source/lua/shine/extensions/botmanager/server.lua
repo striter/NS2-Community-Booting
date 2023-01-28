@@ -103,7 +103,7 @@ function Plugin:CreateCommands()
 	local ShowNewsCommand = self:BindCommand( "sh_maxbots", "maxbots", MaxBots )
 	ShowNewsCommand:AddParam{ Type = "number", Min = 0, Error = "Please specify the amount of bots you want to set.", Help = "Maximum number of bots"  }
 	ShowNewsCommand:AddParam{ Type = "boolean", Default = false, Help = "true = save change", Optional = true  }
-	ShowNewsCommand:Help( "Sets the maximum amount of bots currently allowed at this server." )
+	ShowNewsCommand:Help( "设置场内Bot的最大数量." )
 
 	local function ComBots( _, Enable, SaveIntoConfig )
 
@@ -119,7 +119,7 @@ function Plugin:CreateCommands()
 	local ShowNewsCommand = self:BindCommand( "sh_enablecombots", "enablecombots", ComBots )
 	ShowNewsCommand:AddParam{ Type = "boolean", Error = "Please specify if you want to enable commander bots", Help = "true = add commander bots"  }
 	ShowNewsCommand:AddParam{ Type = "boolean", Default = false, Help = "true = save change", Optional = true  }
-	ShowNewsCommand:Help( "Sets if teams should be filled with commander bots or not" )
+	ShowNewsCommand:Help( "设置是否生成指挥Bot" )
 
 end
 

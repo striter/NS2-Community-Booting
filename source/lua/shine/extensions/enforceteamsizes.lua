@@ -1,7 +1,3 @@
---[[
---Original idea and design by Andrew Krigline (https://github.com/akrigline)
---Original source can be found at https://github.com/akrigline/EnforceTeamSize
-]]
 local Plugin = Shine.Plugin( ... )
 
 Plugin.HasConfig = true
@@ -15,22 +11,9 @@ Plugin.PrintName = "Enforced Team Size"
  - 3: Spec
  ]]
 Plugin.DefaultConfig = {
-	Teams = {
-		Team1 = {
-			MaxPlayers = 8,
-			TooManyMessage = "The %s have currently too many players. Please spectate until the round ends.",
-			InformAboutFreeSpace = {3},
-			InformMessage = "A player left the %s. So you can join up now."
-		},
-		Team2 = {
-			MaxPlayers = 8,
-			TooManyMessage = "The %s have currently too many players. Please spectate until the round ends.",
-			InformAboutFreeSpace = {3},
-			InformMessage = "A player left the %s. So you can join up now."
-		}
-	},
+	Team = { 14 , 14},
+	SkillLimit = -1,
 	MessageNameColor = {0, 255, 0 },
-	IgnoreBots = true,
 }
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
@@ -45,23 +28,14 @@ Plugin.EnabledGamemodes = {
 
 function Plugin:Initialise()
 	self.Enabled = true
+	self:CreateCommands()
 	return true
 end
 
--- function Plugin:OnFirstThink()
--- 	if Server.DisableQuickPlay and (self.Config.Teams.Team1 or self.Config.Teams.Team2) then
--- 		local max = math.ceil(Server.GetMaxPlayers()/2)
--- 		if self.Config.Teams.Team1.MaxPlayers < max or self.Config.Teams.Team2.MaxPlayers < max then
--- 			self:Print("Tagging Server as incompatible to the quickplay queue because the team count restriction is below the player limit.")
--- 			Server.DisableQuickPlay()
--- 		end
--- 	end
--- end
-
-function Plugin:Notify(Player, Message, OldTeam)
-	Shine:NotifyDualColour( Player, self.Config.MessageNameColor[1], self.Config.MessageNameColor[2],
-		self.Config.MessageNameColor[3], "[战局约束]", 255, 255, 255,
-	   Message, true, Shine:GetTeamName(OldTeam, true) )
+function Plugin:Notify(Player, Message, data)
+		Shine:NotifyDualColour( Player, 
+				self.Config.MessageNameColor[1], self.Config.MessageNameColor[2], self.Config.MessageNameColor[3],"[战局约束]",
+				255, 255, 255,Message,true, data )
 end
 
 function Plugin:ClientDisconnect( Client )
@@ -73,54 +47,100 @@ end
 
 function Plugin:GetNumPlayers(Team)
 	local players, _, bots = Team:GetNumPlayers()
-	if not self.Config.IgnoreBots then return players end
-
 	return players - bots
 end
 
 function Plugin:PostJoinTeam( Gamerules, _, OldTeam )
-	if OldTeam < 0 then return end
-
-	local TeamIndex = string.format("Team%s", OldTeam)
-	if self.Config.Teams[TeamIndex] and self.Config.Teams[TeamIndex].InformAboutFreeSpace
-			and #self.Config.Teams[TeamIndex].InformAboutFreeSpace ~= 0 and
-			self:GetNumPlayers(Gamerules:GetTeam(OldTeam)) + 1 == self.Config.Teams[TeamIndex].MaxPlayers then
-		for _, i in ipairs(self.Config.Teams[TeamIndex].InformAboutFreeSpace) do
-			local Team = Gamerules:GetTeam(i)
-			local Players = Team and Team:GetPlayers()
-			if Players and #Players ~= 0 then
-				self:Notify(Players, self.Config.Teams[TeamIndex].InformMessage
-						or "A player left the %s team. So you can join up now.", OldTeam)
-			end
-		end
+	if OldTeam ~= kTeam1Index or OldTeam ~= kTeam2Index then return end
+	for client in Shine.IterateClients() do
+		local player = client:GetControllingPlayer()
+		local team = player:GetTeamNumber()
+		if team ~=kSpectatorIndex or team ~= kTeamReadyRoom then return end
+		self:Notify(player, string.format( "一名玩家已离开[%s],你可以尝试进入对局了.", Shine:GetTeamName(OldTeam, true)),nil)
 	end
 end
 
+local TeamNames = { "陆战队","卡拉异形" }
 function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
+	if ShineForce or NewTeam == kTeamReadyRoom or NewTeam == kSpectatorIndex then return end
 	if self.Config.IgnoreBots and Player:GetIsVirtual() then return end
 
-	local TeamIndex = string.format("Team%s", NewTeam)
-	if ShineForce or NewTeam == kTeamReadyRoom or not self.Config.Teams[TeamIndex] then return end
-
-	--Check if team is above MaxPlayers
-	if self:GetNumPlayers(Gamerules:GetTeam(NewTeam)) >= self.Config.Teams[TeamIndex].MaxPlayers then
-		--Inform player
-		self:Notify(Player, self.Config.Teams[TeamIndex].TooManyMessage, NewTeam)
-		return false
+	
+	local skill = Player:GetPlayerSkill()
+	
+	local available
+	
+	if self.Config.SkillLimit ~= -1 and skill > self.Config.SkillLimit  then
+		self:Notify(Player, string.format("您的分数(%s)以超过服务器上限(%s),请继续观战或加入其他服务器.", skill, self.Config.SkillLimit),nil)
+		available = false
 	end
+	
+	--Check if team is above MaxPlayers
+	local playerLimit = self.Config.Team[NewTeam]
+	if self:GetNumPlayers(Gamerules:GetTeam(NewTeam)) >= playerLimit then
+		self:Notify(Player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[NewTeam] ,playerLimit),nil)
+		available = false
+	end
+
+	if available == false then
+		local SteamID = Server.GetOwner(Player):GetUserId()
+		if not SteamID or SteamID < 1 then return end
+		if GetHasReservedSlotAccess( SteamID ) then
+			self:Notify(Player, string.format("因为您为预留位玩家,以上限制已取消,请勿过度影响其他玩家的正常游玩.", skill, self.Config.SkillLimit),nil)
+			return
+		end
+	end
+	
+	return available
 end
+
+function Plugin:CreateCommands()
+
+	local function RestrictionDisplay(_client)
+		local skillLimit = self.Config.SkillLimit == -1 and "无限制" or tostring(self.Config.SkillLimit)
+		self:Notify(_client,string.format("当前加入限制为:[陆战队]:%s,[卡拉异形]:%s,[最高分数](%s)", self.Config.Team[1], self.Config.Team[2],skillLimit),nil)
+	end
+	local showRestriction = self:BindCommand( "sh_restriction_notify", "restriction_notify", RestrictionDisplay)
+	showRestriction:Help( "示例: !restriction_show 传回当前的队伍限制" )
+	
+	local function NofityAll()
+		for client in Shine.IterateClients() do
+			RestrictionDisplay(client:GetControllingPlayer())
+		end
+	end
+	local function SetTeamSize(_client, _team1, _team2)
+		self.Config.Team[kTeam1Index] = _team1
+		self.Config.Team[kTeam2Index] = _team2
+
+		NofityAll()
+	end
+	local teamsizeCommand = self:BindCommand( "sh_restriction_size", "restriction_size", SetTeamSize)
+	teamsizeCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 10 }
+	teamsizeCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 10 }
+	--teamsizeCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
+	teamsizeCommand:Help( "示例: !restriction_size 14 12. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人" )
+
+	local function SetSkillLimit(_client, _skillLimit)
+		self.Config.SkillLimit = _skillLimit
+		NofityAll()
+	end
+	local skillCommand = self:BindCommand( "sh_restriction_skill", "restriction_skill", SetSkillLimit)
+	skillCommand:AddParam{ Type = "number", Round = true, Min = -1, Max = 99999, Default = -1 }
+	skillCommand:Help( "示例: !restriction_skill 1000. 将服务器的分数上限设置为,最大分数(-1为全部通过):1000" )
+end
+
 
 --Restrict teams also at voterandom
 function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
 	local  Gamerules = GetGamerules()
-	local team1Max = self.Config.Teams.Team1 and self.Config.Teams.Team1.MaxPlayers or 1000
-	local team2Max = self.Config.Teams.Team1 and self.Config.Teams.Team1.MaxPlayers or 1000
-	local max = math.min( team1Max, team2Max )
-
-	if max == 1000 then return end
+	local team1Max = self.Config.Team[1] or 1000
+	local team2Max = self.Config.Team[2] or 1000
+	local maxPlayer = math.min( team1Max, team2Max )
+	
+	if maxPlayer == 1000 then return end
 
 	for i = 1, 2 do
-		for j = #TeamMembers[i], max + 1, -1 do
+		for j = #TeamMembers[i], maxPlayer + 1, -1 do
 			--Move player into the ready room
 			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )
 			--remove the player's entry in the table

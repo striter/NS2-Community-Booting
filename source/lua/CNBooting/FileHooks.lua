@@ -24,3 +24,5 @@ ModLoader.SetupFileHook( "lua/Badges_Shared.lua", "lua/CNBooting/Badges_Shared.l
 ModLoader.SetupFileHook( "lua/Badges_Client.lua", "lua/CNBooting/Badges_Client.lua", "replace")
 ModLoader.SetupFileHook( "lua/Voting.lua", "lua/CNBooting/Voting.lua", "post")
 ModLoader.SetupFileHook( "lua/shine/core/shared/hook.lua", "lua/shine/gamemodehook.lua", "post" )
+
+Shared.Message("[CNCE] CN Booting Version 2023.1.27")
