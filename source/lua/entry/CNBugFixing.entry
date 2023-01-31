@@ -1,0 +1,4 @@
+modEntry = {
+    FileHooks = "lua/CNBugFixing/FileHooks.lua",
+    Priority = 500
+}

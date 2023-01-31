@@ -1,0 +1,1 @@
+﻿ModLoader.SetupFileHook("lua/Weapons/Alien/Web.lua", "lua/CNBugFixing/Web.lua", "post")

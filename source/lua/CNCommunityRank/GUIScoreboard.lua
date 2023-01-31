@@ -80,6 +80,22 @@ local kPlayerSkillIconSize = Vector(62, 20, 0)
 local kPlayerSkillIconTexture = PrecacheAsset("ui/skill_tier_icons.dds")
 local kPlayerSkillIconSizeOverride = Vector(58, 20, 0) -- slightly smaller so it doesn't overlap.
 
+---------------
+local kCommunityRankIconSize = Vector(20,20,0)
+local kCommunityRankIconTexture = PrecacheAsset("ui/CommunityRankIcons.dds")
+
+
+local kCommunityRankIndex =
+{
+    ["RANK_T1"] = 1,
+    ["RANK_T2"] = 2,
+    ["RANK_T3"] = 3,
+    ["RANK_LIVER"] = 3,
+    ["RANK_T4"] = 4,
+    ["RANK_T5"] = 5,
+    ["RANK_HOST"] = 5,
+}
+---------------
 local lastScoreboardVisState = false
 
 local kSteamProfileURL = "http://steamcommunity.com/profiles/"
@@ -894,6 +910,11 @@ function GUIScoreboard:UpdateTeam(updateTeam)
                 self.playerHighlightItem:SetColor(localPlayerHighlightColor)
             end
         end
+        
+        local fakeBot = playerRecord.FakeBot
+        if fakeBot then
+            playerName = "[BOT] " .. playerName
+        end
 
         player["Number"]:SetText(index..".")
         player["Name"]:SetText(playerName)
@@ -954,7 +975,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             
         end
         
-
+        
         numRookies = numRookies + (isRookie and 1 or 0)
         numBots = numBots + (isBot and 1 or 0)
 
@@ -1042,6 +1063,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Voice"]:SetIsVisible(ChatUI_GetClientMuted(clientIndex))
         player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 
+        local communityRankIconIndex = kCommunityRankIndex[playerRecord.Group] or 0
+        player["CommunityRankIcon"]:SetTexturePixelCoordinates(0,communityRankIconIndex*80,80,(communityRankIconIndex+1)*80)
+        player["CommunityRankIcon"]:SetIsVisible(not fakeBot and communityRankIconIndex > 0)
+        
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
         pos = (statusPos - kPlayerBadgeRightPadding) * GUIScoreboard.kScalingFactor
@@ -1162,7 +1187,6 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             teamSkillGUIItem:SetIsVisible(false)
         end
     end
-
 end
 
 function GUIScoreboard:ResizePlayerList(playerList, numPlayers, teamGUIItem)
@@ -1280,7 +1304,7 @@ function GUIScoreboard:CreatePlayerItem()
     playerSkillIcon:SetTexture(kPlayerSkillIconTexture)
     playerSkillIcon:SetTexturePixelCoordinates(0, 0, 100, 31)
     playerItem:AddChild(playerSkillIcon)
-
+    
     -- Status text item.
     local statusItem = GUIManager:CreateTextItem()
     statusItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1370,7 +1394,7 @@ function GUIScoreboard:CreatePlayerItem()
     playerItem:AddChild(resItem)
     
     currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
-    
+
     -- Ping text item.
     local pingItem = GUIManager:CreateTextItem()
     pingItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1379,7 +1403,7 @@ function GUIScoreboard:CreatePlayerItem()
     pingItem:SetAnchor(GUIItem.Left, GUIItem.Center)
     pingItem:SetTextAlignmentX(GUIItem.Align_Min)
     pingItem:SetTextAlignmentY(GUIItem.Align_Center)
-    pingItem:SetPosition(Vector(currentColumnX, 0, 0) * GUIScoreboard.kScalingFactor)
+    pingItem:SetPosition(Vector(currentColumnX - 2, 0, 0) * GUIScoreboard.kScalingFactor)
     pingItem:SetColor(Color(1, 1, 1, 1))
     pingItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(pingItem)
@@ -1401,19 +1425,28 @@ function GUIScoreboard:CreatePlayerItem()
     steamFriendIcon:SetIsVisible(false)
     steamFriendIcon.allowHighlight = true
     playerItem:AddChild(steamFriendIcon)
-    
+
+    local communityRankIcon = GUIManager:CreateGraphicItem()
+    communityRankIcon:SetSize(kCommunityRankIconSize * GUIScoreboard.kScalingFactor)
+    communityRankIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
+    communityRankIcon:SetStencilFunc(GUIItem.NotEqual)
+    communityRankIcon:SetTexture(kCommunityRankIconTexture)
+    communityRankIcon:SetTexturePixelCoordinates(0, 80, 80, 160)
+    playerItem:AddChild(communityRankIcon)
+
     -- Let's do a table here to easily handle the highlighting/clicking of icons
     -- It also makes it easy for other mods to add icons afterwards
     local iconTable = {}
     table.insert(iconTable, steamFriendIcon)
     table.insert(iconTable, playerVoiceIcon)
     table.insert(iconTable, playerTextIcon)
+    table.insert(iconTable, communityRankIcon)
     
     return { Background = playerItem, Number = playerNumber, Name = playerNameItem,
         Voice = playerVoiceIcon, Status = statusItem, SkillIcon = playerSkillIcon, Score = scoreItem, Kills = killsItem,
         Assists = assistsItem, Deaths = deathsItem, Resources = resItem, Ping = pingItem,
         BadgeItems = badgeItems, Text = playerTextIcon,
-        SteamFriend = steamFriendIcon, IconTable = iconTable
+        SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon
     }
     
 end

@@ -71,8 +71,9 @@ end
 
 function Plugin:OnFirstThink()
     ReadPersistent(self)
-
+    
     function Plugin:OnEndGame(_winningTeam)
+
         local gameMode = Shine.GetGamemode()
         
         local data = CHUDGetLastRoundStats();
@@ -223,22 +224,28 @@ function Plugin:CreateMessageCommands()
     deltaCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
     deltaCommand:Help( "增减ID对应玩家的社区段位." )
 
-    local function PlayerBotSwitch(_client,_id)
+    local function FakeBotSwitchID(_client,_id)
         local target = Shine.GetClientByNS2ID(_id)
         if not target then 
             return 
         end
 
         local data = GetPlayerData(self,target:GetUserId())
-        
         data.fakeBot = not data.fakeBot
         target:GetControllingPlayer():SetFakeBot(data.fakeBot)
         Shine:AdminPrint( nil, "%s switch %s fakeBot to <%s>", true, Shine.GetClientInfo( _client ),Shine.GetClientInfo(target),data.fakeBot )
         SavePersistent(self)
     end
-    local botCommand = self:BindCommand( "sh_fakebot", "fakebot", PlayerBotSwitch )
+    local botCommand = self:BindCommand( "sh_fakebot_set", "fakebot_set", FakeBotSwitchID )
     botCommand:AddParam{ Type = "steamid" }
-    botCommand:Help( "切换玩家的假BOT设置." )
+    botCommand:Help( "切换目标玩家的假BOT设置." )
+    
+    local function FakeBotSwitch(_client)
+        FakeBotSwitchID(_client,_client:GetUserId())
+    end
+
+    local botCommand = self:BindCommand( "sh_fakebot", "fakebot", FakeBotSwitch )
+    botCommand:Help( "假扮成BOT." )
 end
 
 function Plugin:GetUserGroup(Client)
