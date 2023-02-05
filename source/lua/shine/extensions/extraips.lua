@@ -19,7 +19,7 @@ Plugin.CheckConfigTypes = true
 Plugin.EnabledGamemodes = {
 	["ns2"] = true,
     ["NS2.0"] = true,
-    ["siege++"] = true,
+    ["siege+++"] = true,
 }
 
 function Plugin:Initialise()

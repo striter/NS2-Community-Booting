@@ -12,7 +12,7 @@ end
 Plugin.EnabledGamemodes = {
 	[ "ns2" ] = true,
 	[ "NS2.0" ] = true,
-	[ 'siege++' ] = true,
+	[ 'siege+++' ] = true,
 	[ 'GunGame' ] = true,
 	[ 'combat' ] = true,
 }

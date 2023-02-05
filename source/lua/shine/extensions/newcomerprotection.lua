@@ -37,7 +37,7 @@ Plugin.DefaultConfig = {
 Plugin.EnabledGamemodes = {
 	["ns2"] = true,
     ["NS2.0"] = true,
-    ["siege++"] = true,
+    ["siege+++"] = true,
 }
 
 Plugin.CheckConfig = true

@@ -5,6 +5,7 @@ Plugin.PrintName = "communityrank"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityRank.json"
 Plugin.DefaultConfig = {
+    EndRoundValidation = true,
     ["UserData"] = {
         ["55022511"] = {
             rank = -2000,
@@ -73,7 +74,8 @@ function Plugin:OnFirstThink()
     ReadPersistent(self)
     
     function Plugin:OnEndGame(_winningTeam)
-
+        if not self.Config.EndRoundValidation then return end
+        
         local gameMode = Shine.GetGamemode()
         
         local data = CHUDGetLastRoundStats();
