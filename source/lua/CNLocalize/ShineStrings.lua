@@ -10,7 +10,6 @@ kShineTranslations["HOUR"] = "{Value:Pluralise:小时|小时}"
 kShineTranslations["DAY"] = "{Value:Pluralise:天|天}"
 kShineTranslations["WEEK"] ="{Value:Pluralise:星期|星期}"
 
-
 kShineTranslations["MARINE"]="边境拓荒者部队"
 kShineTranslations["ALIEN"]="卡拉异型"
 kShineTranslations["ERROR_TAG"]="[错误]"

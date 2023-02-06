@@ -1,7 +1,7 @@
 if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER"] = "投票换服"
-    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "至[%s]<%s>的全体班车"
-    kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "发一辆至<%s>的全体班车?"
+    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "至[%s]<%s>的班车(%s)"
+    kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "发一辆至<%s>的班车(%s)?"
 
     kTranslateMessage["VOTE_MUTE_PLAYER"] = "禁言玩家"
     kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言半小时?"

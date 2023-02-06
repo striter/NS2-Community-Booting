@@ -5,13 +5,9 @@
 local Plugin = ...
 
 local Shine = Shine
-local SGUI = Shine.GUI
-local VoteMenu = Shine.VoteMenu
 
 local TableEmpty = table.Empty
 local Vector = Vector
-
-local ZeroVec = Vector( 0, 0, 0 )
 
 function Plugin:Initialise()
 	self.Enabled = true
@@ -25,7 +21,7 @@ function Plugin:Cleanup()
 end
 
 function Plugin:ReceiveServerList( Data )
-	if self.QueryServers[ Data.ID ] then -- We're refreshing the data.
+	if self.QueryServers[ Data.ID ] then 
 		TableEmpty( self.QueryServers )
 	end
 
@@ -33,6 +29,5 @@ function Plugin:ReceiveServerList( Data )
 		IP = Data.IP,
 		Port = Data.Port,
 		Name = Data.Name,
-		-- Valid = false,
 	}
 end
