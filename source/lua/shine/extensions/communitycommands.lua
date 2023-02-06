@@ -49,6 +49,15 @@ function Plugin:CreateCommands()
     setCommand:AddParam{ Type = "number", Round = false, Min = 0.1, Max = 3, Optional = true, Default = 0.5 }
     setCommand:Help( "设置所有玩家的大小." )
 
+    local function KillSelf(_client)
+        local player = _client:GetControllingPlayer()
+        if player and HasMixin(player, "Live") and player:GetCanDie() then
+            player:Kill(player, nil, player:GetOrigin())
+        end
+    end
+    
+    local killCommand = self:BindCommand("sh_kill","kill",KillSelf,true)
+    killCommand:Help( "不活了." )
 end
 
 function Plugin:Cleanup()

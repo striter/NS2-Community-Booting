@@ -1,5 +1,4 @@
 --Server Switch
-RegisterVoteType("VoteSwitchServer", { ip = "string (25)", name = "string(20)" } )
 RegisterVoteType("VoteMutePlayer", { targetClient = "integer" })
 RegisterVoteType("VoteForceSpectator", { targetClient = "integer" })
 RegisterVoteType("VoteKillPlayer", { targetClient = "integer" })
@@ -8,7 +7,8 @@ RegisterVoteType("VoteKillAll", { })
 RegisterVoteType("VoteBotsCount", {count = "integer"})
 RegisterVoteType("VoteBotsDoom", {team = "integer"})
 RegisterVoteType("VoteRandomScale", {})
-    
+RegisterVoteType("VoteSwitchServer", { ip = "string (25)" , name = "string (25)"} )
+
 if Client then
     local function GetPlayerList()
 
@@ -43,19 +43,43 @@ if Client then
     end
 
     local function SetupAdditionalVotes(voteMenu)
-
-        AddVoteStartListener( "VoteSwitchServer", function( msg )
-            return string.format(Locale.ResolveString("SWITCH_SERVER_TO"),msg.name)
-        end )
+    if Shine then
 
         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_MUTE_PLAYER"), GetPlayerList, function( msg )
             AttemptToStartVote("VoteMutePlayer", { targetClient = msg.targetClient })
         end)
-        
+
         AddVoteStartListener("VoteMutePlayer", function(msg)
             return string.format(Locale.ResolveString("VOTE_MUTE_PLAYER_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
         end)
 
+        local SSVPlugin = Shine.Plugins["serverswitchvote"]
+        if SSVPlugin then
+            local function GetServerList()
+                
+                local menuItems = { }
+                if  SSVPlugin.Enabled then
+                    for ID , ServerData in ipairs(SSVPlugin.QueryServers) do
+                        local ip = ServerData.IP .. ":" .. ServerData.Port
+                        table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"),ID, ServerData.Name,8), extraData = { ip = ip , name = ServerData.Name , amount = 8 } } )
+                        --table.insert(menuItems, { text = string.format("至%s的班车(14人)", ServerData.Name,14), extraData = { ip = ip , name = ServerData.Name ,amount = 14} } )
+                        --table.insert(menuItems, { text = string.format("至%s的大巴车(20车)", ServerData.Name,20), extraData = { ip = ip , name = ServerData.Name , amount = 20} } )
+                    end
+                end
+                return menuItems
+            end
+    
+            AddVoteStartListener( "VoteSwitchServer", 	function( msg )
+                Shared.Message(tostring(msg))
+                return string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY"),msg.name)
+            end )
+    
+            voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )
+                AttemptToStartVote("VoteSwitchServer", { ip = msg.ip , name = msg.name })
+            end)
+        end
+        
+    end
 --         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_RANK_PLAYER"), GetPlayerList, function( msg )
 --             AttemptToStartVote("VoteRankPlayer", { targetClient = msg.targetClient })
 --         end)
@@ -100,17 +124,19 @@ if Client then
         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_RANDOM_SCALE"),nil, function( msg )
             AttemptToStartVote("VoteRandomScale", { })
         end)
+        
     end
     AddVoteSetupCallback(SetupAdditionalVotes)
     
 end
 
 if Server then
+
     SetVoteSuccessfulCallback( "VoteSwitchServer", 1, function( msg )
         -- Shared.Message(msg.name .. " " .. msg.ip)
         Server.SendNetworkMessage("Redirect",{ ip = msg.ip }, true)
     end )
-
+    
     SetVoteSuccessfulCallback("VoteMutePlayer", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)
         if not client then return end

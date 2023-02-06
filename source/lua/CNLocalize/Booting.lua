@@ -59,15 +59,22 @@ if AddHintModPanel then
     for i = 1, 100 do math.random() end
     
     local titleRandom = math.random(1, 2)
-    Shared.Message("[CNCE] Banner Welcome:" .. tostring(titleRandom))
+    --Shared.Message("[CNCE] Banner Welcome:" .. tostring(titleRandom))
     local cnTitleMaterial = PrecacheAsset(string.format("materials/CNLocalize/Banner_Welcome%d.material",titleRandom))
-    AddHintModPanel(cnTitleMaterial, "https://docs.qq.com/doc/DUFlBR0ZJeFRiRnRi","阅读服务器事宜")
+    AddHintModPanel(cnTitleMaterial, "https://docs.qq.com/doc/DUFlBR0ZJeFRiRnRi","社区指南(不读让NS2CN玩家后悔终生)")
 
     local mutekick = math.random(1, 2)
-    Shared.Message("[CNCE] Banner MuteKick:" .. tostring(mutekick))
+    --Shared.Message("[CNCE] Banner MuteKick:" .. tostring(mutekick))
     local muteKickMaterial = PrecacheAsset(string.format("materials/CNLocalize/Banner_MuteKick%d.material",mutekick))
-    AddHintModPanel(muteKickMaterial, "https://docs.qq.com/doc/DWUVmb3FEemlBaFBB","阅读语音净化指南")
-
+    AddHintModPanel(muteKickMaterial, "https://docs.qq.com/doc/DWUVmb3FEemlBaFBB","如何正确屏蔽噪音")
+    
+    local tutorial = math.random(1, 2)
+    --Shared.Message("[CNCE] Banner Tutorial:" .. tostring(tutorial))
+    local tutorialMaterial = PrecacheAsset(string.format("materials/CNLocalize/Banner_Tutorial%d.material",tutorial))
+    AddHintModPanel(tutorialMaterial, "https://docs.qq.com/doc/DVmNmYldZeWlsdWpH","爆杀老屁股的正确姿势?")
+    
     local communityTierMaterial = PrecacheAsset("materials/CNLocalize/Banner_CommunityTier.material")
     AddHintModPanel(communityTierMaterial, "https://docs.qq.com/doc/DUHhYQlhDaGFTYVZ5","进行浓度查询")
 end
+
+Shared.Message("[CNCE] CN Booting Version 2023.2.4")

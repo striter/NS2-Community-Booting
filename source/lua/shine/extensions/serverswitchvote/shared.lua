@@ -9,7 +9,8 @@ function Plugin:SetupDataTable()
 		Name = "string (64)",
 		IP = "string (64)",
 		Port = "integer",
-		ID = "integer (0 to 255)"
+		ID = "integer (0 to 255)",
+		Amount = "integer (0 to 255)",
 	}, "Client" )
 end
 
