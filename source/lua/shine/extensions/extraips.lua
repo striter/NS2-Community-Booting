@@ -23,7 +23,6 @@ Plugin.EnabledGamemodes = {
 }
 
 function Plugin:Initialise()
-    local Gamemode = Shine.GetGamemode()
     self.spawnedInfantryPortal = 0
 
     return true

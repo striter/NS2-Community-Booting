@@ -108,24 +108,31 @@ function Plugin:CreateCommands()
 			RestrictionDisplay(client:GetControllingPlayer())
 		end
 	end
-	local function SetTeamSize(_client, _team1, _team2)
+	local function SetTeamSize(_client, _team1, _team2,_save)
 		self.Config.Team[kTeam1Index] = _team1
 		self.Config.Team[kTeam2Index] = _team2
 
 		NofityAll()
+		if _save then
+			self:SaveConfig()
+		end
 	end
 	local teamsizeCommand = self:BindCommand( "sh_restriction_size", "restriction_size", SetTeamSize)
 	teamsizeCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 10 }
 	teamsizeCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 10 }
-	--teamsizeCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
+	teamsizeCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
 	teamsizeCommand:Help( "示例: !restriction_size 14 12. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人" )
 
-	local function SetSkillLimit(_client, _skillLimit)
+	local function SetSkillLimit(_client, _skillLimit,_save)
 		self.Config.SkillLimit = _skillLimit
+		if _save then
+			self:SaveConfig()
+		end
 		NofityAll()
 	end
 	local skillCommand = self:BindCommand( "sh_restriction_skill", "restriction_skill", SetSkillLimit)
 	skillCommand:AddParam{ Type = "number", Round = true, Min = -1, Max = 99999, Default = -1 }
+	skillCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
 	skillCommand:Help( "示例: !restriction_skill 1000. 将服务器的分数上限设置为,最大分数(-1为全部通过):1000" )
 end
 

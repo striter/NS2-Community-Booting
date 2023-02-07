@@ -6,6 +6,8 @@ Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityRank.json"
 Plugin.DefaultConfig = {
     EndRoundValidation = true,
+    EndRoundValidationTime = 300,
+    EndRoundValidationPlayerCount = 16,
     ["UserData"] = {
         ["55022511"] = {
             rank = -2000,
@@ -16,9 +18,25 @@ Plugin.DefaultConfig = {
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 
+local kEloDefaultConstant = 20
+local kEloTierConstant =
+{
+    [0] = 100,
+    [1] = 75,
+    [2] = 60,
+    [3] = 50,
+    [4] = 35,
+    [5] = 20,
+    [6] = 15,
+    [7] = 10,
+}
+
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "UserData",  Validator.IsType( "table", {} ))
+    Validator:AddFieldRule( "EndRoundValidation",  Validator.IsType( "boolean", true ))
+    Validator:AddFieldRule( "EndRoundValidationTime",  Validator.IsType( "number", 300 ))
+    Validator:AddFieldRule( "EndRoundValidationPlayerCount",  Validator.IsType( "number", 16 ))
 	Plugin.ConfigValidator = Validator
 end
 
@@ -78,74 +96,77 @@ function Plugin:OnFirstThink()
         
         local gameMode = Shine.GetGamemode()
         
-        local data = CHUDGetLastRoundStats();
-        if not data then
+        local lastRoundData = CHUDGetLastRoundStats();
+        if not lastRoundData then
             -- Shared.Message("[CNCR] ERROR Option 'savestats' not enabled ")
             return
         end
         
-        local winningTeam = data.RoundInfo.winningTeam
-        local gameLength = data.RoundInfo.roundLength
+        local winningTeam = lastRoundData.RoundInfo.winningTeam
+        local gameLength = lastRoundData.RoundInfo.roundLength
+        local team1AverageSkill = 0
+        local team2AverageSkill = 0
 
         local team1Table = {}
         local team2Table = {}
-        local function PopTeamEntry(_teamTable,_steamId,_teamEntry)
-            if not _teamEntry.timePlayed or _teamEntry.timePlayed <=0 then return end 
-            table.insert(_teamTable, {steamId = _steamId,gameTime = _teamEntry.timePlayed ,score = _teamEntry.score })
+        local function PopTeamEntry(_teamTable,_steamId,_teamEntry,_playerSkill)
+            if not _teamEntry.timePlayed or _teamEntry.timePlayed <=0 then 
+                return 0 
+            end 
+            local playTimeNormalized = _teamEntry.timePlayed / gameLength
+            table.insert(_teamTable, {steamId = _steamId,playTimeNormalized = playTimeNormalized ,score = _teamEntry.score,hiveSkill = _playerSkill })
+            return  _playerSkill * playTimeNormalized
             -- Shared.Message(string.format("%i %i %i",_steamId,_teamEntry.timePlayed,_teamEntry.score))
         end
 
         local playerCount = 0
-        for steamId , playerStat in pairs( data.PlayerStats ) do
-            PopTeamEntry(team1Table,steamId,playerStat[1])
-            PopTeamEntry(team2Table,steamId,playerStat[2])
+        for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
+            team1AverageSkill = team1AverageSkill + PopTeamEntry(team1Table,steamId,playerStat[1],playerStat.hiveSkill)
+            team2AverageSkill = team2AverageSkill + PopTeamEntry(team2Table,steamId,playerStat[2],playerStat.hiveSkill)
             playerCount = playerCount + 1
         end
         
-        Shared.Message(string.format("[CNCR] End Game Resulting|Mode:%s Length:%i Players:%i WinTeam: %s|", gameMode , gameLength,playerCount , winningTeam))
-        if gameLength < 300 or playerCount < 16 then
-            Shared.Message(string.format("[CNCR] End Game Restricted"))
+        if gameLength < self.Config.EndRoundValidationTime or playerCount < self.Config.EndRoundValidationPlayerCount then
+            Shared.Message(string.format("[CNCR] End Game Result Restricted"))
             return
         end
+        Shared.Message(string.format("[CNCR] End Game Resulting|Mode:%s Length:%i Players:%i WinTeam: %s|", gameMode , gameLength,playerCount , winningTeam))
 
         local function RankCompare(a,b) return a.score > b.score end
         table.sort(team1Table,RankCompare)
         table.sort(team2Table,RankCompare)
         
-        local function ApplyRankTable(rankTable,teamTable,rankStart,rankEnd,gameLength)
-            local size = #teamTable
-            for index,data in ipairs(teamTable) do
+        local function ApplyRankTable(_rankTable, _teamTable, _delta)
+            for _,data in ipairs(_teamTable) do
                 local steamId = data.steamId
-                if not rankTable[steamId] then
-                    rankTable[steamId] = 0
+                
+                if not _rankTable[steamId] then
+                    _rankTable[steamId] = 0
                 end
 
-                local timeParam = data.gameTime / gameLength
-                local indexParam = (index - 1) / math.max(1,( size - 1 )) -- 1 to size
-                local baseScore = rankStart + (rankEnd - rankStart)*indexParam
-                rankTable[steamId] = rankTable[steamId] +  math.floor(baseScore * timeParam)
-                -- Shared.Message(string.format("ID:%s I:%.2f T:%.2f BS:%i F:%i",steamId,indexParam,timeParam,baseScore,rankTable[steamId]))
+                local tier,_ = GetPlayerSkillTier(data.hiveSkill)
+                
+                --its ELO dude
+                local eloConstant = kEloTierConstant[tier] or kEloDefaultConstant
+                local Edelta = eloConstant * _delta
+                
+                _rankTable[steamId] = _rankTable[steamId] + math.floor(Edelta * data.playTimeNormalized)
+                --Shared.Message(string.format("ID:%s T%s K:%s ES-EA:%s", tier,steamId,eloConstant,_delta))
             end
         end
-        local rankTable = {}
-        local rankScoreStatus = {}
-        rankScoreStatus[-1] = { eloStart = -20 , eloEnd = -40 }
-        rankScoreStatus[0] = { eloStart = 0 , eloEnd = 40 }
-        rankScoreStatus[1] = { eloStart = 50 , eloEnd = 30 }
 
-        local team1Status,team2Status
+        local team1S, team2S
         if winningTeam == kMarineTeamType then
-            team1Status = 1; team2Status = -1;
+            team1S = 1; team2S = 0;
         elseif winningTeam == kAlienTeamType then
-            team1Status = -1; team2Status = 1;
+            team1S = 0; team2S = 1;
         else
-            team1Status = 0; team2Status = 0;
+            team1S = .5; team2S = .5;
         end
 
-        -- Shared.Message("[CNCR] Team 1")
-        ApplyRankTable(rankTable,team1Table,rankScoreStatus[team1Status].eloStart,rankScoreStatus[team1Status].eloEnd,gameLength)
-        -- Shared.Message("[CNCR] Team 2")
-        ApplyRankTable(rankTable,team2Table,rankScoreStatus[team2Status].eloStart,rankScoreStatus[team2Status].eloEnd,gameLength)
+        local rankTable = {}
+        ApplyRankTable(rankTable,team1Table,team1S - 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill)/400)))
+        ApplyRankTable(rankTable,team2Table,team2S - 1.0 / (1 + math.pow(10,(team1AverageSkill - team2AverageSkill)/400)))
 
         -- Shared.Message("[CNCR] Result")
 

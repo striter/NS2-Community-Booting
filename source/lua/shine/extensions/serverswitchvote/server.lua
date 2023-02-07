@@ -123,7 +123,6 @@ local function GetConnectIP(_index)
 end
 
 function Plugin:Initialise()
-	self:CreateCommands()
 	self.Enabled = true
 
 	local function RedirClients(_serverIndex,_count,_onlySpectate)
@@ -199,7 +198,7 @@ function Plugin:ProcessClient( Client )
 
 	for i = 1, #Servers do
 		local Data = Servers[ i ]
-
+		
 		if Data.UsersOnly then
 			if IsUser then
 				self:SendServerData( Client, i, Data )
@@ -218,30 +217,4 @@ function Plugin:OnUserReload()
 	for Client in Shine.IterateClients() do
 		self:ProcessClient( Client )
 	end
-end
-
-function Plugin:CreateCommands()
-	local function SwitchServer( Client, Num )
-
-		if not Client then return end
-		local Player = Client:GetControllingPlayer()
-
-		if not Player then return end
-
-		local ServerData = self.Config.Servers[ Num ]
-
-		if not ServerData then
-			Shine:NotifyError( Client, "Invalid server number." )
-			return
-		end
-
-		local dstIP = ServerData.IP .. ":" .. ServerData.Port
-
-		StartVote( "VoteSwitchServer", Client, { ip = dstIP , name = ServerData.Name } )
-	end
-
-	local SwitchServerPoll = self:BindCommand( "sh_switchservervote", "server", SwitchServer, true )
-	SwitchServerPoll:AddParam{ Type = "number", Min = 1, Round = true,
-		Error = "Please specify a server number to switch to." }
-	SwitchServerPoll:Help( "Poll a vote that connects everyone to the given registered server." )
 end

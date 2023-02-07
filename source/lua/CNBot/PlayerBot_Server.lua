@@ -1,6 +1,8 @@
 ﻿local kBotPersonalSettings = 
 {
+    -- custom
     { name = "StriteR.", isMale = true },
+    { name = "2E", isMale = true },
     
     -- previous one
     { name = "The Salty Sea Captain", isMale = true },

@@ -11,9 +11,9 @@ kTranslateMessage["SKILLTIER_SPECIALOPS"]="(T6):<特殊部队>"
 kTranslateMessage["SKILLTIER_SANJISURVIVOR"]="(T7):<昌吉幸存者>"
 
 kTranslateMessage["WELCOME_TO"]="欢迎来到"
-kTranslateMessage["WELCOME_TO_READY_ROOM"]="欢迎来到<物竞天择2中国社区>服务器"
-kTranslateMessage["WELCOME_TO_READY_ROOM_HALLOWEEN"]="欢迎来到物竞天择2中国社区\n按BIND_Use键可以扔糖果"
-kTranslateMessage["WELCOME_TO_READY_ROOM_HOLIDAY"]="欢迎来到物竞天择2中国社区\n按BIND_Use键可以扔雪球"
+kTranslateMessage["WELCOME_TO_READY_ROOM"]=""
+kTranslateMessage["WELCOME_TO_READY_ROOM_HALLOWEEN"]="现在是万圣节\n记得按[BIND_Use]扔糖果"
+kTranslateMessage["WELCOME_TO_READY_ROOM_HOLIDAY"]="现在是圣诞节\n记得按[BIND_Use]扔雪球"
 
 kTranslateMessage["AUTOJOIN_SPEC"]="观战"
 kTranslateMessage["AUTOJOIN_SPEC_AND_RS"]="上场"
