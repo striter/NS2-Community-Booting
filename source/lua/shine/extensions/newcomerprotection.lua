@@ -132,7 +132,7 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	local refund = refundTable[tier]
 	player:AddResources(refund)
 	Shine:NotifyDualColour( player,
-	88, 214, 141, string.format("[新晋-资源%i]",tier),
+	88, 214, 141, string.format("[新人保护%i]",tier),
 	234, 250, 241, string.format("个人资源<%.2f>已回收.",refund) )
 
 	-- Shared.Message("[CNNP] New Comer Protection <Death Refund>")

@@ -44,7 +44,8 @@ kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_LEVEL_ERROR"]= "启动�
 kShinePluginsTranslations["Core"]["INFO_OBS"]= "玩家数据 - Observatory"
 kShinePluginsTranslations["Core"]["INFO_NS2PANEL"]= "玩家数据 -NS2Panel"
 kShinePluginsTranslations["Core"]["OPEN_IN_STEAM"]= "用Steam页面打开"
-kShinePluginsTranslations["Core"]["LOADING"]= "加载中"
+kShinePluginsTranslations["Core"]["LOADING"]= "加载中,请稍后."
+kShinePluginsTranslations["Core"]["NS2CN_WELCOME"]= "欢迎来到<物竞天择2中国社区>"
 
 kShinePluginsTranslations["chatbox"]={}
 kShinePluginsTranslations["chatbox"]["SAY_ALL"]="对所有人发言"

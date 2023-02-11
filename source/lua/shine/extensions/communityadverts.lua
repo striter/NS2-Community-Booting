@@ -17,11 +17,23 @@ Plugin.PrintName = "communityadverts"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityAdverts.json"
 Plugin.DefaultConfig = {
-
+	NewcomerSkill = 100,
+	Delay = 2,
+	URL = "https://www.unknownworlds.com/ns2/",
+	Title = "Welcome To Natural Selection 2",
 }
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 Plugin.ConfigMigrationSteps = { }
+
+do
+	local Validator = Shine.Validator()
+	Validator:AddFieldRule( "NewcomerSkill",  Validator.IsType( "number", 100 ))
+	Validator:AddFieldRule( "Delay",  Validator.IsType( "number", 2 ))
+	Validator:AddFieldRule( "URL",  Validator.IsType( "string", "https://www.unknownworlds.com/ns2/" ))
+	Validator:AddFieldRule( "Title",  Validator.IsType( "string", "Welcome To Natural Selection 2" ))
+	Plugin.ConfigValidator = Validator
+end
 
 function Plugin:Initialise()
 	self.groupData = { }
@@ -78,13 +90,24 @@ function Plugin:GetUserData(Client)
 	return self:BuildGroupAdverts(userData and userData.Group or nil)
 end
 
-function Plugin:PlayerEnter( Client )
+function Plugin:ClientConfirmConnect( Client )
 	local player = Client:GetControllingPlayer()
 	local userData=self:GetUserData(Client)
 	Shine:NotifyDualColour( Shine.GetAllClients(),
 	userData.prefixColor[1], userData.prefixColor[2], userData.prefixColor[3],"[战区通知]",
 	userData.enterColor[1], userData.enterColor[2], userData.enterColor[3], string.format(userData.enter,player:GetName()))
 	-- Shared.Message("[CNCA] Member Name Set:" .. player:GetName())
+
+	local player = Client:GetControllingPlayer()
+	if not player then return end
+	if player:GetPlayerSkill() > self.Config.NewcomerSkill then return end
+
+	self:SimpleTimer( self.Config.Delay, function()
+		Shine.SendNetworkMessage( Client, "Shine_Web", {
+			URL = self.Config.URL,
+			Title = self.Config.Title,
+		}, true )
+	end )
 end
 
 function Plugin:ClientDisconnect( Client )
@@ -105,7 +128,7 @@ function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
 	if NewTeam == kSpectatorIndex then 
 		Shine:NotifyDualColour( Player.client,
 		93, 173, 226,"[观察者]",
-		214, 234, 248, "你已成为观察者.\n*请按[F4]键进入预备室(在有空位的情况下).\n*服务器爆满时可在观战区等待新战区开启.\n*管理将在观战人齐(>14)后进行集体专车接送.")
+		214, 234, 248, "你已成为观察者.\n*请按[F4]进入预备室(在有空位的情况下).\n*服务器爆满时可在观战区等待新战区开启.")
 	elseif NewTeam == kTeamReadyRoom then
 		Shine:NotifyDualColour( Player.client,
 		93, 173, 226,"[预备室]",

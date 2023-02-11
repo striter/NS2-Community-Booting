@@ -567,6 +567,7 @@ if Client then
                     if  SSVPlugin.Enabled then
                         for ID , ServerData in ipairs(SSVPlugin.QueryServers) do
                             local ip = ServerData.IP .. ":" .. ServerData.Port
+                            table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(8人面包车)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 8 } })
                             table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(14人面包车)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 14} }) 
                             table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(20人大巴)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 20 } })
                             table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(一半人)"), extraData = { ip = ip , name = ServerData.Name , onlyAccepted = true } } )
@@ -577,7 +578,7 @@ if Client then
                 end
 
                 AddVoteStartListener( "VoteSwitchServer", 	function( msg )
-                    return string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY"),msg.name,msg.onlyAccepted and "愿者上车" or "所有人")
+                    return string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY"),msg.name,msg.onlyAccepted and Locale.ResolveString("ONLY_ACCEPTED") or Locale.ResolveString("EVERYONE"))
                 end )
 
                 voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )

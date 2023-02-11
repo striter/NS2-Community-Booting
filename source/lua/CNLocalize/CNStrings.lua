@@ -662,8 +662,8 @@ kTranslateMessage["SENTRY_TOOLTIP"]="*自动索敌\n*对敌方单位造成伤害
 kTranslateMessage["SENTRY_TURRET"]="哨戒机枪"
 kTranslateMessage["SET_RALLY_POINT"]="设置集结点"
 kTranslateMessage["SET_TARGET"]="设置目标"
-kTranslateMessage["SET_TARGET_TOOLTIP"]="Settargetdirection"
-kTranslateMessage["SHADOWSTEP"]="迷踪步"
+kTranslateMessage["SET_TARGET_TOOLTIP"]="设置目标的集结点"
+kTranslateMessage["SHADOWSTEP"]="暗影步"
 kTranslateMessage["SHADOWSTEP_TOOLTIP"]="让Fade能够平移一小段距离，不限前后左右"
 
 kTranslateMessage["SOCKET_POWER_NODE"]="配电"

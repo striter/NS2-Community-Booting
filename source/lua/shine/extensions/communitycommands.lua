@@ -7,10 +7,8 @@ Plugin.DefaultConfig =
 {
 }
 
-
 function Plugin:Initialise()
 	self:CreateCommands()
-
 	return true
 end
 
@@ -26,11 +24,11 @@ function Plugin:CreateCommands()
     local killCommand = self:BindCommand("sh_kill","kill",KillSelf,true)
     killCommand:Help( "不活了." )
 
-    local function Delocalize(_client)
-        Server.SendNetworkMessage(_client, "Delocalize", {},true)
+    local function SwitchLocalize(_client)
+        Server.SendNetworkMessage(_client, "SwitchLocalize", {},true)
     end
-    local delocalizeCommand = self:BindCommand("sh_delocalize","delocalize",Delocalize,true)
-    delocalizeCommand:Help( "Get yourself free from brutal injections." )
+    local delocalizeCommand = self:BindCommand("sh_localizeswitch","localizeswitch",SwitchLocalize,true)
+    delocalizeCommand:Help( "Switch your localize mode,Rejoin required. 需要中文汉化的话请勿用(该操作将切换插件强制汉化状态)" )
     
     --Admin comamnds
 	local function AdminScalePlayer( _client, _id, scale )
@@ -65,6 +63,7 @@ function Plugin:CreateCommands()
     setCommand:Help( "设置所有玩家的大小." )
 
 end
+
 
 function Plugin:Cleanup()
 	self.BaseClass.Cleanup( self )

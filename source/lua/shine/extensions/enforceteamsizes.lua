@@ -25,6 +25,7 @@ Plugin.EnabledGamemodes = {
 	[ 'GunGame' ] =true,
 }
 
+local priorColorTable = { 237, 187, 153  }
 
 function Plugin:Initialise()
 	self.Enabled = true
@@ -32,9 +33,9 @@ function Plugin:Initialise()
 	return true
 end
 
-function Plugin:Notify(Player, Message, data)
-		Shine:NotifyDualColour( Player, 
-				self.Config.MessageNameColor[1], self.Config.MessageNameColor[2], self.Config.MessageNameColor[3],"[战局约束]",
+function Plugin:Notify(Player, Message,colors, data)
+		Shine:NotifyDualColour( Player,
+				colors[1], colors[2], colors[3],"[战局约束]",
 				255, 255, 255,Message,true, data )
 end
 
@@ -56,7 +57,7 @@ function Plugin:PostJoinTeam( Gamerules, _, OldTeam )
 		local player = client:GetControllingPlayer()
 		local team = player:GetTeamNumber()
 		if team ~=kSpectatorIndex or team ~= kTeamReadyRoom then return end
-		self:Notify(player, string.format( "一名玩家已离开[%s],你可以尝试进入对局了.", Shine:GetTeamName(OldTeam, true)),nil)
+		self:Notify(player, string.format( "一名玩家已离开[%s],你可以尝试进入对局了.", Shine:GetTeamName(OldTeam, true)),self.Config.MessageNameColor,nil)
 	end
 end
 
@@ -71,22 +72,22 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	local available
 	
 	if self.Config.SkillLimit ~= -1 and skill > self.Config.SkillLimit  then
-		self:Notify(Player, string.format("您的分数(%s)以超过服务器上限(%s),请继续观战或加入其他服务器.", skill, self.Config.SkillLimit),nil)
+		self:Notify(Player, string.format("您的分数(%s)以超过服务器上限(%s),请继续观战或加入其他服务器.", skill, self.Config.SkillLimit),self.Config.MessageNameColor,nil)
 		available = false
 	end
 	
 	--Check if team is above MaxPlayers
 	local playerLimit = self.Config.Team[NewTeam]
 	if self:GetNumPlayers(Gamerules:GetTeam(NewTeam)) >= playerLimit then
-		self:Notify(Player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[NewTeam] ,playerLimit),nil)
+		self:Notify(Player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[NewTeam] ,playerLimit),self.Config.MessageNameColor,nil)
 		available = false
 	end
 
 	if available == false then
-		local SteamID = Server.GetOwner(Player):GetUserId()
-		if not SteamID or SteamID < 1 then return end
-		if GetHasReservedSlotAccess( SteamID ) then
-			self:Notify(Player, string.format("因为您为预留位玩家,以上限制已取消,请勿过度影响其他玩家的正常游玩.", skill, self.Config.SkillLimit),nil)
+		local client = Server.GetOwner(Player)
+		if not client or client:GetIsVirtual()  then return end
+		if Shine:HasAccess( client, "sh_priorslot" ) then
+			self:Notify(Player, string.format("因为您为升级预留位玩家,已忽视限制加入游戏,请勿[过度影响]其他玩家的正常对局.", skill, self.Config.SkillLimit),priorColorTable,nil)
 			return
 		end
 	end
@@ -98,10 +99,10 @@ function Plugin:CreateCommands()
 
 	local function RestrictionDisplay(_client)
 		local skillLimit = self.Config.SkillLimit == -1 and "无限制" or tostring(self.Config.SkillLimit)
-		self:Notify(_client,string.format("当前加入限制为:[陆战队]:%s,[卡拉异形]:%s,[最高分数](%s)", self.Config.Team[1], self.Config.Team[2],skillLimit),nil)
+		self:Notify(_client,string.format("当前加入限制为:[陆战队]:%s,[卡拉异形]:%s,[最高分数](%s)", self.Config.Team[1], self.Config.Team[2],skillLimit),self.Config.MessageNameColor,nil)
 	end
-	local showRestriction = self:BindCommand( "sh_restriction_notify", "restriction_notify", RestrictionDisplay)
-	showRestriction:Help( "示例: !restriction_show 传回当前的队伍限制" )
+	local showRestriction = self:BindCommand( "sh_restriction", "restriction", RestrictionDisplay)
+	showRestriction:Help( "示例: !restriction 传回当前的队伍限制" )
 	
 	local function NofityAll()
 		for client in Shine.IterateClients() do

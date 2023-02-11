@@ -84,6 +84,7 @@ local kPlayerSkillIconSizeOverride = Vector(58, 20, 0) -- slightly smaller so it
 local kCommunityRankIconSize = Vector(20,20,0)
 local kCommunityRankIconTexture = PrecacheAsset("ui/CommunityRankIcons.dds")
 
+local kCommunityRankBGs = PrecacheAsset("ui/CommunityRankBGs.dds")
 
 local kCommunityRankIndex =
 {
@@ -895,9 +896,23 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             score = "*"
         end
 
+        local fakeBot = playerRecord.FakeBot
+        if fakeBot then
+            playerName = "[BOT] " .. playerName
+        end
+
+        local communityRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
+        local visible = not fakeBot and communityRankIndex > 0
+        
+        local showBG = not fakeBot
+        showBG = showBG and (teamNumber == kTeamReadyRoom or teamNumber == kSpectatorIndex)
+        
+        local communityBGIndex = showBG and communityRankIndex or 0
+
         currentPosition.y = currentY
         player["Background"]:SetPosition(currentPosition)
         player["Background"]:SetColor(ConditionalValue(isCommander, commanderColor, teamColor))
+        player["Background"]:SetTexturePixelCoordinates(0, communityBGIndex *41,571,(communityBGIndex +1)*41)
 
         -- Handle local player highlight
         if ScoreboardUI_IsPlayerLocal(playerName) then
@@ -911,11 +926,6 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             end
         end
         
-        local fakeBot = playerRecord.FakeBot
-        if fakeBot then
-            playerName = "[BOT] " .. playerName
-        end
-
         player["Number"]:SetText(index..".")
         player["Name"]:SetText(playerName)
 
@@ -1063,9 +1073,8 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Voice"]:SetIsVisible(ChatUI_GetClientMuted(clientIndex))
         player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 
-        local communityRankIconIndex = kCommunityRankIndex[playerRecord.Group] or 0
-        player["CommunityRankIcon"]:SetTexturePixelCoordinates(0,communityRankIconIndex*80,80,(communityRankIconIndex+1)*80)
-        player["CommunityRankIcon"]:SetIsVisible(not fakeBot and communityRankIconIndex > 0)
+        player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, communityRankIndex *80,80,(communityRankIndex +1)*80)
+        player["CommunityRankIcon"]:SetIsVisible(visible)
         
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
@@ -1222,8 +1231,8 @@ function GUIScoreboard:CreatePlayerItem()
     playerItem:SetAnchor(GUIItem.Left, GUIItem.Top)
     playerItem:SetPosition(Vector(GUIScoreboard.kPlayerItemWidthBuffer, GUIScoreboard.kPlayerItemHeight / 2, 0) * GUIScoreboard.kScalingFactor)
     playerItem:SetColor(Color(1, 1, 1, 1))
-    playerItem:SetTexture("ui/hud_elements.dds")
-    playerItem:SetTextureCoordinates(0, 0, 0.558, 0.16)
+    playerItem:SetTexture(kCommunityRankBGs)
+    playerItem:SetTextureCoordinates(0, 0, 0.558, 0.16)  --571 41
     playerItem:SetStencilFunc(GUIItem.NotEqual)
 
     local playerItemChildX = kPlayerItemLeftMargin
@@ -1437,10 +1446,10 @@ function GUIScoreboard:CreatePlayerItem()
     -- Let's do a table here to easily handle the highlighting/clicking of icons
     -- It also makes it easy for other mods to add icons afterwards
     local iconTable = {}
+    table.insert(iconTable, communityRankIcon)
     table.insert(iconTable, steamFriendIcon)
     table.insert(iconTable, playerVoiceIcon)
     table.insert(iconTable, playerTextIcon)
-    table.insert(iconTable, communityRankIcon)
     
     return { Background = playerItem, Number = playerNumber, Name = playerNameItem,
         Voice = playerVoiceIcon, Status = statusItem, SkillIcon = playerSkillIcon, Score = scoreItem, Kills = killsItem,

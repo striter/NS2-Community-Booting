@@ -2,9 +2,11 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER"] = "投票换服"
     kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "至[%s]<%s>的班车(%s)"
     kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "发一辆至<%s>的班车(%s)?"
+    kTranslateMessage["ONLY_ACCEPTED"] = "持票玩家"
+    kTranslateMessage["EVERYONE"] = "所有玩家"
 
     kTranslateMessage["VOTE_MUTE_PLAYER"] = "禁言玩家"
-    kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言半小时?"
+    kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言?"
 
     kTranslateMessage["VOTE_FORCE_SPECTATE"] = "强制观战"
     kTranslateMessage["VOTE_FORCE_SPECTATE_QUERY"] = "将<%s>强制移到观战?"
@@ -22,9 +24,6 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_RANDOM_SCALE"]="随机大小"
     kTranslateMessage["VOTE_RANDOM_SCALE_QUERY"]="给所有人随机大小?"
 
-    --kTranslateMessage["VOTE_RANK_PLAYER"] = "投票上分"
-    --kTranslateMessage["VOTE_RANK_PLAYER_QUERY"] = "增加<%s>社区段位分?"
-
     kTranslateMessage["RANK_HOST"] = "(C6):<萌新>"
     kTranslateMessage["RANK_T5"] = "(C5):<管理员>"
     kTranslateMessage["RANK_T4"] = "(C4):<Onos>"
@@ -33,5 +32,42 @@ if kTranslateMessage then
     kTranslateMessage["RANK_T1"] = "(C1):<Gorge>"
     kTranslateMessage["RANK_DEFAULT"] = "(C0):<Skulk>"
     kTranslateMessage["RANK_LIVER"] = "(C3):<Vokex>"
-    kTranslateMessage["RANK_INVALID"] = ":<未知>"
+    kTranslateMessage["RANK_INVALID"] = "(C?):<未知>"
 end
+
+if kLocales then
+    kLocales["VOTE_SWITCH_SERVER"] = "Vote Switch Server"
+    kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "To [%s]<%s> affected:(%s)"
+    kLocales["VOTE_SWITCH_SERVER_QUERY"] = "Send people to <%s> (%s)?"
+    kLocales["ONLY_ACCEPTED"] = "Only Accepted"
+    kLocales["EVERYONE"] = "Everyone"
+
+    kLocales["VOTE_MUTE_PLAYER"] = "Vote Mute player"
+    kLocales["VOTE_MUTE_PLAYER_QUERY"] = "Mute <%s>?"
+
+    kLocales["VOTE_FORCE_SPECTATE"] = "Vote Force Spectate"
+    kLocales["VOTE_FORCE_SPECTATE_QUERY"] = "Move <%s> to spectator?"
+
+    kLocales["VOTE_KILL_PLAYER"] = "Vote Slay Player"
+    kLocales["VOTE_KILL_PLAYER_QUERY"] = "Slay <%s>?"
+
+    kLocales["VOTE_KILL_ALL"] = "Vote Slay everyone"
+    kLocales["VOTE_KILL_ALL_QUERY1"] = "My fade has rank seven"
+    kLocales["VOTE_KILL_ALL_QUERY2"] = "Newton found homosexuality in 1666"
+    kLocales["VOTE_KILL_ALL_QUERY3"] = "Are u talk politics often?"
+    kLocales["VOTE_KILL_ALL_QUERY4"] = "Are u a racist?"
+    kLocales["VOTE_KILL_ALL_QUERY5"] = "Im a <Sanji Survivor>?"
+
+    kLocales["VOTE_RANDOM_SCALE"]="Vote random scale"
+    kLocales["VOTE_RANDOM_SCALE_QUERY"]="Dispatch everyone random scale?"
+
+    kLocales["RANK_HOST"] = "(C6):<Newcomer>"
+    kLocales["RANK_T5"] = "(C5):<Admin>"
+    kLocales["RANK_T4"] = "(C4):<Onos>"
+    kLocales["RANK_T3"] = "(C3):<Fade>"
+    kLocales["RANK_T2"] = "(C2):<Lerk>"
+    kLocales["RANK_T1"] = "(C1):<Gorge>"
+    kLocales["RANK_DEFAULT"] = "(C0):<Skulk>"
+    kLocales["RANK_LIVER"] = "(C3):<Vokex>"
+    kLocales["RANK_INVALID"] = "(C?):<Unknown>"
+end 
