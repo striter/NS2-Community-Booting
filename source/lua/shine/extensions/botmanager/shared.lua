@@ -46,7 +46,7 @@ if Server then
 			local team2Number = self.team2:GetTeamNumber()
 			
 			-- only subtract bots IF we want to even teams with bots
-			local client = player:GetClient()
+			--local client = player:GetClient()
 			if not player.isVirtual then
 				team1Players = team1Players - team1Bots
 				team2Players = team2Players - team2Bots
@@ -62,15 +62,18 @@ if Server then
 	
 		end
 	
+		-- Remove bot restrictions
 		-- Scenario: Veteran tries to join a team at rookie only server
-		if teamNumber ~= kSpectatorIndex then --allow to spectate
-			local isRookieOnly = Server.IsDedicated() and not self.botTraining and self.gameInfo:GetRookieMode()
-	
-			if isRookieOnly and player:GetSkillTier() > kRookieMaxSkillTier then
-				Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(2), true)
-				return false
-			end
-		end
+		--if teamNumber ~= kSpectatorIndex then --allow to spectate
+		--	local isRookieOnly = Server.IsDedicated() and not self.botTraining and self.gameInfo:GetRookieMode()
+		--
+		--	if isRookieOnly and player:GetSkillTier() > kRookieMaxSkillTier then
+		--		Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(2), true)
+		--		return false
+		--	end
+		--end
+		
+		
 		
 		return true
 	end
