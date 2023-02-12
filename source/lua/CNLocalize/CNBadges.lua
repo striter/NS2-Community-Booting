@@ -50,7 +50,7 @@ kTranslateMessage["Ceee"]="别看了 杀的又没我多"
 kTranslateMessage["CDark"]="菜狗"
 kTranslateMessage["COrange"]="橘橘饿饿 饭饭\n【关注橘橘noob喵 bili:24811638】"
 kTranslateMessage["CBoBo"]="喝茶摸鱼\n单边人类的老年人直播间\n BILIBILI:2807016"
-
+kTranslateMessage["C555"]="壮丁"
 
 --Characters ?
 kTranslateMessage["KCCTV0"]="CCTV 5 - 动物世界"

@@ -94,7 +94,8 @@ local kCommunityRankIndex =
     ["RANK_LIVER"] = 3,
     ["RANK_T4"] = 4,
     ["RANK_T5"] = 5,
-    ["RANK_HOST"] = 5,
+    ["RANK_HOST"] = 6,
+    ["RANK_ADMIN"] = 6,
 }
 ---------------
 local lastScoreboardVisState = false
