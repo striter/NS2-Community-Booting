@@ -279,8 +279,8 @@ function Plugin:CreateMessageCommands()
         SavePersistent(self)
     end
     local emblemSetCommand = self:BindCommand( "sh_emblem_set", "emblem_set", EmblemSetID)
-    emblemSetCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 20, Optional = true, Default = 0 }
     emblemSetCommand:AddParam{ Type = "steamid" }
+    emblemSetCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 20, Optional = true, Default = 0 }
     emblemSetCommand:Help( "切换目标玩家的计分板底图." )
 
     local function EmblemSet(_client, _emblem)
