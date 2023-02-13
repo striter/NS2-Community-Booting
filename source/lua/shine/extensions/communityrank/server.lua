@@ -12,6 +12,7 @@ Plugin.DefaultConfig = {
         ["55022511"] = {
             rank = -2000,
             fakeBot = true,
+            emblem = -1
         }
     }
 }
@@ -41,7 +42,7 @@ do
 end
 
 function Plugin:Initialise()
-    self.PlayerRanks = {}
+    self.MemberInfos = { }
     self:CreateMessageCommands()
 	return true
 end
@@ -50,42 +51,40 @@ local function ReadPersistent(self)
     -- Shared.Message("[CNCR] Read Persistent:")
     for k,v in pairs(self.Config.UserData) do
         -- Shared.Message(k .. ":" .. tostring(v))
-        self.PlayerRanks[tonumber(k)] = v
+        self.MemberInfos[tonumber(k)] = v
     end
 end
 
 local function SavePersistent(self)
     -- Shared.Message("[CNCR] Save Persistent:")
-    for k,v in pairs(self.PlayerRanks) do
+    for k,v in pairs(self.MemberInfos) do
         self.Config.UserData[tostring(k)] = v
     end
     self:SaveConfig()
 end
 
 local function GetPlayerData(self,steamId)
-    if not self.PlayerRanks[steamId] then
-        self.PlayerRanks[steamId] = {
-            rank = 0,
-            fakeBot = false,
-        }
+    if not self.MemberInfos[steamId] then
+        self.MemberInfos[steamId] = { }
     end
     
-    return self.PlayerRanks[steamId]
+    return self.MemberInfos[steamId]
 end
 
 local function RankPlayerDelta(self,_steamId,_delta)
+    local data = GetPlayerData(self,_steamId)
     
-    local rank = GetPlayerData(self,_steamId).rank + _delta
+    local rank = data.rank or 0 + _delta
     
     local target = Shine.GetClientByNS2ID(_steamId)
     if target then 
         local player = target:GetControllingPlayer()
         
         rank = math.max(rank, -player.skill)
-        player:SetCommunityRank(rank)
+        player:SetPlayerExtraData(data)
     end
-    
-    self.PlayerRanks[_steamId].rank = rank
+
+    data.rank = rank
 end
 
 function Plugin:OnFirstThink()
@@ -183,12 +182,12 @@ function Plugin:OnFirstThink()
 end
 
 function Plugin:ResetState()
-    table.empty(self.PlayerRanks)
+    table.empty(self.MemberInfos)
     ReadPersistent(self)
 end
 
 function Plugin:Cleanup()
-    table.empty(self.PlayerRanks)
+    table.empty(self.MemberInfos)
     return self.BaseClass.Cleanup( self )
 end
 
@@ -203,10 +202,9 @@ function Plugin:CreateMessageCommands()
         local preRank = player.skill
 
         local rank = _rank - preRank
-        GetPlayerData(self,_id).rank = rank
-        player:SetCommunityRank(rank)
-    
-        Shine:AdminPrint( nil, "%s set %s rank to %s", true,  Shine.GetClientInfo( _client ), Shine.GetClientInfo( target ), _rank )
+        data = GetPlayerData(self,_id)
+        data.rank = rank
+        target:GetControllingPlayer():SetPlayerExtraData(data)
         SavePersistent(self)
     end
 
@@ -221,10 +219,9 @@ function Plugin:CreateMessageCommands()
             return 
         end
 
-        GetPlayerData(self,_id).rank = 0 
-        target:GetControllingPlayer():SetCommunityRank(0)
-        
-        Shine:AdminPrint( nil, "%s reset %s rank", true,  Shine.GetClientInfo( _client ), _id )
+        local data = GetPlayerData(self,_id)
+        data.rank = 0
+        target:GetControllingPlayer():SetPlayerExtraData(data)
         SavePersistent(self)
     end
 
@@ -239,7 +236,6 @@ function Plugin:CreateMessageCommands()
         end
 
         RankPlayerDelta(self,_id,_offset)
-        Shine:AdminPrint( nil, "%s delta %s rank with %s", true,  Shine.GetClientInfo( _client ), _id, _offset )
         SavePersistent(self)
     end
     local deltaCommand = self:BindCommand( "sh_rank_delta", "rank_delta", AdminRankPlayerDelta )
@@ -247,6 +243,7 @@ function Plugin:CreateMessageCommands()
     deltaCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
     deltaCommand:Help( "增减ID对应玩家的社区段位." )
 
+--BOT
     local function FakeBotSwitchID(_client,_id)
         local target = Shine.GetClientByNS2ID(_id)
         if not target then 
@@ -255,8 +252,7 @@ function Plugin:CreateMessageCommands()
 
         local data = GetPlayerData(self,target:GetUserId())
         data.fakeBot = not data.fakeBot
-        target:GetControllingPlayer():SetFakeBot(data.fakeBot)
-        Shine:AdminPrint( nil, "%s switch %s fakeBot to <%s>", true, Shine.GetClientInfo( _client ),Shine.GetClientInfo(target),data.fakeBot )
+        target:GetControllingPlayer():SetPlayerExtraData(data)
         SavePersistent(self)
     end
     local botCommand = self:BindCommand( "sh_fakebot_set", "fakebot_set", FakeBotSwitchID )
@@ -267,12 +263,36 @@ function Plugin:CreateMessageCommands()
         FakeBotSwitchID(_client,_client:GetUserId())
     end
 
-    local botCommand = self:BindCommand( "sh_fakebot", "fakebot", FakeBotSwitch )
-    botCommand:Help( "假扮成BOT." )
+    local botSwitchCommand = self:BindCommand( "sh_fakebot", "fakebot", FakeBotSwitch )
+    botSwitchCommand:Help( "假扮成BOT." )
+
+--Emblem
+    local function EmblemSetID(_client, _id, _emblem)
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then
+            return
+        end
+
+        local data = GetPlayerData(self,target:GetUserId())
+        data.emblem = _emblem
+        target:GetControllingPlayer():SetPlayerExtraData(data)
+        SavePersistent(self)
+    end
+    local emblemSetCommand = self:BindCommand( "sh_emblem_set", "emblem_set", EmblemSetID)
+    emblemSetCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 20, Optional = true, Default = 0 }
+    emblemSetCommand:AddParam{ Type = "steamid" }
+    emblemSetCommand:Help( "切换目标玩家的计分板底图." )
+
+    local function EmblemSet(_client, _emblem)
+        EmblemSetID(_client,_client:GetUserId(),_emblem)
+    end
+
+    local emblemCommand = self:BindCommand( "sh_emblem", "emblem", EmblemSet)
+    emblemCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 20, Optional = true, Default = 0 }
+    emblemCommand:Help( "切换自己的计分板底图(0为使用默认)." )
 end
 
 function Plugin:GetUserGroup(Client)
-	local id=tostring(Client:GetUserId())
 	local userData = Shine:GetUserData(Client)
 
     local groupName = userData and userData.Group or nil
@@ -281,19 +301,17 @@ function Plugin:GetUserGroup(Client)
 	return groupName and groupName or "RANK_DEFAULT" , Group
 end
 
-function Plugin:ClientConnect( _client )
+function Plugin:ClientConfirmConnect( _client )
     local clientID = _client:GetUserId()
     if clientID == 0 then return end
     
-    local data = GetPlayerData(self,clientID)
-
-    local player = _client:GetControllingPlayer()
-    player:SetCommunityRank(data.rank)
-    player:SetFakeBot(data.fakeBot)
-
     --Jeez wtf
     local groupName,groupData = self:GetUserGroup(_client)
+
+    local player = _client:GetControllingPlayer()
     player:SetGroup(groupName)
+    player:SetPlayerExtraData(GetPlayerData(self,clientID))
+    
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
-    Shared.Message("[CNCR] Client Rank:" .. tostring(clientID) .. ":" .. tostring(data.rank) .. "," .. tostring(data.fakeBot))
+    Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end

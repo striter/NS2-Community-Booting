@@ -53,22 +53,21 @@ if Server then
         self.totalXP = player.totalXP
 
 ----------
-        self.communityRank = player.communityRank
         self.group = player.group
+        self.communityRank = player.communityRank
         self.fakeBot = player.fakeBot
+        self.emblem = player.emblem
 ---------
     end
 
-    function ScoringMixin:SetCommunityRank(_rank)
-        self.communityRank = _rank
+    function ScoringMixin:SetPlayerExtraData(dataTable)
+        self.communityRank = dataTable.rank or 0
+        self.fakeBot = dataTable.fakeBot or false
+        self.emblem = dataTable.emblem or 0
     end
-
+    
     function ScoringMixin:SetGroup(_group)
         self.group = _group
-    end
-
-    function ScoringMixin:SetFakeBot(_fakeBot)
-        self.fakeBot = _fakeBot
     end
 end --End-Server
 

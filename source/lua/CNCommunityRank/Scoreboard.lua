@@ -112,9 +112,10 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.AdagradSum = pie.adagradSum
         playerRecord.Tech = pie.currentTech
         playerRecord.CallingCard = pie.callingCard
-    -------------   Shit
+    ------------- Why
         playerRecord.FakeBot = pie.fakeBot
         playerRecord.Group = pie.group
+        playerRecord.Emblem = pie.emblem
     ------------
 
         if playerRecord.IsCommander then

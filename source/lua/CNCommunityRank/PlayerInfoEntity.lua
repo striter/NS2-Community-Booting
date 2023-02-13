@@ -47,6 +47,7 @@ local networkVars =
     hiveskill = "integer" ,
     group = string.format("string (%d)", kMaxGroupName ),
     fakeBot = "boolean",
+    emblem = "integer (0 to 64)",
 -----------
     adagradSum = "float",
     currentTech = "integer",
@@ -128,6 +129,7 @@ function PlayerInfoEntity:UpdateScore()
                 self.hiveskill = scorePlayer.skill
                 self.group = scorePlayer.group
                 self.fakeBot = scorePlayer.fakeBot
+                self.emblem = scorePlayer.emblem
             -------------
                 self.adagradSum = scorePlayer:GetAdagradSum()
                 playerSkillOffset = scorePlayer:GetPlayerSkillOffset()

@@ -902,18 +902,24 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             playerName = "[BOT] " .. playerName
         end
 
-        local communityRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
-        local visible = not fakeBot and communityRankIndex > 0
+        local defaultRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
+        local visible = not fakeBot and defaultRankIndex > 0
         
-        local showBG = not fakeBot
-        showBG = showBG and (teamNumber == kTeamReadyRoom or teamNumber == kSpectatorIndex)
-        
-        local communityBGIndex = showBG and communityRankIndex or 0
+        local emblemIndex = defaultRankIndex
+        if playerRecord.Emblem and playerRecord.Emblem ~= 0  then       --Override by emblem setting
+            emblemIndex = playerRecord.Emblem
+        end
 
+        local showEmblem = not fakeBot
+        showEmblem = showEmblem and (teamNumber == kTeamReadyRoom or teamNumber == kSpectatorIndex)
+        if not showEmblem then
+            emblemIndex = 0
+        end
+        
         currentPosition.y = currentY
         player["Background"]:SetPosition(currentPosition)
         player["Background"]:SetColor(ConditionalValue(isCommander, commanderColor, teamColor))
-        player["Background"]:SetTexturePixelCoordinates(0, communityBGIndex *41,571,(communityBGIndex +1)*41)
+        player["Background"]:SetTexturePixelCoordinates(0, emblemIndex *41,571,(emblemIndex +1)*41)
 
         -- Handle local player highlight
         if ScoreboardUI_IsPlayerLocal(playerName) then
@@ -1074,7 +1080,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Voice"]:SetIsVisible(ChatUI_GetClientMuted(clientIndex))
         player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 
-        player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, communityRankIndex *80,80,(communityRankIndex +1)*80)
+        player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, defaultRankIndex *80,80,(defaultRankIndex +1)*80)
         player["CommunityRankIcon"]:SetIsVisible(visible)
         
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
