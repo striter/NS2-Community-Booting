@@ -74,16 +74,13 @@ end
 
 local function RankPlayerDelta(self,_steamId,_delta)
     local data = GetPlayerData(self,_steamId)
-    Shared.Message(tostring(_delta))
     local rank = data.rank or 0
     rank = rank + _delta
     
     local target = Shine.GetClientByNS2ID(_steamId)
     if target then 
         local player = target:GetControllingPlayer()
-        Shared.Message(tostring(rank))
         rank = math.max(rank, -player.skill)
-        Shared.Message(tostring(rank))
         player:SetPlayerExtraData(data)
     end
 
@@ -101,7 +98,7 @@ local function EndGameElo(self)
 
     local lastRoundData = CHUDGetLastRoundStats();
     if not lastRoundData then
-        -- Shared.Message("[CNCR] ERROR Option 'savestats' not enabled ")
+        Shared.Message("[CNCR] ERROR Option 'savestats' not enabled ")
         return
     end
 
@@ -154,7 +151,7 @@ local function EndGameElo(self)
             local Edelta = eloConstant * _delta
 
             _rankTable[steamId] = _rankTable[steamId] + math.floor(Edelta * data.playTimeNormalized)
-            --Shared.Message(string.format("ID:%s T%s K:%s ES-EA:%s", tier,steamId,eloConstant,_delta))
+            --Shared.Message(string.format("ID:%s T%s K:%s ES-EA:%s", steamId,tier,eloConstant,_delta))
         end
     end
 
@@ -177,7 +174,7 @@ local function EndGameElo(self)
         if rankOffset ~= 0 then
             RankPlayerDelta(self,steamId,rankOffset)
         end
-        -- Shared.Message(string.format("%i|%d",steamId, rankOffset))
+         --Shared.Message(string.format("%i|%d",steamId, rankOffset))
     end
 
 end
@@ -326,5 +323,5 @@ function Plugin:ClientConnect( _client )
     player:SetPlayerExtraData(GetPlayerData(self,clientID))
     
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
-    Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
+    --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
