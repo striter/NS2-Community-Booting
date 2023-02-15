@@ -39,27 +39,11 @@ function Plugin:Notify(Player, Message,colors, data)
 				255, 255, 255,Message,true, data )
 end
 
-function Plugin:ClientDisconnect( Client )
-	local Player = Client:GetControllingPlayer()
-	if not Player then return end
-
-	self:PostJoinTeam( GetGamerules(), Player, Player:GetTeamNumber() )
-end
-
 function Plugin:GetNumPlayers(Team)
 	local players, _, bots = Team:GetNumPlayers()
 	return players - bots
 end
 
-function Plugin:PostJoinTeam( Gamerules, _, OldTeam )
-	if OldTeam ~= kTeam1Index or OldTeam ~= kTeam2Index then return end
-	for client in Shine.IterateClients() do
-		local player = client:GetControllingPlayer()
-		local team = player:GetTeamNumber()
-		if team ~=kSpectatorIndex or team ~= kTeamReadyRoom then return end
-		self:Notify(player, string.format( "一名玩家已离开[%s],你可以尝试进入对局了.", Shine:GetTeamName(OldTeam, true)),self.Config.MessageNameColor,nil)
-	end
-end
 
 local TeamNames = { "陆战队","卡拉异形" }
 function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )

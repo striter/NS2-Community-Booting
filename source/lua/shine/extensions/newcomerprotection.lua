@@ -31,18 +31,34 @@ Plugin.DefaultConfig = {
 		["Marine"]=			{1, 0.5,	0.25},
 		["JetpackMarine"]=	{6,		4,		2.25},
 		["Exo"] = 			{27.5,	18.25,	11.25},
-	}
-}
-
-Plugin.EnabledGamemodes = {
-	["ns2"] = true,
-    ["NS2.0"] = true,
-    ["siege+++"] = true,
+	},
+	BelowSkillNotify = 100,
+	URLDelay = 2,
+	URL = "https://www.unknownworlds.com/ns2/",
+	URLTitle = "Welcome To Natural Selection 2",
+	ExtraNotify = true,
+	ExtraNotifyMessage = "You are at a higher tier skill server,choose rookie server for better experience"
 }
 
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 Plugin.ConfigMigrationSteps = { }
+do
+	local Validator = Shine.Validator()
+	Validator:AddFieldRule( "BelowSkillNotify",  Validator.IsType( "number", 100 ))
+	Validator:AddFieldRule( "URLDelay",  Validator.IsType( "number", 2 ))
+	Validator:AddFieldRule( "URL",  Validator.IsType( "string", "https://www.unknownworlds.com/ns2/" ))
+	Validator:AddFieldRule( "URLTitle",  Validator.IsType( "string", "Welcome To Natural Selection 2" ))
+	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
+	Validator:AddFieldRule( "ExtraNotifyMessage",  Validator.IsType( "string", "You are at a higher tier skill server,choose rookie server for better experience" ))
+	Plugin.ConfigValidator = Validator
+end
+
+Plugin.EnabledGamemodes = {
+	["ns2"] = true,
+	["NS2.0"] = true,
+	["siege+++"] = true,
+}
 
 function Plugin:Initialise()
 	return true
@@ -118,6 +134,27 @@ function Plugin:OnPlayerRespawn(playingTeam,player, origin, angles)
 
 end
 
+
+function Plugin:ClientConfirmConnect( Client )
+	
+	local player = Client:GetControllingPlayer()
+	if not player then return end
+	if player:GetPlayerSkill() > self.Config.BelowSkillNotify then return end
+
+	self:SimpleTimer( self.Config.URLDelay, function()
+		Shine.SendNetworkMessage( Client, "Shine_Web", {
+			URL = self.Config.URL,
+			Title = self.Config.URLTitle,
+		}, true )
+	end )
+
+	if self.Config.ExtraNotify then
+		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",
+				213, 245, 227, self.Config.ExtraNotifyMessage)
+	end
+end
+
+
 function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	if not Plugin.Config.Refund then return end
 
@@ -132,7 +169,7 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	local refund = refundTable[tier]
 	player:AddResources(refund)
 	Shine:NotifyDualColour( player,
-	88, 214, 141, string.format("[新人保护%i]",tier),
+	88, 214, 141, string.format("[新兵保护%i]",tier),
 	234, 250, 241, string.format("个人资源<%.2f>已回收.",refund) )
 
 	-- Shared.Message("[CNNP] New Comer Protection <Death Refund>")

@@ -26,6 +26,8 @@ kShinePluginsTranslations["Core"]["Unstuck"]="尝试脱困"
 kShinePluginsTranslations["Core"]["MOTD"]="日常信息"
 kShinePluginsTranslations["Core"]["CLIENT_CONFIG_MENU"]="Shine本地设置"
 kShinePluginsTranslations["Core"]["ADMIN_MENU"]="管理菜单"
+kShinePluginsTranslations["Core"]["ADMIN_MENU"]="管理菜单"
+
 
 kShinePluginsTranslations["Core"]["NS2_MENU_OPTIONS_TITLE"]="SHINE 设置"
 kShinePluginsTranslations["Core"]["NS2_MENU_OPEN_CLIENT_CONFIG"]="打开客户端设置界面"

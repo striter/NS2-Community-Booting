@@ -16,24 +16,10 @@ Plugin.Version = "1.0"
 Plugin.PrintName = "communityadverts"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityAdverts.json"
-Plugin.DefaultConfig = {
-	NewcomerSkill = 100,
-	Delay = 2,
-	URL = "https://www.unknownworlds.com/ns2/",
-	Title = "Welcome To Natural Selection 2",
-}
+Plugin.DefaultConfig = { }
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 Plugin.ConfigMigrationSteps = { }
-
-do
-	local Validator = Shine.Validator()
-	Validator:AddFieldRule( "NewcomerSkill",  Validator.IsType( "number", 100 ))
-	Validator:AddFieldRule( "Delay",  Validator.IsType( "number", 2 ))
-	Validator:AddFieldRule( "URL",  Validator.IsType( "string", "https://www.unknownworlds.com/ns2/" ))
-	Validator:AddFieldRule( "Title",  Validator.IsType( "string", "Welcome To Natural Selection 2" ))
-	Plugin.ConfigValidator = Validator
-end
 
 function Plugin:Initialise()
 	self.groupData = { }
@@ -52,6 +38,8 @@ Plugin.kDefaultData = {
 	enterColor = {128,128,128}, 
 	leaveColor = {128,128,128},
 }
+local kInvalidUserAdvert = { }
+
 function Plugin:BuildGroupAdverts(_groupName)
 	local Group = _groupName and Shine:GetGroupData(_groupName) or Shine:GetDefaultGroup()
 	_groupName = _groupName or Plugin.KDefaultGroup 
@@ -73,53 +61,45 @@ function Plugin:BuildGroupAdverts(_groupName)
 	end
 	
 	self.groupData[_groupName] = targetData
-	Shared.Message("[CNCA] Group Initialize:" .. _groupName .." " .. targetData.enter .. " " .. targetData.leave)
+	--Shared.Message("[CNCA] Group Initialize:" .. _groupName .." " .. targetData.enter .. " " .. targetData.leave)
 	return targetData
 end
 
-function Plugin:GetUserData(Client)
-	local id=tostring(Client:GetUserId())
-	-- Shared.Message("[CNCA] Community Adverts:" .. id)
-
+function Plugin:GetAdvertData(Client)
 	local userData = Shine:GetUserData(Client)
-	local advert = userData and userData.Adverts
-	if advert then
-		return advert
-	end
-
-	return self:BuildGroupAdverts(userData and userData.Group or nil)
+	local groupAdvert = self:BuildGroupAdverts(userData and userData.Group or nil)
+	local userAdvert = userData and userData.Adverts or kInvalidUserAdvert
+	return groupAdvert , userAdvert
 end
 
-function Plugin:ClientConfirmConnect( Client )
+function Plugin:PlayerEnter( Client )
 	local player = Client:GetControllingPlayer()
-	local userData=self:GetUserData(Client)
-	Shine:NotifyDualColour( Shine.GetAllClients(),
-	userData.prefixColor[1], userData.prefixColor[2], userData.prefixColor[3],"[战区通知]",
-	userData.enterColor[1], userData.enterColor[2], userData.enterColor[3], string.format(userData.enter,player:GetName()))
+	local groupData,userData = self:GetAdvertData(Client)
+	local prefix = userData.prefixColor or groupData.prefixColor
+	local enterColor = userData.enterColor or groupData.enterColor
+	local enterMessage = userData.enter or groupData.enter
+	
+	if #enterMessage > 0 then
+		Shine:NotifyDualColour( Shine.GetAllClients(), prefix[1], prefix[2], prefix[3],"[战区通知]",
+				enterColor[1], enterColor[2], enterColor[3], string.format(enterMessage,player:GetName()))
+	end
 	-- Shared.Message("[CNCA] Member Name Set:" .. player:GetName())
-
-	local player = Client:GetControllingPlayer()
-	if not player then return end
-	if player:GetPlayerSkill() > self.Config.NewcomerSkill then return end
-
-	self:SimpleTimer( self.Config.Delay, function()
-		Shine.SendNetworkMessage( Client, "Shine_Web", {
-			URL = self.Config.URL,
-			Title = self.Config.Title,
-		}, true )
-	end )
 end
 
 function Plugin:ClientDisconnect( Client )
 	if not Client then return end
 	if Client:GetIsVirtual() then return end
 	local player = Client:GetControllingPlayer()
-	local userData=self:GetUserData(Client)
-	if #userData.leave == 0 then return end
 
-	Shine:NotifyDualColour( Shine.GetAllClients(),
-	userData.prefixColor[1], userData.prefixColor[2], userData.prefixColor[3],"[战区通知]",
-	userData.leaveColor[1], userData.leaveColor[2], userData.leaveColor[3], string.format(userData.leave,player:GetName()))
+	local groupData,userData = self:GetAdvertData(Client)
+	local prefix = userData.prefixColor or groupData.prefixColor
+	local leaveColor = userData.leaveColor or groupData.leaveColor
+	local leaveMessage = userData.leave or groupData.leave
+
+	if #leaveMessage > 0 then
+		Shine:NotifyDualColour( Shine.GetAllClients(), prefix[1], prefix[2], prefix[3],"[战区通知]",
+				leaveColor[1], leaveColor[2], leaveColor[3], string.format(leaveMessage,player:GetName()))
+	end
 	-- Shared.Message("[CNCA] Member Exit:" .. tostring(Client:GetId()))
 end
 

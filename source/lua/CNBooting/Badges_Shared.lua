@@ -323,7 +323,7 @@ do
     end
     -- Shared.Message("Total Badges:" .. #gBadges)
 
-    local customBadgeFiles={}
+    local customBadgeFiles = {}
     local customBadgeIndex = 0
     Shared.GetMatchingFileNames( "ui/customBadges/*.dds", false, customBadgeFiles )
     table.sort(customBadgeFiles)
@@ -346,6 +346,7 @@ do
             end
         end
     end
+    customBadgeFiles = nil
 ------------------------
 
     gBadges = enum(gBadges)

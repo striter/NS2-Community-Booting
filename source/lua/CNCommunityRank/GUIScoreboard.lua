@@ -97,6 +97,18 @@ local kCommunityRankIndex =
     ["RANK_HOST"] = 6,
     ["RANK_ADMIN"] = 6,
 }
+
+local kDynamicTimer = 0
+local kDynamicEmblems = {}
+
+local temporaryEmblemFiles ={}
+Shared.GetMatchingFileNames( "ui/dynamicEmblems/*.dds", false, temporaryEmblemFiles)
+table.sort(temporaryEmblemFiles)
+for _, dynamicEmblemFile in ipairs(temporaryEmblemFiles) do
+    table.insert(kDynamicEmblems, PrecacheAsset(dynamicEmblemFile))
+end
+temporaryEmblemFiles = nil 
+
 ---------------
 local lastScoreboardVisState = false
 
@@ -565,7 +577,14 @@ function GUIScoreboard:Update(deltaTime)
     PROFILE("GUIScoreboard:Update")
 
     local vis = self.visible and not self.hiddenOverride
-
+    ------------
+    if vis then
+        kDynamicTimer = kDynamicTimer + deltaTime
+    else
+        kDynamicTimer = 0
+    end
+    ----
+    
     -- Show all the elements the frame after sorting them
     -- so it doesn't appear to shift when we open
     local displayScoreboard = self.slidePercentage > -1 and not self.hiddenOverride
@@ -917,10 +936,25 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         end
         
         currentPosition.y = currentY
-        player["Background"]:SetPosition(currentPosition)
-        player["Background"]:SetColor(ConditionalValue(isCommander, commanderColor, teamColor))
-        player["Background"]:SetTexturePixelCoordinates(0, emblemIndex *41,571,(emblemIndex +1)*41)
-
+        local background = player["Background"]
+        background:SetPosition(currentPosition)
+        background:SetColor(ConditionalValue(isCommander, commanderColor, teamColor))
+        if emblemIndex < 0 then
+            local dynamicEmblemIndex = - emblemIndex
+            if dynamicEmblemIndex <= #kDynamicEmblems then
+                background:SetTexture(kDynamicEmblems[dynamicEmblemIndex])
+                
+                local dynamicIndex = math.floor(kDynamicTimer * 12)
+                background:SetTexturePixelCoordinates(0, dynamicIndex *32,512,(dynamicIndex +1)*32)
+            else
+                emblemIndex = 0
+            end
+        end
+        
+        if emblemIndex >= 0 then
+            background:SetTexture(kCommunityRankBGs)
+            background:SetTexturePixelCoordinates(0, emblemIndex *41,571,(emblemIndex +1)*41)
+        end
         -- Handle local player highlight
         if ScoreboardUI_IsPlayerLocal(playerName) then
             if self.playerHighlightItem:GetParent() ~= player["Background"] then
