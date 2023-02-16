@@ -88,12 +88,12 @@ local kCommunityRankBGs = PrecacheAsset("ui/CommunityRankBGs.dds")
 
 local kCommunityRankIndex =
 {
-    ["RANK_T1"] = 1,
-    ["RANK_T2"] = 2,
-    ["RANK_T3"] = 3,
+    ["RANK_C1"] = 1,
+    ["RANK_C2"] = 2,
+    ["RANK_C3"] = 3,
     ["RANK_LIVER"] = 3,
-    ["RANK_T4"] = 4,
-    ["RANK_T5"] = 5,
+    ["RANK_C4"] = 4,
+    ["RANK_C5"] = 5,
     ["RANK_HOST"] = 6,
     ["RANK_ADMIN"] = 6,
 }
