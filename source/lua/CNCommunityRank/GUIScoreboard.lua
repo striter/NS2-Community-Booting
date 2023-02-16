@@ -33,8 +33,8 @@ local kIconSize = Vector(40, 40, 0)
 local kIconOffset = Vector(-15, -10, 0)
 
 -- Shared constants.
-GUIScoreboard.kTeamInfoFontName      = Fonts.kArial_15
-GUIScoreboard.kPlayerStatsFontName   = Fonts.kArial_15
+GUIScoreboard.kTeamInfoFontName      = Fonts.kArial_15 
+GUIScoreboard.kPlayerStatsFontName   = Fonts.kArial_15 
 GUIScoreboard.kTeamNameFontName      = Fonts.kArial_17
 GUIScoreboard.kGameTimeFontName      = Fonts.kArial_17
 GUIScoreboard.kClickForMouseFontName = Fonts.kArial_17
@@ -107,7 +107,7 @@ table.sort(temporaryEmblemFiles)
 for _, dynamicEmblemFile in ipairs(temporaryEmblemFiles) do
     table.insert(kDynamicEmblems, PrecacheAsset(dynamicEmblemFile))
 end
-temporaryEmblemFiles = nil
+temporaryEmblemFiles = nil 
 
 ---------------
 local lastScoreboardVisState = false
@@ -584,7 +584,7 @@ function GUIScoreboard:Update(deltaTime)
         kDynamicTimer = 0
     end
     ----
-
+    
     -- Show all the elements the frame after sorting them
     -- so it doesn't appear to shift when we open
     local displayScoreboard = self.slidePercentage > -1 and not self.hiddenOverride
@@ -793,21 +793,21 @@ local function SetPlayerItemBadges( item ,numberSize , teamItemWidth, badgeTextu
         if badgeTextures[i] ~= nil then
             item.BadgeItems[i]:SetTexture( badgeTextures[i] )
             item.BadgeItems[i]:SetIsVisible( true )
-
+            
             if badgeColumns[i] == 10 then
                 icon = true
                 item.BadgeItems[i]:SetPosition(Vector(ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth, teamItemWidth - GUIScoreboard.kTeamColumnSpacingX * 10-kPlayerBadgeIconSize / 2), -kPlayerBadgeIconSize/2, 0) * GUIScoreboard.kScalingFactor)
-            else
+            else   
                 item.BadgeItems[i]:SetPosition(Vector(numberSize + kPlayerItemLeftMargin + (i-1) * kPlayerVoiceChatIconSize + (i-1) * kPlayerBadgeRightPadding, -kPlayerVoiceChatIconSize/2, 0) * GUIScoreboard.kScalingFactor)
             end
 
         else
             item.BadgeItems[i]:SetIsVisible( false )
         end
-
+        
     end
 
-    return icon
+    return icon 
 
 end
 
@@ -923,7 +923,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
         local defaultRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
         local visible = not fakeBot and defaultRankIndex > 0
-
+        
         local emblemIndex = defaultRankIndex
         if playerRecord.Emblem and playerRecord.Emblem ~= 0  then       --Override by emblem setting
             emblemIndex = playerRecord.Emblem
@@ -931,9 +931,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
         local showEmblem = not fakeBot
         showEmblem = showEmblem and (teamNumber == kTeamReadyRoom or teamNumber == kSpectatorIndex)
-        if not showEmblem then]
+        if not showEmblem then
+            emblemIndex = 0
         end
-
+        
         currentPosition.y = currentY
         local background = player["Background"]
         background:SetPosition(currentPosition)
@@ -944,14 +945,14 @@ function GUIScoreboard:UpdateTeam(updateTeam)
                 background:SetTexture(kDynamicEmblems[dynamicEmblemIndex])
                 local frameRate = 16
                 local framePerSecond = 12
-                local currentFrame = (kDynamicTimer * framePerSecond) % frameRate
+                local currentFrame = (kDynamicTimer * framePerSecond) % frameRate 
                 local dynamicIndex = math.floor(currentFrame)
                 background:SetTexturePixelCoordinates(0, dynamicIndex *32,512,(dynamicIndex +1)*32)
             else
                 emblemIndex = 0
             end
         end
-
+        
         if emblemIndex >= 0 then
             background:SetTexture(kCommunityRankBGs)
             background:SetTexturePixelCoordinates(0, emblemIndex *41,571,(emblemIndex +1)*41)
@@ -967,7 +968,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
                 self.playerHighlightItem:SetColor(localPlayerHighlightColor)
             end
         end
-
+        
         player["Number"]:SetText(index..".")
         player["Name"]:SetText(playerName)
 
@@ -986,48 +987,48 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         -- Set player skill icon
         local skillIconOverrideSettings = CheckForSpecialBadgeRecipient(steamId)
         if skillIconOverrideSettings then
-
+            
             -- User has a special skill-tier icon tied to their steam Id.
-
+    
             -- Reset the skill icon's texture coordinates to the default normalized coordinates (0, 0), (1, 1).
             -- The shader depends on them being this way.
             player.SkillIcon:SetTextureCoordinates(0, 0, 1, 1)
-
+    
             -- Change the skill icon's shader to the one that will animate.
             player.SkillIcon:SetShader(skillIconOverrideSettings.shader)
             player.SkillIcon:SetTexture(skillIconOverrideSettings.tex)
             player.SkillIcon:SetFloatParameter("frameCount", skillIconOverrideSettings.frameCount)
-
+    
             -- Change the size so it doesn't touch the weapon name text.
             player.SkillIcon:SetSize(kPlayerSkillIconSizeOverride * GUIScoreboard.kScalingFactor)
-
+    
             -- Change the tooltip of the skill icon.
             player.SkillIcon.tooltipText = skillIconOverrideSettings.tooltip
-
+            
         else
-
+            
             -- User has no special skill-tier icon.
-
+    
             -- Reset the shader and texture back to the default one.
             player.SkillIcon:SetShader("shaders/GUIBasic.surface_shader")
             player.SkillIcon:SetTexture(kPlayerSkillIconTexture)
             player.SkillIcon:SetSize(kPlayerSkillIconSize * GUIScoreboard.kScalingFactor)
-
+    
             local isBot = steamId == 0
             local skillTier, tierName, cappedSkill = GetPlayerSkillTier(playerSkill, isRookie, adagradSum, isBot)
             player.SkillIcon.tooltipText = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString(tierName), skillTier)
-
+    
             local iconIndex = skillTier + 2
             player.SkillIcon:SetTexturePixelCoordinates(0, iconIndex * 32, 100, (iconIndex + 1) * 32 - 1)
-
+    
             if cappedSkill then
                 sumPlayerSkill = sumPlayerSkill + cappedSkill
                 numPlayerSkill = numPlayerSkill + 1
             end
-
+            
         end
-
-
+        
+        
         numRookies = numRookies + (isRookie and 1 or 0)
         numBots = numBots + (isBot and 1 or 0)
 
@@ -1057,10 +1058,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Name"]:SetColor(nameColor)
 
         -- resource color
-        if resourcesStr then
+    	if resourcesStr then
             local resourcesNumber = tonumber(resourcesStr)
             if resourcesNumber == nil then 	-- necessary at gamestart with bots
-                resourcesNumber = 0
+                resourcesNumber = 0 
             end
             if resourcesNumber < GUIScoreboard.kHighPresThreshold then
                 player["Resources"]:SetColor(baseColor)
@@ -1117,7 +1118,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
         player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, defaultRankIndex *80,80,(defaultRankIndex +1)*80)
         player["CommunityRankIcon"]:SetIsVisible(visible)
-
+        
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
         pos = (statusPos - kPlayerBadgeRightPadding) * GUIScoreboard.kScalingFactor
@@ -1198,12 +1199,12 @@ function GUIScoreboard:UpdateTeam(updateTeam)
                 else
                     local overFavorite = GUIItemContainsPoint(self.favoriteButton, mouseX, mouseY)
                     local overBlocked = GUIItemContainsPoint(self.blockedButton, mouseX, mouseY)
-
+                    
                     if overFavorite then
                         self.favoriteButton:SetColor(kFavoriteMouseOverColor)
                         -- Todo: Tooltip?
                     else
-                        self.favoriteButton:SetColor(kFavoriteColor)
+                        self.favoriteButton:SetColor(kFavoriteColor)                        
                     end
 
                     if overBlocked then
@@ -1299,9 +1300,9 @@ function GUIScoreboard:CreatePlayerItem()
     playerVoiceIcon:SetSize(Vector(kPlayerVoiceChatIconSize, kPlayerVoiceChatIconSize, 0) * GUIScoreboard.kScalingFactor)
     playerVoiceIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
     playerVoiceIcon:SetPosition(Vector(
-            playerItemChildX,
-            -kPlayerVoiceChatIconSize/2,
-            0) * GUIScoreboard.kScalingFactor)
+                playerItemChildX,
+                -kPlayerVoiceChatIconSize/2,
+                0) * GUIScoreboard.kScalingFactor)
     playerItemChildX = playerItemChildX + kPlayerVoiceChatIconSize
     playerVoiceIcon:SetTexture(kMutedVoiceTexture)
     playerVoiceIcon:SetStencilFunc(GUIItem.NotEqual)
@@ -1339,8 +1340,8 @@ function GUIScoreboard:CreatePlayerItem()
     playerNameItem:SetTextAlignmentX(GUIItem.Align_Min)
     playerNameItem:SetTextAlignmentY(GUIItem.Align_Center)
     playerNameItem:SetPosition(Vector(
-            playerItemChildX,
-            0, 0) * GUIScoreboard.kScalingFactor)
+                playerItemChildX,
+                0, 0) * GUIScoreboard.kScalingFactor)
     playerNameItem:SetColor(Color(1, 1, 1, 1))
     playerNameItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(playerNameItem)
@@ -1355,7 +1356,7 @@ function GUIScoreboard:CreatePlayerItem()
     playerSkillIcon:SetTexture(kPlayerSkillIconTexture)
     playerSkillIcon:SetTexturePixelCoordinates(0, 0, 100, 31)
     playerItem:AddChild(playerSkillIcon)
-
+    
     -- Status text item.
     local statusItem = GUIManager:CreateTextItem()
     statusItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1368,9 +1369,9 @@ function GUIScoreboard:CreatePlayerItem()
     statusItem:SetColor(Color(1, 1, 1, 1))
     statusItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(statusItem)
-
+    
     currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 35
-
+    
     -- Score text item.
     local scoreItem = GUIManager:CreateTextItem()
     scoreItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1383,9 +1384,9 @@ function GUIScoreboard:CreatePlayerItem()
     scoreItem:SetColor(Color(1, 1, 1, 1))
     scoreItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(scoreItem)
-
+    
     currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 30
-
+    
     -- Kill text item.
     local killsItem = GUIManager:CreateTextItem()
     killsItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1398,9 +1399,9 @@ function GUIScoreboard:CreatePlayerItem()
     killsItem:SetColor(Color(1, 1, 1, 1))
     killsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(killsItem)
-
+    
     currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
-
+    
     -- assists text item.
     local assistsItem = GUIManager:CreateTextItem()
     assistsItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1413,9 +1414,9 @@ function GUIScoreboard:CreatePlayerItem()
     assistsItem:SetColor(Color(1, 1, 1, 1))
     assistsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(assistsItem)
-
+    
     currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
-
+    
     -- Deaths text item.
     local deathsItem = GUIManager:CreateTextItem()
     deathsItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1428,9 +1429,9 @@ function GUIScoreboard:CreatePlayerItem()
     deathsItem:SetColor(Color(1, 1, 1, 1))
     deathsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(deathsItem)
-
+    
     currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
-
+    
     -- Resources text item.
     local resItem = GUIManager:CreateTextItem()
     resItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1443,7 +1444,7 @@ function GUIScoreboard:CreatePlayerItem()
     resItem:SetColor(Color(1, 1, 1, 1))
     resItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(resItem)
-
+    
     currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- Ping text item.
@@ -1458,7 +1459,7 @@ function GUIScoreboard:CreatePlayerItem()
     pingItem:SetColor(Color(1, 1, 1, 1))
     pingItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(pingItem)
-
+    
     local playerTextIcon = GUIManager:CreateGraphicItem()
     playerTextIcon:SetSize(Vector(kPlayerVoiceChatIconSize, kPlayerVoiceChatIconSize, 0) * GUIScoreboard.kScalingFactor)
     playerTextIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
@@ -1467,7 +1468,7 @@ function GUIScoreboard:CreatePlayerItem()
     playerTextIcon:SetIsVisible(false)
     playerTextIcon:SetColor(GUIScoreboard.kVoiceMuteColor)
     playerItem:AddChild(playerTextIcon)
-
+    
     local steamFriendIcon = GUIManager:CreateGraphicItem()
     steamFriendIcon:SetSize(Vector(kPlayerVoiceChatIconSize, kPlayerVoiceChatIconSize, 0) * GUIScoreboard.kScalingFactor)
     steamFriendIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
@@ -1492,34 +1493,34 @@ function GUIScoreboard:CreatePlayerItem()
     table.insert(iconTable, steamFriendIcon)
     table.insert(iconTable, playerVoiceIcon)
     table.insert(iconTable, playerTextIcon)
-
+    
     return { Background = playerItem, Number = playerNumber, Name = playerNameItem,
-             Voice = playerVoiceIcon, Status = statusItem, SkillIcon = playerSkillIcon, Score = scoreItem, Kills = killsItem,
-             Assists = assistsItem, Deaths = deathsItem, Resources = resItem, Ping = pingItem,
-             BadgeItems = badgeItems, Text = playerTextIcon,
-             SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon
+        Voice = playerVoiceIcon, Status = statusItem, SkillIcon = playerSkillIcon, Score = scoreItem, Kills = killsItem,
+        Assists = assistsItem, Deaths = deathsItem, Resources = resItem, Ping = pingItem,
+        BadgeItems = badgeItems, Text = playerTextIcon,
+        SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon
     }
-
+    
 end
 
 local function HandlePlayerVoiceClicked(self)
     if MouseTracker_GetIsVisible() then
         local mouseX, mouseY = Client.GetCursorPosScreen()
         for t = 1, #self.teams do
-
+        
             local playerList = self.teams[t]["PlayerList"]
             for p = 1, #playerList do
-
+            
                 local playerItem = playerList[p]
                 if GUIItemContainsPoint(playerItem["Voice"], mouseX, mouseY) and playerItem["Voice"]:GetIsVisible() then
-
+                
                     local clientIndex = playerItem["ClientIndex"]
                     ChatUI_SetClientMuted(clientIndex, not ChatUI_GetClientMuted(clientIndex))
-
+                    
                 end
-
+                
             end
-
+            
         end
     end
 end
@@ -1528,21 +1529,21 @@ local function HandlePlayerTextClicked(self)
     if MouseTracker_GetIsVisible() then
         local mouseX, mouseY = Client.GetCursorPosScreen()
         for t = 1, #self.teams do
-
+        
             local playerList = self.teams[t]["PlayerList"]
             for p = 1, #playerList do
-
+            
                 local playerItem = playerList[p]
                 if GUIItemContainsPoint(playerItem["Text"], mouseX, mouseY) and playerItem["Text"]:GetIsVisible() then
-
+                
                     local clientIndex = playerItem["ClientIndex"]
                     local steamId = GetSteamIdForClientIndex(clientIndex)
                     ChatUI_SetSteamIdTextMuted(steamId, not ChatUI_GetSteamIdTextMuted(steamId))
-
+                    
                 end
-
+                
             end
-
+            
         end
 
         if self.favoriteButton and GUIItemContainsPoint(self.favoriteButton, mouseX, mouseY) then
@@ -1566,24 +1567,24 @@ local function HandlePlayerTextClicked(self)
                 self.favoriteButton.isServerFavorite = false
                 self.favoriteButton:SetTexture(self.kNotFavoriteTexture)
             end
-        end
-
+        end  
+        
     end
 end
 
 function GUIScoreboard:SetIsVisible(state)
-
+    
     self.hiddenOverride = not state
 
     -- Don't remove the deltatime parameter we use it to detect if the scoreboard get opened
     self:Update(0)
-
+    
 end
 
 function GUIScoreboard:GetIsVisible()
-
+    
     return not self.hiddenOverride
-
+    
 end
 
 function GUIScoreboard:SendKeyEvent(key, down)
@@ -1591,7 +1592,7 @@ function GUIScoreboard:SendKeyEvent(key, down)
     if ChatUI_EnteringChatMessage() then
         return false
     end
-
+    
     if GetIsBinding(key, "Scoreboard") then
         self.visible = down and not self.hiddenOverride
         if not self.visible then
@@ -1600,18 +1601,18 @@ function GUIScoreboard:SendKeyEvent(key, down)
             self.updateInterval = 0
         end
     end
-
+    
     if not self.visible then
         return false
     end
-
+    
     if key == InputKey.MouseButton0 and self.mousePressed["LMB"]["Down"] ~= down and down and not MainMenu_GetIsOpened() then
         HandlePlayerTextClicked(self)
-
+        
         local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex) or 0
         if self.hoverMenu.background:GetIsVisible() then
             return false
-            -- Display the menu for bots if dev mode is on (steamId is 0 but they have a proper clientIndex)
+        -- Display the menu for bots if dev mode is on (steamId is 0 but they have a proper clientIndex)
         elseif steamId ~= 0 or self.hoverPlayerClientIndex ~= 0 and Shared.GetDevMode() then
             local isTextMuted = ChatUI_GetSteamIdTextMuted(steamId)
             local isVoiceMuted = ChatUI_GetClientMuted(self.hoverPlayerClientIndex)
@@ -1624,18 +1625,18 @@ function GUIScoreboard:SendKeyEvent(key, down)
             local function muteVoice()
                 ChatUI_SetClientMuted(self.hoverPlayerClientIndex, not isVoiceMuted)
             end
-
+        
             self.hoverMenu:ResetButtons()
-
+            
             local teamColorBg
             local teamColorHighlight
             local playerName = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "Name")
             local teamNumber = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "EntityTeamNumber")
             local isCommander = Scoreboard_GetPlayerData(self.hoverPlayerClientIndex, "IsCommander") and GetIsVisibleTeam(teamNumber)
-
+            
             local textColor = Color(1, 1, 1, 1)
             local nameBgColor = Color(0, 0, 0, 0)
-
+            
             if isCommander then
                 teamColorBg = GUIScoreboard.kCommanderFontColor
             elseif teamNumber == 1 then
@@ -1645,45 +1646,45 @@ function GUIScoreboard:SendKeyEvent(key, down)
             else
                 teamColorBg = GUIScoreboard.kSpectatorColor
             end
-
+            
             local bgColor = teamColorBg * 0.1
             bgColor.a = 0.9
-
+            
             teamColorHighlight = teamColorBg * 0.75
             teamColorBg = teamColorBg * 0.5
-
+            
             self.hoverMenu:SetBackgroundColor(bgColor)
             self.hoverMenu:AddButton(playerName, nameBgColor, nameBgColor, textColor)
             self.hoverMenu:AddButton(Locale.ResolveString("SB_MENU_STEAM_PROFILE"), teamColorBg, teamColorHighlight, textColor, openSteamProf)
-
+            
             if Client.GetSteamId() ~= steamId then
                 self.hoverMenu:AddSeparator("muteOptions")
                 self.hoverMenu:AddButton(ConditionalValue(isVoiceMuted, Locale.ResolveString("SB_MENU_UNMUTE_VOICE"), Locale.ResolveString("SB_MENU_MUTE_VOICE")), teamColorBg, teamColorHighlight, textColor, muteVoice)
                 self.hoverMenu:AddButton(ConditionalValue(isTextMuted, Locale.ResolveString("SB_MENU_UNMUTE_TEXT"), Locale.ResolveString("SB_MENU_MUTE_TEXT")), teamColorBg, teamColorHighlight, textColor, muteText)
             end
-
+            
             self.hoverMenu:Show()
             self.badgeNameTooltip:Hide(0)
         end
     end
-
+    
     if key == InputKey.MouseButton0 and self.mousePressed["LMB"]["Down"] ~= down then
 
         self.mousePressed["LMB"]["Down"] = down
         if down then
             local mouseX, mouseY = Client.GetCursorPosScreen()
             self.isDragging = GUIItemContainsPoint(self.slidebarBg, mouseX, mouseY)
-
+            
             if not MouseTracker_GetIsVisible() then
                 SetMouseVisible(self, true)
             else
                 HandlePlayerVoiceClicked(self)
             end
-
+            
             return true
         end
     end
-
+    
     if self.slidebarBg:GetIsVisible() then
         if key == InputKey.MouseWheelDown then
             self.slidePercentage = math.min(self.slidePercentage + 5, 100)
@@ -1705,5 +1706,5 @@ function GUIScoreboard:SendKeyEvent(key, down)
             return true
         end
     end
-
+    
 end
