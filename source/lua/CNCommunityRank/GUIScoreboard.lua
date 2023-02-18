@@ -105,7 +105,11 @@ local temporaryEmblemFiles ={}
 Shared.GetMatchingFileNames( "ui/dynamicEmblems/*.dds", false, temporaryEmblemFiles)
 table.sort(temporaryEmblemFiles)
 for _, dynamicEmblemFile in ipairs(temporaryEmblemFiles) do
-    table.insert(kDynamicEmblems, PrecacheAsset(dynamicEmblemFile))
+    local indexStart = string.find(dynamicEmblemFile,'_') + 1
+    local indexEnd = string.find(dynamicEmblemFile,".dds") - 1
+    local frameCount = string.sub(dynamicEmblemFile,indexStart,indexEnd ) or "16"
+    
+    table.insert(kDynamicEmblems, {texture = PrecacheAsset(dynamicEmblemFile) , count = tonumber(frameCount)})
 end
 temporaryEmblemFiles = nil 
 
@@ -942,10 +946,11 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         if emblemIndex < 0 then
             local dynamicEmblemIndex = - emblemIndex
             if dynamicEmblemIndex <= #kDynamicEmblems then
-                background:SetTexture(kDynamicEmblems[dynamicEmblemIndex])
-                local frameRate = 16
+                local dynamicEmblemData = kDynamicEmblems[dynamicEmblemIndex]
+                background:SetTexture(dynamicEmblemData.texture)
+                local frameCount = dynamicEmblemData.count
                 local framePerSecond = 12
-                local currentFrame = (kDynamicTimer * framePerSecond) % frameRate 
+                local currentFrame = (kDynamicTimer * framePerSecond) % frameCount 
                 local dynamicIndex = math.floor(currentFrame)
                 background:SetTexturePixelCoordinates(0, dynamicIndex *32,512,(dynamicIndex +1)*32)
             else

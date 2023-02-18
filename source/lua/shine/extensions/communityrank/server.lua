@@ -76,15 +76,14 @@ local function RankPlayerDelta(self,_steamId,_delta)
     local data = GetPlayerData(self,_steamId)
     local rank = data.rank or 0
     rank = rank + _delta
+    data.rank = rank
     
     local target = Shine.GetClientByNS2ID(_steamId)
     if target then 
         local player = target:GetControllingPlayer()
-        rank = math.max(rank, -player.skill)
+        data.rank = math.max(rank, -player.skill)
         player:SetPlayerExtraData(data)
     end
-
-    data.rank = rank
 end
 
 
