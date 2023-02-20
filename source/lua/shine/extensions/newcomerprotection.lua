@@ -119,7 +119,7 @@ function Plugin:OnPlayerRespawn(playingTeam,player, origin, angles)
 				result = (result or "") .. equipment.info
 			end
 		end
-		local weapon=player:GetWeaponInHUDSlot(kPrimaryWeaponSlot)
+		local weapon = player:GetWeaponInHUDSlot(kPrimaryWeaponSlot)
 		if weapon then
 			player:SetActiveWeapon(weapon:GetMapName())
 		end
@@ -136,6 +136,7 @@ end
 
 
 function Plugin:ClientConfirmConnect( Client )
+	if Client:GetIsVirtual() then return end
 	
 	local player = Client:GetControllingPlayer()
 	if not player then return end

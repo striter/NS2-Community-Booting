@@ -210,6 +210,8 @@ function Plugin:ProcessClient( Client )
 end
 
 function Plugin:ClientConnect( Client )
+	if Client:GetIsVirtual() then return end
+	
 	self:ProcessClient( Client )
 end
 

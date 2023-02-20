@@ -61,7 +61,7 @@ end
 local TeamNames = { "陆战队","卡拉异形" }
 function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	if ShineForce or NewTeam == kTeamReadyRoom or NewTeam == kSpectatorIndex then return end
-	if self.Config.IgnoreBots and Player:GetIsVirtual() then return end
+	if Player:GetIsVirtual() then return end
 	
 	local skill = Player:GetPlayerSkill()
 	
@@ -102,7 +102,7 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	return available
 end
 
-local function RestrictionDisplay(_client)
+local function RestrictionDisplay(self,_client)
 	local skillLimitMin = self.Config.SkillLimitMin
 	local skillLimitMax = self.Config.SkillLimitMax == -1 and "∞" or tostring(self.Config.SkillLimitMax)
 
@@ -111,14 +111,18 @@ end
 
 function Plugin:CreateCommands()
 
-	local showRestriction = self:BindCommand( "sh_restriction", "restriction", RestrictionDisplay , true) 
-	showRestriction:Help( "示例: !restriction 传回当前的队伍限制" )
-	
+	local function NotifyClient(_client)
+		RestrictionDisplay(self,_client:GetControllingPlayer())
+	end
 	local function NofityAll()
 		for client in Shine.IterateClients() do
-			RestrictionDisplay(client:GetControllingPlayer())
+			NotifyClient(client)
 		end
 	end
+	
+	local showRestriction = self:BindCommand( "sh_restriction", "restriction", NotifyClient , true) 
+	showRestriction:Help( "示例: !restriction 传回当前的队伍限制" )
+	
 	local function SetTeamSize(_client, _team1, _team2,_save)
 		self.Config.Team[kTeam1Index] = _team1
 		self.Config.Team[kTeam2Index] = _team2
@@ -152,7 +156,8 @@ end
 
 
 function Plugin:ClientConfirmConnect( Client )
-	RestrictionDisplay(Client)
+	if Client:GetIsVirtual() then return end
+	RestrictionDisplay(self,Client)
 end
 --Restrict teams also at voterandom
 function Plugin:PreShuffleOptimiseTeams ( TeamMembers )

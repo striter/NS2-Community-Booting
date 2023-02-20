@@ -27,6 +27,8 @@ if Server then
 
 	local baseGetCanJoinTeamNumber = NS2Gamerules.GetCanJoinTeamNumber
 	function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
+		if player.isVirtual then return true end		--Let bots in without any errors
+		
 		if not Plugin.EnabledGamemodes[Shine.GetGamemode()] then
 			return baseGetCanJoinTeamNumber(self,player,teamNumber)
 		end
@@ -72,8 +74,6 @@ if Server then
 		--		return false
 		--	end
 		--end
-		
-		
 		
 		return true
 	end
