@@ -1,4 +1,6 @@
-kTranslateMessage["SKILLTIER_TOOLTIP"]="段位%s"
+
+
+kTranslateMessage["SKILLTIER_TOOLTIP"]="段位 %s"
 kTranslateMessage["SKILLTIER_UNKNOWN"]=":<未知>"
 kTranslateMessage["SKILLTIER_BOT"]=":<机器人>"
 kTranslateMessage["SKILLTIER_ROOKIE"]="(T0):<新人上路>"
@@ -75,7 +77,7 @@ kTranslateMessage["BADGE_COMMUNITY_DEV"]="游戏开发者-社区团队"
 kTranslateMessage["BADGE_CONSTELLATION"]="星座(NS1捐赠者)"
 kTranslateMessage["BADGE_DEV"]="游戏开发者-官方团队"
 kTranslateMessage["BADGE_DEV_RETIRED"]="游戏开发者-已退休"
-kTranslateMessage["BADGE_EMPTY_SLOT"]="Emptybadgeslot"
+kTranslateMessage["BADGE_EMPTY_SLOT"]="空徽章栏"
 kTranslateMessage["BADGE_ENSL_2017"]="ENSL第10赛季冠军"
 kTranslateMessage["BADGE_ENSL_COMMUNITY_CHAMPION_2019_BRONZE"]="ENSL2019社区赛 季军"
 kTranslateMessage["BADGE_ENSL_COMMUNITY_CHAMPION_2019_GOLD"]="ENSL2019社区赛 冠军"

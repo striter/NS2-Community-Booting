@@ -15,6 +15,7 @@ function AddHintModPanel(material, url,hint)
 end
 
 ModLoader.SetupFileHook("lua/NetworkMessages_Server.lua", "lua/CNBooting/NetworkMessages_Server.lua", "post")
+ModLoader.SetupFileHook( "lua/Gamerules.lua", "lua/CNBooting/Gamerules.lua", "post" )
 ModLoader.SetupFileHook( "lua/NS2Gamerules.lua", "lua/CNBooting/NS2Gamerules.lua", "post" )
 ModLoader.SetupFileHook( "lua/Shared.lua", "lua/CNBooting/Shared.lua", "post" )
 ModLoader.SetupFileHook( "lua/Utility.lua", "lua/CNBooting/Utility.lua", "post" )

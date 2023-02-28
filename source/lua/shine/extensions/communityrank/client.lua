@@ -65,7 +65,9 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                             description = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString("SKILLTIER_BOT"))
                         else
                             description = skillIcon.tooltipText
-                            description = string.format("%s \n社区%s \n段位分: %i\nNS2ID: %i",description , Locale.ResolveString(playerRecord.Group), playerRecord.Skill,playerRecord.SteamId)
+                            local communityRankString = string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(playerRecord.Group))
+                            local skillTierString = string.format(Locale.ResolveString("SKILL_TIER"),playerRecord.Skill)
+                            description = string.format("%s \n%s \n%s\nNS2ID: %i",description , communityRankString, skillTierString,playerRecord.SteamId)
                         end
                         scoreboard.badgeNameTooltip:SetText(description)
                     end

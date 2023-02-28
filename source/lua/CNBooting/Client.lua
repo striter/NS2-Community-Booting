@@ -24,6 +24,7 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_RANDOM_SCALE"]="随机大小"
     kTranslateMessage["VOTE_RANDOM_SCALE_QUERY"]="给所有人随机大小?"
 
+    kTranslateMessage["COMMUNITY_RANK"]="社区 %s"
     kTranslateMessage["RANK_HOST"] = "(C6):<萌新>"
     kTranslateMessage["RANK_ADMIN"] = "(C5):<管理员>"
     kTranslateMessage["RANK_C5"] = "(C5):<Onos>"
@@ -34,6 +35,8 @@ if kTranslateMessage then
     kTranslateMessage["RANK_DEFAULT"] = "(C0):<Hydra>"
     kTranslateMessage["RANK_LIVER"] = "(C3):<Vokex>"
     kTranslateMessage["RANK_INVALID"] = "(C?):<未知>"
+    
+    kTranslateMessage["SKILL_TIER"]="段位分: %i"
 end
 
 if kLocales then
@@ -62,14 +65,16 @@ if kLocales then
     kLocales["VOTE_RANDOM_SCALE"]="Vote random scale"
     kLocales["VOTE_RANDOM_SCALE_QUERY"]="Dispatch everyone random scale?"
 
-    kLocales["RANK_HOST"] = "(C6):<Newcomer>"
-    kLocales["RANK_ADMIN"] = "(C5):<Admin>"
-    kLocales["RANK_C5"] = "(C5):<Onos>"
-    kLocales["RANK_C4"] = "(C4):<Fade>"
-    kLocales["RANK_C3"] = "(C3):<Lerk>"
-    kLocales["RANK_C2"] = "(C2):<Gorge>"
-    kLocales["RANK_C1"] = "(C1):<Skulk>"
-    kLocales["RANK_DEFAULT"] = "(C0):<Hydra>"
-    kLocales["RANK_LIVER"] = "(C3):<Vokex>"
-    kLocales["RANK_INVALID"] = "(C?):<Unknown>"
+    kLocales["SKILL_TIER"]="Tier Score: %i"
+    kLocales["RANK_HOST"] = ":<Newcomer> (C6)"
+    kLocales["RANK_ADMIN"] = ":<Admin> (C5)"
+    kLocales["RANK_C5"] = ":<Onos> (C5)"
+    kLocales["RANK_C4"] = ":<Fade> (C4)"
+    kLocales["RANK_C3"] = ":<Lerk> (C3)"
+    kLocales["RANK_C2"] = ":<Gorge> (C2)"
+    kLocales["RANK_C1"] = ":<Skulk> (C1)"
+    kLocales["RANK_DEFAULT"] = ":<Hydra> (C0)"
+    kLocales["RANK_LIVER"] = ":<Vokex> (C3)"
+    kLocales["RANK_INVALID"] = ":<Unknown> (C?)"
+    kLocales["COMMUNITY_RANK"]="NS2CN Tier %s"
 end 

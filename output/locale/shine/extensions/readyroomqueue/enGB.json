@@ -1,0 +1,18 @@
+{
+  "NOTIFY_PREFIX": "[PlayerSlotQueue]",
+  "QUEUE_CHANGED": "A player in front of you left the player slot queue. Your new position is {Position}.",
+  "QUEUE_CHANGED_VIP": "A VIP player joined the player slot queue in front of you. Your new position is {Position}.",
+  "PIORITY_QUEUE_CHANGED": "A player in front of you left the reservered slot queue. You are the {Position} spectator in the reserved slot queue.",
+  "PIORITY_QUEUE_CHANGED_VIP": "A VIP player joined the reservered slot queue in front of you. You are the {Position} spectator in the reserved slot queue.",
+  "QUEUE_ADDED":  "You joined the player slot queue! Your current position is {Position}. To leave the queue enter !rr_dequeue into the chat.",
+  "PIORITY_QUEUE_ADDED": "You joined the reserved slot queue! Your current position is {Position}. To leave the queue enter !rr_dequeue into the chat.",
+  "QUEUE_POSITION":  "Your current position in the player slot queue is {Position}.",
+  "PIORITY_QUEUE_POSITION": "Your current position in the reserved slot queue is {Position}.",
+  "QUEUE_POSITION_UNKNOWN": "You haven't joined the player slot queue yet!",
+  "DEQUEUE_SUCCESS": "You left the players slot queue!",
+  "QUEUE_LEAVE": "A player slot became available. You now get moved to the Ready Room! Thanks for waiting.",
+  "ENQUEUE_ERROR_PLAYER": "Only spectators can queue for a player slot!",
+  "QUEUE_INFORM": "If you want to play please press F4 or enter !rr_enqueue into the chat. Currently {Position} player are waiting for a player slot!",
+  "QUEUE_WELCOME_BACK": "Welcome back! We restored your previous player slot queue position ({Position}). To leave the queue enter !rr_dequeue into the chat.",
+  "QUEUE_WAITTIME": "Average queue time is %s. You may want to consider seeding a empty server."
+}

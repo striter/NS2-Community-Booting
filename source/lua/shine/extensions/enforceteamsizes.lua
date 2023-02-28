@@ -58,6 +58,19 @@ function Plugin:GetNumPlayers(Team)
 end
 
 
+function Plugin:GetPlayerLimit(Gamerules,Team)
+	local playerLimit = self.Config.Team[Team]
+	if self.Config.IncreaseByForceJoins then
+		local maxPlayers = math.max(self:GetNumPlayers(Gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(Gamerules:GetTeam(kTeam2Index)))
+		playerLimit = math.max(playerLimit,maxPlayers)
+	end
+	return playerLimit
+end
+
+function Plugin:GetMaxPlayers(Gamerules)
+	return self:GetPlayerLimit(Gamerules,kTeam1Index) + self:GetPlayerLimit(Gamerules,kTeam2Index)
+end
+
 local TeamNames = { "陆战队","卡拉异形" }
 function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	if ShineForce or NewTeam == kTeamReadyRoom or NewTeam == kSpectatorIndex then return end
@@ -78,12 +91,7 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	end
 	
 	--Check if team is above MaxPlayers
-	local playerLimit = self.Config.Team[NewTeam]
-	if self.Config.IncreaseByForceJoins then
-		local maxPlayers = math.max(self:GetNumPlayers(Gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(Gamerules:GetTeam(kTeam2Index)))
-		playerLimit = math.max(playerLimit,maxPlayers)
-	end
-	
+	local playerLimit = self:GetPlayerLimit(Gamerules,NewTeam)
 	if self:GetNumPlayers(Gamerules:GetTeam(NewTeam)) >= playerLimit then
 		self:Notify(Player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[NewTeam] ,playerLimit),
 				self.Config.MessageNameColor,nil)

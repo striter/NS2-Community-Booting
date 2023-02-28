@@ -194,24 +194,14 @@ end
 
 function Plugin:ProcessClient( Client )
 	local Servers = self.Config.Servers
-	local IsUser = Shine:GetUserData( Client )
-
 	for i = 1, #Servers do
-		local Data = Servers[ i ]
-		
-		if Data.UsersOnly then
-			if IsUser then
-				self:SendServerData( Client, i, Data )
-			end
-		else
-			self:SendServerData( Client, i, Data )
-		end
+		local Data = Servers[i]
+		self:SendServerData( Client, i, Data )
 	end
 end
 
 function Plugin:ClientConnect( Client )
 	if Client:GetIsVirtual() then return end
-	
 	self:ProcessClient( Client )
 end
 

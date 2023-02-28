@@ -286,6 +286,6 @@ kShinePluginsTranslations["readyroomqueue"]["QUEUE_POSITION_UNKNOWN"]= "还未�
 kShinePluginsTranslations["readyroomqueue"]["DEQUEUE_SUCCESS"]= "停止了排队!"
 kShinePluginsTranslations["readyroomqueue"]["QUEUE_LEAVE"]= "排队成功. 已被挪到预备室!  感谢你的耐心等待,请尽快加入游戏."
 kShinePluginsTranslations["readyroomqueue"]["ENQUEUE_ERROR_PLAYER"]= "只有观战可以进入排队!"
-kShinePluginsTranslations["readyroomqueue"]["QUEUE_INFORM"]= "如果你想进场游戏请按下 |F4建| 或者再聊天框输入 !rr_enqueue. 目前有 {Position} 个玩家正在排队!"
+kShinePluginsTranslations["readyroomqueue"]["QUEUE_INFORM"]= "如果你想进场游戏请按下 [F4] 或者再聊天框输入 !rr_enqueue. 目前有 {Position} 个玩家正在排队!"
 kShinePluginsTranslations["readyroomqueue"]["QUEUE_WELCOME_BACK"]= "欢迎回来! 你的排队序号已被复原 ({Position}). 聊天框输入 !rr_dequeue 离开队列."
 kShinePluginsTranslations["readyroomqueue"]["QUEUE_WAITTIME"]= "当前服务器的平均排队时间为 %s. 可以考虑暖暖别的服务器."

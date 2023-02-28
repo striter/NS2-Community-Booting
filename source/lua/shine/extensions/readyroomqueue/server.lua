@@ -122,6 +122,16 @@ function Plugin:OnFirstThink()
     end )
 end
 
+function Plugin:ClientConnect( Client )
+
+    if not Client or Client:GetIsVirtual() then return end
+
+    if Client:GetIsSpectator() then return end
+
+    local player = Client:GetControllingPlayer()
+    GetGamerules():JoinTeam( player, kSpectatorIndex, true )
+end
+
 function Plugin:ClientDisconnect( Client )
     if not Client or Client:GetIsVirtual() then return end
 

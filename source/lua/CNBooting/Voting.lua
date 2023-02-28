@@ -5,11 +5,11 @@
 --    Created by:   Brian Cronin (brianc@unknownworlds.com)
 --
 -- ========= For more information, visit us at http://www.unknownworlds.com =====================
-local kVoteExpireTime = 20
+local kVoteExpireTime = 30
 local kDefaultVoteExecuteTime = 30
 local kNextVoteAllowedAfterTime = 50
 -- How many seconds must pass before a client can start another vote of a certain type after a failed vote.
-local kStartVoteAfterFailureLimit = 3 * 60
+local kStartVoteAfterFailureLimit = 60 * 1
 
 Shared.RegisterNetworkMessage("SendVote", { voteId = "integer", choice = "boolean" })
 kVoteState = enum( { 'InProgress', 'Passed', 'Failed' } )
@@ -533,21 +533,6 @@ if Client then
 
     end
 
-    local kBotDoomTeam = {
-        {title = "取消增幅",team = 0},
-        {title = "<边境拓荒者部队>",team = 1},
-        {title = "<卡拉异形>",team = 2},
-    }
-    local function GetBotsDoomList()
-        local menuItems = { }
-        for p = 1, #kBotDoomTeam do
-            local data = kBotDoomTeam[p]
-            table.insert(menuItems, { text = data.title, extraData = {title=data.title , team = data.team } })
-        end
-
-        return menuItems
-    end
-
     local function SetupAdditionalVotes(voteMenu)
         if Shine then
 
@@ -563,15 +548,18 @@ if Client then
             if SSVPlugin then
                 local function GetServerList()
 
+                    local address = Client.GetConnectedServerAddress()
                     local menuItems = { }
                     if  SSVPlugin.Enabled then
                         for ID , ServerData in ipairs(SSVPlugin.QueryServers) do
                             local ip = ServerData.IP .. ":" .. ServerData.Port
-                            table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(8人面包车)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 8 } })
-                            table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(14人面包车)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 14} }) 
-                            table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(20人大巴)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 20 } })
-                            table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(一半人)"), extraData = { ip = ip , name = ServerData.Name , onlyAccepted = true } } )
-                            table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"所有人"), extraData = { ip = ip , name = ServerData.Name , onlyAccepted = false } } )
+                            if address ~= ip then
+                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(8人面包车)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 8 } })
+                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(14人面包车)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 14} })
+                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(20人大巴)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 20 } })
+                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(一半人)"), extraData = { ip = ip , name = ServerData.Name , onlyAccepted = true } } )
+                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"所有人"), extraData = { ip = ip , name = ServerData.Name , onlyAccepted = false } } )
+                            end
                         end
                     end
                     return menuItems
@@ -587,14 +575,6 @@ if Client then
             end
 
         end
-        --         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_RANK_PLAYER"), GetPlayerList, function( msg )
-        --             AttemptToStartVote("VoteRankPlayer", { targetClient = msg.targetClient })
-        --         end)
-
-        -- AddVoteStartListener("VoteRankPlayer", function(msg)
-        --     return string.format(Locale.ResolveString("VOTE_RANK_PLAYER_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
-        -- end)
-
 
         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_FORCE_SPECTATE"), GetPlayerList, function( msg )
             AttemptToStartVote("VoteForceSpectator", { targetClient = msg.targetClient })
@@ -621,7 +601,6 @@ if Client then
             return Locale.ResolveString(string.format("VOTE_KILL_ALL_QUERY%i",random))
         end)
 
-
         AddVoteStartListener("VoteRandomScale", function(msg)
             return Locale.ResolveString("VOTE_RANDOM_SCALE_QUERY")
         end)
@@ -634,7 +613,6 @@ if Client then
     AddVoteSetupCallback(SetupAdditionalVotes)
 
 end
-
 
 if Server then
 
@@ -659,18 +637,12 @@ if Server then
         Shared.ConsoleCommand(string.format("sh_gagid %s %s", client:GetUserId(), 30 * 60))
     end)
 
-    --     SetVoteSuccessfulCallback("VoteRankPlayer", 1, function( msg )
-    --         local client = Server.GetClientById(msg.targetClient)
-    --         if not client then return end
-    --         Shared.ConsoleCommand(string.format("sh_rank_delta %s %s", client:GetUserId(), 100))
-    --     end)
-
     SetVoteSuccessfulCallback("VoteForceSpectator", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)
         if not client then return end
         local Player = client:GetControllingPlayer()
         if not Player then return end
-        GetGamerules():JoinTeam( Player, kSpectatorIndex, true, true )
+        GetGamerules():JoinTeam( Player, kSpectatorIndex, true )
     end)
 
     SetVoteSuccessfulCallback("VoteKillPlayer", 1, function( msg )

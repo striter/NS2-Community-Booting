@@ -26,25 +26,19 @@ if Client then
     if not kTranslateMessage then
         kTranslateMessage = {}
         kLocales = {}
-        kBadgesMessage = {}
     end
     
     Script.Load("lua/CNLocalize/CNStrings.lua")
     Script.Load("lua/CNLocalize/CNStringsMenu.lua")
-    Script.Load("lua/CNLocalize/CNBadges.lua")
     local baseResolveString = Locale.ResolveString
     function CNLocalizeResolve(input)
         if not input then return "" end
 
-        local resolvedString = gForceLocalize and rawget(kTranslateMessage,input) or rawget(kLocales,input)
+        local resolvedString = gForceLocalize and rawget(kTranslateMessage,input) or nil
+        resolvedString = resolvedString or rawget(kLocales,input)
         return resolvedString or baseResolveString(input)
     end
     Locale.ResolveString = CNLocalizeResolve
-    
-    function BadgesLocalize(input)
-        if not input then return "" end
-        return rawget(kBadgesMessage,input) or input
-    end
     
     -- Fonts Fix
     ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "post")
