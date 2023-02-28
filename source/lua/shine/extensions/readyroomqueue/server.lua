@@ -129,7 +129,10 @@ function Plugin:ClientConnect( Client )
     if Client:GetIsSpectator() then return end
 
     local player = Client:GetControllingPlayer()
-    GetGamerules():JoinTeam( player, kSpectatorIndex, true )
+    local gamerules = GetGamerules()
+    if not gamerules:GetCanJoinPlayingTeam(player) then
+        GetGamerules():JoinTeam( player, kSpectatorIndex, true )
+    end
 end
 
 function Plugin:ClientDisconnect( Client )

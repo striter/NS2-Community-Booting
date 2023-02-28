@@ -62,7 +62,7 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                     if skillIcon:GetIsVisible() and GUIItemContainsPoint(skillIcon, mouseX, mouseY) then
                         local description
                         if playerRecord.FakeBot or playerRecord.SteamId == 0 then
-                            description = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString("SKILLTIER_BOT"))
+                            description = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString("SKILLTIER_BOT"),-1)
                         else
                             description = skillIcon.tooltipText
                             local communityRankString = string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(playerRecord.Group))
