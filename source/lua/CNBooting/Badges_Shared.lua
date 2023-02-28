@@ -413,7 +413,7 @@ function Badges_GetMaxBadges()
 end
 
 function GetBadgeFormalName(badgename)
-    local fullString = badgename and Locale.ResolveString(badgename)
+    local fullString = BadgesLocalize(badgename)
 
     return fullString or "Custom Badge"
 end
