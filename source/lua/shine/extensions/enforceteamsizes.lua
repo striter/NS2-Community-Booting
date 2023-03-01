@@ -135,6 +135,11 @@ function Plugin:CreateCommands()
 		self.Config.Team[kTeam1Index] = _team1
 		self.Config.Team[kTeam2Index] = _team2
 
+		local RRQPlugin = Shine.Plugins["readyroomqueue"]
+		if RRQPlugin and RRQPlugin.Enabled then
+			RRQPlugin:Pop()
+		end
+		
 		NofityAll()
 		if _save then
 			self:SaveConfig()

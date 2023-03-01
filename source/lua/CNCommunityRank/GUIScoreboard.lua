@@ -1100,6 +1100,13 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
         local statusPos = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth + 30, (teamItemWidth - GUIScoreboard.kTeamColumnSpacingX * 10) + 60)
         playerStatus = player["Status"]:GetText()
+----
+        if playerStatus == Locale.ResolveString("STATUS_SPECTATOR") then
+            if playerRecord.QueueIndex > 0 then
+                player["Status"]:SetText(string.format(Locale.ResolveString("STATUS_QUEUE"),playerRecord.QueueIndex))
+            end
+        end
+------    
         if playerStatus == "-" or (playerStatus ~= Locale.ResolveString("STATUS_SPECTATOR") and teamNumber ~= 1 and teamNumber ~= 2) then
             playerStatus = ""
             player["Status"]:SetText("")

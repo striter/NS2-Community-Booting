@@ -122,17 +122,17 @@ function Plugin:OnFirstThink()
     end )
 end
 
-function Plugin:ClientConnect( Client )
+function Plugin:ClientConnect( _client )
 
-    if not Client or Client:GetIsVirtual() then return end
+    if not _client or _client:GetIsVirtual() then return end
 
-    local gamerules = GetGamerules()
-    if not gamerules then return end
-    if Client:GetIsSpectator() then return end
+    local gameRules = GetGamerules()
+    if not gameRules then return end
+    if _client:GetIsSpectator() then return end
 
-    local player = Client:GetControllingPlayer()
-    if gamerules:GetCanJoinPlayingTeam(player) then return end
-    gamerules:JoinTeam( player, kSpectatorIndex, true )
+    local player = _client:GetControllingPlayer()
+    if gameRules:JoinPlayingTeamValidation(player) then return end
+    gameRules:JoinTeam( player, kSpectatorIndex, true , true)
 end
 
 function Plugin:ClientDisconnect( Client )
@@ -180,7 +180,8 @@ function Plugin:PostJoinTeam( _, Player, _, NewTeam )
         self.HistoricPlayers:Remove( SteamId )
         position = self.PlayerQueue:Get( SteamId ) or 0
     end
-
+    Player:SetQueueIndex(position)
+    
     self:Pop()
 
     if not self:GetCanJoinPlayingTeam( Player ) then
@@ -251,7 +252,7 @@ function Plugin:SendQueuePosition( Client, Position )
     self:SendTranslatedNotify(Client, "QUEUE_POSITION", {
         Position = Position
     })
-
+    
     if self.AVGWaitTimeSampleSize > 0 then
         self:SendNetworkMessage( Client, "WaitTime", { Time = self.AVGWaitTime }, true )
     end
@@ -290,6 +291,7 @@ function Plugin:Enqueue( Client )
         })
     end
 
+    Client:GetControllingPlayer():SetQueueIndex(position)
     -- Save join time for later
     Client.RRQueueJoinTime = Shared.GetTime()
 end
@@ -304,6 +306,7 @@ function Plugin:UpdateQueuePositions( Queue, Message )
 
             if Position ~= i then
                 Queue:Add( SteamID, i )
+                Client:GetControllingPlayer():SetQueueIndex(Position)
                 self:SendTranslatedNotify( Client, Message, {
                     Position = i
                 })
@@ -330,7 +333,7 @@ function Plugin:Dequeue( Client )
 
     local position = self.PlayerQueue:Remove( SteamId )
     if not position then return false end
-
+    Client:GetControllingPlayer():SetQueueIndex(0)
     self:UpdateQueuePositions( self.PlayerQueue )
 
     position = self.ReservedQueue:Remove( SteamId )

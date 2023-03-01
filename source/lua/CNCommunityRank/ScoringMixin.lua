@@ -1,11 +1,11 @@
-ScoringMixin.networkVars.communityRank = "integer"
-
 local baseInitMixin = ScoringMixin.__initmixin
 function ScoringMixin:__initmixin()
     baseInitMixin(self)
     self.communityRank = 0
     self.fakeBot = false
     self.group = "RANK_INVALID"
+    self.emblem = 0
+    self.queueIndex = 0
 end
 
 function ScoringMixin:GetPlayerSkill()
@@ -57,6 +57,7 @@ if Server then
         self.communityRank = player.communityRank
         self.fakeBot = player.fakeBot
         self.emblem = player.emblem
+        self.queueIndex = player.queueIndex
 ---------
     end
 
@@ -68,6 +69,11 @@ if Server then
     
     function ScoringMixin:SetGroup(_group)
         self.group = _group
+    end
+    
+    function ScoringMixin:SetQueueIndex(_index)
+        Shared.Message(tostring(_index))
+        self.queueIndex = _index
     end
 end --End-Server
 

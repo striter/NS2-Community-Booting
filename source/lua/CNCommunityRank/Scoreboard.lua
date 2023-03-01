@@ -116,6 +116,7 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.FakeBot = pie.fakeBot
         playerRecord.Group = pie.group
         playerRecord.Emblem = pie.emblem
+        playerRecord.QueueIndex = pie.queueIndex
     ------------
 
         if playerRecord.IsCommander then

@@ -37,6 +37,8 @@ if kTranslateMessage then
     kTranslateMessage["RANK_INVALID"] = "(C?):<未知>"
     
     kTranslateMessage["SKILL_TIER"]="段位分: %i"
+    kTranslateMessage["STATUS_QUEUE"]="队列: %i"
+    
 end
 
 if kLocales then
@@ -77,4 +79,5 @@ if kLocales then
     kLocales["RANK_LIVER"] = ":<Vokex> (C3)"
     kLocales["RANK_INVALID"] = ":<Unknown> (C?)"
     kLocales["COMMUNITY_RANK"]="NS2CN Tier %s"
+    kLocales["STATUS_QUEUE"]="Queue: %i"
 end 

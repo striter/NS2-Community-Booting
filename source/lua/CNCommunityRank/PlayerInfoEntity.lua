@@ -48,6 +48,7 @@ local networkVars =
     group = string.format("string (%d)", kMaxGroupName ),
     fakeBot = "boolean",
     emblem = "integer (-64 to 64)",
+    queueIndex = "integer (0 to 64)",
 -----------
     adagradSum = "float",
     currentTech = "integer",
@@ -130,6 +131,7 @@ function PlayerInfoEntity:UpdateScore()
                 self.group = scorePlayer.group
                 self.fakeBot = scorePlayer.fakeBot
                 self.emblem = scorePlayer.emblem
+                self.queueIndex = scorePlayer.queueIndex
             -------------
                 self.adagradSum = scorePlayer:GetAdagradSum()
                 playerSkillOffset = scorePlayer:GetPlayerSkillOffset()
