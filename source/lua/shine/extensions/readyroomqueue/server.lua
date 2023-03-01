@@ -306,10 +306,10 @@ function Plugin:UpdateQueuePositions( Queue, Message )
 
             if Position ~= i then
                 Queue:Add( SteamID, i )
-                Client:GetControllingPlayer():SetQueueIndex(Position)
                 self:SendTranslatedNotify( Client, Message, {
                     Position = i
                 })
+                Client:GetControllingPlayer():SetQueueIndex(i)
             end
             i = i + 1
 
