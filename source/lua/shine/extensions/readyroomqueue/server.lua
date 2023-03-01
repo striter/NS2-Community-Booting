@@ -126,13 +126,13 @@ function Plugin:ClientConnect( Client )
 
     if not Client or Client:GetIsVirtual() then return end
 
+    local gamerules = GetGamerules()
+    if not gamerules then return end
     if Client:GetIsSpectator() then return end
 
     local player = Client:GetControllingPlayer()
-    local gamerules = GetGamerules()
-    if not gamerules:GetCanJoinPlayingTeam(player) then
-        GetGamerules():JoinTeam( player, kSpectatorIndex, true )
-    end
+    if gamerules:GetCanJoinPlayingTeam(player) then return end
+    gamerules:JoinTeam( player, kSpectatorIndex, true )
 end
 
 function Plugin:ClientDisconnect( Client )
