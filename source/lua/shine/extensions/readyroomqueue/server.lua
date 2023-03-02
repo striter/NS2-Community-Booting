@@ -180,7 +180,6 @@ function Plugin:PostJoinTeam( _, Player, _, NewTeam )
         self.HistoricPlayers:Remove( SteamId )
         position = self.PlayerQueue:Get( SteamId ) or 0
     end
-    Player:SetQueueIndex(position)
     
     self:Pop()
 
@@ -289,6 +288,8 @@ function Plugin:Enqueue( Client )
         self:SendTranslatedNotify(Client, "PIORITY_QUEUE_ADDED", {
             Position = position
         })
+        
+        position = - position
     end
 
     Client:GetControllingPlayer():SetQueueIndex(position)
@@ -309,7 +310,9 @@ function Plugin:UpdateQueuePositions( Queue, Message )
                 self:SendTranslatedNotify( Client, Message, {
                     Position = i
                 })
-                Client:GetControllingPlayer():SetQueueIndex(i)
+                
+                local multiplier =  Queue == self.PlayerQueue and 1 or -1
+                Client:GetControllingPlayer():SetQueueIndex( multiplier * i)
             end
             i = i + 1
 

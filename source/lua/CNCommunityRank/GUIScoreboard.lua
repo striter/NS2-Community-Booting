@@ -130,6 +130,7 @@ GUIScoreboard.kSpectatorHighlightColor = Color(0.8, 0.8, 0.8, 1)
 GUIScoreboard.kCommanderFontColor = Color(1, 1, 0, 1)
 GUIScoreboard.kWhiteColor = Color(1,1,1,1)
 local kDeadColor = Color(1,0,0,1)
+local kReserveColor = Color(0.92, 0.73, 0.6)
 
 local kMutedTextTexture = PrecacheAsset("ui/sb-text-muted.dds")
 local kMutedVoiceTexture = PrecacheAsset("ui/sb-voice-muted.dds")
@@ -1102,8 +1103,14 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         playerStatus = player["Status"]:GetText()
 ----
         if playerStatus == Locale.ResolveString("STATUS_SPECTATOR") then
-            if playerRecord.QueueIndex > 0 then
-                player["Status"]:SetText(string.format(Locale.ResolveString("STATUS_QUEUE"),playerRecord.QueueIndex))
+            if playerRecord.QueueIndex ~= 0 then
+                local queueIndex = playerRecord.QueueIndex
+                local reserved = queueIndex < 0
+                local title = reserved and Locale.ResolveString("STATUS_QUEUE_RESERVED") or Locale.ResolveString("STATUS_QUEUE") 
+                player["Status"]:SetColor(reserved and kReserveColor or GUIScoreboard.kWhiteColor)
+
+                queueIndex = reserved and -queueIndex or queueIndex
+                player["Status"]:SetText(string.format(title,queueIndex))
             end
         end
 ------    

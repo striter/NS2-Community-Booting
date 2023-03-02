@@ -38,6 +38,7 @@ if kTranslateMessage then
     
     kTranslateMessage["SKILL_TIER"]="段位分: %i"
     kTranslateMessage["STATUS_QUEUE"]="队列: %i"
+    kTranslateMessage["STATUS_QUEUE_RESERVED"]="预留: %i"
     
 end
 
@@ -80,4 +81,5 @@ if kLocales then
     kLocales["RANK_INVALID"] = ":<Unknown> (C?)"
     kLocales["COMMUNITY_RANK"]="NS2CN Tier %s"
     kLocales["STATUS_QUEUE"]="Queue: %i"
+    kLocales["STATUS_QUEUE_RESERVED"]="Reserved: %i"
 end 

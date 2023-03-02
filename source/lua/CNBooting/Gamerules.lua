@@ -19,7 +19,7 @@ if Server then
 
         local numRes = Server.GetReservedSlotLimit()
 
-        Shared.Message(tostring(numPlayer) .. " " .. tostring(activePlayers))
+        --Shared.Message(tostring(numPlayer) .. " " .. tostring(activePlayers))
 
         --check for empty player slots excluding reserved slots
         if numPlayer >= activePlayers then

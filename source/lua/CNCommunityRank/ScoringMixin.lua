@@ -1,3 +1,5 @@
+ScoringMixin.networkVars.communityRank = "integer"
+
 local baseInitMixin = ScoringMixin.__initmixin
 function ScoringMixin:__initmixin()
     baseInitMixin(self)
@@ -72,7 +74,6 @@ if Server then
     end
     
     function ScoringMixin:SetQueueIndex(_index)
-        Shared.Message(tostring(_index))
         self.queueIndex = _index
     end
 end --End-Server
