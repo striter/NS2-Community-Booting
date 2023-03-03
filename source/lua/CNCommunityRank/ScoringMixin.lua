@@ -8,6 +8,7 @@ function ScoringMixin:__initmixin()
     self.group = "RANK_INVALID"
     self.emblem = 0
     self.queueIndex = 0
+    self.reservedQueueIndex = 0
 end
 
 function ScoringMixin:GetPlayerSkill()
@@ -60,6 +61,7 @@ if Server then
         self.fakeBot = player.fakeBot
         self.emblem = player.emblem
         self.queueIndex = player.queueIndex
+        self.reservedQueueIndex = player.reservedQueueIndex
 ---------
     end
 
@@ -74,7 +76,16 @@ if Server then
     end
     
     function ScoringMixin:SetQueueIndex(_index)
-        self.queueIndex = _index
+        if _index == 0 then
+            self.queueIndex = 0
+            self.reservedQueueIndex = 0
+        end
+
+        if _index < 0 then
+            self.reservedQueueIndex = -_index
+        else
+            self.queueIndex = _index
+        end 
     end
 end --End-Server
 

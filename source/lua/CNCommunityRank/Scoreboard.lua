@@ -117,6 +117,7 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.Group = pie.group
         playerRecord.Emblem = pie.emblem
         playerRecord.QueueIndex = pie.queueIndex
+        playerRecord.ReservedQueueIndex = pie.reservedQueueIndex
     ------------
 
         if playerRecord.IsCommander then

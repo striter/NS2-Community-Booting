@@ -1103,17 +1103,16 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         playerStatus = player["Status"]:GetText()
 ----
         if playerStatus == Locale.ResolveString("STATUS_SPECTATOR") then
-            if playerRecord.QueueIndex ~= 0 then
-                local queueIndex = playerRecord.QueueIndex
-                local reserved = queueIndex < 0
+            local reserved = playerRecord.ReservedQueueIndex > 0
+            local queueIndex = reserved and playerRecord.ReservedQueueIndex or playerRecord.QueueIndex
+    
+            if queueIndex > 0 then
                 local title = reserved and Locale.ResolveString("STATUS_QUEUE_RESERVED") or Locale.ResolveString("STATUS_QUEUE") 
                 player["Status"]:SetColor(reserved and kReserveColor or GUIScoreboard.kWhiteColor)
-
-                queueIndex = reserved and -queueIndex or queueIndex
                 player["Status"]:SetText(string.format(title,queueIndex))
             end
         end
-------    
+---
         if playerStatus == "-" or (playerStatus ~= Locale.ResolveString("STATUS_SPECTATOR") and teamNumber ~= 1 and teamNumber ~= 2) then
             playerStatus = ""
             player["Status"]:SetText("")
