@@ -37,7 +37,8 @@ do
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
 	Plugin.ConfigValidator = Validator
 end
-local priorColorTable = { 237, 187, 153  }
+local priorColorTable = { 235, 152, 78 }
+local errorColorTable = { 236, 112, 99 }
 
 
 function Plugin:Initialise()
@@ -86,15 +87,14 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	if skillLimited then
 		self:Notify(Player, string.format("您的分数(%s)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
 				skill, self.Config.SkillLimitMin,self.Config.SkillLimitMax == -1 and "∞" or self.Config.SkillLimitMax),
-					self.Config.MessageNameColor,nil)
+					errorColorTable,nil)
 		available = false
 	end
 	
 	--Check if team is above MaxPlayers
 	local playerLimit = self:GetPlayerLimit(Gamerules,NewTeam)
 	if self:GetNumPlayers(Gamerules:GetTeam(NewTeam)) >= playerLimit then
-		self:Notify(Player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[NewTeam] ,playerLimit),
-				self.Config.MessageNameColor,nil)
+		self:Notify(Player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[NewTeam] ,playerLimit),errorColorTable,nil)
 		available = false
 	end
 

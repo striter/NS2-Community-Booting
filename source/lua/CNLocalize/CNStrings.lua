@@ -1,4 +1,7 @@
-
+kTranslateMessage["CHAT_COMMANDER"]="[指挥]"
+kTranslateMessage["CHAT_NEWCOMER"]="[新兵]"
+kLocales["CHAT_COMMANDER"]="[Commander]"
+kLocales["CHAT_NEWCOMER"]="[NewComer]"
 
 kTranslateMessage["SKILLTIER_TOOLTIP"]="段位 %s"
 kTranslateMessage["SKILLTIER_UNKNOWN"]=":<未知>"

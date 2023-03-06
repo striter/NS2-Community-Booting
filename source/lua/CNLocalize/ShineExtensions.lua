@@ -105,12 +105,12 @@ if ICPlugin then
 
         if IsCommander then
             Contents[ #Contents + 1 ] = ColourElement( IntToColour( kCommanderColor ) )
-            Contents[ #Contents + 1 ] = TextElement( "[指挥] " )
+            Contents[ #Contents + 1 ] = TextElement( Locale.ResolveString("CHAT_COMMANDER") .." " )
         end
 
         if IsRookie then
             Contents[ #Contents + 1 ] = ColourElement( IntToColour( kNewPlayerColor ) )
-            Contents[ #Contents + 1 ] = TextElement( Locale.ResolveString( "新兵" ).." " )
+            Contents[ #Contents + 1 ] = TextElement( Locale.ResolveString("CHAT_NEWCOMER") .." " )
         end
 
         local Prefix = "(全局) "
