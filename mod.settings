@@ -1,12 +1,8 @@
-name        = "[CN] Community Booting"
+name        = "[CN] Community Startup"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[用于社区服务器的正常运营.
-包括汉化/服务器管理/bug修复等等.
-请勿直接订阅!.
-代码/中文/润色/插件@StriteR.
-字体@Ladjic]=]
+description = [=[请勿直接订阅!.]=]
 image       = "preview.jpg"
 tag_modtype = ""
 tag_support = ""
-publish_id = 2724929490
+publish_id = 2940618449
