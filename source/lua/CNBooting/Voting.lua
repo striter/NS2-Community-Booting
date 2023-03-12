@@ -506,6 +506,7 @@ end
 
 --Server Switch
 RegisterVoteType("VoteMutePlayer", { targetClient = "integer" })
+RegisterVoteType("VoteFuckPolitican", { targetClient = "integer" })
 RegisterVoteType("VoteForceSpectator", { targetClient = "integer" })
 RegisterVoteType("VoteKillPlayer", { targetClient = "integer" })
 RegisterVoteType("VoteRankPlayer", { targetClient = "integer" })
@@ -544,6 +545,14 @@ if Client then
                 return string.format(Locale.ResolveString("VOTE_MUTE_PLAYER_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
             end)
 
+            voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_FUCK_POLITICAN"), GetPlayerList, function( msg )
+                AttemptToStartVote("VoteFuckPolitican", { targetClient = msg.targetClient })
+            end)
+
+            AddVoteStartListener("VoteFuckPolitican", function(msg)
+                return string.format(Locale.ResolveString("VOTE_FUCK_POLITICAN_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
+            end)
+            
             local SSVPlugin = Shine.Plugins["serverswitchvote"]
             if SSVPlugin then
                 local function GetServerList()
@@ -634,7 +643,14 @@ if Server then
     SetVoteSuccessfulCallback("VoteMutePlayer", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)
         if not client then return end
-        Shared.ConsoleCommand(string.format("sh_gagid %s %s", client:GetUserId(), 30 * 60))
+        Shared.ConsoleCommand(string.format("sh_gagid %s", client:GetUserId()))
+    end)
+    
+    SetVoteSuccessfulCallback("VoteFuckPolitican", 1, function( msg )
+        local client = Server.GetClientById(msg.targetClient)
+        if not client then return end
+        Shared.ConsoleCommand(string.format("sh_gagid %s", client:GetUserId()))
+        Shared.ConsoleCommand(string.format("sh_renameid %s %s", client:GetUserId(), "Transgender"))
     end)
 
     SetVoteSuccessfulCallback("VoteForceSpectator", 1, function( msg )
