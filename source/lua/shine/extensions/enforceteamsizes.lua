@@ -15,6 +15,7 @@ Plugin.DefaultConfig = {
 	IncreaseByForceJoins = true,
 	SkillLimitMin = -1,
 	SkillLimitMax = -1,
+	NewcomerForceJoin = -1,
 	MessageNameColor = {0, 255, 0 },
 }
 Plugin.CheckConfig = true
@@ -34,6 +35,7 @@ do
 	Validator:AddFieldRule( "IncreaseByForceJoins",  Validator.IsType( "boolean", true ))
 	Validator:AddFieldRule( "SkillLimitMin",  Validator.IsType( "number", -1 ))
 	Validator:AddFieldRule( "SkillLimitMax",  Validator.IsType( "number", -1 ))
+	Validator:AddFieldRule( "NewcomerForceJoin",  Validator.IsType( "number", -1 ))
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
 	Plugin.ConfigValidator = Validator
 end
@@ -102,7 +104,12 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 		local client = Server.GetOwner(Player)
 		if not client or client:GetIsVirtual()  then return end
 		if Shine:HasAccess( client, "sh_priorslot" ) then
-			self:Notify(Player, string.format("因为您为升级预留位玩家,已忽视限制加入游戏,请勿[过度影响]其他玩家的正常对局.", skill, self.Config.SkillLimit),priorColorTable,nil)
+			self:Notify(Player, string.format("由于您为[升级预留位]玩家,已忽视限制并加入游戏,请勿[过度影响]其他玩家的正常对局.", skill, self.Config.SkillLimit),priorColorTable,nil)
+			return
+		end
+
+		if self.Config.NewcomerForceJoin ~= -1 and skill < self.Config.NewcomerForceJoin then
+			self:Notify(Player, string.format("由于您为[新人]玩家,已忽视限制并加入游戏,请勿[过度影响]其他玩家的正常对局.", skill, self.Config.SkillLimit),priorColorTable,nil)
 			return
 		end
 	end
