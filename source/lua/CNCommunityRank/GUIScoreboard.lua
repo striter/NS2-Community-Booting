@@ -922,9 +922,6 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         end
 
         local fakeBot = playerRecord.FakeBot
-        if fakeBot then
-            playerName = "[BOT] " .. playerName
-        end
 
         local defaultRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
         local visible = not fakeBot and defaultRankIndex > 0
@@ -976,6 +973,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         end
         
         player["Number"]:SetText(index..".")
+        
+        if fakeBot then
+            playerName = "[BOT] " .. playerName
+        end
         player["Name"]:SetText(playerName)
 
         -- Needed to determine who to (un)mute when voice icon is clicked.
