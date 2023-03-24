@@ -19,6 +19,7 @@ ModLoader.SetupFileHook( "lua/Gamerules.lua", "lua/CNBooting/Gamerules.lua", "po
 ModLoader.SetupFileHook( "lua/NS2Gamerules.lua", "lua/CNBooting/NS2Gamerules.lua", "post" )
 ModLoader.SetupFileHook( "lua/Shared.lua", "lua/CNBooting/Shared.lua", "post" )
 ModLoader.SetupFileHook( "lua/Utility.lua", "lua/CNBooting/Utility.lua", "post" )
+ModLoader.SetupFileHook( "lua/MapCycle.lua", "lua/CNBooting/MapCycle.lua", "replace" )
 ModLoader.SetupFileHook( "lua/ServerAdminCommands.lua", "lua/CNBooting/ServerAdminCommands.lua", "post" )
 ModLoader.SetupFileHook( "lua/GUIWebView.lua", "lua/CNBooting/GUIWebView.lua", "replace" )
 ModLoader.SetupFileHook( "lua/Badges_Shared.lua", "lua/CNBooting/Badges_Shared.lua", "replace")
