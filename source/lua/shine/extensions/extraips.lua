@@ -20,6 +20,7 @@ Plugin.EnabledGamemodes = {
 	["ns2"] = true,
     ["NS2.0"] = true,
     ["NS2.0beta"] = true,
+    ["NS1.0"] = true,
     ["siege+++"] = true,
 }
 

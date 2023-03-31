@@ -515,7 +515,7 @@ kTranslateMessage["MINE_TOOLTIP"]="内含一组地雷"
 kTranslateMessage["MINES"]="研发地雷"
 kTranslateMessage["MINIGUN"]="转轮机枪"
 kTranslateMessage["CLUSTERGRENADE"]="集束手雷"
-kTranslateMessage["PLUSEGRENADE"]="电磁手雷"
+kTranslateMessage["PULSEGRENADE"]="电磁手雷"
 
 kTranslateMessage["MINIGUN_CLAW_TOOLTIP"]="BIND_PrimaryAttacktopunchwithClaw.HoldBIND_SecondaryAttacktofireminigun(unlimitedammobutcanoverheat).BIND_Jumptoactivatejumpjets."
 kTranslateMessage["MINIGUN_MINIGUN_TOOLTIP"]="BIND_PrimaryAttacktofireleftminigun,BIND_SecondaryAttackforright(unlimitedammobutcanoverheat).BIND_Jumptoactivatejumpjets."
@@ -1003,8 +1003,8 @@ kTranslateMessage["RECYCLE_TOOLTIP"]="回收当前建筑.\n*返还建造费用.\
 kTranslateMessage["CAT_PACK"]="兴奋剂"
 kTranslateMessage["CAT_PACK_TOOLTIP"]="增强陆战队员战斗的效率.\n*提升移动速度.\n*提升武器速度.\n*提升动作速度."
 
-kTranslateMessage["WEAPONS_MENU"]="装备"
-kTranslateMessage["WEAPONS_MENU_TOOLTIP"]="给陆战队员发放装备"
+kTranslateMessage["WEAPONS_MENU"]="武器"
+kTranslateMessage["WEAPONS_MENU_TOOLTIP"]="给陆战队员发放武器"
 
 kTranslateMessage["UPGRADE_ROBOTICS_FACTORY"]="升级为高级机械工厂"
 kTranslateMessage["UPGRADE_ROBOTICS_FACTORY_TOOLTIP"]="解锁生产能力\n*攻坚坦克."
