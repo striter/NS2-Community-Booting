@@ -56,14 +56,16 @@ if Server then
 				team2Players = team2Players - team2Bots
 			end
 			
-			if (team1Players > team2Players) and (teamNumber == team1Number) then
-				Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
-				return false
-			elseif (team2Players > team1Players) and (teamNumber == team2Number) then
-				Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
-				return false
+			local totalPlayers = team1Players - team2Players
+			if totalPlayers >= 12 then
+				if (team1Players > team2Players) and (teamNumber == team1Number) then
+					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
+					return false
+				elseif (team2Players > team1Players) and (teamNumber == team2Number) then
+					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
+					return false
+				end
 			end
-	
 		end
 	
 		-- Remove bot restrictions
