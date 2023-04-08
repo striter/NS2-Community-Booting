@@ -82,19 +82,18 @@ if Server then
     -- Send new Clients the map list.
     local function OnClientConnect(client)
 
-        local mapCount = 0
         for i = 1, Server.GetNumMaps() do
 
             local mapName = Server.GetMapName(i)
             if MapCycle_GetMapIsInCycle(mapName) then
                 Server.SendNetworkMessage(client, "AddVoteMap", { name = mapName, index = i }, true)
-                mapCount = mapCount+1
             end
             
         end
         
         -- Add official game mode mods to the player's map list.  (For example, infested marines uses vanilla maps, and the
         -- game mode is activated by the map previx being "infested" or "infected".
+        local mapCount = nil
         mapCount = AddMapPrefixesToVoteMenu(client,"infest", mapCount)
         mapCount = AddMapPrefixesToVoteMenu(client,"infect", mapCount)
         mapCount = AddMapPrefixesToVoteMenu(client,"ns2.0", mapCount)
