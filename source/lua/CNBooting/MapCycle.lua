@@ -111,7 +111,7 @@ end
 
 local gameModePrefixes =
 {
-    "infest", "infext","ns2.0beta","ns"
+    "infest", "infext","ns2.0b","ns2.0","ns1.0","def"
 }
 
 local prefixToModId =

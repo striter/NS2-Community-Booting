@@ -68,6 +68,9 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                             local communityRankString = string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(playerRecord.Group))
                             local skillTierString = string.format(Locale.ResolveString("SKILL_TIER"),playerRecord.Skill)
                             description = string.format("%s \n%s \n%s\nNS2ID: %i",description , communityRankString, skillTierString,playerRecord.SteamId)
+                            if playerRecord.Seeding then
+                                description = description .. "\n" .. Locale.ResolveString("COMMUNITY_PREWARM")
+                            end
                         end
                         scoreboard.badgeNameTooltip:SetText(description)
                     end

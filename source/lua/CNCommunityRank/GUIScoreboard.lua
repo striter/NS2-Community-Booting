@@ -1135,7 +1135,12 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Voice"]:SetIsVisible(ChatUI_GetClientMuted(clientIndex))
         player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 
-        player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, defaultRankIndex *80,80,(defaultRankIndex +1)*80)
+        
+        local rankIconIndex = defaultRankIndex
+        if playerRecord.Seeding then
+            rankIconIndex = 7
+        end
+        player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, rankIconIndex *80,80,(rankIconIndex +1)*80)
         player["CommunityRankIcon"]:SetIsVisible(visible)
         
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)

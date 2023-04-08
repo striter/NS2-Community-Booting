@@ -45,9 +45,10 @@ local networkVars =
     playerSkill = "integer",
 ---------------
     hiveskill = "integer" ,
-    group = string.format("string (%d)", kMaxGroupName ),
     fakeBot = "boolean",
     emblem = "integer (-64 to 64)",
+    seeding = "boolean",
+    group = string.format("string (%d)", kMaxGroupName ),
     queueIndex = "integer (0 to 64)",
     reservedQueueIndex = "integer (0 to 64)",
 -----------
@@ -132,6 +133,7 @@ function PlayerInfoEntity:UpdateScore()
                 self.group = scorePlayer.group
                 self.fakeBot = scorePlayer.fakeBot
                 self.emblem = scorePlayer.emblem
+                self.seeding = scorePlayer.seeding
                 self.queueIndex = scorePlayer.queueIndex
                 self.reservedQueueIndex = scorePlayer.reservedQueueIndex
             -------------

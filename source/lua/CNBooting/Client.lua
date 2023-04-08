@@ -42,7 +42,8 @@ if kTranslateMessage then
     kTranslateMessage["SKILL_TIER"]="段位分: %i"
     kTranslateMessage["STATUS_QUEUE"]="队列: %i"
     kTranslateMessage["STATUS_QUEUE_RESERVED"]="预留: %i"
-    
+
+    kTranslateMessage["COMMUNITY_PREWARM"]="          [预热贡献者]"
 end
 
 if kLocales then
@@ -88,4 +89,6 @@ if kLocales then
     kLocales["COMMUNITY_RANK"]="NS2CN Tier %s"
     kLocales["STATUS_QUEUE"]="Queue: %i"
     kLocales["STATUS_QUEUE_RESERVED"]="Reserved: %i"
+
+    kLocales["COMMUNITY_PREWARM"]="          [Pre-Warmer]"
 end 

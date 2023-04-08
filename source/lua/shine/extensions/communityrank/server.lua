@@ -12,9 +12,12 @@ Plugin.DefaultConfig = {
         ["55022511"] = {
             rank = -2000,
             fakeBot = true,
-            emblem = 0
+            emblem = 0,
+            seedingDay = 0,
         }
-    }
+    },
+    SeedingDay = 1,
+    SeedingActivePlayer = 12,
 }
 
 Plugin.CheckConfig = true
@@ -36,6 +39,8 @@ local kEloTierConstant =
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "UserData",  Validator.IsType( "table", {} ))
+    Validator:AddFieldRule( "SeedingDay",  Validator.IsType( "number", -1 ))
+    Validator:AddFieldRule( "SeedingActivePlayer",  Validator.IsType( "number", 12 ))
     Validator:AddFieldRule( "EndRoundValidation",  Validator.IsType( "boolean", true ))
     Validator:AddFieldRule( "EndRoundValidationTime",  Validator.IsType( "number", 300 ))
     Validator:AddFieldRule( "EndRoundValidationPlayerCount",  Validator.IsType( "number", 16 ))
@@ -87,8 +92,7 @@ local function RankPlayerDelta(self,_steamId,_delta)
 end
 
 
-local eloEnable = { "ns2","NS2.0","siege+++"  }
-
+local eloEnable = { "ns2","NS2.0","NS1.0","siege+++"  }
 local function EndGameElo(self)
     local gameMode = Shine.GetGamemode()
     if not table.contains(eloEnable,gameMode) then return end
@@ -178,11 +182,48 @@ local function EndGameElo(self)
 
 end
 
+local kSeedingPrewarmColor = { 235, 152, 78 }
+local function StartGameSeeding(self)
+    local tmpDate = os.date("*t", Shared.GetSystemTime())
+    if tmpDate.hour < 4 or self.Config.SeedingDay == tmpDate.day then return end
+    
+    for client in Shine.IterateClients() do
+        Shine:NotifyDualColour( client,
+                kSeedingPrewarmColor[1], kSeedingPrewarmColor[2], kSeedingPrewarmColor[3],"[战局预热]",
+                255, 255, 255,string.format("当前为预热局,当游戏结束时[人数>%s]后,场内所有玩家将获得该服务器当天的预热特权.", self.Config.SeedingActivePlayer),true, data )
+    end
+end
+
+local function EndGameSeeding(self)
+    local tmpDate =  os.date("*t", Shared.GetSystemTime())
+    local currentDay = tmpDate.day
+    if tmpDate.hour < 4 or self.Config.SeedingDay == currentDay then return end
+    
+    if Shine.GetHumanPlayerCount() < self.Config.SeedingActivePlayer then return end
+    
+    self.Config.SeedingDay = currentDay
+    for client in Shine.IterateClients() do
+        data = GetPlayerData(self,client:GetUserId())
+        data.seedingDay = currentDay
+        client:GetControllingPlayer():SetPlayerExtraData(data)
+        Shine:NotifyDualColour( client,
+                kSeedingPrewarmColor[1], kSeedingPrewarmColor[2], kSeedingPrewarmColor[3],"[战局预热]",
+                255, 255, 255,"以达到预热预期,现在您于该服务器当天享有预热徽章,感谢您的付出!",true, data )
+    end
+end
+
 function Plugin:OnFirstThink()
     ReadPersistent(self)
+
+    function Plugin:SetGameState( Gamerules, State, OldState )
+        if State == kGameState.Countdown then
+            StartGameSeeding(self)
+        end
+    end
     
     function Plugin:OnEndGame(_winningTeam)
         EndGameElo(self)
+        EndGameSeeding(self)
         SavePersistent(self)
     end
     Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")

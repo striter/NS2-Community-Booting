@@ -56,8 +56,7 @@ if Server then
 				team2Players = team2Players - team2Bots
 			end
 			
-			local totalPlayers = team1Players - team2Players
-			if totalPlayers >= 12 then
+			if team1Players + team2Players >= 12 then
 				if (team1Players > team2Players) and (teamNumber == team1Number) then
 					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
 					return false

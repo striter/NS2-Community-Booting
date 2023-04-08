@@ -105,13 +105,18 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	if available == false then
 		local client = Server.GetOwner(Player)
 		if not client or client:GetIsVirtual()  then return end
+		if Player.seeding then
+			self:Notify(Player, "您为 [预热贡献者],已忽视限制加入!",priorColorTable,nil)
+			return
+		end
+		
 		if Shine:HasAccess( client, "sh_priorslot" ) then
-			self:Notify(Player, string.format("由于您为[升级预留位]玩家,已忽视限制并加入游戏,请勿[过度影响]其他玩家的正常对局.", skill, self.Config.SkillLimit),priorColorTable,nil)
+			self:Notify(Player, "您为 [高级预留玩家],已忽视限制加入!",priorColorTable,nil)
 			return
 		end
 
 		if self.Config.NewcomerForceJoin ~= -1 and skill < self.Config.NewcomerForceJoin then
-			self:Notify(Player, string.format("由于您为[新人]玩家,已忽视限制并加入游戏,请勿[过度影响]其他玩家的正常对局.", skill, self.Config.SkillLimit),priorColorTable,nil)
+			self:Notify(Player, "您为 [新人优待玩家],已忽视限制加入!",priorColorTable,nil)
 			return
 		end
 	end
