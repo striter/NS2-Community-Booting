@@ -20,14 +20,11 @@ function Plugin:Cleanup()
 	return self.BaseClass.Cleanup( self )
 end
 
-function Plugin:ReceiveServerList( Data )
-	if self.QueryServers[ Data.ID ] then 
-		TableEmpty( self.QueryServers )
-	end
-
-	self.QueryServers[ Data.ID ] = {
-		IP = Data.IP,
+function Plugin:ReceiveAddServerList( Data )
+	self.QueryServers[#self.QueryServers + 1] = {
+		Address = Data.IP .. ":" .. Data.Port,
 		Port = Data.Port,
 		Name = Data.Name,
+		Amount = Data.Amount,
 	}
 end

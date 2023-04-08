@@ -105,11 +105,7 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	if available == false then
 		local client = Server.GetOwner(Player)
 		if not client or client:GetIsVirtual()  then return end
-		if Player.seeding then
-			self:Notify(Player, "您为 [预热贡献者],已忽视限制加入!",priorColorTable,nil)
-			return
-		end
-		
+
 		if Shine:HasAccess( client, "sh_priorslot" ) then
 			self:Notify(Player, "您为 [高级预留玩家],已忽视限制加入!",priorColorTable,nil)
 			return
@@ -119,6 +115,9 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 			self:Notify(Player, "您为 [新人优待玩家],已忽视限制加入!",priorColorTable,nil)
 			return
 		end
+
+		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+		if crEnabled and cr:GetPrewarmPrivilege(client,1,"无限制下场") then return end
 	end
 	
 	return available

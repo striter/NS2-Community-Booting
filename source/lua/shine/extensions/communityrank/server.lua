@@ -5,19 +5,27 @@ Plugin.PrintName = "communityrank"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityRank.json"
 Plugin.DefaultConfig = {
-    EndRoundValidation = true,
-    EndRoundValidationTime = 300,
-    EndRoundValidationPlayerCount = 16,
     ["UserData"] = {
         ["55022511"] = {
             rank = -2000,
             fakeBot = true,
             emblem = 0,
-            seedingDay = 0,
+            prewarmDay = 0,
+            prewarmCredit = 5,
         }
     },
-    SeedingDay = 1,
-    SeedingActivePlayer = 12,
+    Prewarm =
+    {
+        Check = false,
+        Player = 12,
+        Day = 1,
+        Credit = 5,
+    },
+    Elo = {
+      Check = false,
+      Time = 300,
+      Player = 16,
+    },
 }
 
 Plugin.CheckConfig = true
@@ -39,11 +47,13 @@ local kEloTierConstant =
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "UserData",  Validator.IsType( "table", {} ))
-    Validator:AddFieldRule( "SeedingDay",  Validator.IsType( "number", -1 ))
-    Validator:AddFieldRule( "SeedingActivePlayer",  Validator.IsType( "number", 12 ))
-    Validator:AddFieldRule( "EndRoundValidation",  Validator.IsType( "boolean", true ))
-    Validator:AddFieldRule( "EndRoundValidationTime",  Validator.IsType( "number", 300 ))
-    Validator:AddFieldRule( "EndRoundValidationPlayerCount",  Validator.IsType( "number", 16 ))
+    Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", false ))
+    Validator:AddFieldRule( "Elo.Time",  Validator.IsType( "number", 300 ))
+    Validator:AddFieldRule( "Elo.Player",  Validator.IsType( "number", 16 ))
+    Validator:AddFieldRule( "Prewarm.Check",  Validator.IsType( "boolean", false ))
+    Validator:AddFieldRule( "Prewarm.Day",  Validator.IsType( "number", -1 ))
+    Validator:AddFieldRule( "Prewarm.Player",  Validator.IsType( "number", 12 ))
+    Validator:AddFieldRule( "Prewarm.Credit",  Validator.IsType( "number", 5 ))
 	Plugin.ConfigValidator = Validator
 end
 
@@ -97,7 +107,7 @@ local function EndGameElo(self)
     local gameMode = Shine.GetGamemode()
     if not table.contains(eloEnable,gameMode) then return end
 
-    if not self.Config.EndRoundValidation then return end
+    if not self.Config.Elo.Check then return end
 
     local lastRoundData = CHUDGetLastRoundStats();
     if not lastRoundData then
@@ -129,7 +139,7 @@ local function EndGameElo(self)
         playerCount = playerCount + 1
     end
 
-    if gameLength < self.Config.EndRoundValidationTime or playerCount < self.Config.EndRoundValidationPlayerCount then
+    if gameLength < self.Config.Elo.Time or playerCount < self.Config.Elo.Player then
         Shared.Message(string.format("[CNCR] End Game Result Restricted"))
         return
     end
@@ -182,33 +192,63 @@ local function EndGameElo(self)
 
 end
 
-local kSeedingPrewarmColor = { 235, 152, 78 }
-local function StartGameSeeding(self)
+local kPrewarmColor = { 235, 152, 78 }
+local function StartGamePrewarm(self)
+    if not self.Config.Prewarm.Check then return end
+    
     local tmpDate = os.date("*t", Shared.GetSystemTime())
-    if tmpDate.hour < 4 or self.Config.SeedingDay == tmpDate.day then return end
+    if tmpDate.hour < 4 or self.Config.Prewarm.Day == tmpDate.day then return end
     
     for client in Shine.IterateClients() do
-        Shine:NotifyDualColour( client,
-                kSeedingPrewarmColor[1], kSeedingPrewarmColor[2], kSeedingPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("当前为预热局,当游戏结束时[人数>%s]后,场内所有玩家将获得该服务器当天的预热特权.", self.Config.SeedingActivePlayer),true, data )
+        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+                255, 255, 255,string.format("当前为预热局,当游戏结束时[人数>%s]后,场内所有玩家将获得该服务器当天的预热特权,同时获得了%s个[预热点].", self.Config.Prewarm.Player,self.Config.Prewarm.Credit),true, data )
     end
 end
 
-local function EndGameSeeding(self)
+local function EndGamePrewarm(self)
+    if not self.Config.Prewarm.Check then return end
+    
     local tmpDate =  os.date("*t", Shared.GetSystemTime())
     local currentDay = tmpDate.day
-    if tmpDate.hour < 4 or self.Config.SeedingDay == currentDay then return end
+    if tmpDate.hour < 4 or self.Config.Prewarm.Day == currentDay then return end
     
-    if Shine.GetHumanPlayerCount() < self.Config.SeedingActivePlayer then return end
+    if Shine.GetHumanPlayerCount() < self.Config.Prewarm.Player then return end
     
-    self.Config.SeedingDay = currentDay
+    self.Config.Prewarm.Day = currentDay
     for client in Shine.IterateClients() do
         data = GetPlayerData(self,client:GetUserId())
-        data.seedingDay = currentDay
+        data.prewarmDay = currentDay
+        data.prewarmCredit = self.Config.Prewarm.Credit
         client:GetControllingPlayer():SetPlayerExtraData(data)
-        Shine:NotifyDualColour( client,
-                kSeedingPrewarmColor[1], kSeedingPrewarmColor[2], kSeedingPrewarmColor[3],"[战局预热]",
-                255, 255, 255,"以达到预热预期,现在您于该服务器当天享有预热徽章,感谢您的付出!",true, data )
+        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+                255, 255, 255,string.format("预热预期已达成,您于该服务器当天享有[预热徽章]以及[%s预热点],感谢您的付出!",self.Config.Prewarm.Credit),true, data )
+    end
+end
+
+function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
+    data = GetPlayerData(self,_client:GetUserId())
+    if not _client:GetControllingPlayer().seeding then
+        return false
+    end
+
+    if _cost == 0 then
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+                255, 255, 255,string.format("您于该服务器当天享有[预热特权:%s]!", _privilege),true, data )
+    end
+    
+    if _cost > 0 then
+        local credit = data.prewarmCredit or 0
+        if credit >= _cost then
+            data.prewarmCredit = credit - _cost
+            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+                    255, 255, 255,string.format("您已使用[预热特权:%s],消耗[%s预热点],剩余[%s预热点]!", _privilege,_cost,data.prewarmCredit),true, data )
+            return true
+        end
+        return false
+    else
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+                255, 255, 255,string.format("您的[预热点]不足!", _privilege),true, data )
+        return true
     end
 end
 
@@ -217,13 +257,13 @@ function Plugin:OnFirstThink()
 
     function Plugin:SetGameState( Gamerules, State, OldState )
         if State == kGameState.Countdown then
-            StartGameSeeding(self)
+            StartGamePrewarm(self)
         end
     end
     
     function Plugin:OnEndGame(_winningTeam)
         EndGameElo(self)
-        EndGameSeeding(self)
+        EndGamePrewarm(self)
         SavePersistent(self)
     end
     Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
@@ -241,6 +281,20 @@ end
 
 
 function Plugin:CreateMessageCommands()
+--Prewarm
+
+    local function ShowPrewarmStatus( _client)
+        if not _client then return end
+        
+        data = GetPlayerData(self,_client:GetUserId())
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+                255, 255, 255,string.format("您当前为[%s],您还剩%s[预热点]!",_client:GetControllingPlayer().seeding and "预热贡献者" or "社区玩家", data.prewarmCredit or 0),true, data )
+    end
+
+    local setCommand = self:BindCommand( "sh_prewarm", "prewarm", ShowPrewarmStatus,true )
+    setCommand:Help( "显示你的[预热点]状态." )
+    
+--Elo
     local function AdminRankPlayer( _client, _id, _rank )
         local target = Shine.GetClientByNS2ID(_id)
         if not target then 

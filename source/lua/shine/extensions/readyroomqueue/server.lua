@@ -323,7 +323,13 @@ function Plugin:Enqueue( Client )
         self:SendNetworkMessage( Client, "WaitTime", { Time = self.AVGWaitTime }, true)
     end
 
-    if GetHasReservedSlotAccess( SteamID ) then
+    local reserved = GetHasReservedSlotAccess(SteamID)
+    if not reserved then
+        local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+        reserved =  crEnabled and cr:GetPrewarmPrivilege(Client,1,"排队预留队列")
+    end
+    
+    if reserved then
         position = self:GetQueueInsertPosition(self.ReservedQueue, Client)
         self:InsertIntoQueue(self.ReservedQueue, SteamID, position, "PIORITY_QUEUE_CHANGED_VIP")
         self:SendTranslatedNotify(Client, "PIORITY_QUEUE_ADDED", {

@@ -924,7 +924,6 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local fakeBot = playerRecord.FakeBot
 
         local defaultRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
-        local visible = not fakeBot and defaultRankIndex > 0
         
         local emblemIndex = defaultRankIndex
         if playerRecord.Emblem and playerRecord.Emblem ~= 0  then       --Override by emblem setting
@@ -1140,6 +1139,8 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         if playerRecord.Seeding then
             rankIconIndex = 7
         end
+        
+        local visible = not fakeBot and rankIconIndex > 0
         player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, rankIconIndex *80,80,(rankIconIndex +1)*80)
         player["CommunityRankIcon"]:SetIsVisible(visible)
         

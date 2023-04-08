@@ -487,8 +487,51 @@ if Client then
 end
 
 --Load all the Votes
+--Server Switch
+if Client then
+    if Shine then
+
+        local function SetupServerSwitchVote(voteMenu)
+
+            local SSVPlugin = Shine.Plugins["serverswitchvote"]
+            if SSVPlugin then
+                local function GetServerList()
+
+                    local address = Client.GetConnectedServerAddress()
+                    local menuItems = { }
+                    if  SSVPlugin.Enabled then
+                        for _, data in ipairs(SSVPlugin.QueryServers) do
+                            if address ~= data.Address then
+                                if data.Amount ~= 0 then
+                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,string.format("仅同意者(%s人)", data.Amount)), 
+                                                              extraData = { ip = data.Address , name = data.Name ,onlyAccepted = true , voteRequired = data.Amount } })
+                                else
+                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,"所有人"), 
+                                                              extraData = { ip = data.Address , name = data.Name , onlyAccepted = false } } )
+                                end
+                            end
+                        end
+                    end
+                    return menuItems
+                end
+
+                AddVoteStartListener( "VoteSwitchServer", 	function( msg )
+                    return string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY"),msg.name,msg.onlyAccepted and Locale.ResolveString("ONLY_ACCEPTED") or Locale.ResolveString("EVERYONE"))
+                end )
+
+                voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )
+                    AttemptToStartVote("VoteSwitchServer", { ip = msg.ip , name = msg.name,onlyAccepted = msg.onlyAccepted,voteRequired = msg.voteRequired })
+                end)
+            end
+        end
+
+        AddVoteSetupCallback(SetupServerSwitchVote)
+    end
+end
+
 Script.Load("lua/VotingChangeMap.lua")
 Script.Load("lua/VotingResetGame.lua")
+Script.Load("lua/VotingKickPlayer.lua")
 --Script.Load("lua/VotingRandomizeRR.lua")
 --Script.Load("lua/VotingForceEvenTeams.lua")
 --Script.Load("lua/VotingAddCommanderBots.lua")
@@ -500,9 +543,6 @@ if Shared.GetThunderdomeEnabled() then
 end
 
 ---------------------------Post
-
---Server Switch
-Script.Load("lua/VotingKickPlayer.lua")
 RegisterVoteType("VoteMutePlayer", { targetClient = "integer" })
 RegisterVoteType("VoteFuckPolitican", { targetClient = "integer" })
 RegisterVoteType("VoteForceSpectator", { targetClient = "integer" })
@@ -531,8 +571,25 @@ if Client then
         return menuItems
 
     end
-
+    
     local function SetupAdditionalVotes(voteMenu)
+
+        voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_FORCE_SPECTATE"), GetPlayerList, function( msg )
+            AttemptToStartVote("VoteForceSpectator", { targetClient = msg.targetClient })
+        end)
+
+        AddVoteStartListener("VoteForceSpectator", function(msg)
+            return string.format(Locale.ResolveString("VOTE_FORCE_SPECTATE_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
+        end)
+
+        voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_KILL_PLAYER"), GetPlayerList, function( msg )
+            AttemptToStartVote("VoteKillPlayer", { targetClient = msg.targetClient })
+        end)
+
+        AddVoteStartListener("VoteKillPlayer", function(msg)
+            return string.format(Locale.ResolveString("VOTE_KILL_PLAYER_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
+        end)
+        
         if Shine then
 
             voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_MUTE_PLAYER"), GetPlayerList, function( msg )
@@ -551,53 +608,8 @@ if Client then
                 return string.format(Locale.ResolveString("VOTE_FUCK_POLITICAN_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
             end)
             
-            local SSVPlugin = Shine.Plugins["serverswitchvote"]
-            if SSVPlugin then
-                local function GetServerList()
-
-                    local address = Client.GetConnectedServerAddress()
-                    local menuItems = { }
-                    if  SSVPlugin.Enabled then
-                        for ID , ServerData in ipairs(SSVPlugin.QueryServers) do
-                            local ip = ServerData.IP .. ":" .. ServerData.Port
-                            if address ~= ip then
-                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(8人面包车)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 8 } })
-                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(14人面包车)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 14} })
-                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(20人大巴)"), extraData = { ip = ip , name = ServerData.Name ,onlyAccepted = true , voteRequired = 20 } })
-                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"仅同意者(一半人)"), extraData = { ip = ip , name = ServerData.Name , onlyAccepted = true } } )
-                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), ID, ServerData.Name,"所有人"), extraData = { ip = ip , name = ServerData.Name , onlyAccepted = false } } )
-                            end
-                        end
-                    end
-                    return menuItems
-                end
-
-                AddVoteStartListener( "VoteSwitchServer", 	function( msg )
-                    return string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY"),msg.name,msg.onlyAccepted and Locale.ResolveString("ONLY_ACCEPTED") or Locale.ResolveString("EVERYONE"))
-                end )
-
-                voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )
-                    AttemptToStartVote("VoteSwitchServer", { ip = msg.ip , name = msg.name,onlyAccepted = msg.onlyAccepted,voteRequired = msg.voteRequired })
-                end)
-            end
-
         end
 
-        voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_FORCE_SPECTATE"), GetPlayerList, function( msg )
-            AttemptToStartVote("VoteForceSpectator", { targetClient = msg.targetClient })
-        end)
-
-        AddVoteStartListener("VoteForceSpectator", function(msg)
-            return string.format(Locale.ResolveString("VOTE_FORCE_SPECTATE_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
-        end)
-
-        voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_KILL_PLAYER"), GetPlayerList, function( msg )
-            AttemptToStartVote("VoteKillPlayer", { targetClient = msg.targetClient })
-        end)
-
-        AddVoteStartListener("VoteKillPlayer", function(msg)
-            return string.format(Locale.ResolveString("VOTE_KILL_PLAYER_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
-        end)
 
         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_KILL_ALL"),nil, function( msg )
             AttemptToStartVote("VoteKillAll", {  })

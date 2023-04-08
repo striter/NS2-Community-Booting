@@ -135,7 +135,7 @@ function Plugin:Initialise()
                     goto continue
                 end
                 
-                table.insert(clients,{client =Client,priority = player:GetPlayerSkill()})
+                table.insert(clients,{client = Client,priority = player:GetPlayerSkill()})
                 ::continue::
 			end
 		end
@@ -184,19 +184,19 @@ function Plugin:OnNetworkingReady()
 end
 
 function Plugin:SendServerData( Client, ID, Data )
-	self:SendNetworkMessage( Client, "ServerList", {
-		Name = Data.Name and Data.Name:sub( 1, 15 ) or "No Name",
-		IP = Data.IP,
-		Port = tonumber( Data.Port ) or 27015,
-		ID = ID
-	}, true )
+	for _,amount in ipairs(Data.Amount) do
+		self:SendNetworkMessage( Client, "AddServerList", {
+			Name = Data.Name  or "No Name",
+			IP = Data.IP,
+			Port = tonumber( Data.Port ) or 27015,
+			Amount = amount
+		}, true )
+	end
 end
 
 function Plugin:ProcessClient( Client )
-	local Servers = self.Config.Servers
-	for i = 1, #Servers do
-		local Data = Servers[i]
-		self:SendServerData( Client, i, Data )
+	for i = 1, #self.Config.Servers do
+		self:SendServerData( Client, i, self.Config.Servers[i] )
 	end
 end
 

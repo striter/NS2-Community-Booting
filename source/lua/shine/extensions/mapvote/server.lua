@@ -777,23 +777,6 @@ function Plugin:CreateCommands()
 		local SteamID = Client and Client:GetUserId() or "Console"
 		local Player, PlayerName = GetPlayerData( Client )
 
-		if self.Config.Nominations.AccessCheck then
-			local valid =  Shine:HasAccess( Client , "sh_nominateaccess")
-			if not valid then
-				if Player.seeding then
-					Shine:NotifyDualColour( Player,
-							priorColorTable[1], priorColorTable[2], priorColorTable[3],"[换图]",
-							255, 255, 255,"由于您为[预热贡献者],以成功换图提名!",true, data )
-					valid = true
-				end
-			end
-			
-			if not valid then
-				NotifyError(Player,"NOMINATE_DENIED_ACCESS",nil,"You need access to nominate")
-				return	
-			end
-		end
-
 		-- Verify the user hasn't nominated too many, and use their Steam ID to prevent rejoining resetting it.
 		local NominationCount = self.Vote.NominationTracker[ SteamID ] or 0
 		if NominationCount >= self.Config.Nominations.MaxPerPlayer then
@@ -828,6 +811,21 @@ function Plugin:CreateCommands()
 
 			return
 		end
+
+---
+		if self.Config.Nominations.AccessCheck then
+			local accesss =  Shine:HasAccess( Client , "sh_nominateaccess")
+			if not accesss then
+				local communityRankEnabled, communityRank = Shine:IsExtensionEnabled( "communityrank" )
+				accesss = communityRankEnabled and communityRank:GetPrewarmPrivilege(Client,0,"换图提名")
+			end
+
+			if not accesss then
+				NotifyError(Player,"NOMINATE_DENIED_ACCESS",nil,"You need access to nominate")
+				return
+			end
+		end
+----
 
 		local IsConditional = self:IsConditionalMap( self.MapOptions[ Map ] )
 

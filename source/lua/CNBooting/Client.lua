@@ -1,30 +1,30 @@
 if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER"] = "投票换服"
-    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "至[%s]<%s>的班车(%s)"
+    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "至<%s>的班车(%s)"
     kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "发一辆至<%s>的班车(%s)?"
     kTranslateMessage["ONLY_ACCEPTED"] = "持票玩家"
     kTranslateMessage["EVERYONE"] = "所有玩家"
 
-    kTranslateMessage["VOTE_MUTE_PLAYER"] = "禁言玩家"
+    kTranslateMessage["VOTE_MUTE_PLAYER"] = "玩家处理 - [禁言]"
     kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言?"
 
-    kTranslateMessage["VOTE_FUCK_POLITICAN"] = "禁言+改名玩家(仅政治自爆处理)"
+    kTranslateMessage["VOTE_FUCK_POLITICAN"] = "玩家处理 - [禁言+改名](仅政治自爆处理)"
     kTranslateMessage["VOTE_FUCK_POLITICAN_QUERY"] = "将<%s>变成没有感情的暖服机器."
     
-    kTranslateMessage["VOTE_FORCE_SPECTATE"] = "强制观战"
+    kTranslateMessage["VOTE_FORCE_SPECTATE"] = "玩家处理 - [强制观战]"
     kTranslateMessage["VOTE_FORCE_SPECTATE_QUERY"] = "将<%s>强制移到观战?"
 
-    kTranslateMessage["VOTE_KILL_PLAYER"] = "击杀玩家"
+    kTranslateMessage["VOTE_KILL_PLAYER"] = "玩家处理 - [击杀]"
     kTranslateMessage["VOTE_KILL_PLAYER_QUERY"] = "将<%s>强制击杀?"
     
-    kTranslateMessage["VOTE_KILL_ALL"] = "击杀全体"
+    kTranslateMessage["VOTE_KILL_ALL"] = "全体玩家 - [击杀]"
     kTranslateMessage["VOTE_KILL_ALL_QUERY1"] = "大家都不活辣?"
     kTranslateMessage["VOTE_KILL_ALL_QUERY2"] = "生活失意,我好难过."
     kTranslateMessage["VOTE_KILL_ALL_QUERY3"] = "听说群友不来开黑啦?"
     kTranslateMessage["VOTE_KILL_ALL_QUERY4"] = "你是红裤衩吗."
     kTranslateMessage["VOTE_KILL_ALL_QUERY5"] = "你难道没有自己的生活行吗?"
     
-    kTranslateMessage["VOTE_RANDOM_SCALE"]="随机大小"
+    kTranslateMessage["VOTE_RANDOM_SCALE"]="全体玩家 - [随机大小]"
     kTranslateMessage["VOTE_RANDOM_SCALE_QUERY"]="给所有人随机大小?"
 
     kTranslateMessage["COMMUNITY_RANK"]="社区 %s"
@@ -48,7 +48,7 @@ end
 
 if kLocales then
     kLocales["VOTE_SWITCH_SERVER"] = "Vote Switch Server"
-    kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "To [%s]<%s> affected:(%s)"
+    kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "To <%s> affected:(%s)"
     kLocales["VOTE_SWITCH_SERVER_QUERY"] = "Send people to <%s> (%s)?"
     kLocales["ONLY_ACCEPTED"] = "Only Accepted"
     kLocales["EVERYONE"] = "Everyone"

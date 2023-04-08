@@ -651,15 +651,16 @@ do
 
 		local Words = StringExplode( NiceName, "_", true )
 		local KnownPrefixWords = {
-			co = "Combat - ",
-			sws = "SWS - ",
-			sg = "Siege - ",
-			gg = "Gun Game - ",
-			ls = "Last Stand - ",
-			infest = "Infest - ",
-			infest = "Infest - ",
-			["ns2.0"] = "NS[2.0] - ",
-			["ns1.0"] = "NS[1.0] - ",
+			co = "Combat -",
+			sws = "SWS -",
+			sg = "Siege -",
+			gg = "Gun Game -",
+			ls = "Last Stand -",
+			infest = "Infest -",
+			infest = "Infest -",
+			def = "Defense -",
+			["ns1.0"] = "NS[1.0] -",
+			["ns2.0"] = "NS[2.0] -",
 		}
 		KnownPrefixWords.infect = KnownPrefixWords.infest
 

@@ -73,7 +73,7 @@ if Server then
         self.communityRank = dataTable.rank or 0
         self.fakeBot = dataTable.fakeBot or false
         self.emblem = dataTable.emblem or 0
-        self.seeding = dataTable.seedingDay and dataTable.seedingDay == currentDay
+        self.seeding = dataTable.prewarmDay and dataTable.prewarmDay == currentDay
     end
     
     function ScoringMixin:SetGroup(_group)
