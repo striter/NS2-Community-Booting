@@ -65,7 +65,7 @@ kTranslateMessage["MENU_APPLY"] = "应用"
 
 kTranslateMessage["VOTE_CALL_VOTE"] = "发起投票"
 kTranslateMessage["VOTE_KICK_PLAYER"] = "踢出玩家"
-kTranslateMessage["VOTE_CHANGE_MAP"] = "换图"
+kTranslateMessage["VOTE_CHANGE_MAP"] = "换图提名"
 kTranslateMessage["VOTE_RESET_GAME"] = "重置游戏"
 kTranslateMessage["VOTE_RANDOMIZE_RR"] = "随机预备室玩家"
 kTranslateMessage["VOTE_FORCE_EVEN_TEAMS"] = "洗牌分队"

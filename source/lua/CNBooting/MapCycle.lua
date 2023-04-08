@@ -118,6 +118,8 @@ local prefixToModId =
 {
     ["infest"] = "2e813610",
     ["infect"] = "2e813610",
+    ["ns2.0"] = "a474e602",
+    ["ns1.0"] = "b0087f28",
 }
 
 -- Returns nil if the prefix doesn't match, or the real map name if it does match.

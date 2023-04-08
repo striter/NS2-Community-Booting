@@ -244,6 +244,7 @@ kShinePluginsTranslations["mapvote"]["NEXT_MAP_STARTED"]= "换图投票开始了
 kShinePluginsTranslations["mapvote"]["WINNER_CYCLING"]= "{MapName}赢得了投票,开始换图."
 
 kShinePluginsTranslations["mapvote"]["NOMINATE_FAIL"]= "你不能提名当前地图."
+kShinePluginsTranslations["mapvote"]["NOMINATE_DENIED_ACCESS"]= "需要地图提名资格,例如[社区段位]或[预热激励]."
 kShinePluginsTranslations["mapvote"]["NOMINATE_DENIED"]= "已达到了允许提名次数的上限."
 kShinePluginsTranslations["mapvote"]["ALREADY_NOMINATED"]= "{MapName}已经被提名了."
 kShinePluginsTranslations["mapvote"]["NOMINATIONS_FULL"]= "提名已满."

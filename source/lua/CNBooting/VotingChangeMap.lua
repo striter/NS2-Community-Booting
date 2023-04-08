@@ -35,7 +35,7 @@ if Client then
                     local MVPlugin = Shine.Plugins["mapvote"]
                     if MVPlugin and MVPlugin.Enabled then
                         Shared.ConsoleCommand(string.format("sh_nominate %s", serverMapIndices[data.map_index]))
-                        Shared.ConsoleCommand("sh_votemap")
+                        --Shared.ConsoleCommand("sh_votemap")
                         return
                     end
                 end
@@ -61,7 +61,7 @@ if Server then
     -- finds every map with "ns2_" as a prefix, and, attempts to replace it with "[prefix]_" in order to add
     -- more game modes via different map names (for the same level data).  The map will only be added to the
     -- vote menu if the map (with altered prefix) is included in the server's MapCycle.
-    local function AddMapPrefixesToVoteMenu(prefix, mapIndex)
+    local function AddMapPrefixesToVoteMenu(client,prefix, mapIndex)
         
         mapIndex = mapIndex or (Server.GetNumMaps() + 1)
         
@@ -81,21 +81,25 @@ if Server then
     
     -- Send new Clients the map list.
     local function OnClientConnect(client)
-    
+
+        local mapCount = 0
         for i = 1, Server.GetNumMaps() do
-        
+
             local mapName = Server.GetMapName(i)
             if MapCycle_GetMapIsInCycle(mapName) then
                 Server.SendNetworkMessage(client, "AddVoteMap", { name = mapName, index = i }, true)
+                mapCount = mapCount+1
             end
             
         end
         
         -- Add official game mode mods to the player's map list.  (For example, infested marines uses vanilla maps, and the
         -- game mode is activated by the map previx being "infested" or "infected".
-        local mapCount = nil
-        mapCount = AddMapPrefixesToVoteMenu("infest", mapCount)
-        mapCount = AddMapPrefixesToVoteMenu("infect", mapCount)
+        mapCount = AddMapPrefixesToVoteMenu(client,"infest", mapCount)
+        mapCount = AddMapPrefixesToVoteMenu(client,"infect", mapCount)
+        mapCount = AddMapPrefixesToVoteMenu(client,"ns2.0", mapCount)
+        mapCount = AddMapPrefixesToVoteMenu(client,"ns1.0", mapCount)
+        mapCount = AddMapPrefixesToVoteMenu(client,"def", mapCount)
         
     end
     Event.Hook("ClientConnect", OnClientConnect)
