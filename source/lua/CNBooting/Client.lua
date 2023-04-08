@@ -1,6 +1,6 @@
 if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER"] = "投票换服"
-    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "至<%s>的班车(%s)"
+    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "<%s> 人数要求:(%s)"
     kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "发一辆至<%s>的班车(%s)?"
     kTranslateMessage["ONLY_ACCEPTED"] = "持票玩家"
     kTranslateMessage["EVERYONE"] = "所有玩家"
@@ -8,7 +8,7 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_MUTE_PLAYER"] = "玩家处理 - [禁言]"
     kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言?"
 
-    kTranslateMessage["VOTE_FUCK_POLITICAN"] = "玩家处理 - [禁言+改名](仅政治自爆处理)"
+    kTranslateMessage["VOTE_FUCK_POLITICAN"] = "玩家处理 - [禁言+改名] (仅政治自爆处理)"
     kTranslateMessage["VOTE_FUCK_POLITICAN_QUERY"] = "将<%s>变成没有感情的暖服机器."
     
     kTranslateMessage["VOTE_FORCE_SPECTATE"] = "玩家处理 - [强制观战]"
