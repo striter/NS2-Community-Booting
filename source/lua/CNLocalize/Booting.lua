@@ -60,9 +60,11 @@ if Client then
     end
     Locale.ResolveLocation = CNResolveLocation
     ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "post")
+    ModLoader.SetupFileHook("lua/Player_Client.lua", "lua/CNLocalize/Player_Client.lua", "post")
     ModLoader.SetupFileHook("lua/PhaseGate.lua", "lua/CNLocalize/PhaseGate.lua", "post")
     ModLoader.SetupFileHook("lua/Observatory.lua", "lua/CNLocalize/Observatory.lua", "post")
     ModLoader.SetupFileHook("lua/TunnelEntrance.lua", "lua/CNLocalize/TunnelEntrance.lua", "post")
+    ModLoader.SetupFileHook("lua/GUIHiveStatus.lua", "lua/CNLocalize/GUIHiveStatus.lua", "post")
     
     -- Name Fix
     ModLoader.SetupFileHook("lua/menu2/MenuUtilities.lua", "lua/CNLocalize/MenuUtilities.lua", "post")

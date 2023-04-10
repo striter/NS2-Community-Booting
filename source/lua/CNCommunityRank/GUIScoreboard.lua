@@ -678,7 +678,7 @@ function GUIScoreboard:Update(deltaTime)
         local seconds = math.floor( gameTime - minutes * 60 )
 
         local serverName = Client.GetServerIsHidden() and "Hidden" or Client.GetConnectedServerName()
-        local gameTimeText = serverName .. " | " .. Shared.GetMapName() .. string.format( " - %d:%02d", minutes, seconds)
+        local gameTimeText = serverName .. " | " .. GetGamemode() .. "/" .. string.gsub( Shared.GetMapName(), "^ns[12]?_", "" ) .. string.format( " - %d:%02d", minutes, seconds)
 
         self.gameTime:SetText(gameTimeText)
 

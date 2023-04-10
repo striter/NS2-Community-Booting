@@ -870,7 +870,7 @@ kTranslateMessage["SPORES_TOOLTIP"]="施放孢子毒气.\n*朝目标喷放一片
 
 kTranslateMessage["FADE"]="Fade"
 kTranslateMessage["FADE_EGG"]="蛹(Fade)"
-kTranslateMessage["FADE_TOOLTIP"]="致命的刺客\n*使用刀状骨骼挥砍\n*通过闪烁快速切入切出战场.\n*(进化)新陈代谢在战斗中回复\n*(进化)蓄力一击造成双倍伤害\n# ProDDDDDDD"
+kTranslateMessage["FADE_TOOLTIP"]="致命的刺客\n*使用刀状骨骼挥砍\n*通过闪烁快速切入切出战场.\n*(进化)新陈代谢在战斗中回复\n*(进化)蓄力一击造成双倍伤害."
 kTranslateMessage["SWIPE"]="劈砍"
 kTranslateMessage["BLINK"]="闪现"
 kTranslateMessage["BLINK_TOOLTIP"]="*快速切入切出战场.\n*朝任意方向加速.\n*持续释放保持高速."
