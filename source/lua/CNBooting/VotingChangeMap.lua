@@ -15,34 +15,45 @@ Shared.RegisterNetworkMessage("AddVoteMap", { name = "string (" .. kMaxMapNameLe
 RegisterVoteType("VoteChangeMap", { map_index = "integer" })
 
 if Client then
-
+    
+    
     local serverMapList = { }
     local serverMapIndices = { }
     local function OnAddVoteMap(message)
-    
         table.insert(serverMapList, { text = message.name, extraData = { map_index = message.index } })
         serverMapIndices[message.index] = message.name
-        
     end
+    
+    local function GetMapList()
+        if Shine then
+            local MVEnabled, MVPlugin = Shine:IsExtensionEnabled( "mapvote" )
+
+            local mapList = {}
+            for _,mapdata in ipairs(serverMapList) do
+                table.insert(mapList, { text = MVPlugin:GetNiceMapName(mapdata.text), extraData = mapdata.extraData })
+            end
+            return mapList
+        end
+        return serverMapList
+    end
+    
     Client.HookNetworkMessage("AddVoteMap", OnAddVoteMap)
     
     local function SetupChangeMapVote(voteMenu)
 
         if GetStartVoteAllowedForThunderdome("VoteChangeMap") then
             local function StartChangeMapVote(data)
-
                 if Shine then
-                    local MVPlugin = Shine.Plugins["mapvote"]
-                    if MVPlugin and MVPlugin.Enabled then
+                    local MVEnabled, MVPlugin = Shine:IsExtensionEnabled( "mapvote" ) 
+                    if MVEnabled then
                         Shared.ConsoleCommand(string.format("sh_nominate %s", serverMapIndices[data.map_index]))
                         --Shared.ConsoleCommand("sh_votemap")
                         return
                     end
                 end
-                
                 AttemptToStartVote("VoteChangeMap", { map_index = data.map_index })
             end
-            voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_CHANGE_MAP"), function() return serverMapList end, StartChangeMapVote)
+            voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_CHANGE_MAP"), GetMapList, StartChangeMapVote)
         end
         
         -- This function translates the networked data into a question to display to the player for voting.
@@ -96,9 +107,9 @@ if Server then
         local mapCount = nil
         mapCount = AddMapPrefixesToVoteMenu(client,"infest", mapCount)
         mapCount = AddMapPrefixesToVoteMenu(client,"infect", mapCount)
-        mapCount = AddMapPrefixesToVoteMenu(client,"ns2.0", mapCount)
-        mapCount = AddMapPrefixesToVoteMenu(client,"ns1.0", mapCount)
         mapCount = AddMapPrefixesToVoteMenu(client,"def", mapCount)
+        mapCount = AddMapPrefixesToVoteMenu(client,"ns1.0", mapCount)
+        mapCount = AddMapPrefixesToVoteMenu(client,"ns2.0", mapCount)
         
     end
     Event.Hook("ClientConnect", OnClientConnect)

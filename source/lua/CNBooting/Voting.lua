@@ -231,7 +231,7 @@ if Server then
             local votingDone = Shared.GetTime() - activeVoteStartedAtTime >= kVoteExpireTime
             if not votingDone and message.voteId == activeVoteId then
                 local clientId = client:GetUserId()
-                if not activeVoteResults.votes[clientId] then
+                if not table.contains(activeVoteResults.voters,clientId) then
                     table.insert(activeVoteResults.voters, clientId)
                 end
 
@@ -368,11 +368,11 @@ if Client then
         if currentVoteId > 0 then
 
             -- Predict the vote locally for the UI.
-            if votedYes then
-                yesVotes = yesVotes + 1
-            else
-                noVotes = noVotes + 1
-            end
+            --if votedYes then
+            --    yesVotes = yesVotes + 1
+            --else
+            --    noVotes = noVotes + 1
+            --end
 
             Client.SendNetworkMessage("SendVote", { voteId = currentVoteId, choice = votedYes }, true)
 
@@ -426,8 +426,8 @@ if Client then
         if currentVoteId == message.voteId then
 
             -- Use the higher value as we predict the vote for the local player.
-            yesVotes = math.max(yesVotes, message.yesVotes)
-            noVotes = math.max(noVotes, message.noVotes)
+            yesVotes =  message.yesVotes
+            noVotes = message.noVotes
             requiredVotes = math.max(requiredVotes, message.requiredVotes)
 
             if message.state == kVoteState.Passed then
@@ -503,7 +503,7 @@ if Client then
                         for _, data in ipairs(SSVPlugin.QueryServers) do
                             if address ~= data.Address then
                                 if data.Amount ~= 0 then
-                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,string.format("仅同意者(%s人)", data.Amount)), 
+                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,string.format("%s人", data.Amount)), 
                                                               extraData = { ip = data.Address , name = data.Name ,onlyAccepted = true , voteRequired = data.Amount } })
                                 else
                                     table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,"所有人"), 

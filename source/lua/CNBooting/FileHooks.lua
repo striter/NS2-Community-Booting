@@ -26,4 +26,5 @@ ModLoader.SetupFileHook( "lua/Badges_Shared.lua", "lua/CNBooting/Badges_Shared.l
 ModLoader.SetupFileHook( "lua/Badges_Client.lua", "lua/CNBooting/Badges_Client.lua", "replace")
 ModLoader.SetupFileHook( "lua/Voting.lua", "lua/CNBooting/Voting.lua", "replace")
 ModLoader.SetupFileHook( "lua/VotingChangeMap.lua", "lua/CNBooting/VotingChangeMap.lua", "replace")
+ModLoader.SetupFileHook( "lua/GUIVoteMenu.lua", "lua/CNBooting/GUIVoteMenu.lua", "post")
 ModLoader.SetupFileHook( "lua/shine/core/shared/hook.lua", "lua/shine/gamemodehook.lua", "post" )

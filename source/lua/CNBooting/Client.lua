@@ -1,8 +1,8 @@
 if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER"] = "投票换服"
-    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "<%s> 人数要求:(%s)"
+    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "<%s> : %s"
     kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "发一辆至<%s>的班车(%s)?"
-    kTranslateMessage["ONLY_ACCEPTED"] = "持票玩家"
+    kTranslateMessage["ONLY_ACCEPTED"] = "持票"
     kTranslateMessage["EVERYONE"] = "所有玩家"
 
     kTranslateMessage["VOTE_MUTE_PLAYER"] = "玩家处理 - [禁言]"
@@ -48,7 +48,7 @@ end
 
 if kLocales then
     kLocales["VOTE_SWITCH_SERVER"] = "Vote Switch Server"
-    kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "To <%s> affected:(%s)"
+    kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "To <%s> : %s"
     kLocales["VOTE_SWITCH_SERVER_QUERY"] = "Send people to <%s> (%s)?"
     kLocales["ONLY_ACCEPTED"] = "Only Accepted"
     kLocales["EVERYONE"] = "Everyone"
