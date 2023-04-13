@@ -62,7 +62,8 @@ do
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
     Validator:AddFieldRule( "Elo.Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Player ))
-    Validator:AddFieldRule( "Elo.Constants.Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.Constants))
+    Validator:AddFieldRule( "Elo.Constants.Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.Constants.Tier))
+    Validator:AddFieldRule( "Elo.Constants.Default",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Constants.Default))
     Validator:AddFieldRule( "Prewarm.ValidationDay",  Validator.IsType( "number", Plugin.DefaultConfig.Prewarm.ValidationDay ))
     Validator:AddFieldRule( "Prewarm.Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Prewarm.Restriction.Hour ))
     Validator:AddFieldRule( "Prewarm.Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Prewarm.Restriction.Player ))
@@ -101,14 +102,14 @@ local function GetPlayerData(self,steamId)
 end
 
 function Plugin:ResetState()
-    table.empty(self.MemberInfos)
-    table.empty(self.PrewarmTracker)
+    table.Empty(self.MemberInfos)
+    table.Empty(self.PrewarmTracker)
     ReadPersistent(self)
 end
 
 function Plugin:Cleanup()
-    table.empty(self.MemberInfos)
-    table.empty(self.PrewarmTracker)
+    table.Empty(self.MemberInfos)
+    table.Empty(self.PrewarmTracker)
     return self.BaseClass.Cleanup( self )
 end
 
@@ -231,21 +232,21 @@ local function PrewarmEnabled(self)
     return true
 end
 
-local function PrewarmStatusNotify(self,_client)
+local function PrewarmStatusNotify(self,_client,_data)
     if not _client then return end
     
-    data = GetPlayerData(self,_client:GetUserId())
-    player = _client:GetControllingPlayer()
+    local data = _data or GetPlayerData(self,_client:GetUserId())
     Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-            255, 255, 255,string.format("您目前为[%s],当日的预热时长[%s分],拥有%s[预热点]!",
-                    (data.prewarmTier and data.prewarmTier  > 0) and string.format("预热贡献者%s",data.prewarmTier) or "社区玩家",
-                    math.floor((data.prewarmTime or 0) / 60),
-                    data.prewarmCredit or 0),true, data )
+            255, 255, 255,string.format("您的预热等级为:[%s].\n可用[预热点]:%s点.今日预热时长[%s分]!",
+                    (data.prewarmTier and data.prewarmTier  > 0) and string.format("预热贡献者 - %s",data.prewarmTier) or "社区玩家",
+                    data.prewarmCredit or 0,
+                    math.floor((data.prewarmTime or 0) / 60)
+            ),true, data )
 end
 
 local function PrewarmTrack(self,client,_clientID)
     local now = Shared.GetTime()
-    data = GetPlayerData(self,_clientID)
+    local data = GetPlayerData(self,_clientID)
     if data.prewarmDay ~= kCurrentDay then
         data.prewarmDay = kCurrentDay
         data.prewarmTime = 0
@@ -255,17 +256,22 @@ local function PrewarmTrack(self,client,_clientID)
     
     data.prewarmTime = (data.prewarmTime or 0) + math.floor(now - self.PrewarmTracker[_clientID])
     self.PrewarmTracker[_clientID] = now
-    --Shared.Message(tostring(data.prewarmTime))
     client:GetControllingPlayer():SetPlayerExtraData(data)
 end
 
 local function PrewarmTrackConnect(self, _client, _clientID)
-    if not PrewarmEnabled(self) then  
-        PrewarmStatusNotify(self,_client)
+    if not PrewarmEnabled(self) then
+
+        local data = GetPlayerData(self,_client:GetUserId())
+        if data.prewarmTier and data.prewarmTier > 0 then
+            PrewarmStatusNotify(self,_client,data)
+        end
+        
         return 
     end
     self.PrewarmTracker[_clientID] = Shared.GetTime()
-    Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,"服务器为预热状态,预热成功后场内所有人都将获得激励.",true, data )
+    Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
+            string.format("服务器为预热状态,预热成功后场[>=%s人]内所有人都将获得激励.",self.Config.Prewarm.Restriction.Player),true, data )
     PrewarmTrack(self,_client,_clientID)
 end
 
@@ -286,7 +292,7 @@ local function PrewarmNotify(self)
     if not PrewarmEnabled(self) then return end
     for client in Shine.IterateClients() do
         Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("当前为预热局,当游戏结束时[人数>%s]后,预热排名靠前的玩家将获得当日[预热徽章]以及对应的[预热点].",
+                255, 255, 255,string.format("当前为预热局,当游戏开始/结束时[人数>%s]后,参与预热的玩家将获得当日[预热徽章]以及对应的[预热点].",
                         self.Config.Prewarm.Restriction.Player),true, data)
     end
 end
@@ -332,7 +338,7 @@ local function PrewarmValidate(self)
         client:GetControllingPlayer():SetPlayerExtraData(data)
         Shine:NotifyDualColour( clientData.client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
                 string.format("预热已达成,您于当日享有[预热徽章%s]并获得了[%s预热点],感谢您的付出!", curTier, curData.Credit),true, data )
-        PrewarmStatusNotify(self,client)
+        PrewarmStatusNotify(self,client,nil)
         
         currentIndex = currentIndex + 1
     end
@@ -340,8 +346,8 @@ local function PrewarmValidate(self)
 end
 
 function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
-    data = GetPlayerData(self,_client:GetUserId())
-    if data.prewarmTier <= 0 then return end
+    local data = GetPlayerData(self,_client:GetUserId())
+    if not data.prewarmTier or data.prewarmTier <= 0 then return end
     
     if _cost == 0 then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
@@ -373,6 +379,7 @@ end
 
 function Plugin:SetGameState( Gamerules, State, OldState )
     if State == kGameState.Countdown then
+        PrewarmValidate(self)
         PrewarmNotify(self)
     end
 end
@@ -399,7 +406,7 @@ end
 
 function Plugin:ClientConnect( _client )
     local clientID = _client:GetUserId()
-    if clientID == 0 then return end
+    if clientID <= 0 then return end
     PrewarmTrackConnect(self,_client,clientID)
     
     --Jeez wtf
@@ -415,9 +422,9 @@ end
 
 function Plugin:ClientDisconnect( _client )
     local clientID = _client:GetUserId()
-    if clientID == 0 then return end
+    if clientID <= 0 then return end
 
-    PrewarmTrackDisconnect(self,_client,clientId)
+    PrewarmTrackDisconnect(self,_client,clientID)
 end
 
 function Plugin:CreateMessageCommands()
@@ -435,7 +442,7 @@ function Plugin:CreateMessageCommands()
         local preRank = player.skill
 
         local rank = _rank - preRank
-        data = GetPlayerData(self,_id)
+        local data = GetPlayerData(self,_id)
         data.rank = rank
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
