@@ -5,7 +5,8 @@ function ScoringMixin:__initmixin()
     baseInitMixin(self)
     self.communityRank = 0
     self.fakeBot = false
-    self.seeding = false
+    self.prewarmTier = 0
+    self.prewarmTime = 0
     self.group = "RANK_INVALID"
     self.emblem = 0
     self.queueIndex = 0
@@ -60,20 +61,21 @@ if Server then
         self.communityRank = player.communityRank
         self.fakeBot = player.fakeBot
         self.emblem = player.emblem
-        self.seeding = player.seeding
+        self.prewarmTier = player.prewarmTier
+        self.prewarmTime = player.prewarmTime
         self.group = player.group
         self.queueIndex = player.queueIndex
         self.reservedQueueIndex = player.reservedQueueIndex
 ---------
     end
 
-
     local currentDay = os.date("*t", Shared.GetSystemTime()).day
     function ScoringMixin:SetPlayerExtraData(dataTable)
         self.communityRank = dataTable.rank or 0
         self.fakeBot = dataTable.fakeBot or false
         self.emblem = dataTable.emblem or 0
-        self.seeding = dataTable.prewarmDay and dataTable.prewarmDay == currentDay
+        self.prewarmTier = dataTable.prewarmTier or 0
+        self.prewarmTime = math.floor((dataTable.prewarmTime or 0) / 60)
     end
     
     function ScoringMixin:SetGroup(_group)

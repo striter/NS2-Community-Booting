@@ -81,4 +81,4 @@ if Client then
     Locale.ChatFilter = CNChatFilter
 end
 
-Shared.Message("[CNCE] CN Booting Version 2023.3.5")
+Shared.Message("[CNCE] CN Booting Version 2023.04.13")

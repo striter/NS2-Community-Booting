@@ -118,7 +118,8 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.Emblem = pie.emblem
         playerRecord.QueueIndex = pie.queueIndex
         playerRecord.ReservedQueueIndex = pie.reservedQueueIndex
-        playerRecord.Seeding = pie.seeding
+        playerRecord.prewarmTier = pie.prewarmTier
+        playerRecord.prewarmTime = pie.prewarmTime
     ------------
 
         if playerRecord.IsCommander then

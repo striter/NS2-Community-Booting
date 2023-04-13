@@ -1136,8 +1136,8 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
         
         local rankIconIndex = defaultRankIndex
-        if playerRecord.Seeding then
-            rankIconIndex = 7
+        if playerRecord.prewarmTier > 0 then
+            rankIconIndex = 6 + playerRecord.prewarmTier
         end
         
         local visible = not fakeBot and rankIconIndex > 0

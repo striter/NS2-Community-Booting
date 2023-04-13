@@ -48,6 +48,7 @@ local errorColorTable = { 236, 112, 99 }
 function Plugin:Initialise()
 	self.Enabled = true
 	self:CreateCommands()
+	Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
 	return true
 end
 
@@ -75,7 +76,7 @@ end
 function Plugin:GetMaxPlayers(Gamerules)
 	return self:GetPlayerLimit(Gamerules,kTeam1Index) + self:GetPlayerLimit(Gamerules,kTeam2Index)
 end
-
+local kJoinTracker = { }
 local TeamNames = { "陆战队","卡拉异形" }
 function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 	if ShineForce or NewTeam == kTeamReadyRoom or NewTeam == kSpectatorIndex then return end
@@ -117,10 +118,18 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 		end
 
 		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
-		if crEnabled and cr:GetPrewarmPrivilege(client,1,"无限制下场") then return end
+		if crEnabled then
+			local userId = client:GetUserId()
+			if table.contains(kJoinTracker,userId) and cr:GetPrewarmPrivilege(client,0,"本局自由下场") then return end
+			if cr:GetPrewarmPrivilege(client,1,"自由下场") then table.insert(kJoinTracker,userId) return end
+		end
 	end
 	
 	return available
+end
+
+function Plugin:OnEndGame(_winningTeam)
+	table.Empty(kJoinTracker)
 end
 
 local function RestrictionDisplay(self,_client)
@@ -181,10 +190,10 @@ function Plugin:CreateCommands()
 end
 
 
-function Plugin:ClientConfirmConnect( Client )
-	if Client:GetIsVirtual() then return end
-	RestrictionDisplay(self,Client)
-end
+--function Plugin:ClientConfirmConnect( Client )
+--	if Client:GetIsVirtual() then return end
+--	RestrictionDisplay(self,Client)
+--end
 --Restrict teams also at voterandom
 function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
 	local  Gamerules = GetGamerules()

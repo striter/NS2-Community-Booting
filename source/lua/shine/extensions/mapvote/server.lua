@@ -817,7 +817,7 @@ function Plugin:CreateCommands()
 			local accesss =  Shine:HasAccess( Client , "sh_nominateaccess")
 			if not accesss then
 				local communityRankEnabled, communityRank = Shine:IsExtensionEnabled( "communityrank" )
-				accesss = communityRankEnabled and communityRank:GetPrewarmPrivilege(Client,0,"换图提名")
+				accesss = communityRankEnabled and communityRank:GetPrewarmPrivilege(Client,0.25,"换图提名")
 			end
 
 			if not accesss then
