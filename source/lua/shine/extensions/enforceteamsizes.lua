@@ -194,23 +194,24 @@ end
 --	if Client:GetIsVirtual() then return end
 --	RestrictionDisplay(self,Client)
 --end
---Restrict teams also at voterandom
-function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
-	local  Gamerules = GetGamerules()
-	local team1Max = self.Config.Team[1] or 1000
-	local team2Max = self.Config.Team[2] or 1000
-	local maxPlayer = math.min( team1Max, team2Max )
-	
-	if maxPlayer == 1000 then return end
 
-	for i = 1, 2 do
-		for j = #TeamMembers[i], maxPlayer + 1, -1 do
-			--Move player into the ready room
-			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )
-			--remove the player's entry in the table
-			TeamMembers[i][j] = nil
-		end
-	end
-end
+--Restrict teams also at voterandom
+--function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
+--	local  Gamerules = GetGamerules()
+--	local team1Max = self.Config.Team[1] or 1000
+--	local team2Max = self.Config.Team[2] or 1000
+--	local maxPlayer = math.min( team1Max, team2Max )
+--	
+--	if maxPlayer == 1000 then return end
+--
+--	for i = 1, 2 do
+--		for j = #TeamMembers[i], maxPlayer + 1, -1 do
+--			--Move player into the ready room
+--			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )
+--			--remove the player's entry in the table
+--			TeamMembers[i][j] = nil
+--		end
+--	end
+--end
 
 return Plugin

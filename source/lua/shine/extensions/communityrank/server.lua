@@ -241,7 +241,7 @@ local function PrewarmStatusNotify(self,_client,_data)
                     (data.prewarmTier and data.prewarmTier  > 0) and string.format("预热贡献者 - %s",data.prewarmTier) or "社区玩家",
                     data.prewarmCredit or 0,
                     math.floor((data.prewarmTime or 0) / 60)
-            ),true, data )
+            ) )
 end
 
 local function PrewarmTrack(self,client,_clientID)
@@ -260,8 +260,9 @@ local function PrewarmTrack(self,client,_clientID)
 end
 
 local function PrewarmTrackConnect(self, _client, _clientID)
-    if not PrewarmEnabled(self) then
-
+    if not PrewarmEnabled(self) then --return end
+        
+        if not self.Config.Prewarm.Check then return end
         local data = GetPlayerData(self,_client:GetUserId())
         if data.prewarmTier and data.prewarmTier > 0 then
             PrewarmStatusNotify(self,_client,data)
@@ -269,6 +270,7 @@ local function PrewarmTrackConnect(self, _client, _clientID)
         
         return 
     end
+    
     self.PrewarmTracker[_clientID] = Shared.GetTime()
     Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
             string.format("服务器为预热状态,预热成功后场[>=%s人]内所有人都将获得激励.",self.Config.Prewarm.Restriction.Player),true, data )
@@ -293,7 +295,7 @@ local function PrewarmNotify(self)
     for client in Shine.IterateClients() do
         Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
                 255, 255, 255,string.format("当前为预热局,当游戏开始/结束时[人数>%s]后,参与预热的玩家将获得当日[预热徽章]以及对应的[预热点].",
-                        self.Config.Prewarm.Restriction.Player),true, data)
+                        self.Config.Prewarm.Restriction.Player))
     end
 end
 
@@ -309,35 +311,36 @@ local function PrewarmValidate(self)
     
     for client in Shine.IterateClients() do
         local clientID = client:GetUserId()
-        table.insert(prewarmTable, { client = client,clientID = clientID, time = self.PrewarmTracker[clientID] })
+        local playerData = GetPlayerData(self,clientID)
+        table.insert(prewarmTable, { client = client,clientID = clientID, data = playerData or 0})
     end
 
-    local function PrewarmCompare(a, b) return a.time > b.time end
+    local function PrewarmCompare(a, b) return a.data.prewarmTime > b.data.prewarmTime end
     table.sort(prewarmTable, PrewarmCompare)
 
     local currentIndex = 0
     for _, clientData in ipairs(prewarmTable) do
         local curTier = 0
-        local curData = nil
+        local tierInfo = nil
         local tierValidator = 0
         for tier,data in ipairs(self.Config.Prewarm.Tier) do
             tierValidator = tierValidator + data.Count
             if currentIndex < tierValidator then
-                curData = data
+                tierInfo = data
                 curTier = tier
                 break
             end
         end
         
-        if not curData then break end
+        if not tierInfo then break end
         local client = clientData.client
         
-        data = GetPlayerData(self, clientData.clientID)
+        data = clientData.data
         data.prewarmTier = curTier
-        data.prewarmCredit = curData.Credit
+        data.prewarmCredit = tierInfo.Credit
         client:GetControllingPlayer():SetPlayerExtraData(data)
         Shine:NotifyDualColour( clientData.client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
-                string.format("预热已达成,您于当日享有[预热徽章%s]并获得了[%s预热点],感谢您的付出!", curTier, curData.Credit),true, data )
+                string.format("预热已达成,您于当日享有[预热徽章%s]并获得了[%s预热点],感谢您的付出!", curTier, tierInfo.Credit) )
         PrewarmStatusNotify(self,client,nil)
         
         currentIndex = currentIndex + 1
@@ -351,7 +354,7 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
     
     if _cost == 0 then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("您已使用[预热特权:%s]!", _privilege),true, data )
+                255, 255, 255,string.format("您已使用[预热特权:%s]!", _privilege) )
         return true
     end
     
@@ -360,13 +363,13 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
         if credit >= _cost then
             data.prewarmCredit = credit - _cost
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                    255, 255, 255,string.format("消耗[%s预热点]获得[预热特权:%s],剩余[%s预热点]!", _cost,_privilege,data.prewarmCredit),true, data )
+                    255, 255, 255,string.format("消耗[%s预热点]获得[预热特权:%s],剩余[%s预热点]!", _cost,_privilege,data.prewarmCredit) )
             return true
         end
         return false
     else
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("您的[预热点]不足!", _privilege),true, data )
+                255, 255, 255,string.format("您的[预热点]不足!", _privilege) )
         return true
     end
 end
@@ -391,6 +394,8 @@ function Plugin:OnEndGame(_winningTeam)
 end
 
 function Plugin:MapChange()
+    if not self.Config.Prewarm.Check then return end
+    
     PrewarmClientsTrack(self)
     SavePersistent(self)
 end
