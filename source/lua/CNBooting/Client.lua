@@ -43,7 +43,8 @@ if kTranslateMessage then
     kTranslateMessage["STATUS_QUEUE"]="队列: %i"
     kTranslateMessage["STATUS_QUEUE_RESERVED"]="预留: %i"
 
-    kTranslateMessage["COMMUNITY_PREWARM"]="[预热贡献者 - %s]:%s分钟"
+    kTranslateMessage["COMMUNITY_PLAYTIME"]="今日在线: %s分"
+    kTranslateMessage["COMMUNITY_PREWARM"]="           < 预热贡献者 - %s >"
 end
 
 if kLocales then
@@ -90,5 +91,6 @@ if kLocales then
     kLocales["STATUS_QUEUE"]="Queue: %i"
     kLocales["STATUS_QUEUE_RESERVED"]="Reserved: %i"
 
-    kLocales["COMMUNITY_PREWARM"]="[PreWarmer - %s] - %sm"
+    kLocales["COMMUNITY_PLAYTIME"]="Online: %sm"
+    kLocales["COMMUNITY_PREWARM"]="           < Prewarmer - %s >"
 end 

@@ -69,13 +69,10 @@ if Server then
 ---------
     end
 
-    local currentDay = os.date("*t", Shared.GetSystemTime()).day
     function ScoringMixin:SetPlayerExtraData(dataTable)
         self.communityRank = dataTable.rank or 0
         self.fakeBot = dataTable.fakeBot or false
         self.emblem = dataTable.emblem or 0
-        self.prewarmTier = dataTable.prewarmTier or 0
-        self.prewarmTime = math.floor((dataTable.prewarmTime or 0) / 60)
     end
     
     function ScoringMixin:SetGroup(_group)
@@ -93,6 +90,11 @@ if Server then
         else
             self.queueIndex = _index
         end 
+    end
+    
+    function ScoringMixin:SetPrewarmData(dataTable)
+        self.prewarmTier = dataTable.tier or 0
+        self.prewarmTime = math.floor((dataTable.time or 0) / 60)
     end
 end --End-Server
 

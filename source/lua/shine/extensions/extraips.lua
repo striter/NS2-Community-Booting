@@ -11,7 +11,7 @@ Plugin.HasConfig = true
 Plugin.ConfigName = "ExtraIps.json"
 Plugin.DefaultConfig =
 {
-    MinPlayers = { 18, 26 }
+    MinPlayers = { 12 , 16 , 20 }
 }
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
@@ -79,7 +79,7 @@ function Plugin:OnAddPlayer(Team)
     if not Team.spawnedInfantryPortal or Team.spawnedInfantryPortal < 1 then return end
 
     local MinPlayers = self.Config.MinPlayers
-    local _, PlayerCount = Shine.GetAllPlayers()
+    local PlayerCount = Team:GetNumPlayers()
     local TechPoint = self:GetTechPoint(Team)
 
     for i = 1, #MinPlayers do
@@ -93,7 +93,7 @@ function Plugin:OnSpawnInitialStructures( Team, TechPoint)
     self.spawnedInfantryPortal = 0
 
     local MinPlayers = self.Config.MinPlayers
-    local _, PlayerCount = Shine.GetAllPlayers()
+    local PlayerCount = Team:GetNumPlayers()
 
     for i = 1, #MinPlayers do
         if PlayerCount >= MinPlayers[i] then

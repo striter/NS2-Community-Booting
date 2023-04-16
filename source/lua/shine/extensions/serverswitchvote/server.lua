@@ -143,7 +143,7 @@ function Plugin:Initialise()
 		table.sort(clients,function (a,b) return a.priority < b.priority end)
 		local count = _count
 		local targetIP =  GetConnectIP(_serverIndex)
-		for index,data in ipairs(clients) do
+		for index,data in pairs(clients) do
 			
 			Server.SendNetworkMessage(data.client, "Redirect",{ ip = targetIP }, true)
 

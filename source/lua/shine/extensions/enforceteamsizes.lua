@@ -117,11 +117,11 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
 			return
 		end
 
-		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
-		if crEnabled then
+		local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
+		if cpEnabled then
 			local userId = client:GetUserId()
-			if table.contains(kJoinTracker,userId) and cr:GetPrewarmPrivilege(client,0,"本局自由下场") then return end
-			if cr:GetPrewarmPrivilege(client,1,"自由下场") then table.insert(kJoinTracker,userId) return end
+			if table.contains(kJoinTracker,userId) and cp:GetPrewarmPrivilege(client,0,"本局自由下场") then return end
+			if cp:GetPrewarmPrivilege(client,1,"自由下场") then table.insert(kJoinTracker,userId) return end
 		end
 	end
 	
@@ -196,22 +196,29 @@ end
 --end
 
 --Restrict teams also at voterandom
---function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
---	local  Gamerules = GetGamerules()
---	local team1Max = self.Config.Team[1] or 1000
---	local team2Max = self.Config.Team[2] or 1000
---	local maxPlayer = math.min( team1Max, team2Max )
---	
---	if maxPlayer == 1000 then return end
---
---	for i = 1, 2 do
---		for j = #TeamMembers[i], maxPlayer + 1, -1 do
---			--Move player into the ready room
---			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )
---			--remove the player's entry in the table
---			TeamMembers[i][j] = nil
---		end
---	end
---end
+function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
+	local  Gamerules = GetGamerules()
+	local team1Max = self.Config.Team[1] or 1000
+	local team2Max = self.Config.Team[2] or 1000
+	local maxPlayer = math.min( team1Max, team2Max )
+
+	if maxPlayer == 1000 then return end
+
+	for i = 1, 2 do
+		for j = #TeamMembers[i], maxPlayer + 1, -1 do
+			local player = TeamMembers[i][j]
+			local id = player:GetClient():GetUserId()
+			local ignore = table.contains(kJoinTracker,id) 
+			ignore = ignore or (player:GetPlayerSkill() < self.Config.SkillLimitMin)
+
+			if not ignore then
+				--Move player into the ready room
+				pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )
+				--remove the player's entry in the table
+				TeamMembers[i][j] = nil
+			end
+		end
+	end
+end
 
 return Plugin

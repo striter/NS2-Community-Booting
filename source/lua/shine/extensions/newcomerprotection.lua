@@ -29,7 +29,7 @@ Plugin.DefaultConfig = {
 		["Onos"] = 			{31,	20.5,	12.25},
 	
 		["Marine"]=			{1, 0.5,	0.25},
-		["JetpackMarine"]=	{6,		4,		2.25},
+		["JetpackMarine"]=	{7.5,		4,		2.25},
 		["Exo"] = 			{27.5,	18.25,	11.25},
 	},
 	BelowSkillNotify = 100,

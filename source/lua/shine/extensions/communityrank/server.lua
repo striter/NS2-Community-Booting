@@ -5,21 +5,6 @@ Plugin.PrintName = "communityrank"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityRank.json"
 Plugin.DefaultConfig = {
-    Prewarm =
-    {
-        Check = false,
-        ValidationDay = 0,
-        Restriction = {
-            Hour = 4,           --Greater than this hour
-            Player = 12,
-        },
-        ["Tier"] = {
-            [1] = { Count = 2, Credit = 15 },
-            [2] = { Count = 3, Credit = 10 },
-            [3] = { Count = 10, Credit = 5 },
-            [4] = { Count = 99, Credit = 1 },
-        },
-    },
     Elo = {
         Check = false,
         Restriction = {
@@ -46,10 +31,6 @@ Plugin.DefaultConfig = {
             rank = -2000,
             fakeBot = true,
             emblem = 0,
-            prewarmDay = 0,
-            prewarmCredit = 5,
-            prewarmTier = 0,
-            prewarmTime = 0,
         }
     },
 }
@@ -64,29 +45,21 @@ do
     Validator:AddFieldRule( "Elo.Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Player ))
     Validator:AddFieldRule( "Elo.Constants.Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.Constants.Tier))
     Validator:AddFieldRule( "Elo.Constants.Default",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Constants.Default))
-    Validator:AddFieldRule( "Prewarm.ValidationDay",  Validator.IsType( "number", Plugin.DefaultConfig.Prewarm.ValidationDay ))
-    Validator:AddFieldRule( "Prewarm.Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Prewarm.Restriction.Hour ))
-    Validator:AddFieldRule( "Prewarm.Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Prewarm.Restriction.Player ))
-    Validator:AddFieldRule( "Prewarm.Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Prewarm.Tier  ))
     Plugin.ConfigValidator = Validator
 end
 function Plugin:Initialise()
     self.MemberInfos = { }
-    self.PrewarmTracker = { }
     self:CreateMessageCommands()
 	return true
 end
 
 local function ReadPersistent(self)
-    -- Shared.Message("[CNCR] Read Persistent:")
     for k,v in pairs(self.Config.UserData) do
-        -- Shared.Message(k .. ":" .. tostring(v))
         self.MemberInfos[tonumber(k)] = v
     end
 end
 
 local function SavePersistent(self)
-    -- Shared.Message("[CNCR] Save Persistent:")
     for k,v in pairs(self.MemberInfos) do
         self.Config.UserData[tostring(k)] = v
     end
@@ -103,13 +76,11 @@ end
 
 function Plugin:ResetState()
     table.Empty(self.MemberInfos)
-    table.Empty(self.PrewarmTracker)
     ReadPersistent(self)
 end
 
 function Plugin:Cleanup()
     table.Empty(self.MemberInfos)
-    table.Empty(self.PrewarmTracker)
     return self.BaseClass.Cleanup( self )
 end
 
@@ -219,184 +190,14 @@ local function EndGameElo(self)
 end
 
 
----Prewarm
-local kPrewarmColor = { 235, 152, 78 }
-local tmpDate = os.date("*t", Shared.GetSystemTime())
-local kCurrentDay = tmpDate.day
-local kCurrentHour = tmpDate.hour
-
-local function PrewarmEnabled(self)
-    if not self.Config.Prewarm.Check then return false end
-    if kCurrentDay == self.Config.Prewarm.ValidationDay then return false end
-    if kCurrentHour < self.Config.Prewarm.Restriction.Hour then return false end
-    return true
-end
-
-local function PrewarmStatusNotify(self,_client,_data)
-    if not _client then return end
-    
-    local data = _data or GetPlayerData(self,_client:GetUserId())
-    Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-            255, 255, 255,string.format("您的预热等级为:[%s].\n可用[预热点]:%s点.今日预热时长[%s分]!",
-                    (data.prewarmTier and data.prewarmTier  > 0) and string.format("预热贡献者 - %s",data.prewarmTier) or "社区玩家",
-                    data.prewarmCredit or 0,
-                    math.floor((data.prewarmTime or 0) / 60)
-            ) )
-end
-
-local function PrewarmTrack(self,client,_clientID)
-    local now = Shared.GetTime()
-    local data = GetPlayerData(self,_clientID)
-    if data.prewarmDay ~= kCurrentDay then
-        data.prewarmDay = kCurrentDay
-        data.prewarmTime = 0
-        data.prewarmTier = 0
-        data.prewarmCredit = 0
-    end
-    
-    data.prewarmTime = (data.prewarmTime or 0) + math.floor(now - self.PrewarmTracker[_clientID])
-    self.PrewarmTracker[_clientID] = now
-    client:GetControllingPlayer():SetPlayerExtraData(data)
-end
-
-local function PrewarmTrackConnect(self, _client, _clientID)
-    if not PrewarmEnabled(self) then --return end
-        
-        if not self.Config.Prewarm.Check then return end
-        local data = GetPlayerData(self,_client:GetUserId())
-        if data.prewarmTier and data.prewarmTier > 0 then
-            PrewarmStatusNotify(self,_client,data)
-        end
-        
-        return 
-    end
-    
-    self.PrewarmTracker[_clientID] = Shared.GetTime()
-    Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
-            string.format("服务器为预热状态,预热成功后场[>=%s人]内所有人都将获得激励.",self.Config.Prewarm.Restriction.Player),true, data )
-    PrewarmTrack(self,_client,_clientID)
-end
-
-local function PrewarmTrackDisconnect(self, _client, _clientID)
-    if not PrewarmEnabled(self) then return end
-    PrewarmTrack(self,_client,_clientID)
-    self.PrewarmTracker[_clientID] = nil
-end
-
-local function PrewarmClientsTrack(self)
-    if not PrewarmEnabled(self) then return end
-    for client in Shine.IterateClients() do
-        PrewarmTrack(self,client,client:GetUserId())
-    end
-end
-
-local function PrewarmNotify(self)
-    if not PrewarmEnabled(self) then return end
-    for client in Shine.IterateClients() do
-        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("当前为预热局,当游戏开始/结束时[人数>%s]后,参与预热的玩家将获得当日[预热徽章]以及对应的[预热点].",
-                        self.Config.Prewarm.Restriction.Player))
-    end
-end
-
-
-local function PrewarmValidate(self)
-    if not PrewarmEnabled(self) then return end
-
-    PrewarmClientsTrack(self)
-    if Shine.GetHumanPlayerCount() < self.Config.Prewarm.Restriction.Player then return end
-    self.Config.Prewarm.ValidationDay = kCurrentDay
-    
-    local prewarmTable = {}
-    
-    for client in Shine.IterateClients() do
-        local clientID = client:GetUserId()
-        local playerData = GetPlayerData(self,clientID)
-        table.insert(prewarmTable, { client = client,clientID = clientID, data = playerData or 0})
-    end
-
-    local function PrewarmCompare(a, b) return a.data.prewarmTime > b.data.prewarmTime end
-    table.sort(prewarmTable, PrewarmCompare)
-
-    local currentIndex = 0
-    for _, clientData in ipairs(prewarmTable) do
-        local curTier = 0
-        local tierInfo = nil
-        local tierValidator = 0
-        for tier,data in ipairs(self.Config.Prewarm.Tier) do
-            tierValidator = tierValidator + data.Count
-            if currentIndex < tierValidator then
-                tierInfo = data
-                curTier = tier
-                break
-            end
-        end
-        
-        if not tierInfo then break end
-        local client = clientData.client
-        
-        data = clientData.data
-        data.prewarmTier = curTier
-        data.prewarmCredit = tierInfo.Credit
-        client:GetControllingPlayer():SetPlayerExtraData(data)
-        Shine:NotifyDualColour( clientData.client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
-                string.format("预热已达成,您于当日享有[预热徽章%s]并获得了[%s预热点],感谢您的付出!", curTier, tierInfo.Credit) )
-        PrewarmStatusNotify(self,client,nil)
-        
-        currentIndex = currentIndex + 1
-    end
-    
-end
-
-function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
-    local data = GetPlayerData(self,_client:GetUserId())
-    if not data.prewarmTier or data.prewarmTier <= 0 then return end
-    
-    if _cost == 0 then
-        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("您已使用[预热特权:%s]!", _privilege) )
-        return true
-    end
-    
-    if _cost > 0 then
-        local credit = data.prewarmCredit or 0
-        if credit >= _cost then
-            data.prewarmCredit = credit - _cost
-            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                    255, 255, 255,string.format("消耗[%s预热点]获得[预热特权:%s],剩余[%s预热点]!", _cost,_privilege,data.prewarmCredit) )
-            return true
-        end
-        return false
-    else
-        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("您的[预热点]不足!", _privilege) )
-        return true
-    end
-end
-
 -- Triggers
 function Plugin:OnFirstThink()
     ReadPersistent(self)
     Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
 end
 
-function Plugin:SetGameState( Gamerules, State, OldState )
-    if State == kGameState.Countdown then
-        PrewarmValidate(self)
-        PrewarmNotify(self)
-    end
-end
-
 function Plugin:OnEndGame(_winningTeam)
     EndGameElo(self)
-    PrewarmValidate(self)
-    SavePersistent(self)
-end
-
-function Plugin:MapChange()
-    if not self.Config.Prewarm.Check then return end
-    
-    PrewarmClientsTrack(self)
     SavePersistent(self)
 end
 
@@ -412,7 +213,6 @@ end
 function Plugin:ClientConnect( _client )
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
-    PrewarmTrackConnect(self,_client,clientID)
     
     --Jeez wtf
     local groupName,groupData = GetUserGroup(_client)
@@ -425,17 +225,7 @@ function Plugin:ClientConnect( _client )
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
 
-function Plugin:ClientDisconnect( _client )
-    local clientID = _client:GetUserId()
-    if clientID <= 0 then return end
-
-    PrewarmTrackDisconnect(self,_client,clientID)
-end
-
 function Plugin:CreateMessageCommands()
-    local setCommand = self:BindCommand( "sh_prewarm", "prewarm", function(_client) PrewarmStatusNotify(self,_client) end,true )
-    setCommand:Help( "显示你的[预热点]状态." )
-
     --Elo
     local function AdminRankPlayer( _client, _id, _rank )
         local target = Shine.GetClientByNS2ID(_id)
