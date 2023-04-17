@@ -147,7 +147,7 @@ local function EndGameElo(self)
     table.sort(team2Table,RankCompare)
 
     local function ApplyRankTable(_rankTable, _teamTable, _delta)
-        for _,data in ipairs(_teamTable) do
+        for _,data in pairs(_teamTable) do
             local steamId = data.steamId
 
             if not _rankTable[steamId] then
