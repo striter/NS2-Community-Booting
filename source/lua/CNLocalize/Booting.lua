@@ -71,8 +71,8 @@ if Client then
 
     --Additional Localizes
     ModLoader.SetupFileHook("lua/GUIDeathScreen2.lua", "lua/CNLocalize/GUIDeathScreen2.lua", "post")
-    ModLoader.SetupFileHook( "lua/GUIGameEndStats.lua", "lua/CNLocalize/GUIGameEndStats.lua", "replace" )
-    ModLoader.SetupFileHook( "lua/GUIDeathStats.lua", "lua/CNLocalize/GUIDeathStats.lua", "replace" )
+    ModLoader.SetupFileHook("lua/GUIGameEndStats.lua", "lua/CNLocalize/GUIGameEndStats.lua", "replace" )
+    ModLoader.SetupFileHook("lua/GUIDeathStats.lua", "lua/CNLocalize/GUIDeathStats.lua", "replace" )
     ModLoader.SetupFileHook("lua/ConfigFileUtility.lua", "lua/CNLocalize/ShineExtensions.lua", "post" )        --Shine localizes
 
     --Chat Filter

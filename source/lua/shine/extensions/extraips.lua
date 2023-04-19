@@ -32,12 +32,7 @@ end
 
 function Plugin:OnFirstThink()
     Shine.Hook.SetupClassHook( "MarineTeam", "SpawnInitialStructures", "OnSpawnInitialStructures", "PassivePost")
-    Shine.Hook.SetupClassHook( "MarineTeam", "SpawnInfantryPortal", "OnSpawnInfantryPortal", "ActivePre")
     Shine.Hook.SetupClassHook( "MarineTeam", "AddPlayer", "OnAddPlayer", "PassivePost")
-end
-
-function Plugin:OnSpawnInfantryPortal(Team, _, Force)
-    if Team.spawnedInfantryPortal >= 1 and not Force then return false end
 end
 
 function Plugin:SpawnInfantryPortal(Team, TechPoint, IPIndex)

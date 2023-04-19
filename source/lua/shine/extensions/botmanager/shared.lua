@@ -90,6 +90,7 @@ if Server then
 			local mostHumans = math.max(team1HumanNum, team2HumanNum)
 			self.MaxBots = math.max(mostHumans * 2, Plugin.MaxBots, 2) -- need a minimum of 2 since the update code "optimizes" if max is 0
 		end
+
 		baseUpdateBots(self)
 	end
 end

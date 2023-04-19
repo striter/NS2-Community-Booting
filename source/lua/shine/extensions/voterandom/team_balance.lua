@@ -25,7 +25,10 @@ local TableRemove = table.remove
 local TableShallowMerge = table.ShallowMerge
 local TableSort = table.sort
 
-local EvenlySpreadTeams = Shine.EvenlySpreadTeams
+local function EvenlySpreadTeams( Gamerules, TeamMembers,BalanceMode)
+	Shine.EvenlySpreadTeams( Gamerules, TeamMembers, BalanceMode)
+	Shine.Hook.Call( "OnShuffleDone" )
+end  
 
 BalanceModule.DefaultConfig = {
 	TeamPreferences = {
