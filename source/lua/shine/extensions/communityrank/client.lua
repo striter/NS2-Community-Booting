@@ -38,18 +38,11 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
         local teamScores = updateTeam["GetScores"]()
         local currentPlayerIndex = 1
         
-        local sumPlayerSkill = 0
-        local sumPlayers = 0
         for _, player in ipairs(playerList) do
             if not scoreboard.hoverMenu.background:GetIsVisible() and not MainMenu_GetIsOpened() then
                 
                 local playerRecord = teamScores[currentPlayerIndex]
                 if playerRecord == nil then return end
-                local clientIndex = playerRecord.ClientIndex
-                if GetSteamIdForClientIndex(clientIndex) ~= 0 then
-                    sumPlayerSkill = sumPlayerSkill + playerRecord.Skill
-                    sumPlayers = sumPlayers + 1
-                end
                 
                 local skillIcon = player.SkillIcon
                 if playerRecord.FakeBot then  --Fake BOT
@@ -65,18 +58,28 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                             description = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString("SKILLTIER_BOT"),-1)
                         else
                             description = skillIcon.tooltipText
-                            local communityRankString = string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(playerRecord.Group))
-                            local skillTierString = string.format(Locale.ResolveString("SKILL_TIER"),playerRecord.Skill)
-                            description = string.format("%s \n%s \n%s",description , communityRankString, skillTierString)
-                            description = description .. string.format("\nNS2ID: %i",playerRecord.SteamId)
+                            
+                            description = description .. "\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(playerRecord.Group))
+
+                            local skillTierString
+                            if playerRecord.CommSkill ~= playerRecord.Skill then
+                                skillTierString = string.format(Locale.ResolveString("SKILL_TIER_COMM"),playerRecord.Skill,playerRecord.CommSkill)
+                            else
+                                skillTierString = string.format(Locale.ResolveString("SKILL_TIER"),playerRecord.Skill)
+                            end
+                            description = description .. "\n" .. skillTierString
+
+                            --description = description .. string.format("\nNS2ID: %i",playerRecord.SteamId)
 
                             if playerRecord.prewarmTime > 0 then
                                 description = description .. "\n"
                                 description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PLAYTIME"),playerRecord.prewarmTime)
+
+                                if playerRecord.prewarmTier > 0 then
+                                    description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PREWARM"),playerRecord.prewarmTier)
+                                end
                             end
-                            if playerRecord.prewarmTier > 0 then
-                                description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PREWARM"),playerRecord.prewarmTier)
-                            end
+                            
                             
                         end
                         scoreboard.badgeNameTooltip:SetText(description)
@@ -87,22 +90,6 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
             currentPlayerIndex = currentPlayerIndex + 1
         end
 
-        local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]
-        local teamSkillGUIItem = updateTeam["GUIs"]["TeamSkill"]
-        if updateTeam.TeamNumber >= 1 and updateTeam.TeamNumber <= 2 then --and numPlayers > 0 then -- Display for only aliens or marines
-
-            local avgSkill = sumPlayerSkill / math.max(1,sumPlayers)
-            
-            local teamHeaderText = teamNameGUIItem:GetText()
-            teamHeaderText = string.sub(teamHeaderText, 1, string.len(teamHeaderText) - 1) -- Original header
-    
-            teamHeaderText = teamHeaderText .. string.format(", %i 均分)", avgSkill) -- Skill Average
-            --
-    
-            teamNameGUIItem:SetText( teamHeaderText )
-            
-            teamSkillGUIItem:SetPosition(Vector(teamNameGUIItem:GetTextWidth(teamNameGUIItem:GetText()) + 20, 5, 0) * GUIScoreboard.kScalingFactor)
-        end
 end
 
 local function openUrl(url, title)
@@ -168,13 +155,17 @@ function Plugin.GUIScoreboardSendKeyEvent(self, key, down)
         teamColorBg = teamColorBg * 0.5
         
         local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex)
-        self.hoverMenu:AddButton('Observatory信息', teamColorBg, teamColorHighlight, textColor, function()
+        self.hoverMenu:AddButton('Obs 信息', teamColorBg, teamColorHighlight, textColor, function()
           openUrlObservatory(steamId);
         end);
         
-        self.hoverMenu:AddButton('NS2Panel信息', teamColorBg, teamColorHighlight, textColor, function()
+        self.hoverMenu:AddButton('NS2Panel 信息', teamColorBg, teamColorHighlight, textColor, function()
           openUrlNs2Panel(steamId);
         end);
+          
+          self.hoverMenu:AddButton('复制NS2ID', teamColorBg, teamColorHighlight, textColor, function()
+              Shine.GUI.SetClipboardText(tostring(steamId))
+          end);
       end
     end
 

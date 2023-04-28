@@ -24,11 +24,22 @@ Plugin.DefaultConfig = {
                 [6] = 15,
                 [7] = 10,
             },
+            CommanderTier = {
+                [0] = 130,
+                [1] = 115,
+                [2] = 100,
+                [3] = 90,
+                [4] = 80,
+                [5] = 70,
+                [6] = 60,
+                [7] = 50,
+            },
         },
     },
     ["UserData"] = {
         ["55022511"] = {
             rank = -2000,
+            rankComm = -500,
             fakeBot = true,
             emblem = 0,
         }
@@ -44,6 +55,7 @@ do
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
     Validator:AddFieldRule( "Elo.Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Player ))
     Validator:AddFieldRule( "Elo.Constants.Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.Constants.Tier))
+    Validator:AddFieldRule( "Elo.Constants.CommanderTier",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.Constants.CommanderTier))
     Validator:AddFieldRule( "Elo.Constants.Default",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Constants.Default))
     Plugin.ConfigValidator = Validator
 end
@@ -85,16 +97,16 @@ function Plugin:Cleanup()
 end
 
 ----Elo
-local function RankPlayerDelta(self,_steamId,_delta)
+local function RankPlayerDelta(self,_steamId,_delta,_commDelta)
     local data = GetPlayerData(self,_steamId)
-    local rank = data.rank or 0
-    rank = rank + _delta
-    data.rank = rank
+    data.rank = (data.rank or 0) + _delta
+    data.rankComm =  (data.rankComm or 0) + _commDelta
     
     local target = Shine.GetClientByNS2ID(_steamId)
     if target then 
         local player = target:GetControllingPlayer()
-        data.rank = math.max(rank, -player.skill)
+        data.rank = math.max(data.rank, -player.skill)
+        data.rankComm = math.max(data.rankComm, -player.skill)
         player:SetPlayerExtraData(data)
     end
 end
@@ -123,9 +135,16 @@ local function EndGameElo(self)
         if not _teamEntry.timePlayed or _teamEntry.timePlayed <=0 then
             return 0
         end
+        local commTimeNormalized = _teamEntry.commanderTime / gameLength
         local playTimeNormalized = _teamEntry.timePlayed / gameLength
-        table.insert(_teamTable, {steamId = _steamId,playTimeNormalized = playTimeNormalized ,score = _teamEntry.score,hiveSkill = _playerSkill })
-        return  _playerSkill * playTimeNormalized
+        table.insert(_teamTable, {
+            steamId = _steamId,
+            playerTimeNormalized = playTimeNormalized - commTimeNormalized,
+            commTimeNormalized = commTimeNormalized,
+            score = _teamEntry.score,
+            hiveSkill = _playerSkill
+        })
+        return _playerSkill * playTimeNormalized
         -- Shared.Message(string.format("%i %i %i",_steamId,_teamEntry.timePlayed,_teamEntry.score))
     end
 
@@ -146,21 +165,25 @@ local function EndGameElo(self)
     table.sort(team1Table,RankCompare)
     table.sort(team2Table,RankCompare)
 
-    local function ApplyRankTable(_rankTable, _teamTable, _delta)
+    local function ApplyRankTable(_rankTable, _teamTable, _eloMultiplier)
         for _,data in pairs(_teamTable) do
             local steamId = data.steamId
 
             if not _rankTable[steamId] then
-                _rankTable[steamId] = 0
+                _rankTable[steamId] = {
+                    playerD = 0,
+                    commD = 0,
+                }
             end
 
-            local tier,_ = GetPlayerSkillTier(data.hiveSkill)
-
             --its ELO dude
-            local eloConstant = self.Config.Elo.Constants.Tier[tier] or self.Config.Elo.Constants.Default
-            local Edelta = eloConstant * _delta
-
-            _rankTable[steamId] = _rankTable[steamId] + math.floor(Edelta * data.playTimeNormalized)
+            local tier,_ = GetPlayerSkillTier(data.hiveSkill)
+            local tierString = tostring(tier)
+            local playerConstant = self.Config.Elo.Constants.Tier[tierString] or self.Config.Elo.Constants.Default
+            _rankTable[steamId].playerD = _rankTable[steamId].playerD + math.floor(playerConstant * _eloMultiplier * data.playerTimeNormalized)
+            local commConstant = self.Config.Elo.Constants.CommanderTier[tierString] or self.Config.Elo.Constants.Default
+            _rankTable[steamId].commD = _rankTable[steamId].commD + math.floor(commConstant * _eloMultiplier * data.commTimeNormalized)
+            --Shared.Message(tierString .. " " .. tostring(_eloMultiplier) .. " " .. tostring(commConstant) .." ".. tostring(data.commTimeNormalized))
             --Shared.Message(string.format("ID:%s T%s K:%s ES-EA:%s", steamId,tier,eloConstant,_delta))
         end
     end
@@ -181,8 +204,8 @@ local function EndGameElo(self)
     -- Shared.Message("[CNCR] Result")
 
     for steamId, rankOffset in pairs(rankTable) do
-        if rankOffset ~= 0 then
-            RankPlayerDelta(self,steamId,rankOffset)
+        if rankOffset.playerD ~= 0 or rankOffset.commD ~=0 then
+            RankPlayerDelta(self,steamId,rankOffset.playerD,rankOffset.commD)
         end
          --Shared.Message(string.format("%i|%d",steamId, rankOffset))
     end
@@ -227,34 +250,13 @@ end
 
 function Plugin:CreateMessageCommands()
     --Elo
-    local function AdminRankPlayer( _client, _id, _rank )
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then
-            return
-        end
-
-        local player = target:GetControllingPlayer()
-        local preRank = player.skill
-
-        local rank = _rank - preRank
-        local data = GetPlayerData(self,_id)
-        data.rank = rank
-        target:GetControllingPlayer():SetPlayerExtraData(data)
-    end
-
-    local setCommand = self:BindCommand( "sh_rank_set", "rank_set", AdminRankPlayer )
-    setCommand:AddParam{ Type = "steamid" }
-    setCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 9999999, Optional = true, Default = 0 }
-    setCommand:Help( "设置ID对应玩家的社区段位." )
-
     local function AdminRankReset( _client, _id )
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then
-            return
-        end
+        if not target then return end
 
         local data = GetPlayerData(self,_id)
         data.rank = 0
+        data.rankComm = 0
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
 
@@ -262,18 +264,35 @@ function Plugin:CreateMessageCommands()
     resetCommand:AddParam{ Type = "steamid" }
     resetCommand:Help( "重置玩家的段位(还原至NS2段位)." )
 
-    local function AdminRankPlayerDelta( _client, _id, _offset )
+    local function AdminRankPlayer( _client, _id, _rank ,_rankComm)
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then
-            return
-        end
+        if not target then return end
 
-        RankPlayerDelta(self,_id,_offset)
+
+        local data = GetPlayerData(self,_id)
+        local player = target:GetControllingPlayer()
+        data.rank = _rank - player.skill
+        data.rankComm = _rankComm - player.commSkill
+        target:GetControllingPlayer():SetPlayerExtraData(data)
+    end
+
+    local setCommand = self:BindCommand( "sh_rank_set", "rank_set", AdminRankPlayer )
+    setCommand:AddParam{ Type = "steamid" }
+    setCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 9999999, Optional = true, Default = 0 }
+    setCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 9999999, Optional = true, Default = 0 }
+    setCommand:Help( "设置对应玩家的[社区段位]及[指挥段位].例:!rank_set 55022511 2500 2800" )
+
+    local function AdminRankPlayerDelta( _client, _id, _offset,_commOffset )
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then return end
+
+        RankPlayerDelta(self,_id,_offset,_commOffset)
     end
     local deltaCommand = self:BindCommand( "sh_rank_delta", "rank_delta", AdminRankPlayerDelta )
     deltaCommand:AddParam{ Type = "steamid" }
     deltaCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
-    deltaCommand:Help( "增减ID对应玩家的社区段位." )
+    deltaCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
+    deltaCommand:Help( "增减对应玩家的[社区段位]及[指挥段位].例:!rank_delta 55022511 100 -100" )
 
     --BOT
     local function FakeBotSwitchID(_client,_id)

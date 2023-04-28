@@ -53,7 +53,7 @@ if Client then
 
         local locationName = kTranslateLocations[input]
         if not locationName then
-            Shared.Message("Location:{" .. input .. "} Untranslated")
+            --Shared.Message("Location:{" .. input .. "} Untranslated")
             locationName = input
         end
         return locationName
@@ -65,6 +65,7 @@ if Client then
     ModLoader.SetupFileHook("lua/Observatory.lua", "lua/CNLocalize/Observatory.lua", "post")
     ModLoader.SetupFileHook("lua/TunnelEntrance.lua", "lua/CNLocalize/TunnelEntrance.lua", "post")
     ModLoader.SetupFileHook("lua/GUIHiveStatus.lua", "lua/CNLocalize/GUIHiveStatus.lua", "post")
+    ModLoader.SetupFileHook("lua/TeamMessenger.lua", "lua/CNLocalize/TeamMessenger.lua", "replace")
     
     -- Name Fix
     ModLoader.SetupFileHook("lua/menu2/MenuUtilities.lua", "lua/CNLocalize/MenuUtilities.lua", "post")

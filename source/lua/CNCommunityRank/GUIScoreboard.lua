@@ -213,6 +213,17 @@ local function CreateTeamBackground(self, teamNumber)
     teamSkillItem:SetIsVisible(false)
     teamItem:AddChild(teamSkillItem)
 
+    local teamCommanderSkillItem = GUIManager:CreateGraphicItem()
+    teamCommanderSkillItem:SetAnchor(GUIItem.Left, GUIItem.Top)
+    teamCommanderSkillItem:SetPosition(Vector(10, 5, 0) * GUIScoreboard.kScalingFactor)
+    teamCommanderSkillItem:SetSize(kPlayerSkillIconSize * GUIScoreboard.kScalingFactor)
+    teamCommanderSkillItem:SetStencilFunc(GUIItem.NotEqual)
+    teamCommanderSkillItem:SetTexture(kPlayerSkillIconTexture)
+    teamCommanderSkillItem:SetTexturePixelCoordinates(0, 0, 100, 31)
+    teamCommanderSkillItem:SetIsVisible(false)
+    teamItem:AddChild(teamCommanderSkillItem)
+
+
     -- Add team info (team resources and number of players).
     local teamInfoItem = GUIManager:CreateTextItem()
     teamInfoItem:SetFontName(GUIScoreboard.kTeamInfoFontName)
@@ -334,7 +345,7 @@ local function CreateTeamBackground(self, teamNumber)
     pingItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(pingItem)
 
-    return { Background = teamItem, TeamName = teamNameItem, TeamInfo = teamInfoItem, TeamSkill = teamSkillItem }
+    return { Background = teamItem, TeamName = teamNameItem, TeamInfo = teamInfoItem, TeamSkill = teamSkillItem ,TeamCommanderSkill = teamCommanderSkillItem }
 
 end
 
@@ -821,6 +832,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
     local teamGUIItem = updateTeam["GUIs"]["Background"]
     local teamNameGUIItem = updateTeam["GUIs"]["TeamName"]
     local teamSkillGUIItem = updateTeam["GUIs"]["TeamSkill"]
+    local teamCommanderSkillGUIItem = updateTeam["GUIs"]["TeamCommanderSkill"]
     local teamInfoGUIItem = updateTeam["GUIs"]["TeamInfo"]
     local teamNameText = Locale.ResolveString( string.format("NAME_TEAM_%s", updateTeam["TeamNumber"]))
     local teamColor = updateTeam["Color"]
@@ -836,28 +848,6 @@ function GUIScoreboard:UpdateTeam(updateTeam)
     -- How many items per player.
     local numPlayers = table.icount(teamScores)
 
-    -- Update the team name text.
-    local playersOnTeamText = string.format("%d %s", numPlayers, numPlayers == 1 and Locale.ResolveString("SB_PLAYER") or Locale.ResolveString("SB_PLAYERS") )
-    local teamHeaderText
-
-    if teamNumber == kTeamReadyRoom then
-        -- Add number of players connecting
-        local numPlayersConnecting = PlayerUI_GetNumConnectingPlayers()
-        if numPlayersConnecting > 0 then
-            -- It will show RR team if players are connecting even if no players are in the RR
-            if numPlayers > 0 then
-                teamHeaderText = string.format("%s (%s, %d %s)", teamNameText, playersOnTeamText, numPlayersConnecting, Locale.ResolveString("SB_CONNECTING") )
-            else
-                teamHeaderText = string.format("%s (%d %s)", teamNameText, numPlayersConnecting, Locale.ResolveString("SB_CONNECTING") )
-            end
-        end
-    end
-
-    if not teamHeaderText then
-        teamHeaderText = string.format("%s (%s)", teamNameText, playersOnTeamText)
-    end
-
-    teamNameGUIItem:SetText( teamHeaderText )
 
     -- Update team resource display
     if teamNumber ~= kTeamReadyRoom then
@@ -880,6 +870,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
     local sumPlayerSkill = 0
     local numPlayerSkill = 0
+    local commanderSkill = -1
     local numRookies = 0
     local numBots = 0
 
@@ -895,6 +886,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local deaths = playerRecord.Deaths
         local isCommander = playerRecord.IsCommander and isVisibleTeam == true
         local isRookie = playerRecord.IsRookie
+        local isBot = steamId == 0
         local resourcesStr = ConditionalValue(isVisibleTeam, tostring(math.floor(playerRecord.Resources * 10) / 10), "-")
         local ping = playerRecord.Ping
         local pingStr = tostring(ping)
@@ -902,7 +894,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local playerStatus = isVisibleTeam and playerRecord.Status or "-"
         local isDead = isVisibleTeam and playerRecord.Status == deadString
         local isSteamFriend = playerRecord.IsSteamFriend
-        local playerSkill = playerRecord.Skill
+        local playerSkill = isCommander and playerRecord.CommSkill or playerRecord.Skill
         local adagradSum = playerRecord.AdagradSum
         local commanderColor = GUIScoreboard.kCommanderFontColor
 
@@ -1020,18 +1012,20 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             player.SkillIcon:SetTexture(kPlayerSkillIconTexture)
             player.SkillIcon:SetSize(kPlayerSkillIconSize * GUIScoreboard.kScalingFactor)
     
-            local isBot = steamId == 0
             local skillTier, tierName, cappedSkill = GetPlayerSkillTier(playerSkill, isRookie, adagradSum, isBot)
             player.SkillIcon.tooltipText = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString(tierName), skillTier)
     
             local iconIndex = skillTier + 2
+            if not isBot and isCommander then
+                iconIndex = iconIndex + 7
+                commanderSkill = playerSkill
+            end
             player.SkillIcon:SetTexturePixelCoordinates(0, iconIndex * 32, 100, (iconIndex + 1) * 32 - 1)
     
             if cappedSkill then
                 sumPlayerSkill = sumPlayerSkill + cappedSkill
                 numPlayerSkill = numPlayerSkill + 1
             end
-            
         end
         
         
@@ -1245,21 +1239,66 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         end
 
     end
+    
+    -- Update the team name text.
+    local playersOnTeamText = string.format("%d %s", numPlayers, numPlayers == 1 and Locale.ResolveString("SB_PLAYER") or Locale.ResolveString("SB_PLAYERS") )
+    local teamHeaderText
 
+    if teamNumber == kTeamReadyRoom then
+        -- Add number of players connecting
+        local numPlayersConnecting = PlayerUI_GetNumConnectingPlayers()
+        if numPlayersConnecting > 0 then
+            -- It will show RR team if players are connecting even if no players are in the RR
+            if numPlayers > 0 then
+                teamHeaderText = string.format("%s (%s, %d %s)", teamNameText, playersOnTeamText, numPlayersConnecting, Locale.ResolveString("SB_CONNECTING") )
+            else
+                teamHeaderText = string.format("%s (%d %s)", teamNameText, numPlayersConnecting, Locale.ResolveString("SB_CONNECTING") )
+            end
+        end
+    end
+
+    local avgSkill = sumPlayerSkill / math.max(1,numPlayerSkill)
+    if teamNumber == kTeam1Index or teamNumber == kTeam2Index then
+        local avgSkillText = string.format(Locale.ResolveString("SB_AVGSKILL"),avgSkill)
+        if commanderSkill > 0 then
+            local cmdSkillText = string.format(Locale.ResolveString("SB_COMMSKILL"),commanderSkill)
+            teamHeaderText = string.format("%s - %s | %s | %s", teamNameText, playersOnTeamText,cmdSkillText,avgSkillText)
+        else
+            teamHeaderText = string.format("%s - %s | %s", teamNameText, playersOnTeamText,avgSkillText)
+        end
+    end
+    
+    if not teamHeaderText then
+        teamHeaderText = string.format("%s (%s)", teamNameText, playersOnTeamText)
+    end
+
+    teamNameGUIItem:SetText( teamHeaderText )
+    
     numPlayers = #playerList
-    if teamNumber ~= kTeamReadyRoom and teamSkillGUIItem.sumPlayerSkill ~= sumPlayerSkill then
+    if teamNumber ~= kTeamReadyRoom then
+        local offset = (teamNameGUIItem:GetTextWidth(teamHeaderText) + 10)* GUIScoreboard.kScalingFactor
+        
+        if commanderSkill >= 0 then
+            
+            local skillTier = GetPlayerSkillTier(commanderSkill)
+            local textureIndex = skillTier + 2 + 7
+            teamCommanderSkillGUIItem:SetTexturePixelCoordinates(0, textureIndex * 32, 100, (textureIndex + 1) * 32 - 1)
+            teamCommanderSkillGUIItem:SetPosition(Vector( offset, 5, 0) * GUIScoreboard.kScalingFactor)
+            teamCommanderSkillGUIItem:SetIsVisible(true)
+            
+            offset = offset + 50 * GUIScoreboard.kScalingFactor
+        else
+            teamCommanderSkillGUIItem:SetIsVisible(false)
+        end
+        
         if numPlayers > 0 then
-            teamSkillGUIItem.sumPlayerSkill = sumPlayerSkill
-            local avgSkill = numPlayerSkill < 1 and 0 or sumPlayerSkill / numPlayerSkill
-            avgSkill = (sumPlayerSkill + avgSkill * (numPlayers - numPlayerSkill)) / numPlayers
-
-            local halfPlayerNum =  0.5 * numPlayers
-            local skillTier, tierName = GetPlayerSkillTier(avgSkill, numRookies > halfPlayerNum, nil, numBots > halfPlayerNum)
-            teamSkillGUIItem.tooltipText = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString(tierName), skillTier)
+            local skillTier = GetPlayerSkillTier(avgSkill, false, nil, false)
             local textureIndex = skillTier + 2
             teamSkillGUIItem:SetTexturePixelCoordinates(0, textureIndex * 32, 100, (textureIndex + 1) * 32 - 1)
-            teamSkillGUIItem:SetPosition(Vector(teamNameGUIItem:GetTextWidth(teamHeaderText) + 20, 5, 0) * GUIScoreboard.kScalingFactor)
+            teamSkillGUIItem:SetPosition(Vector(offset, 5, 0) * GUIScoreboard.kScalingFactor)
             teamSkillGUIItem:SetIsVisible(true)
+            
+            offset = offset + 50 * GUIScoreboard.kScalingFactor
         else
             teamSkillGUIItem:SetIsVisible(false)
         end

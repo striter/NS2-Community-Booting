@@ -16,18 +16,13 @@ Plugin.Version = "1.0"
 Plugin.PrintName = "communityadverts"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityAdverts.json"
-Plugin.DefaultConfig = { }
+Plugin.DefaultConfig = { 
+	
+}
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
-Plugin.ConfigMigrationSteps = { }
-
-function Plugin:Initialise()
-	self.groupData = { }
-	return true
-end
-
-function Plugin:ResetState()
-	TableEmpty( self.groupData )
+do
+	--local Validator = Shine.Validator()
 end
 
 Plugin.KDefaultGroup = "DefaultGroup"
@@ -39,6 +34,23 @@ Plugin.kDefaultData = {
 	leaveColor = {128,128,128},
 }
 local kInvalidUserAdvert = { }
+
+function Plugin:Initialise()
+	self.groupData = { }
+	return true
+end
+
+function Plugin:OnFirstThink()
+end
+
+function Plugin:ResetState()
+	TableEmpty( self.groupData )
+end
+
+function Plugin:Cleanup()
+	self:ResetState()
+	return self.BaseClass.Cleanup( self )
+end
 
 function Plugin:BuildGroupAdverts(_groupName)
 	local Group = _groupName and Shine:GetGroupData(_groupName) or Shine:GetDefaultGroup()
@@ -116,11 +128,5 @@ function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
 	end
 end
 
-function Plugin:Cleanup()
-	self:ResetState()
-	return self.BaseClass.Cleanup( self )
-end
-
-Shine.LoadPluginModule( "logger.lua", Plugin )
 
 return Plugin

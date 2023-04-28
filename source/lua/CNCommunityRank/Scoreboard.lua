@@ -108,11 +108,13 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.IsSpectator = pie.isSpectator
         playerRecord.Assists = pie.assists
         playerRecord.SteamId = pie.steamId
-        playerRecord.Skill = pie.playerSkill
         playerRecord.AdagradSum = pie.adagradSum
         playerRecord.Tech = pie.currentTech
         playerRecord.CallingCard = pie.callingCard
     ------------- Why
+        playerRecord.Skill = pie.playerSkill
+        playerRecord.CommSkill = pie.commanderSkill
+        
         playerRecord.FakeBot = pie.fakeBot
         playerRecord.Group = pie.group
         playerRecord.Emblem = pie.emblem
@@ -294,7 +296,7 @@ end
 function Scoreboard_GetPlayerName(clientIndex)
 
     local record = Scoreboard_GetPlayerRecord(clientIndex)
-    return record and record.Name or "Admin"
+    return record and record.Name or "服务器"
 
 end
 

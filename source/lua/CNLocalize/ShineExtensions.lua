@@ -53,7 +53,7 @@ if ICPlugin then
         if Data.LocationID > 0 then
             local Location = Shared.GetString( Data.LocationID )
             if StringFind( Location, "[^%s]" ) then
-                return StringFormat( "(队伍, %s) ", Locale.ResolveLocation(Location) )
+                return StringFormat( "(队伍, %s) ", CNResolveLocation(Location) )
             end
         end
 

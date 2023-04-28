@@ -42,12 +42,13 @@ local networkVars =
     isRookie = "boolean",
     status = "enum kPlayerStatus",
     isSpectator = "boolean",
-    playerSkill = "integer",
 ---------------
+    playerSkill = "integer",
+    commanderSkill = "integer",
     hiveskill = "integer" ,
     fakeBot = "boolean",
     emblem = "integer (-64 to 64)",
-    prewarmTier = "integer(0 to 32)",
+    prewarmTier = "integer(0 to 16)",
     prewarmTime = "integer",
     group = string.format("string (%d)", kMaxGroupName ),
     queueIndex = "integer (0 to 64)",
@@ -128,9 +129,10 @@ function PlayerInfoEntity:UpdateScore()
                 self.kills = scorePlayer:GetKills()
                 self.assists = scorePlayer:GetAssistKills()
                 self.deaths = scorePlayer:GetDeaths()
-                self.playerSkill = scorePlayer:GetPlayerSkill()
-            -------------
                 self.hiveskill = scorePlayer.skill
+            -------------
+                self.playerSkill = scorePlayer:GetPlayerSkill()
+                self.commanderSkill = scorePlayer:GetCommanderSkill()
                 self.group = scorePlayer.group
                 self.fakeBot = scorePlayer.fakeBot
                 self.emblem = scorePlayer.emblem

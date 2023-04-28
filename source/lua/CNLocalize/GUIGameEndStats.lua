@@ -410,7 +410,7 @@ local function CreateScoreboardRow(container, bgColor, textColor, playerName, ki
 		item.commIcon:SetSize(GUILinearScale(Vector(20, 20, 0)))
 		item.commIcon:SetPosition(Vector(kRowPlayerNameOffset + playerNameLength, -GUILinearScale(10), 0))
 		item.commIcon:SetLayer(kGUILayerMainMenu)
-		item.commIcon.tooltip = "Commander time: " .. timeComm
+		item.commIcon.tooltip = "指挥时长: " .. timeComm
 		item.background:AddChild(item.commIcon)
 	end
 

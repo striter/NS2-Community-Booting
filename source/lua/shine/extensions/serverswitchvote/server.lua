@@ -18,68 +18,77 @@ Plugin.ConfigName = "ServerSwitchVote.json"
 Plugin.DefaultConfig = {
 	Servers = {
 		{ Name = "My awesome server", IP = "127.0.0.1", Port = "27015", Password = "" }
-	}
+	},
+	CrowdAdvert = {
+		PlayerCount = 0,
+		Interval = 120,
+		StartVote = false,
+		Prefix = "[病危通知书]",
+		Messages = {
+			"服务器要炸了",
+			"真的要炸了",
+			"马上就炸",
+		}
+	},
 }
 
 Plugin.CheckConfigTypes = true
-
-
 do
-	local Validator = Shine.Validator()
 
-	local BitLShift = bit.lshift
-	local select = select
+local Validator = Shine.Validator()
+local BitLShift = bit.lshift
+local select = select
 
-	local function IPToInt( ... )
-		if not ... then return nil end
+local function IPToInt( ... )
+	if not ... then return nil end
 
-		for i = 1, 4 do
-			if tonumber( select( i, ... ), 10 ) > 255 then
-				return -1
-			end
+	for i = 1, 4 do
+		if tonumber( select( i, ... ), 10 ) > 255 then
+			return -1
 		end
-
-		local Byte1, Byte2, Byte3, Byte4 = ...
-
-		-- Not using lshift for the first byte to avoid getting a signed int back.
-		return tonumber( Byte1, 10 ) * 16777216 +
-			BitLShift( tonumber( Byte2, 10 ), 16 ) +
-			BitLShift( tonumber( Byte3, 10 ), 8 ) +
-			tonumber( Byte4, 10 )
 	end
 
-	local function IsValidIPAddress( IP )
-		if IP <= 0 then
-			return false
-		end
+	local Byte1, Byte2, Byte3, Byte4 = ...
 
-		-- 255.255.255.255 or higher.
-		if IP >= 0xFFFFFFFF then
-			return false
-		end
+	-- Not using lshift for the first byte to avoid getting a signed int back.
+	return tonumber( Byte1, 10 ) * 16777216 +
+		BitLShift( tonumber( Byte2, 10 ), 16 ) +
+		BitLShift( tonumber( Byte3, 10 ), 8 ) +
+		tonumber( Byte4, 10 )
+end
 
-		-- 127.x.x.x
-		if IP >= 0x7F000000 and IP <= 0x7FFFFFFF then
-			return false
-		end
-
-		-- 10.x.x.x
-		if IP >= 0x0A000000 and IP <= 0x0AFFFFFF then
-			return false
-		end
-
-		-- 172.16.0.0 - 172.31.255.255
-		if IP >= 0xAC100000 and IP <= 0xAC1FFFFF then
-			return false
-		end
-
-		-- 192.168.x.x
-		if IP >= 0xC0A80000 and IP <= 0xC0A8FFFF then
-			return false
-		end
-
-		return true
+local function IsValidIPAddress( IP )
+	if IP <= 0 then
+		return false
 	end
+
+	-- 255.255.255.255 or higher.
+	if IP >= 0xFFFFFFFF then
+		return false
+	end
+
+	-- 127.x.x.x
+	if IP >= 0x7F000000 and IP <= 0x7FFFFFFF then
+		return false
+	end
+
+	-- 10.x.x.x
+	if IP >= 0x0A000000 and IP <= 0x0AFFFFFF then
+		return false
+	end
+
+	-- 172.16.0.0 - 172.31.255.255
+	if IP >= 0xAC100000 and IP <= 0xAC1FFFFF then
+		return false
+	end
+
+	-- 192.168.x.x
+	if IP >= 0xC0A80000 and IP <= 0xC0A8FFFF then
+		return false
+	end
+
+	return true
+end
 
 	Validator:AddFieldRule( "Servers", Validator.AllValuesSatisfy(
 		Validator.ValidateField( "Name", Validator.IsAnyType( { "string", "nil" } ) ),
@@ -115,6 +124,13 @@ do
 	) )
 
 	Plugin.ConfigValidator = Validator
+
+	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
+	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
+	Validator:AddFieldRule( "CrowdAdvert.Interval",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.Interval ))
+	Validator:AddFieldRule( "CrowdAdvert.Prefix",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Prefix ))
+	Validator:AddFieldRule( "CrowdAdvert.StartVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.CrowdAdvert.StartVote ))
+	Validator:AddFieldRule( "CrowdAdvert.Messages",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert.Messages ))
 end
 
 local function GetConnectIP(_index)
@@ -181,6 +197,37 @@ function Plugin:OnNetworkingReady()
 	for Client in Shine.IterateClients() do
 		self:ProcessClient( Client )
 	end
+end
+
+function Plugin:OnFirstThink()
+	if self.Config.CrowdAdvert.PlayerCount ~= 0  then
+		self:TriggerCrowdAdvert()
+	end
+end
+
+function Plugin:TriggerCrowdAdvert()
+	if self.Timer then
+		self.Timer:Destroy()
+		self.Timer = nil
+	end
+
+	if Shine.GetHumanPlayerCount() >= self.Config.CrowdAdvert.PlayerCount then
+		Shine:NotifyDualColour( Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
+				253, 237, 236, self.Config.CrowdAdvert.Messages[math.random(#self.Config.CrowdAdvert.Messages)])
+	end
+	
+	if self.Config.CrowdAdvert.StartVote then
+		local data = self.Config.Servers[math.random(#self.Config.Servers)]
+		local amount = data.Amount[#data.Amount]
+		local address = data.IP .. ":" .. data.Port
+		if amount > 0 then
+			StartVote("VoteSwitchServer",nil, { ip = address , name = data.Name, onlyAccepted = true, voteRequired = amount })
+		end
+	end
+	
+	self.Timer = self:SimpleTimer( self.Config.CrowdAdvert.Interval, function()
+		self:TriggerCrowdAdvert()
+	end )
 end
 
 function Plugin:SendServerData( Client, ID, Data )

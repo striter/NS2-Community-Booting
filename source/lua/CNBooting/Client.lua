@@ -1,9 +1,11 @@
 if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER"] = "投票换服"
     kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "<%s> : %s"
-    kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "发一辆至<%s>的班车(%s)?"
-    kTranslateMessage["ONLY_ACCEPTED"] = "持票"
-    kTranslateMessage["EVERYONE"] = "所有玩家"
+    kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "<%s> 正在组建新战局"
+    kTranslateMessage["VOTE_SWITCH_SERVER_QUERY_ALL"] = "将所有人送去 <%s>?"
+
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] 算我一个! "
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] 想在这多待会."
 
     kTranslateMessage["VOTE_MUTE_PLAYER"] = "玩家处理 - [禁言]"
     kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言?"
@@ -39,21 +41,25 @@ if kTranslateMessage then
     kTranslateMessage["RANK_LIVER"] = "(C3):<Vokex>"
     kTranslateMessage["RANK_INVALID"] = "(C?):<未知>"
     
-    kTranslateMessage["SKILL_TIER"]="段位分: %i"
+    kTranslateMessage["SKILL_TIER"]="段位分(P): %i"
+    kTranslateMessage["SKILL_TIER_COMM"]="段位分(P): %i\n指挥分(C): %i"
     kTranslateMessage["STATUS_QUEUE"]="队列: %i"
     kTranslateMessage["STATUS_QUEUE_RESERVED"]="预留: %i"
 
-    kTranslateMessage["COMMUNITY_PLAYTIME"]="今日在线: %s分"
+    kTranslateMessage["COMMUNITY_PLAYTIME"]="今日在线: %s分钟"
     kTranslateMessage["COMMUNITY_PREWARM"]="           < 预热贡献者 - %s >"
 end
 
 if kLocales then
+    
     kLocales["VOTE_SWITCH_SERVER"] = "Vote Switch Server"
     kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "To <%s> : %s"
-    kLocales["VOTE_SWITCH_SERVER_QUERY"] = "Send people to <%s> (%s)?"
-    kLocales["ONLY_ACCEPTED"] = "Only Accepted"
-    kLocales["EVERYONE"] = "Everyone"
+    kLocales["VOTE_SWITCH_SERVER_QUERY"] = "<%s> is starting a new game!"
+    kLocales["VOTE_SWITCH_SERVER_QUERY_ALL"] = "Send every one to <%s>?"
 
+    kLocales["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] Lets go!"
+    kLocales["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] I'd like to stay for more times."
+    
     kLocales["VOTE_MUTE_PLAYER"] = "Vote Mute player"
     kLocales["VOTE_MUTE_PLAYER_QUERY"] = "Mute <%s>?"
 
@@ -76,7 +82,8 @@ if kLocales then
     kLocales["VOTE_RANDOM_SCALE"]="Vote random scale"
     kLocales["VOTE_RANDOM_SCALE_QUERY"]="Dispatch everyone random scale?"
 
-    kLocales["SKILL_TIER"]="Tier Score: %i"
+    kLocales["SKILL_TIER"]="Tier Score(P): %i"
+    kLocales["SKILL_TIER_COMM"]="Tier Score(P): %i\nCommander Tier(C): %i"
     kLocales["RANK_HOST"] = ":<Newcomer> (C6)"
     kLocales["RANK_ADMIN"] = ":<Admin> (C5)"
     kLocales["RANK_C5"] = ":<Onos> (C5)"

@@ -1,9 +1,11 @@
-ScoringMixin.networkVars.communityRank = "integer"
+ScoringMixin.networkVars.rankDelta = "integer"
+ScoringMixin.networkVars.rankCommDelta = "integer"
 
 local baseInitMixin = ScoringMixin.__initmixin
 function ScoringMixin:__initmixin()
     baseInitMixin(self)
-    self.communityRank = 0
+    self.rankDelta = 0
+    self.rankCommDelta = 0
     self.fakeBot = false
     self.prewarmTier = 0
     self.prewarmTime = 0
@@ -14,11 +16,11 @@ function ScoringMixin:__initmixin()
 end
 
 function ScoringMixin:GetPlayerSkill()
-    return math.max(0,self.skill + self.communityRank)
+    return math.max(0,self.skill + self.rankDelta)
 end
 
 function ScoringMixin:GetCommanderSkill()
-    return math.max(0,self.commSkill + self.communityRank)
+    return math.max(0,self.commSkill + self.rankCommDelta)
 end
 
 if Server then
@@ -58,7 +60,8 @@ if Server then
         self.totalXP = player.totalXP
 
 ----------
-        self.communityRank = player.communityRank
+        self.rankDelta = player.rankDelta
+        self.rankCommDelta = player.rankCommDelta
         self.fakeBot = player.fakeBot
         self.emblem = player.emblem
         self.prewarmTier = player.prewarmTier
@@ -70,7 +73,8 @@ if Server then
     end
 
     function ScoringMixin:SetPlayerExtraData(dataTable)
-        self.communityRank = dataTable.rank or 0
+        self.rankDelta = dataTable.rank or 0
+        self.rankCommDelta = dataTable.rankComm or 0
         self.fakeBot = dataTable.fakeBot or false
         self.emblem = dataTable.emblem or 0
     end

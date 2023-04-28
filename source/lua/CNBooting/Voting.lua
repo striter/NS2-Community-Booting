@@ -338,6 +338,7 @@ if Client then
     local noVotes = 0
     local requiredVotes = 0
     local lastVoteResults
+    local onlyAccepted
 
     function RegisterVoteType(voteName, voteData)
 
@@ -411,6 +412,7 @@ if Client then
             requiredVotes = 0
             currentVoteQuery = queryTextGenerator(data)
             lastVoteResults = nil
+            onlyAccepted = data.onlyAccepted
             local message = StringReformat(Locale.ResolveString("VOTE_PLAYER_STARTED_VOTE"), { name = Scoreboard_GetPlayerName(data.client_index) })
             ChatUI_AddSystemMessage(message)
 
@@ -445,6 +447,10 @@ if Client then
         return yesVotes, noVotes, requiredVotes
     end
 
+    function GetOnlyAcceptedResults()
+        return onlyAccepted
+    end
+    
     local function OnVoteComplete(message)
         PROFILE("Voting:OnVoteComplete")
         if message.voteId == currentVoteId then
@@ -455,6 +461,7 @@ if Client then
             yesVotes = 0
             noVotes = 0
             requiredVotes = 0
+            onlyAccepted = false
             lastVoteResults = nil
 
         end
@@ -516,7 +523,7 @@ if Client then
                 end
 
                 AddVoteStartListener( "VoteSwitchServer", 	function( msg )
-                    return string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY"),msg.name,msg.onlyAccepted and Locale.ResolveString("ONLY_ACCEPTED") or Locale.ResolveString("EVERYONE"))
+                    return string.format(msg.onlyAccepted and Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY") or Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY_ALL"),msg.name)
                 end )
 
                 voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )
@@ -552,7 +559,7 @@ RegisterVoteType("VoteKillAll", { })
 RegisterVoteType("VoteBotsCount", {count = "integer"})
 RegisterVoteType("VoteBotsDoom", {team = "integer"})
 RegisterVoteType("VoteRandomScale", {})
-RegisterVoteType("VoteSwitchServer", { ip = "string (25)" , name = "string (25)" , onlyAccepted = "boolean" , voteRequired = "integer"} )
+RegisterVoteType("VoteSwitchServer", { ip = "string (25)" , name = "string (32)" , onlyAccepted = "boolean" , voteRequired = "integer"} )
 
 if Client then
     local function GetPlayerList()
