@@ -214,16 +214,17 @@ function Plugin:TriggerCrowdAdvert()
 	if Shine.GetHumanPlayerCount() >= self.Config.CrowdAdvert.PlayerCount then
 		Shine:NotifyDualColour( Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
 				253, 237, 236, self.Config.CrowdAdvert.Messages[math.random(#self.Config.CrowdAdvert.Messages)])
-	end
-	
-	if self.Config.CrowdAdvert.StartVote then
-		local data = self.Config.Servers[math.random(#self.Config.Servers)]
-		local amount = data.Amount[#data.Amount]
-		local address = data.IP .. ":" .. data.Port
-		if amount > 0 then
-			StartVote("VoteSwitchServer",nil, { ip = address , name = data.Name, onlyAccepted = true, voteRequired = amount })
+		
+		if self.Config.CrowdAdvert.StartVote then
+			local data = self.Config.Servers[math.random(#self.Config.Servers)]
+			local amount = data.Amount[#data.Amount]
+			local address = data.IP .. ":" .. data.Port
+			if amount > 0 then
+				StartVote("VoteSwitchServer",nil, { ip = address , name = data.Name, onlyAccepted = true, voteRequired = amount })
+			end
 		end
 	end
+	
 	
 	self.Timer = self:SimpleTimer( self.Config.CrowdAdvert.Interval, function()
 		self:TriggerCrowdAdvert()

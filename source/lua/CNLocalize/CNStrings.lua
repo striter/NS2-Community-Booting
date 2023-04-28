@@ -4,11 +4,11 @@ kTranslateMessage["CHAT_NEWCOMER"]="[新兵]"
 kLocales["CHAT_COMMANDER"]="[Commander]"
 kLocales["CHAT_NEWCOMER"]="[NewComer]"
 
-kTranslateMessage["SB_AVGSKILL"]="%s 均分"
-kTranslateMessage["SB_COMMSKILL"]="%s 指挥"
+kTranslateMessage["SB_AVGSKILL"]="%i 均分"
+kTranslateMessage["SB_COMMSKILL"]="%i 指挥"
 
-kLocales["SB_AVGSKILL"]="%s Avg"
-kLocales["SB_COMMSKILL"]="%s Cmd"
+kLocales["SB_AVGSKILL"]="%i Avg"
+kLocales["SB_COMMSKILL"]="%i Cmd"
 
 kTranslateMessage["SKILLTIER_TOOLTIP"]="段位 %s"
 kTranslateMessage["SKILLTIER_UNKNOWN"]=":<未知>"

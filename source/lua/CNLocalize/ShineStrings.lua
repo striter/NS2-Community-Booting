@@ -211,6 +211,10 @@ kShinePluginsTranslations["voterandom"]["SHUFFLE_AND_RESTART_SHUFFLE_HIVE"] = "�
 kShinePluginsTranslations["voterandom"]["ERROR_ALREADY_VOTED_HIVE_BASED"] = "你已经投过洗牌分队了."
 kShinePluginsTranslations["voterandom"]["ERROR_CANNOT_START_HIVE_BASED"] = "当前无法投票."
 kShinePluginsTranslations["voterandom"]["ERROR_CONSTRAINTS"]="当前分数已平衡."
+kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_DISABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[禁用]基于分数的自动洗牌分队 (需要{VotesNeeded}票,还剩{VotesNeeded:Pluralise:vote|votes})."
+kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_ENABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[启用]基于分数的自动洗牌分队 (需要{VotesNeeded}票,还剩{VotesNeeded:Pluralise:vote|votes})."
+kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLED_HIVE_BASED"]="基于分数的自动分数洗牌分队已[禁用]."
+kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_ENABLED_HIVE_BASED"]="基于分数的自动分数洗牌分队已[启用]."
 
 -- PreGame
 kShinePluginsTranslations["pregame"]={}
@@ -224,6 +228,8 @@ kShinePluginsTranslations["pregame"]["MARINES_HAVE_COMMANDER"]= "边境拓荒者
 kShinePluginsTranslations["pregame"]["WAITING_FOR_BOTH"]="正在等待双方的指挥官."
 kShinePluginsTranslations["pregame"]["WAITING_FOR_ALIENS"]= "等待卡拉异形选择他们的指挥员."
 kShinePluginsTranslations["pregame"]["WAITING_FOR_MARINES"]= "等待边境拓荒者部队选择他们的指挥员."
+kShinePluginsTranslations["pregame"]["ROUND_START_ABORTED_MAP_VOTE_STARTED"]= "开局终止,换图提名以开始."
+kShinePluginsTranslations["pregame"]["ROUND_START_ABORTED_MAX_PLAYERS"] = "开局终止,双方需要指挥官."
 
 -- Map Vote
 kShinePluginsTranslations["mapvote"]={}

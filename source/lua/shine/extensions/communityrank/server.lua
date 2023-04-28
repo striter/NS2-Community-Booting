@@ -271,16 +271,16 @@ function Plugin:CreateMessageCommands()
 
         local data = GetPlayerData(self,_id)
         local player = target:GetControllingPlayer()
-        data.rank = _rank - player.skill
-        data.rankComm = _rankComm - player.commSkill
+        if _rank >= 0 then data.rank = _rank - player.skill end
+        if _rankComm >= 0 then data.rankComm = _rankComm - player.commSkill end
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
 
     local setCommand = self:BindCommand( "sh_rank_set", "rank_set", AdminRankPlayer )
     setCommand:AddParam{ Type = "steamid" }
-    setCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 9999999, Optional = true, Default = 0 }
-    setCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 9999999, Optional = true, Default = 0 }
-    setCommand:Help( "设置对应玩家的[社区段位]及[指挥段位].例:!rank_set 55022511 2500 2800" )
+    setCommand:AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+    setCommand:AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+    setCommand:Help( "设置对应玩家的[社区段位]及[指挥段位].例:!rank_set 55022511 -1 2800" )
 
     local function AdminRankPlayerDelta( _client, _id, _offset,_commOffset )
         local target = Shine.GetClientByNS2ID(_id)

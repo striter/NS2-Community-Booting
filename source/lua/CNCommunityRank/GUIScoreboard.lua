@@ -884,7 +884,8 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local kills = playerRecord.Kills
         local assists = playerRecord.Assists
         local deaths = playerRecord.Deaths
-        local isCommander = playerRecord.IsCommander and isVisibleTeam == true
+        local isCommander = playerRecord.IsCommander
+        local isVisibleCommander = isCommander and isVisibleTeam == true
         local isRookie = playerRecord.IsRookie
         local isBot = steamId == 0
         local resourcesStr = ConditionalValue(isVisibleTeam, tostring(math.floor(playerRecord.Resources * 10) / 10), "-")
@@ -894,7 +895,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local playerStatus = isVisibleTeam and playerRecord.Status or "-"
         local isDead = isVisibleTeam and playerRecord.Status == deadString
         local isSteamFriend = playerRecord.IsSteamFriend
-        local playerSkill = isCommander and playerRecord.CommSkill or playerRecord.Skill
+        local playerSkill = playerRecord.IsCommander and playerRecord.CommSkill or playerRecord.Skill
         local adagradSum = playerRecord.AdagradSum
         local commanderColor = GUIScoreboard.kCommanderFontColor
 
@@ -909,7 +910,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             end
         end
 
-        if isCommander then
+        if isVisibleCommander then
             score = "*"
         end
 
@@ -931,7 +932,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         currentPosition.y = currentY
         local background = player["Background"]
         background:SetPosition(currentPosition)
-        background:SetColor(ConditionalValue(isCommander, commanderColor, teamColor))
+        background:SetColor(ConditionalValue(isVisibleCommander, commanderColor, teamColor))
         if emblemIndex < 0 then
             local dynamicEmblemIndex = - emblemIndex
             if dynamicEmblemIndex <= #kDynamicEmblems then
@@ -1017,7 +1018,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
             local iconIndex = skillTier + 2
             if not isBot and isCommander then
-                iconIndex = iconIndex + 7
+                iconIndex = iconIndex + 8
                 commanderSkill = playerSkill
             end
             player.SkillIcon:SetTexturePixelCoordinates(0, iconIndex * 32, 100, (iconIndex + 1) * 32 - 1)
@@ -1166,7 +1167,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         end
 
         local color = Color(0.5, 0.5, 0.5, 1)
-        if isCommander then
+        if isVisibleCommander then
             color = GUIScoreboard.kCommanderFontColor * 0.8
         else
             color = teamColor * 0.8
@@ -1280,7 +1281,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         if commanderSkill >= 0 then
 
             local skillTier = GetPlayerSkillTier(commanderSkill)
-            local textureIndex = skillTier + 2 + 7
+            local textureIndex = skillTier + 2 + 8
             teamCommanderSkillGUIItem:SetTexturePixelCoordinates(0, textureIndex * 32, 100, (textureIndex + 1) * 32 - 1)
             teamCommanderSkillGUIItem:SetPosition(Vector( offset, 5, 0) * GUIScoreboard.kScalingFactor)
             teamCommanderSkillGUIItem:SetIsVisible(true)
