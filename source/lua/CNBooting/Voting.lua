@@ -502,33 +502,34 @@ if Client then
 
             local SSVPlugin = Shine.Plugins["serverswitchvote"]
             if SSVPlugin then
-                local function GetServerList()
-
-                    local address = Client.GetConnectedServerAddress()
-                    local menuItems = { }
-                    if  SSVPlugin.Enabled then
-                        for _, data in ipairs(SSVPlugin.QueryServers) do
-                            if address ~= data.Address then
-                                if data.Amount ~= 0 then
-                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,string.format("%s人", data.Amount)), 
-                                                              extraData = { ip = data.Address , name = data.Name ,onlyAccepted = true , voteRequired = data.Amount } })
-                                else
-                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,"所有人"), 
-                                                              extraData = { ip = data.Address , name = data.Name , onlyAccepted = false } } )
-                                end
-                            end
-                        end
-                    end
-                    return menuItems
-                end
-
+                --local function GetServerList()
+                --
+                --    local address = Client.GetConnectedServerAddress()
+                --    local menuItems = { }
+                --    if  SSVPlugin.Enabled then
+                --        for _, data in ipairs(SSVPlugin.QueryServers) do
+                --            if address ~= data.Address then
+                --                if data.Amount ~= 0 then
+                --                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,string.format("%s人", data.Amount)), 
+                --                                              extraData = { ip = data.Address , name = data.Name ,onlyAccepted = true , voteRequired = data.Amount } })
+                --                else
+                --                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,"所有人"), 
+                --                                              extraData = { ip = data.Address , name = data.Name , onlyAccepted = false } } )
+                --                end
+                --            end
+                --        end
+                --    end
+                --    return menuItems
+                --end
+                --
+                --voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )
+                --    AttemptToStartVote("VoteSwitchServer", { ip = msg.ip , name = msg.name,onlyAccepted = msg.onlyAccepted,voteRequired = msg.voteRequired })
+                --end)
+                
                 AddVoteStartListener( "VoteSwitchServer", 	function( msg )
                     return string.format(msg.onlyAccepted and Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY") or Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY_ALL"),msg.name)
                 end )
 
-                voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )
-                    AttemptToStartVote("VoteSwitchServer", { ip = msg.ip , name = msg.name,onlyAccepted = msg.onlyAccepted,voteRequired = msg.voteRequired })
-                end)
             end
         end
 
@@ -645,13 +646,25 @@ if Server then
     SetVoteSuccessfulCallback( "VoteSwitchServer", 1, function( msg )
         --Shared.Message(msg.name .. " " .. msg.ip .. " " .. tostring(msg.onlyAccepted) .. " " .. tostring(#activeVoteResults))
         if msg.onlyAccepted then
+            local acceptClients = {}
+            local message = {ip = msg.ip}
+            
             for i = 1, #activeVoteResults.voters do
                 local voterId = activeVoteResults.voters[i]
                 local client = Shine.GetClientByNS2ID(voterId)
                 if activeVoteResults.votes[voterId] and client then
-                    Server.SendNetworkMessage(client,"Redirect",{ ip = msg.ip }, true)
+                    table.insert(acceptClients,client)
                 end
             end
+
+            if Shine then
+                local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
+                if cpEnabled then cp:DispatchTomorrowPrivilege(acceptClients,"新战局开启") end
+            end
+            
+            --for _,client in acceptClients do
+            --    Server.SendNetworkMessage(client,"Redirect",message, true)
+            --end
         else
             Server.SendNetworkMessage("Redirect",{ ip = msg.ip }, true)
         end

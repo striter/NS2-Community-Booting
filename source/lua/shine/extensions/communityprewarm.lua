@@ -18,6 +18,13 @@ Plugin.DefaultConfig = {
         [3] = { Count = 10, Credit = 5 },
         [4] = { Count = 99, Credit = 1 },
     },
+    ["TomorrowAward"] = {
+        Tier = 5,
+        Credit = 1,
+        ["UserData"] = {
+            [1] = 55022511,
+        },
+    },
     ["UserData"] = {
         ["55022511"] = {tier = 0 , time = 100 , credit = 0 , name = "StriteR."}
     },
@@ -33,6 +40,10 @@ do
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier  ))
     Validator:AddFieldRule( "UserData",  Validator.IsType( "table", Plugin.DefaultConfig.UserData  ))
+    Validator:AddFieldRule( "TomorrowAward",  Validator.IsType( "table", Plugin.DefaultConfig.TomorrowAward))
+    Validator:AddFieldRule( "TomorrowAward.Tier",  Validator.IsType( "number", Plugin.DefaultConfig.TomorrowAward.Tier))
+    Validator:AddFieldRule( "TomorrowAward.Credit",  Validator.IsType( "number", Plugin.DefaultConfig.TomorrowAward.Credit))
+    Validator:AddFieldRule( "TomorrowAward.UserData",  Validator.IsType( "table", Plugin.DefaultConfig.TomorrowAward.UserData))
     Plugin.ConfigValidator = Validator
 end
 
@@ -118,14 +129,14 @@ end
 local function ValidateClient(self, _clientID, _data, _tier, _credit)
     _data = _data or GetPlayerData(self,_clientID)
     _data.tier = _tier
-    _data.credit = _credit
+    _data.credit = _data.credit + _credit
     
     local client = Shine.GetClientByNS2ID(_clientID)
     if not client then return end
 
     client:GetControllingPlayer():SetPrewarmData(_data)
     Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
-            string.format("预热激励已派发,您于当日享有[预热徽章%s]并获得了[%s预热点],感谢您的付出!",_tier,_credit) )
+            string.format("激励已派发,以获得[预热徽章%s]及[%s预热点],感谢您的付出!",_tier,_credit) )
 end
 
 local function Reset(self)
@@ -140,6 +151,22 @@ local function PrewarmValidateEnable(self)
     return true
 end
 
+function Plugin:DispatchTomorrowPrivilege(_clients,_message)
+    if not self.Config.Validated then return end
+    
+    for _,client in pairs(_clients) do
+        local clientID = tostring(client:GetUserId())
+        if not table.contains(self.Config.TomorrowAward.UserData,clientID) then
+            table.insert(self.Config.TomorrowAward.UserData,clientID)
+        end
+    end
+
+    for client in Shine.IterateClients() do
+        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+                255, 255, 255,string.format("%s成功,参与其中的%i名玩家将于明日获得对应的换服激励.",_message,#_clients))
+    end
+end
+
 local function Validate(self)
     if not PrewarmValidateEnable(self) then return end
 
@@ -147,6 +174,13 @@ local function Validate(self)
     if self.Config.Validated then return end
     self.Config.Validated = true
 
+    --Dispatch yesterdays award
+    for _,clientIDs in pairs(self.Config.TomorrowAward.UserData) do
+        local clientID = tonumber(clientIDs)
+        ValidateClient(self,clientID,nil,self.Config.TomorrowAward.Tier,self.Config.TomorrowAward.Credit)
+    end
+    table.Empty(self.Config.TomorrowAward.UserData)
+    
     local prewarmClients = {}
     for clientID,prewarmData in pairs(self.MemberInfos) do
         table.insert(prewarmClients, { clientID = clientID, data = prewarmData})
@@ -177,7 +211,7 @@ local function Validate(self)
         end
         currentIndex = currentIndex + 1
     end
-
+    
     for client in Shine.IterateClients() do
         Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
                 255, 255, 255,string.format("预热已达成,预热排名靠前的玩家:" .. nameList .. "等,感谢各位对预热做出的贡献.",
@@ -279,6 +313,8 @@ function Plugin:ClientDisconnect( _client )
 
     TrackClient(self,_client,clientID)
 end
+
+
 
 function Plugin:CreateMessageCommands()
     local setCommand = self:BindCommand( "sh_prewarm", "prewarm", function(_client) NotifyClient(self,_client,nil) end,true )

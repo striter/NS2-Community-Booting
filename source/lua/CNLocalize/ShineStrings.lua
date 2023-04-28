@@ -213,8 +213,8 @@ kShinePluginsTranslations["voterandom"]["ERROR_CANNOT_START_HIVE_BASED"] = "当�
 kShinePluginsTranslations["voterandom"]["ERROR_CONSTRAINTS"]="当前分数已平衡."
 kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_DISABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[禁用]基于分数的自动洗牌分队 (需要{VotesNeeded}票,还剩{VotesNeeded:Pluralise:vote|votes})."
 kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_ENABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[启用]基于分数的自动洗牌分队 (需要{VotesNeeded}票,还剩{VotesNeeded:Pluralise:vote|votes})."
-kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLED_HIVE_BASED"]="基于分数的自动分数洗牌分队已[禁用]."
-kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_ENABLED_HIVE_BASED"]="基于分数的自动分数洗牌分队已[启用]."
+kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[禁用]."
+kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_ENABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[启用]."
 
 -- PreGame
 kShinePluginsTranslations["pregame"]={}
