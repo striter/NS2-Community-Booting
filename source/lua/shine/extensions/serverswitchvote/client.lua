@@ -22,6 +22,7 @@ end
 
 function Plugin:ReceiveAddServerList( Data )
 	self.QueryServers[#self.QueryServers + 1] = {
+		ID = Data.ID,
 		Address = Data.IP .. ":" .. Data.Port,
 		Port = Data.Port,
 		Name = Data.Name,

@@ -500,37 +500,36 @@ if Client then
 
         local function SetupServerSwitchVote(voteMenu)
 
-            local SSVPlugin = Shine.Plugins["serverswitchvote"]
-            if SSVPlugin then
-                --local function GetServerList()
-                --
-                --    local address = Client.GetConnectedServerAddress()
-                --    local menuItems = { }
-                --    if  SSVPlugin.Enabled then
-                --        for _, data in ipairs(SSVPlugin.QueryServers) do
-                --            if address ~= data.Address then
-                --                if data.Amount ~= 0 then
-                --                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,string.format("%s人", data.Amount)), 
-                --                                              extraData = { ip = data.Address , name = data.Name ,onlyAccepted = true , voteRequired = data.Amount } })
-                --                else
-                --                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"), data.Name,"所有人"), 
-                --                                              extraData = { ip = data.Address , name = data.Name , onlyAccepted = false } } )
-                --                end
-                --            end
-                --        end
-                --    end
-                --    return menuItems
-                --end
-                --
-                --voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )
-                --    AttemptToStartVote("VoteSwitchServer", { ip = msg.ip , name = msg.name,onlyAccepted = msg.onlyAccepted,voteRequired = msg.voteRequired })
-                --end)
+                local function GetServerList()
+                    local address = Client.GetConnectedServerAddress()
+                    local menuItems = { }
+                    local ssvEnabled, ssv = Shine:IsExtensionEnabled( "serverswitchvote" )
+                    if ssvEnabled and #ssv.QueryServers > 0 then
+                        for _, data in ipairs(ssv.QueryServers) do
+                            if address ~= data.Address then
+                                if data.Amount ~= 0 then
+                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"),data.ID, data.Name,string.format("%s人", data.Amount)),
+                                                              extraData = { ip = data.Address , name = data.Name ,onlyAccepted = true , voteRequired = data.Amount } })
+                                else
+                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"),data.ID, data.Name,"所有人"),
+                                                              extraData = { ip = data.Address , name = data.Name , onlyAccepted = false } } )
+                                end
+                            end
+                        end
+                    else
+                        table.insert(menuItems,{text = Locale.ResolveString("VOTE_SWITCH_SERVER_INVALID"),extraData = {invalid = true } } )
+                    end
+                    return menuItems
+                end
+
+                voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_SWITCH_SERVER"), GetServerList, function( msg )
+                    if msg.invalid then return end
+                    AttemptToStartVote("VoteSwitchServer", { ip = msg.ip , name = msg.name,onlyAccepted = msg.onlyAccepted,voteRequired = msg.voteRequired })
+                end)
                 
                 AddVoteStartListener( "VoteSwitchServer", 	function( msg )
                     return string.format(msg.onlyAccepted and Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY") or Locale.ResolveString("VOTE_SWITCH_SERVER_QUERY_ALL"),msg.name)
                 end )
-
-            end
         end
 
         AddVoteSetupCallback(SetupServerSwitchVote)
@@ -662,9 +661,9 @@ if Server then
                 if cpEnabled then cp:DispatchTomorrowPrivilege(acceptClients,"新战局开启") end
             end
             
-            --for _,client in acceptClients do
-            --    Server.SendNetworkMessage(client,"Redirect",message, true)
-            --end
+            for _,client in acceptClients do
+                Server.SendNetworkMessage(client,"Redirect",message, true)
+            end
         else
             Server.SendNetworkMessage("Redirect",{ ip = msg.ip }, true)
         end

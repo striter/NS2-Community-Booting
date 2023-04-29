@@ -1,11 +1,4 @@
---[[
-	Shine multi-server plugin.
-]]
-
 local Shine = Shine
-
-local Notify = Shared.Message
-local StringFormat = string.format
 local StringMatch = string.match
 local tonumber = tonumber
 
@@ -16,6 +9,7 @@ Plugin.HasConfig = true
 Plugin.ConfigName = "ServerSwitchVote.json"
 
 Plugin.DefaultConfig = {
+	ClientVote = true,
 	Servers = {
 		{ Name = "My awesome server", IP = "127.0.0.1", Port = "27015", Password = "" }
 	},
@@ -125,6 +119,7 @@ end
 
 	Plugin.ConfigValidator = Validator
 
+	Validator:AddFieldRule( "ClientVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.ClientVote ))
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
 	Validator:AddFieldRule( "CrowdAdvert.Interval",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.Interval ))
@@ -140,63 +135,8 @@ end
 
 function Plugin:Initialise()
 	self.Enabled = true
-
-	local function RedirClients(_serverIndex,_count,_onlySpectate)
-		local clients = {}
-		for Client in Shine.IterateClients() do
-			
-            local player = Client:GetControllingPlayer()
-            if player then
-                if _onlySpectate and not player:GetIsSpectator() then
-                    goto continue
-                end
-                
-                table.insert(clients,{client = Client,priority = player:GetPlayerSkill()})
-                ::continue::
-			end
-		end
-
-		table.sort(clients,function (a,b) return a.priority < b.priority end)
-		local count = _count
-		local targetIP =  GetConnectIP(_serverIndex)
-		for index,data in pairs(clients) do
-			
-			Server.SendNetworkMessage(data.client, "Redirect",{ ip = targetIP }, true)
-
-			count = count - 1
-			if count == 0 then
-				break
-			end
-		end
-	end
-	
-	
-	local function RedirSpectateWithCount(_client,_serverIndex,_count)
-	    RedirClients(_serverIndex,_count,1)
-	end
-	
-    local redirSpectateWithCountCommand = self:BindCommand( "sh_redir_spec_count", "redir_spec_count", RedirSpectateWithCount )
-    redirSpectateWithCountCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
-    redirSpectateWithCountCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Optional = true, Default = 16 }
-    redirSpectateWithCountCommand:Help( "示例: !redir_spec_count 1 20. 将20个观战(不包括场内玩家)迁移至服务器[1],排序为分数从下到上" )
-
-
-	local function RedirPlayersWithCount(_client,_serverIndex,_count)
-	    RedirClients(_serverIndex,_count,nil)
-	end
-
-    local redirPlayersCommand = self:BindCommand( "sh_redir_count", "redir_count", RedirPlayersWithCount )
-    redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
-    redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Optional = true, Default = 16 }
-    redirPlayersCommand:Help( "示例: !redir_count 1 20. 将20个玩家(包括观战)迁移至服务器[1],排序为分数从下到上" )
-
+	self:CreateCommands()
 	return true
-end
-
-function Plugin:OnNetworkingReady()
-	for Client in Shine.IterateClients() do
-		self:ProcessClient( Client )
-	end
 end
 
 function Plugin:OnFirstThink()
@@ -225,36 +165,94 @@ function Plugin:TriggerCrowdAdvert()
 		end
 	end
 	
-	
 	self.Timer = self:SimpleTimer( self.Config.CrowdAdvert.Interval, function()
 		self:TriggerCrowdAdvert()
 	end )
 end
 
-function Plugin:SendServerData( Client, ID, Data )
-	for _,amount in ipairs(Data.Amount) do
-		self:SendNetworkMessage( Client, "AddServerList", {
-			Name = Data.Name  or "No Name",
-			IP = Data.IP,
-			Port = tonumber( Data.Port ) or 27015,
-			Amount = amount
-		}, true )
-	end
-end
 
-function Plugin:ProcessClient( Client )
-	for i = 1, #self.Config.Servers do
-		self:SendServerData( Client, i, self.Config.Servers[i] )
-	end
-end
-
+-- Send Client Vote List
 function Plugin:ClientConnect( Client )
 	if Client:GetIsVirtual() then return end
-	self:ProcessClient( Client )
+	self:ProcessClientVoteList( Client )
 end
 
 function Plugin:OnUserReload()
 	for Client in Shine.IterateClients() do
-		self:ProcessClient( Client )
+		self:ProcessClientVoteList( Client )
 	end
+end
+
+function Plugin:OnNetworkingReady()
+	for Client in Shine.IterateClients() do
+		self:ProcessClientVoteList( Client )
+	end
+end
+
+function Plugin:ProcessClientVoteList( Client )
+	local valid = self.Config.ClientVote
+	valid = valid or Shine:HasAccess( Client, "sh_adminmenu" )
+	if not valid then return end
+
+	for i = 1, #self.Config.Servers do
+		local data = self.Config.Servers[i]
+		for _,amount in ipairs(data.Amount) do
+			self:SendNetworkMessage( Client, "AddServerList", {
+				ID = i,
+				Name = data.Name  or "No Name",
+				IP = data.IP,
+				Port = tonumber( data.Port ) or 27015,
+				Amount = amount
+			}, true )
+		end
+	end
+end
+
+function Plugin:CreateCommands()
+	local function RedirClients(_serverIndex,_count,_onlySpectate)
+		local clients = {}
+		for Client in Shine.IterateClients() do
+
+			local player = Client:GetControllingPlayer()
+			if player then
+				if _onlySpectate and not player:GetIsSpectator() then
+					goto continue
+				end
+
+				table.insert(clients,{client = Client,priority = player:GetPlayerSkill()})
+				::continue::
+			end
+		end
+
+		table.sort(clients,function (a,b) return a.priority < b.priority end)
+		local count = _count
+		local targetIP =  GetConnectIP(_serverIndex)
+		for index,data in pairs(clients) do
+
+			Server.SendNetworkMessage(data.client, "Redirect",{ ip = targetIP }, true)
+
+			count = count - 1
+			if count == 0 then
+				break
+			end
+		end
+	end
+	
+	local function RedirSpectateWithCount(_client,_serverIndex,_count)
+		RedirClients(_serverIndex,_count,1)
+	end
+
+	local redirSpectateWithCountCommand = self:BindCommand( "sh_redir_spec_count", "redir_spec_count", RedirSpectateWithCount )
+	redirSpectateWithCountCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
+	redirSpectateWithCountCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Optional = true, Default = 16 }
+	redirSpectateWithCountCommand:Help( "示例: !redir_spec_count 1 20. 将20个观战(不包括场内玩家)迁移至服务器[1],排序为分数从下到上" )
+
+	local function RedirPlayersWithCount(_client,_serverIndex,_count)
+		RedirClients(_serverIndex,_count,nil)
+	end
+
+	local redirPlayersCommand = self:BindCommand( "sh_redir_count", "redir_count", RedirPlayersWithCount )
+	redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
+	redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Optional = true, Default = 16 }
+	redirPlayersCommand:Help( "示例: !redir_count 1 20. 将20个玩家(包括观战)迁移至服务器[1],排序为分数从下到上" )
 end

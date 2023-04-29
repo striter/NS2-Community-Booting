@@ -1130,7 +1130,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 
         local rankIconIndex = defaultRankIndex
-        if playerRecord.prewarmTier > 0 then
+        if playerRecord.prewarmTier and playerRecord.prewarmTier > 0 then
             rankIconIndex = 6 + playerRecord.prewarmTier
         end
 

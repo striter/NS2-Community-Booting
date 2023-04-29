@@ -1,9 +1,10 @@
 if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER"] = "投票换服"
-    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "<%s> : %s"
+    kTranslateMessage["VOTE_SWITCH_SERVER_ELEMENT"] = "[%i]<%s> : %s"
     kTranslateMessage["VOTE_SWITCH_SERVER_QUERY"] = "<%s> 正在组建新战局"
     kTranslateMessage["VOTE_SWITCH_SERVER_QUERY_ALL"] = "将所有人送去 <%s>?"
-
+    kTranslateMessage["VOTE_SWITCH_SERVER_INVALID"] = "主动投票换服已被禁用,请联系管理发起换服."
+    
     kTranslateMessage["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] 算我一个! "
     kTranslateMessage["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] 想在这多待会."
 
@@ -53,9 +54,10 @@ end
 if kLocales then
     
     kLocales["VOTE_SWITCH_SERVER"] = "Vote Switch Server"
-    kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "To <%s> : %s"
+    kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "[i]<%s> : %s"
     kLocales["VOTE_SWITCH_SERVER_QUERY"] = "<%s> is starting a new game!"
     kLocales["VOTE_SWITCH_SERVER_QUERY_ALL"] = "Send every one to <%s>?"
+    kLocales["VOTE_SWITCH_SERVER_INVALID"] = "Client server switch vote been disabled.Contact admin to begin vote."
 
     kLocales["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] Lets go!"
     kLocales["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] I'd like to stay for more times."
