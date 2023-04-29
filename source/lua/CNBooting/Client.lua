@@ -9,7 +9,7 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] 想在这多待会."
 
     kTranslateMessage["VOTE_MUTE_PLAYER"] = "玩家处理 - [禁言]"
-    kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言?"
+    kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言10分钟?"
 
     kTranslateMessage["VOTE_FUCK_POLITICAN"] = "玩家处理 - [禁言+改名] (仅政治自爆处理)"
     kTranslateMessage["VOTE_FUCK_POLITICAN_QUERY"] = "将<%s>变成没有感情的暖服机器."
@@ -63,7 +63,7 @@ if kLocales then
     kLocales["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] I'd like to stay for more times."
     
     kLocales["VOTE_MUTE_PLAYER"] = "Vote Mute player"
-    kLocales["VOTE_MUTE_PLAYER_QUERY"] = "Mute <%s>?"
+    kLocales["VOTE_MUTE_PLAYER_QUERY"] = "Mute <%s> for 10min?"
 
     kLocales["VOTE_FUCK_POLITICAN"] = "Vote f**k politican"
     kLocales["VOTE_FUCK_POLITICAN_QUERY"] = "<%s> likes big booty fat thick lips black muslim transgender."

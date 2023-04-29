@@ -239,7 +239,7 @@ function Plugin:SetupAdminMenuCommands()
 			return
 		end
 
-		Shine.AdminMenu:RunCommand( "sh_gagid", Args )
+		Shine.AdminMenu:RunCommand( "sh_gagid0", Args )
 	end
 
 	self:AddAdminMenuCommand( Category, self:GetPhrase( "GAG" ), "sh_gag", false, GagLabels,

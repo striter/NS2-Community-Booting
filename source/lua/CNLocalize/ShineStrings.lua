@@ -95,6 +95,7 @@ kShinePluginsTranslations["ban"]["DURATION_HINT"]= "输入封禁时间"
 kShinePluginsTranslations["ban"]["REASON"]= "理由"
 
 kShinePluginsTranslations["basecommands"]={}
+kShinePluginsTranslations["basecommands"]["NOTIFY_PREFIX"]= "[禁言]"
 kShinePluginsTranslations["basecommands"]["FORCE_START"]="强制对局开启."
 kShinePluginsTranslations["basecommands"]["ALL_TALK_TAG"]="[全局语音]"
 kShinePluginsTranslations["basecommands"]["CATEGORY"]="玩家操作目录"
@@ -139,6 +140,9 @@ kShinePluginsTranslations["basecommands"]["STATE"]="状态"
 kShinePluginsTranslations["basecommands"]["UNLOAD_PLUGIN"]="卸载"
 kShinePluginsTranslations["basecommands"]["LOAD_PLUGIN"]="安装"
 kShinePluginsTranslations["basecommands"]["ERROR_NOT_GAGGED"]="<{TargetName}>未被禁言"
+kShinePluginsTranslations["basecommands"]["ERROR_BE_GAGGED"]="您已被[暂时禁言],请静待禁言结束.切记保持友善度!"
+kShinePluginsTranslations["basecommands"]["ERROR_BE_GAGGED_PERMANENT"]="您已被[永久禁言],请联系管理解封.切记保持友善度,文明游戏从我做起!"
+kShinePluginsTranslations["basecommands"]["BE_UNGAGGED"]="您已被解除[禁言],请保持友善度切勿二进宫!"
 kShinePluginsTranslations["basecommands"]["PLAYER_GAGGED"]="将<{TargetName}>禁言{Duration:Duration:REST_OF_MAP}."
 kShinePluginsTranslations["basecommands"]["PLAYER_UNGAGGED"]="解除<{TargetName}>的禁言."
 

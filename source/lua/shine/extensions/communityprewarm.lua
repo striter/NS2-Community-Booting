@@ -322,9 +322,9 @@ function Plugin:CreateMessageCommands()
     
     local validateCommand = self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end,true )
     validateCommand:AddParam{ Type = "steamid" }
-    validateCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 4, Default = 4 }
+    validateCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 4 }
     validateCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 15, Default = 3 }
-    validateCommand:Help( "设置玩家的预热状态以及预热点数,例如!prewarm_validate 4 3.(设置玩家段位4并给予3点预热点)")
+    validateCommand:Help( "设置玩家的预热状态以及预热点数,例如!prewarm_validate 5 3.(设置玩家段位4并给予3点预热点)")
 end
 
 return Plugin

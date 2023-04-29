@@ -368,7 +368,10 @@ do
 	end
 
 	function Plugin:IsSpectatorAllTalk( Listener )
-		return self.Config.AllTalkSpectator and Listener:GetTeamNumber() == ( kSpectatorIndex or 3 )
+		local teamNumber = Listener:GetTeamNumber()
+		local allTalkTeam = teamNumber == ( kSpectatorIndex or 3 )
+		allTalkTeam = allTalkTeam or teamNumber == (kTeamReadyRoom or 4)
+		return self.Config.AllTalkSpectator and allTalkTeam
 	end
 
 	-- Will need updating if it changes in NS2Gamerules...
@@ -1483,52 +1486,66 @@ function Plugin:CreateMessageCommands()
 		MaxLength = 128, Help = "message" }
 	CSayCommand:Help( "Displays a message in the centre of all player's screens." )
 
-	local function GagPlayer( Client, Target, Duration )
-		if Target:GetIsVirtual() then
+	local function GagPlayer(Client, TargetClient, Duration )
+		if TargetClient:GetIsVirtual() then
 			NotifyError( Client, "ERROR_GAG_BOT", nil, "Bots cannot be gagged" )
 			return
 		end
 
-		self.Gagged[ Target:GetUserId() ] = Duration == 0 and true or SharedTime() + Duration
-
-		local TargetPlayer = Target:GetControllingPlayer()
-		local TargetName = TargetPlayer and TargetPlayer:GetName() or "<unknown>"
+		self.Gagged[ TargetClient:GetUserId() ] = Duration == 0 and true or SharedTime() + Duration
+		
 		local DurationString = string.TimeToString( Duration )
-
 		Shine:AdminPrint( nil, "%s gagged %s%s", true,
 			Shine.GetClientInfo( Client ),
-			Shine.GetClientInfo( Target ),
+			Shine.GetClientInfo(TargetClient),
 			Duration == 0 and "" or " for "..DurationString )
 
-		self:SendTranslatedMessage( Client, "PLAYER_GAGGED", {
-			TargetName = TargetName,
-			Duration = Duration
-		} )
+		self:NotifyGagStatus(TargetClient)
 	end
 	local GagCommand = self:BindCommand( "sh_gag", "gag", GagPlayer )
 	GagCommand:AddParam{ Type = "client" }
 	GagCommand:AddParam{ Type = "time", Round = true, Min = 0, Max = 1800, Optional = true, Default = 0 }
-	GagCommand:Help( "Silences the given player's chat. If no duration is given, it will hold for the remainder of the map." )
+	GagCommand:Help( "禁言该玩家,参数为秒,0为换图前都禁言.!gag StriteR. 660" )
 
-	local function GagID( Client, ID )
-		self.Config.GaggedPlayers[ tostring( ID ) ] = true
-		self:SaveConfig()
-
+	local function GagID(Client, ID ,Duration)
 		self.Gagged[ ID ] = true
+		local TargetClient = Shine.GetClientByNS2ID( ID )
+		if not TargetClient then return end
 
+		local DurationString = string.TimeToString( Duration )
+		Shine:AdminPrint( nil, "%s gagged %s%s", true,
+				Shine.GetClientInfo( Client ),
+				Shine.GetClientInfo(TargetClient),
+				Duration == 0 and "" or " for "..DurationString )
+		
+		self.Gagged[ TargetClient:GetUserId() ] = Duration == 0 and true or SharedTime() + Duration
+		self:NotifyGagStatus(TargetClient)
+	end
+	self:BindCommand( "sh_gagid", "gagid", GagID)
+		:AddParam{ Type = "steamid" }
+		:AddParam{ Type = "time", Round = true, Min = 0, Max = 1800, Optional = true, Default = 0 }
+		:Help( "临时禁言该玩家,参数为秒,0为换图前都禁言.!gagid 55022511 600" )
+	
+	local function GagIDPermanent(Client, ID )
+		self.Config.GaggedPlayers[ tostring( ID ) ] = true
+		self.Gagged[ ID ] = true
+		self:SaveConfig()
+		
 		Shine:AdminPrint( nil, "%s gagged %s permanently.", true,
 			Shine.GetClientInfo( Client ), ID )
 
-		local Target = Shine.GetClientByNS2ID( ID )
-		if Target then
+		local TargetClient = Shine.GetClientByNS2ID( ID )
+		if TargetClient then
 			self:SendTranslatedMessage( Client, "PLAYER_GAGGED_PERMANENTLY", {
-				TargetName = Shine.GetClientName( Target )
+				TargetName = Shine.GetClientName(TargetClient)
 			} )
+
+			self:NotifyGagStatus(TargetClient)
 		end
 	end
-	self:BindCommand( "sh_gagid", "gagid", GagID )
+	self:BindCommand( "sh_gagid0", "gagid0", GagIDPermanent)
 		:AddParam{ Type = "steamid" }
-		:Help( "Silences the given Steam ID's chat permanently until ungagged, persisting between map changes." )
+		:Help( "永久禁言该玩家.!sh_gagid 55022511" )
 
 	local function UngagID( Client, ID )
 		local IDAsString = tostring( ID )
@@ -1546,15 +1563,23 @@ function Plugin:CreateMessageCommands()
 
 		Shine:AdminPrint( nil, "%s ungagged %s.", true,
 			Shine.GetClientInfo( Client ), IDAsString )
+
+		local TargetClient = Shine.GetClientByNS2ID( ID )
+		if TargetClient then
+			Shine:TranslatedNotifyDualColour( TargetClient, kUngagColor[ 1 ], kUngagColor[ 2 ], kUngagColor[ 3 ],
+					"NOTIFY_PREFIX", 255, 255, 255, "BE_UNGAGGED",self.__Name)
+		end
 	end
 	self:BindCommand( "sh_ungagid", "ungagid", UngagID )
 		:AddParam{ Type = "steamid" }
 		:Help( "Stops silencing the given Steam ID's chat if they have been gagged with sh_gagid." )
 
-	local function UngagPlayer( Client, Target )
-		local TargetPlayer = Target:GetControllingPlayer()
+	
+	local kUngagColor = {88, 214, 141}
+	local function UngagPlayer(Client, TargetClient)
+		local TargetPlayer = TargetClient:GetControllingPlayer()
 		local TargetName = TargetPlayer and TargetPlayer:GetName() or "<unknown>"
-		local TargetID = Target:GetUserId() or 0
+		local TargetID = TargetClient:GetUserId() or 0
 
 		if not self.Gagged[ TargetID ] then
 			NotifyError( Client, "ERROR_NOT_GAGGED", {
@@ -1571,10 +1596,12 @@ function Plugin:CreateMessageCommands()
 			self.Config.GaggedPlayers[ IDAsString ] = nil
 			self:SaveConfig()
 		end
+		Shine:TranslatedNotifyDualColour( TargetClient, kUngagColor[ 1 ], kUngagColor[ 2 ], kUngagColor[ 3 ],
+				"NOTIFY_PREFIX", 255, 255, 255, "BE_UNGAGGED",self.__Name)
 
 		Shine:AdminPrint( nil, "%s ungagged %s", true,
 			Shine.GetClientInfo( Client ),
-			Shine.GetClientInfo( Target ) )
+			Shine.GetClientInfo(TargetClient) )
 
 		self:SendTranslatedMessage( Client, "PLAYER_UNGAGGED", {
 			TargetName = TargetName
@@ -1840,11 +1867,30 @@ function Plugin:IsClientGagged( Client )
 	return false
 end
 
+function Plugin:NotifyGagStatus(_client)
+
+	local clientID = _client:GetUserId()
+	if clientID <= 0 then return end
+
+	local GagData = self.Gagged[ clientID ]
+
+	if not GagData then return false end
+	local gagPermanent = self.Config.GaggedPlayers[tostring(clientID)]
+	if gagPermanent then return Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED_PERMANENT" ) end
+	if GagData then return Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED" ) end
+end
+
+
+function Plugin:ClientConnect( _client )
+	self:NotifyGagStatus(_client)
+end
+
 --[[
 	Facilitates the gag command.
 ]]
 function Plugin:PlayerSay( Client, Message )
 	if self:IsClientGagged( Client ) then
+		self:NotifyGagStatus(Client)
 		return ""
 	end
 end
