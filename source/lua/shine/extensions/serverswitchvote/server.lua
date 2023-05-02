@@ -15,14 +15,10 @@ Plugin.DefaultConfig = {
 	},
 	CrowdAdvert = {
 		PlayerCount = 0,
-		Interval = 120,
-		StartVote = false,
+		ToServer = 0,
+		ToServerDelay = 10,
 		Prefix = "[病危通知书]",
-		Messages = {
-			"服务器要炸了",
-			"真的要炸了",
-			"马上就炸",
-		}
+		Message = "服务器要炸了",
 	},
 }
 
@@ -122,10 +118,10 @@ end
 	Validator:AddFieldRule( "ClientVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.ClientVote ))
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
-	Validator:AddFieldRule( "CrowdAdvert.Interval",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.Interval ))
 	Validator:AddFieldRule( "CrowdAdvert.Prefix",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Prefix ))
-	Validator:AddFieldRule( "CrowdAdvert.StartVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.CrowdAdvert.StartVote ))
-	Validator:AddFieldRule( "CrowdAdvert.Messages",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert.Messages ))
+	Validator:AddFieldRule( "CrowdAdvert.ToServer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServer ))
+	Validator:AddFieldRule( "CrowdAdvert.ToServerDelay",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServerDelay ))
+	Validator:AddFieldRule( "CrowdAdvert.Message",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Message ))
 end
 
 local function GetConnectIP(_index)
@@ -140,36 +136,27 @@ function Plugin:Initialise()
 end
 
 function Plugin:OnFirstThink()
-	if self.Config.CrowdAdvert.PlayerCount ~= 0  then
-		self:TriggerCrowdAdvert()
-	end
+	
 end
 
-function Plugin:TriggerCrowdAdvert()
-	if self.Timer then
-		self.Timer:Destroy()
-		self.Timer = nil
-	end
-
-	if Shine.GetHumanPlayerCount() >= self.Config.CrowdAdvert.PlayerCount then
-		Shine:NotifyDualColour( Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
-				253, 237, 236, self.Config.CrowdAdvert.Messages[math.random(#self.Config.CrowdAdvert.Messages)])
-		
-		if self.Config.CrowdAdvert.StartVote then
-			local data = self.Config.Servers[math.random(#self.Config.Servers)]
-			local amount = data.Amount[#data.Amount]
-			local address = data.IP .. ":" .. data.Port
-			if amount > 0 then
-				StartVote("VoteSwitchServer",nil, { ip = address , name = data.Name, onlyAccepted = true, voteRequired = amount })
-			end
-		end
-	end
+function Plugin:OnEndGame(_winningTeam)
+	local playerCount = Shine.GetHumanPlayerCount()
+	if playerCount < self.Config.CrowdAdvert.PlayerCount then return end
 	
-	self.Timer = self:SimpleTimer( self.Config.CrowdAdvert.Interval, function()
-		self:TriggerCrowdAdvert()
+	if self.Config.CrowdAdvert.ToServer <= 0 then return end
+	local data = self.Config.Servers[self.Config.CrowdAdvert.ToServer]
+	if not data then return end 
+	local delay = self.Config.CrowdAdvert.ToServerDelay
+
+	local address = data.IP .. ":" .. data.Port
+	local amount = playerCount / 2
+	Shine:NotifyDualColour( Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
+			253, 237, 236, string.format( self.Config.CrowdAdvert.Message,delay,amount,data.Name))
+	
+	self.Timer = self:SimpleTimer(delay, function()
+		self:RedirClients(address,amount)
 	end )
 end
-
 
 -- Send Client Vote List
 function Plugin:ClientConnect( Client )
@@ -208,47 +195,30 @@ function Plugin:ProcessClientVoteList( Client )
 	end
 end
 
+function Plugin:RedirClients(_targetIP,_count)
+	local clients = {}
+	for Client in Shine.IterateClients() do
+
+		local player = Client:GetControllingPlayer()
+		if player then
+			table.insert(clients,{client = Client,priority = player:GetPlayerSkill()})
+		end
+	end
+
+	table.sort(clients,function (a,b) return a.priority < b.priority end)
+	local count = _count
+	for _,data in pairs(clients) do
+		Server.SendNetworkMessage(data.client, "Redirect",{ ip = _targetIP }, true)
+		count = count - 1
+		if count <= 0 then
+			break
+		end
+	end
+end
+
 function Plugin:CreateCommands()
-	local function RedirClients(_serverIndex,_count,_onlySpectate)
-		local clients = {}
-		for Client in Shine.IterateClients() do
-
-			local player = Client:GetControllingPlayer()
-			if player then
-				if _onlySpectate and not player:GetIsSpectator() then
-					goto continue
-				end
-
-				table.insert(clients,{client = Client,priority = player:GetPlayerSkill()})
-				::continue::
-			end
-		end
-
-		table.sort(clients,function (a,b) return a.priority < b.priority end)
-		local count = _count
-		local targetIP =  GetConnectIP(_serverIndex)
-		for index,data in pairs(clients) do
-
-			Server.SendNetworkMessage(data.client, "Redirect",{ ip = targetIP }, true)
-
-			count = count - 1
-			if count == 0 then
-				break
-			end
-		end
-	end
-	
-	local function RedirSpectateWithCount(_client,_serverIndex,_count)
-		RedirClients(_serverIndex,_count,1)
-	end
-
-	local redirSpectateWithCountCommand = self:BindCommand( "sh_redir_spec_count", "redir_spec_count", RedirSpectateWithCount )
-	redirSpectateWithCountCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
-	redirSpectateWithCountCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Optional = true, Default = 16 }
-	redirSpectateWithCountCommand:Help( "示例: !redir_spec_count 1 20. 将20个观战(不包括场内玩家)迁移至服务器[1],排序为分数从下到上" )
-
 	local function RedirPlayersWithCount(_client,_serverIndex,_count)
-		RedirClients(_serverIndex,_count,nil)
+		self:RedirClients(GetConnectIP(_serverIndex),_count)
 	end
 
 	local redirPlayersCommand = self:BindCommand( "sh_redir_count", "redir_count", RedirPlayersWithCount )

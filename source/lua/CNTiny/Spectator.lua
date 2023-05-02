@@ -22,11 +22,11 @@ Script.Load("lua/KillCamSpectatorMode.lua")
 Script.Load("lua/MinimapMoveMixin.lua")
 Script.Load("lua/ScoringMixin.lua")
 ---------------
-Script.Load("lua/Marine.lua")
+--Script.Load("lua/Marine.lua")
 Script.Load("lua/Mixins/GroundMoveMixin.lua")
 Script.Load("lua/Mixins/JumpMoveMixin.lua")
-Script.Load("lua/Mixins/CrouchMoveMixin.lua")
-Script.Load("lua/Mixins/LadderMoveMixin.lua")
+--Script.Load("lua/Mixins/CrouchMoveMixin.lua")
+--Script.Load("lua/Mixins/LadderMoveMixin.lua")
 Script.Load("lua/CNTiny/TinymanSpectatorMode.lua")
 ---------------
 
@@ -75,8 +75,8 @@ AddMixinNetworkVars(MarineVariantMixin, networkVars)
 -----------
 AddMixinNetworkVars(GroundMoveMixin, networkVars)
 AddMixinNetworkVars(JumpMoveMixin, networkVars)
-AddMixinNetworkVars(CrouchMoveMixin, networkVars)
-AddMixinNetworkVars(LadderMoveMixin, networkVars)
+--AddMixinNetworkVars(CrouchMoveMixin, networkVars)
+--AddMixinNetworkVars(LadderMoveMixin, networkVars)
 ----------
 
 --
@@ -171,7 +171,7 @@ end
 function Spectator:OnCreate()
 
     Player.OnCreate(self)
-
+    
     InitMixin(self, CameraHolderMixin, { kFov = kDefaultFov })
     InitMixin(self, BaseMoveMixin, { kGravity = Player.kGravity })
     InitMixin(self, MarineVariantMixin)
@@ -183,10 +183,9 @@ function Spectator:OnCreate()
 -------------
     InitMixin(self, GroundMoveMixin)
     InitMixin(self, JumpMoveMixin)
-    InitMixin(self, CrouchMoveMixin)
-    InitMixin(self, LadderMoveMixin)
+    --InitMixin(self, CrouchMoveMixin)
+    --InitMixin(self, LadderMoveMixin)
     -- InitMixin(self, RagdollMixin)
-    Player.SetScale(self,0.2)
 -------------
     -- Default all move mixins to off.
     self:SetFreeLookMoveEnabled(false)
@@ -480,6 +479,9 @@ function Spectator:GetMaxSpeed(possible)
     return kMaxSpeed
 end
 
+function Spectator:GetMaxViewOffsetHeight()
+    return self.specMode == kSpectatorMode.Tinyman and 0.4 or Player.GetMaxViewOffsetHeight(self)
+end
 function Spectator:GetAcceleration()
     return kAcceleration
 end

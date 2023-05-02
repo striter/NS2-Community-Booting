@@ -37,7 +37,11 @@ Plugin.DefaultConfig = {
 	URL = "https://www.unknownworlds.com/ns2/",
 	URLTitle = "Welcome To Natural Selection 2",
 	ExtraNotify = true,
-	ExtraNotifyMessage = "You are at a higher tier skill server,choose rookie server for better experience"
+	ExtraNotifyMessage = "You are at a higher tier skill server,choose rookie server for better experience",
+	Messages = {
+		{"Hello Marines"},
+		{"Hello Aliens"},
+	},
 }
 
 Plugin.CheckConfig = true
@@ -51,6 +55,7 @@ do
 	Validator:AddFieldRule( "URLTitle",  Validator.IsType( "string", "Welcome To Natural Selection 2" ))
 	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
 	Validator:AddFieldRule( "ExtraNotifyMessage",  Validator.IsType( "string", "You are at a higher tier skill server,choose rookie server for better experience" ))
+	Validator:AddFieldRule( "Messages",  Validator.IsType( "table", Plugin.DefaultConfig.Messages))
 	Plugin.ConfigValidator = Validator
 end
 
@@ -175,6 +180,13 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	88, 214, 141, string.format("[新兵保护%i]",tier),
 	234, 250, 241, string.format("个人资源<%.2f>已回收.",refund) )
 
+	local team = player:GetTeamNumber()
+	local messages = self.Config.Messages[team]
+	if messages then
+		Shine:NotifyDualColour( player,
+				88, 214, 141, "[新人提示]",
+				234, 250, 241, messages[math.random(#messages)] )
+	end
 	-- Shared.Message("[CNNP] New Comer Protection <Death Refund>")
 end
 

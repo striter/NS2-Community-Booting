@@ -10,6 +10,12 @@ function Player:OnCreate()
     InitMixin(self, ReadyRoomPlayerActionFinderMixin)
 end
 
+local baseOnInitialized = Player.OnInitialized
+function Player:OnInitialized()
+    baseOnInitialized(self)
+    self.scale = 1
+end
+
 function Player:GetCanDieOverride()     --Just die Anyway
     local teamNumber = self:GetTeamNumber()
     return (teamNumber == kTeam1Index or teamNumber == kTeam2Index or teamNumber == kTeamReadyRoom)
@@ -58,4 +64,10 @@ end
 function Player:SetScale(_scale)
     self.scale = _scale
     self:UpdateControllerFromEntity()
+end
+
+
+local kCrouchShrinkAmount = 0.7
+function Player:GetCrouchShrinkAmount()
+    return kCrouchShrinkAmount * self.scale
 end

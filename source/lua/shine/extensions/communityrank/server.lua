@@ -249,26 +249,37 @@ function Plugin:ClientConnect( _client )
 end
 
 function Plugin:CreateMessageCommands()
+    local function CanSelfTargeting(_client,_target)
+        local access = _client == nil or Shine:HasAccess(_client,"sh_host") 
+        if access then return true end
+        if _target == _client then
+            Shine:NotifyCommandError( _client, "你不应该对自己使用这个指令" )
+            return false
+        end
+        return true
+    end
+    
     --Elo
     local function AdminRankReset( _client, _id )
         local target = Shine.GetClientByNS2ID(_id)
         if not target then return end
-
+        if not CanSelfTargeting(_client,target) then return end
+        
         local data = GetPlayerData(self,_id)
         data.rank = 0
         data.rankComm = 0
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
 
-    local resetCommand = self:BindCommand( "sh_rank_reset", "rank_reset", AdminRankReset )
-    resetCommand:AddParam{ Type = "steamid" }
-    resetCommand:Help( "重置玩家的段位(还原至NS2段位)." )
+    self:BindCommand( "sh_rank_reset", "rank_reset", AdminRankReset )
+    :AddParam{ Type = "steamid" }
+    :Help( "重置玩家的段位(还原至NS2段位)." )
 
     local function AdminRankPlayer( _client, _id, _rank ,_rankComm)
         local target = Shine.GetClientByNS2ID(_id)
         if not target then return end
-
-
+        if not CanSelfTargeting(_client,target) then return end
+        
         local data = GetPlayerData(self,_id)
         local player = target:GetControllingPlayer()
         if _rank >= 0 then data.rank = _rank - player.skill end
@@ -277,22 +288,23 @@ function Plugin:CreateMessageCommands()
     end
 
     local setCommand = self:BindCommand( "sh_rank_set", "rank_set", AdminRankPlayer )
-    setCommand:AddParam{ Type = "steamid" }
-    setCommand:AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
-    setCommand:AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
-    setCommand:Help( "设置对应玩家的[社区段位]及[指挥段位].例:!rank_set 55022511 -1 2800" )
+    :AddParam{ Type = "steamid" }
+    :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+    :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+    :Help( "设置对应玩家的[社区段位]及[指挥段位].例:!rank_set 55022511 -1 2800" )
 
     local function AdminRankPlayerDelta( _client, _id, _offset,_commOffset )
         local target = Shine.GetClientByNS2ID(_id)
         if not target then return end
-
+        if not CanSelfTargeting(_client,target) then return end
+        
         RankPlayerDelta(self,_id,_offset,_commOffset)
     end
-    local deltaCommand = self:BindCommand( "sh_rank_delta", "rank_delta", AdminRankPlayerDelta )
-    deltaCommand:AddParam{ Type = "steamid" }
-    deltaCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
-    deltaCommand:AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
-    deltaCommand:Help( "增减对应玩家的[社区段位]及[指挥段位].例:!rank_delta 55022511 100 -100" )
+    self:BindCommand( "sh_rank_delta", "rank_delta", AdminRankPlayerDelta )
+    :AddParam{ Type = "steamid"}
+    :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
+    :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
+    :Help( "增减对应玩家的[社区段位]及[指挥段位].例:!rank_delta 55022511 100 -100" )
 
     --BOT
     local function FakeBotSwitchID(_client,_id)
