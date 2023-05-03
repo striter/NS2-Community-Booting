@@ -3,6 +3,7 @@ ModLoader.SetupFileHook( "lua/Globals.lua", "lua/CNTiny/Globals.lua", "post")
 ModLoader.SetupFileHook( "lua/ServerAdminCommands.lua", "lua/CNTiny/ServerAdminCommands.lua", "post" )
 ModLoader.SetupFileHook( "lua/WallMovementMixin.lua", "lua/CNTiny/WallMovementMixin.lua", "post" )
 ModLoader.SetupFileHook( "lua/CrouchMoveMixin.lua", "lua/CNTiny/CrouchMoveMixin.lua", "post" )
+ModLoader.SetupFileHook( "lua/MarineVariantMixin.lua", "lua/CNTiny/MarineVariantMixin.lua", "post" )
 
 ModLoader.SetupFileHook( "lua/Spectator.lua", "lua/CNTiny/Spectator.lua", "replace")
 
@@ -18,7 +19,6 @@ ModLoader.SetupFileHook( "lua/Gorge.lua", "lua/CNTiny/Player/Gorge.lua", "post" 
 ModLoader.SetupFileHook( "lua/Lerk.lua", "lua/CNTiny/Player/Lerk.lua", "post" )
 ModLoader.SetupFileHook( "lua/Fade.lua", "lua/CNTiny/Player/Fade.lua", "post" )
 ModLoader.SetupFileHook( "lua/Onos.lua", "lua/CNTiny/Player/Onos.lua", "post" )
-
 
 ModLoader.SetupFileHook( "lua/Prowler/Prowler.lua", "lua/CNTiny/Player/Prowler.lua", "post" )
 
