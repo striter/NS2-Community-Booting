@@ -1056,8 +1056,9 @@ kTranslateMessage["MAC"]="机器工人"
 kTranslateMessage["MAC_HINT"]="机器工人,由指挥员操作."
 kTranslateMessage["MAC_TOOLTIP"]="轻型辅助角色,由指挥控制行动.\n*修复友军护甲.\n*缓速建造建筑."
 
-kTranslateMessage["BEACONS_TO"]="紧急召回: 传送至-%{location}s"
-kTranslateMessage["BEACON_TO"]="紧急召回: 即将被传送至-%s"
+kTranslateMessage["BEACONS_TO"]="紧急召回: 传送至%{location}s"
+kTranslateMessage["BEACON_TO"]="紧急召回: 即将被传送至%s"
+kTranslateMessage["BEACONING_COMMANDER"]="紧急召回启用,即将开始传送."
 -- END
 
 --Alien 
