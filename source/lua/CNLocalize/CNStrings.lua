@@ -571,8 +571,8 @@ kTranslateMessage["PLAYER"]="玩家"
 kTranslateMessage["PLAYER_COUNT_WARNING"]="此服务器的最大玩家人数上限超过了24。在NS2的设计理念中，最大玩家人数不多于24时可以获得最佳体验。超过24人的话，我们并不能保证你能接受其中性能体验或游戏平衡性。"
 kTranslateMessage["PLAYER_NAME"]="玩家名称"
 kTranslateMessage["PLAYERS"]="玩家"
-kTranslateMessage["POWER_BUILT"]="%{location}s(已建造%{percentage}d%%)"
-kTranslateMessage["POWER_HEALTH"]="%{location}s(耐久度%{percentage}d%%)"
+kTranslateMessage["POWER_BUILT"]="%{location}s (供电中/%{percentage}d%%)"
+kTranslateMessage["POWER_HEALTH"]="%{location}s (待修复/%{percentage}d%%)"
 kTranslateMessage["POWER_LOST"]="%s 失去供电"
 kTranslateMessage["POWER_NODE"]="电力节点"
 kTranslateMessage["POWER_POINT_UNDER_ATTACK"]="%s电力节点遭袭"
@@ -1056,7 +1056,8 @@ kTranslateMessage["MAC"]="机器工人"
 kTranslateMessage["MAC_HINT"]="机器工人,由指挥员操作."
 kTranslateMessage["MAC_TOOLTIP"]="轻型辅助角色,由指挥控制行动.\n*修复友军护甲.\n*缓速建造建筑."
 
-kTranslateMessage["BEACONS_TO"]="紧急召回: 正在传送至 %{location}s 区域"
+kTranslateMessage["BEACONS_TO"]="紧急召回: 传送至-%{location}s"
+kTranslateMessage["BEACON_TO"]="紧急召回: 即将被传送至-%s"
 -- END
 
 --Alien 

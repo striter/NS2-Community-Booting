@@ -698,7 +698,6 @@ if Client then
 
 end
 
-Shared.LinkClassToMap("Spectator", Spectator.kMapName, networkVars)
 
 function Spectator:GetIsVisible()
     return self.specMode == kSpectatorMode.Tinyman
@@ -725,3 +724,5 @@ end
 --     baseModifyGravityForce(self,gravityTable)
 --     gravityTable.gravity = gravityTable.gravity* 0.5
 -- end
+
+Shared.LinkClassToMap("Spectator", Spectator.kMapName, networkVars)
