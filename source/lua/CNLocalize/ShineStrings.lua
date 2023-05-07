@@ -209,18 +209,18 @@ kShinePluginsTranslations["voterandom"]["DECLINE_FRIEND_GROUP_INVITE"]="拒绝�
 kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_FOR_DURATION_HIVE_BASED"]= "强制洗牌分队将持续 {Duration:Duration}."
 kShinePluginsTranslations["voterandom"]["TEAM_ENFORCING_TIMELIMIT_HIVE_BASED"]= "强制洗牌分队时限已到."
 kShinePluginsTranslations["voterandom"]["ERROR_NOT_ENOUGH_PLAYERS"] ="当前人数不足,无法洗牌分队."
-kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_HIVE_BASED"] = "{PlayerName} 投票洗牌分队 (还需  {VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
+kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_HIVE_BASED"] = "{PlayerName} 投票洗牌分队 (还需{VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
 kShinePluginsTranslations["voterandom"]["SHUFFLING_TEAMS_SHUFFLE_HIVE"] = "基于玩家的战力洗牌."
 kShinePluginsTranslations["voterandom"]["SHUFFLE_AND_RESTART_SHUFFLE_HIVE"] = "基于玩家的战力洗牌,对局已重启."
 kShinePluginsTranslations["voterandom"]["ERROR_ALREADY_VOTED_HIVE_BASED"] = "你已经投过洗牌分队了."
 kShinePluginsTranslations["voterandom"]["ERROR_CANNOT_START_HIVE_BASED"] = "当前无法投票."
 kShinePluginsTranslations["voterandom"]["ERROR_CONSTRAINTS"]="当前分数已平衡."
-kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_DISABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[禁用]基于分数的自动洗牌分队 (需要{VotesNeeded}票,还剩{VotesNeeded:Pluralise:vote|votes})."
-kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_ENABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[启用]基于分数的自动洗牌分队 (需要{VotesNeeded}票,还剩{VotesNeeded:Pluralise:vote|votes})."
+kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_DISABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[禁用]基于分数的自动洗牌分队 (共需{VotesNeeded}票,还需{VotesNeeded:Pluralise: 票| 票})."
+kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_ENABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[启用]基于分数的自动洗牌分队 (共需{VotesNeeded}票,还需{VotesNeeded:Pluralise: 票| 票})."
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[禁用]."
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_ENABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[启用]."
 
--- PreGame
+-- PreGam
 kShinePluginsTranslations["pregame"]={}
 kShinePluginsTranslations["pregame"]["NOTIFY_PREFIX"]= "[游戏开局]"
 kShinePluginsTranslations["pregame"]["GAME_START"]= "战局即将开始...%s"
@@ -299,4 +299,9 @@ kShinePluginsTranslations["readyroomqueue"]["QUEUE_LEAVE"]= "排队成功. 已�
 kShinePluginsTranslations["readyroomqueue"]["ENQUEUE_ERROR_PLAYER"]= "只有观战可以进入排队!"
 kShinePluginsTranslations["readyroomqueue"]["QUEUE_INFORM"]= "如果你想进场游戏请按下 [F4] 或者再聊天框输入 !rr_enqueue. 目前有 {Position} 个玩家正在排队!"
 kShinePluginsTranslations["readyroomqueue"]["QUEUE_WELCOME_BACK"]= "欢迎回来! 你的排队序号已被复原 ({Position}). 聊天框输入 !rr_dequeue 离开队列."
-kShinePluginsTranslations["readyroomqueue"]["QUEUE_WAITTIME"]= "当前服务器的平均排队时间为 %s. 可以考虑暖暖别的服务器."
+kShinePluginsTranslations["readyroomqueue"]["QUEUE_WAITTIME"]= "当前服务器的平均排队时间为%s.若时间过长的话请考虑加入别的服务器."
+
+--AFK Kick
+kShinePluginsTranslations["afkkick"]={}
+kShinePluginsTranslations["afkkick"]["NOTIFY_PREFIX"]="[挂机提醒]"
+kShinePluginsTranslations["afkkick"]["WARN_WILL_BE_KICKED"]= "你已经挂机了{AFKTime:Duration}. 如果挂机时长超过{KickTime:Duration},你将被踢出!."

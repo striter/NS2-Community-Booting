@@ -12,13 +12,23 @@ function Plugin:OnFirstThink()
     self.playerCommunityTier = 0
 end
 
-function Plugin:OnCleanUp()
-    return self.BaseClass.Cleanup( self )
+local baseGetOwnsItem = GetOwnsItem
+local function CommunityUnlocks(_item,_tier)
+    assert(gCommunityUnlocks,"[CNCT] Not Initialized!")
+
+    for index,unlocks in pairs(gCommunityUnlocks) do
+        if _tier >= index then
+            for k,v in pairs(unlocks) do
+                if v == _item then
+                    return true
+                end
+            end
+        end
+    end
 end
 
 Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     Plugin.playerCommunityTier = Message.Tier or 0
-
     Shine.Hook.SetupGlobalHook( "GetOwnsItem", "CheckCommunityGadgets", "Replace" )
     GetGlobalEventDispatcher():FireEvent("OnUserStatsAndItemsRefreshed")
     SendPlayerVariantUpdate()
@@ -27,7 +37,11 @@ Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
 end )
 
 function Plugin:CheckCommunityGadgets(_item)
-    return CommunityGetOwnsItem(_item,self.playerCommunityTier)
+    if CommunityUnlocks(_item,self.playerCommunityTier) then
+        return true
+    end
+
+    return baseGetOwnsItem(_item)
 end
 
 local kZeroStr = "0"

@@ -150,7 +150,6 @@ end
 
 
 function Plugin:OnFirstThink()
-    Shine.Hook.SetupGlobalHook( "GetOwnsItem", "CheckCommunityGadgets", "Replace" )
     Shine.Hook.SetupClassHook( "Gamerules", "GetCanJoinPlayingTeam", "OnGetCanJoinPlayingTeam", function(OldFunc, gamerules, player, skipHook )
 
         local result = self:JoinTeamValidation(gamerules,player)
@@ -163,18 +162,18 @@ function Plugin:OnFirstThink()
     end )
 end
 
-function Plugin:ClientConnect( _client )
-
-    if not _client or _client:GetIsVirtual() then return end
-
-    local gameRules = GetGamerules()
-    if not gameRules then return end
-    if _client:GetIsSpectator() then return end
-
-    local player = _client:GetControllingPlayer()
-    if self:JoinTeamValidation(gameRules,player,true) then return end
-    gameRules:JoinTeam( player, kSpectatorIndex, true , true)
-end
+--function Plugin:ClientConnect( _client )
+--
+--    if not _client or _client:GetIsVirtual() then return end
+--
+--    local gameRules = GetGamerules()
+--    if not gameRules then return end
+--    if _client:GetIsSpectator() then return end
+--
+--    local player = _client:GetControllingPlayer()
+--    if self:JoinTeamValidation(gameRules,player,true) then return end
+--    gameRules:JoinTeam( player, kSpectatorIndex, true , true)
+--end
 
 function Plugin:ClientDisconnect( Client )
     if not Client or Client:GetIsVirtual() then return end

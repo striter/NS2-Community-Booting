@@ -35,6 +35,7 @@ Plugin.DefaultConfig = {
                 [7] = 50,
             },
         },
+        Debug = false,
     },
     ["UserData"] = {
         ["55022511"] = {
@@ -52,6 +53,7 @@ do
     local Validator = Shine.Validator()
     Validator:AddFieldRule( "UserData",  Validator.IsType( "table", Plugin.DefaultConfig.UserData ))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
+    Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
     Validator:AddFieldRule( "Elo.Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Player ))
     Validator:AddFieldRule( "Elo.Constants.Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.Constants.Tier))
@@ -97,6 +99,11 @@ function Plugin:Cleanup()
 end
 
 ----Elo
+local function EloDebugMessage(self,_string)
+    if not self.Config.Elo.Debug then return end
+    Shared.Message(_string)
+end
+
 local function RankPlayerDelta(self,_steamId,_delta,_commDelta)
     local data = GetPlayerData(self,_steamId)
     data.rank = (data.rank or 0) + _delta
@@ -120,7 +127,7 @@ local function EndGameElo(self)
 
     local lastRoundData = CHUDGetLastRoundStats();
     if not lastRoundData then
-        Shared.Message("[CNCR] ERROR Option 'savestats' not enabled ")
+        EloDebugMessage(self,"[CNCR] ERROR Option 'savestats' not enabled ")
         return
     end
 
@@ -142,9 +149,10 @@ local function EndGameElo(self)
             score = _teamEntry.score,
             hiveSkill = _playerSkill
         })
-        -- Shared.Message(string.format("%i %i %i",_steamId,_teamEntry.timePlayed,_teamEntry.score))
+        EloDebugMessage(self,string.format("%i %i %i",_steamId,_teamEntry.timePlayed,_teamEntry.score))
     end
 
+    local playerCount = 0
     for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
         PopTeamEntry(team1Table,steamId,playerStat[kTeam1Index],playerStat.hiveSkill)
         PopTeamEntry(team2Table,steamId,playerStat[kTeam2Index],playerStat.hiveSkill)
@@ -152,10 +160,10 @@ local function EndGameElo(self)
     end
     
     if gameLength < self.Config.Elo.Restriction.Time or playerCount < self.Config.Elo.Restriction.Player then
-        Shared.Message(string.format("[CNCR] End Game Result Restricted"))
+        EloDebugMessage(self,string.format("[CNCR] End Game Result Restricted"))
         return
     end
-    Shared.Message(string.format("[CNCR] End Game Resulting|Mode:%s Length:%i Players:%i WinTeam: %s|", gameMode , gameLength,playerCount , winningTeam))
+    EloDebugMessage(self,string.format("[CNCR] End Game Resulting|Mode:%s Length:%i Players:%i WinTeam: %s|", gameMode , gameLength,playerCount , winningTeam))
 
     local function GetTeamAvgSkill(_teamTable)
         local count = 0
@@ -164,7 +172,7 @@ local function EndGameElo(self)
             sum = sum + data.hiveSkill * data.playerTimeNormalized + data.commTimeNormalized
             count = count + 1
         end
-        return sum / count
+        return sum / math.max(count,1)
     end
     local team1AverageSkill = GetTeamAvgSkill(team1Table)
     local team2AverageSkill = GetTeamAvgSkill(team2Table)
@@ -195,9 +203,9 @@ local function EndGameElo(self)
             local commDelta =  math.floor(commConstant * _estimate * data.commTimeNormalized)
             _rankTable[steamId].commD = _rankTable[steamId].commD + commDelta
 
-            --Shared.Message(string.format("ID:%-10s T%-3i (P) T:%f K:%-3i F:%3i", steamId,tierString,data.playerTimeNormalized,playerConstant,playerDelta)
-            --        ..string.format("  (C) T:%f K:%-3i F:%3i",data.commTimeNormalized,commConstant,commDelta)
-            --)
+            EloDebugMessage(self,string.format("ID:%-10s T%-3i (P) T:%f K:%-3i F:%3i", steamId,tierString,data.playerTimeNormalized,playerConstant,playerDelta)
+                    ..string.format("  (C) T:%f K:%-3i F:%3i",data.commTimeNormalized,commConstant,commDelta)
+            )
         end
     end
 
@@ -211,19 +219,17 @@ local function EndGameElo(self)
     end
 
     local rankTable = {}
-    --Shared.Message("Team1:" .. tostring(team1AverageSkill))
+    EloDebugMessage(self,"Team1:" .. tostring(team1AverageSkill))
     local estimateA = 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill)/100))
     ApplyRankTable(rankTable,team1Table,team1S - estimateA)
-    --Shared.Message("Team2:" .. tostring(team2AverageSkill))
+    EloDebugMessage(self,"Team2:" .. tostring(team2AverageSkill))
     ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA))
-
-    -- Shared.Message("[CNCR] Result")
 
     for steamId, rankOffset in pairs(rankTable) do
         if rankOffset.playerD ~= 0 or rankOffset.commD ~=0 then
             RankPlayerDelta(self,steamId,rankOffset.playerD,rankOffset.commD)
+            EloDebugMessage(self,string.format("(ID:%-10s (P):%-5i (C):%-5i",steamId, rankOffset.playerD,rankOffset.commD))
         end
-         --Shared.Message(string.format("%i|%d",steamId, rankOffset))
     end
 
 end

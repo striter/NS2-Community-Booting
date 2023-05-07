@@ -41,9 +41,9 @@ do
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
 	Plugin.ConfigValidator = Validator
 end
+
 local priorColorTable = { 235, 152, 78 }
 local errorColorTable = { 236, 112, 99 }
-
 
 function Plugin:Initialise()
 	self.Enabled = true
@@ -81,11 +81,20 @@ function Plugin:GetSkillLimited(_player)
 	local skill = _player:GetPlayerSkill()
 	local skillLimited = false
 	skillLimited = skillLimited or (skill < self.Config.SkillLimitMin)
-	skillLimited = skillLimited or (self.Config.SkillLimitMax ~= -1 and skill > self.Config.SkillLimitMax)
+	if self.Config.SkillLimitMax >= 0 then
+		skillLimited = skillLimited or skill >= self.Config.SkillLimitMax
+	end
+	
+	if skillLimited then
+		self:Notify(_player, string.format("您的分数(%i)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
+				skill,self.Config.SkillLimitMin,self.Config.SkillLimitMax < 0 and "∞" or self.Config.SkillLimitMax),
+				errorColorTable,nil)
 
-	self:Notify(_player, string.format("您的分数不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
-			self.Config.SkillLimitMin,self.Config.SkillLimitMax == -1 and "∞" or self.Config.SkillLimitMax),
-			errorColorTable,nil)
+		if _player:GetTeamNumber() ~= kSpectatorIndex then
+			local gamerules = GetGamerules()
+			if gamerules then gamerules:JoinTeam( _player, kSpectatorIndex, true,true ) end
+		end
+	end
 	
 	return skillLimited
 end
@@ -95,12 +104,14 @@ local TeamNames = { "陆战队","卡拉异形","观战" }
 function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	if _shineForce then return end
 	if _player:GetIsVirtual() then return end
-	if _newTeam == kTeamReadyRoom then return end
+	local skillLimited = self:GetSkillLimited(_player)
+	if _newTeam == kTeamReadyRoom then 
+		if skillLimited then return false end
+		return
+	end
 	
 	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
-	local playerLimited = self:GetNumPlayers(_gamerules:GetTeam(_newTeam)) >=  playerLimit
-	local skillLimited = self:GetSkillLimited(_player)
-	
+	local playerLimited = self:GetNumPlayers(_gamerules:GetTeam(_newTeam)) >= playerLimit
 	if _newTeam == kSpectatorIndex then
 		if playerLimited then
 			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请进入游戏或加入有观战位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
@@ -108,8 +119,8 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		end
 		return 
 	end
-	
-	local available = not skillLimited
+
+	local available = true
 	--Check if team is above MaxPlayers
 	if playerLimited then
 		self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
@@ -138,7 +149,8 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		end
 	end
 	
-	return available
+	if available then return end
+	return false
 end
 
 function Plugin:OnEndGame(_winningTeam)
@@ -147,7 +159,7 @@ end
 
 local function RestrictionDisplay(self,_client)
 	local skillLimitMin = self.Config.SkillLimitMin
-	local skillLimitMax = self.Config.SkillLimitMax == -1 and "∞" or tostring(self.Config.SkillLimitMax)
+	local skillLimitMax = self.Config.SkillLimitMax < 0 and "∞" or tostring(self.Config.SkillLimitMax)
 
 	self:Notify(_client,string.format("当前加入限制:陆战队:%s,卡拉异形:%s 分数限制:(%s至%s)", self.Config.Team[1], self.Config.Team[2],skillLimitMin,skillLimitMax),self.Config.MessageNameColor,nil)
 end
@@ -190,7 +202,7 @@ function Plugin:CreateCommands()
 		if _save then self:SaveConfig() end
 	end
 
-	self:BindCommand( "sh_restriction_specsize", "restriction_specsize", SetTeamSize)
+	self:BindCommand( "sh_restriction_specsize", "restriction_specsize", SetSpectatorSize)
 	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = -1 }
 	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
 	:Help( "示例: !restriction_size 14 12 true. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人 并保存" )
@@ -199,23 +211,20 @@ function Plugin:CreateCommands()
 		self.Config.SkillLimitMin = _min
 		self.Config.SkillLimitMax = _max
 
-		if _save then
-			self:SaveConfig()
-		end
 		NofityAll()
+		if _save then self:SaveConfig() end
 	end
 	local skillCommand = self:BindCommand( "sh_restriction_skill", "restriction_skill", SetSkillLimit)
-	skillCommand:AddParam{ Type = "number", Round = true, Min = -1, Max = 4000, Default = -1 }
-	skillCommand:AddParam{ Type = "number", Round = true, Min = -1, Max = 4000, Default = -1 }
+	skillCommand:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
+	skillCommand:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
 	skillCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
 	skillCommand:Help( "示例: !restriction_skill 1000 -1 true.将服务器的入场分数设置为,[1000-∞],并且保存,-1代表无限制" )
 end
 
-
---function Plugin:ClientConfirmConnect( Client )
---	if Client:GetIsVirtual() then return end
---	RestrictionDisplay(self,Client)
---end
+function Plugin:ClientConfirmConnect( Client )
+	if Client:GetIsVirtual() then return end
+	RestrictionDisplay(self,Client)
+end
 
 --Restrict teams also at voterandom
 function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
