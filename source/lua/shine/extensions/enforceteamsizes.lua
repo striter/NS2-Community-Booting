@@ -11,7 +11,7 @@ Plugin.PrintName = "Enforced Team Size"
  - 3: Spec
  ]]
 Plugin.DefaultConfig = {
-	Team = { 14 , 14 },
+	Team = { 14 , 14 , 5 },
 	IncreaseByForceJoins = true,
 	SkillLimitMin = -1,
 	SkillLimitMax = -1,
@@ -73,47 +73,60 @@ function Plugin:GetPlayerLimit(Gamerules,Team)
 	return playerLimit
 end
 
-function Plugin:GetMaxPlayers(Gamerules)
-	return self:GetPlayerLimit(Gamerules,kTeam1Index) + self:GetPlayerLimit(Gamerules,kTeam2Index)
+function Plugin:GetMaxPlayers(_gamerules)
+	return self:GetPlayerLimit(_gamerules,kTeam1Index) + self:GetPlayerLimit(_gamerules,kTeam2Index)
 end
-local kJoinTracker = { }
-local TeamNames = { "陆战队","卡拉异形" }
-function Plugin:JoinTeam( Gamerules, Player, NewTeam, _, ShineForce )
-	if ShineForce or NewTeam == kTeamReadyRoom or NewTeam == kSpectatorIndex then return end
-	if Player:GetIsVirtual() then return end
-	
-	local skill = Player:GetPlayerSkill()
-	
-	local available
-	
+
+function Plugin:GetSkillLimited(_player)
+	local skill = _player:GetPlayerSkill()
 	local skillLimited = false
 	skillLimited = skillLimited or (skill < self.Config.SkillLimitMin)
 	skillLimited = skillLimited or (self.Config.SkillLimitMax ~= -1 and skill > self.Config.SkillLimitMax)
-	if skillLimited then
-		self:Notify(Player, string.format("您的分数(%s)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
-				skill, self.Config.SkillLimitMin,self.Config.SkillLimitMax == -1 and "∞" or self.Config.SkillLimitMax),
-					errorColorTable,nil)
-		available = false
+
+	self:Notify(_player, string.format("您的分数不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
+			self.Config.SkillLimitMin,self.Config.SkillLimitMax == -1 and "∞" or self.Config.SkillLimitMax),
+			errorColorTable,nil)
+	
+	return skillLimited
+end
+
+local kJoinTracker = { }
+local TeamNames = { "陆战队","卡拉异形","观战" }
+function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
+	if _shineForce then return end
+	if _player:GetIsVirtual() then return end
+	if _newTeam == kTeamReadyRoom then return end
+	
+	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
+	local playerLimited = self:GetNumPlayers(_gamerules:GetTeam(_newTeam)) >=  playerLimit
+	local skillLimited = self:GetSkillLimited(_player)
+	
+	if _newTeam == kSpectatorIndex then
+		if playerLimited then
+			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请进入游戏或加入有观战位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
+			return false
+		end
+		return 
 	end
 	
+	local available = not skillLimited
 	--Check if team is above MaxPlayers
-	local playerLimit = self:GetPlayerLimit(Gamerules,NewTeam)
-	if self:GetNumPlayers(Gamerules:GetTeam(NewTeam)) >= playerLimit then
-		self:Notify(Player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[NewTeam] ,playerLimit),errorColorTable,nil)
+	if playerLimited then
+		self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
 		available = false
 	end
 
 	if available == false then
-		local client = Server.GetOwner(Player)
+		local client = Server.GetOwner(_player)
 		if not client or client:GetIsVirtual()  then return end
 
 		if Shine:HasAccess( client, "sh_priorslot" ) then
-			self:Notify(Player, "您为 [高级预留玩家],已忽视限制加入!",priorColorTable,nil)
+			self:Notify(_player, "您为 [高级预留玩家],已忽视限制加入!",priorColorTable,nil)
 			return
 		end
 
 		if self.Config.NewcomerForceJoin ~= -1 and skill < self.Config.NewcomerForceJoin then
-			self:Notify(Player, "您为 [新人优待玩家],已忽视限制加入!",priorColorTable,nil)
+			self:Notify(_player, "您为 [新人优待玩家],已忽视限制加入!",priorColorTable,nil)
 			return
 		end
 
@@ -161,18 +174,27 @@ function Plugin:CreateCommands()
 		if RRQPlugin and RRQPlugin.Enabled then
 			RRQPlugin:Pop()
 		end
-		
-		NofityAll()
-		if _save then
-			self:SaveConfig()
-		end
-	end
-	local teamsizeCommand = self:BindCommand( "sh_restriction_size", "restriction_size", SetTeamSize)
-	teamsizeCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 10 }
-	teamsizeCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 10 }
-	teamsizeCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
-	teamsizeCommand:Help( "示例: !restriction_size 14 12 true. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人 并保存" )
 
+		NofityAll()
+		if _save then self:SaveConfig() end
+	end
+	
+	self:BindCommand( "sh_restriction_size", "restriction_size", SetTeamSize)								 
+	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 0 }
+	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 0 }
+	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
+	:Help( "示例: !restriction_size 14 12 true. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人 并保存" )
+
+	local function SetSpectatorSize(_client, _size,_save)
+		self.Config.Team[kSpectatorIndex] = _size
+		if _save then self:SaveConfig() end
+	end
+
+	self:BindCommand( "sh_restriction_specsize", "restriction_specsize", SetTeamSize)
+	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = -1 }
+	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
+	:Help( "示例: !restriction_size 14 12 true. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人 并保存" )
+	
 	local function SetSkillLimit(_client, _min,_max,_save)
 		self.Config.SkillLimitMin = _min
 		self.Config.SkillLimitMax = _max
@@ -198,25 +220,16 @@ end
 --Restrict teams also at voterandom
 function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
 	local  Gamerules = GetGamerules()
-	local team1Max = self.Config.Team[1] or 1000
-	local team2Max = self.Config.Team[2] or 1000
-	local maxPlayer = math.min( team1Max, team2Max )
-
-	if maxPlayer == 1000 then return end
+	local team1Max = Gamerules:GetTeam(kTeam1Index):GetNumPlayers()
+	local team2Max = Gamerules:GetTeam(kTeam2Index):GetNumPlayers()
+	local maxPlayer = math.max( team1Max, team2Max )
 
 	for i = 1, 2 do
-		for j = #TeamMembers[i], maxPlayer + 1, -1 do
-			local player = TeamMembers[i][j]
-			local id = player:GetClient():GetUserId()
-			local ignore = table.contains(kJoinTracker,id) 
-			ignore = ignore or (player:GetPlayerSkill() < self.Config.SkillLimitMin)
-
-			if not ignore then
-				--Move player into the ready room
-				pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )
-				--remove the player's entry in the table
-				TeamMembers[i][j] = nil
-			end
+		local teamRestriction = self.Config.Team[i]
+		local teamMaxPlayer = math.max( teamRestriction, maxPlayer )
+		for j = #TeamMembers[i], teamMaxPlayer + 1, -1 do
+			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )				--Move player into the ready room
+			TeamMembers[i][j] = nil				--remove the player's entry in the table
 		end
 	end
 end

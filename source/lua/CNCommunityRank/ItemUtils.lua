@@ -1,7 +1,6 @@
 
 
 local communityUnlocks 
-local baseGetOwnsItem = GetOwnsItem
 local function CommunityUnlocks(_item,_tier)
     assert(communityUnlocks,"[CNCT] Not Initialized!")
 
@@ -16,6 +15,7 @@ local function CommunityUnlocks(_item,_tier)
     end
 end
 
+local baseGetOwnsItem = GetOwnsItem
 function CommunityGetOwnsItem(_item,_tier)
     if CommunityUnlocks(_item,_tier) then
         return true

@@ -16,7 +16,6 @@ function Plugin:OnCleanUp()
     return self.BaseClass.Cleanup( self )
 end
 
-
 Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     Plugin.playerCommunityTier = Message.Tier or 0
 

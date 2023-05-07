@@ -122,8 +122,8 @@ function Plugin:JoinTeamValidation(Gamerules, player, clientConnect)
     local maxPlayers = Server.GetMaxPlayers()
     ----
     local activePlayers = maxPlayers
-    local ETPlugin = Shine.Plugins["enforceteamsizes"]
-    if ETPlugin and ETPlugin.Enabled then
+    local ETEnabled,ETPlugin = Shine:IsExtensionEnabled( "enforceteamsizes" ) 
+    if ETEnabled then
         activePlayers = ETPlugin:GetMaxPlayers(Gamerules)
     end
     ----
@@ -306,7 +306,10 @@ function Plugin:Enqueue( Client )
     local SteamID = Client:GetUserId()
 
     if not SteamID or SteamID < 1 then return end
-
+---
+    local ETEnabled,ETPlugin = Shine:IsExtensionEnabled( "enforceteamsizes" )
+    if ETEnabled and ETPlugin:GetSkillLimited(Client:GetControllingPlayer()) then return end
+--- 
     local position = self.PlayerQueue:Get( SteamID )
     if position then
         self:SendQueuePosition( Client, position )
@@ -323,12 +326,14 @@ function Plugin:Enqueue( Client )
         self:SendNetworkMessage( Client, "WaitTime", { Time = self.AVGWaitTime }, true)
     end
 
+---
     local reserved = GetHasReservedSlotAccess(SteamID)
     if not reserved then
         local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-        reserved =  cpEnabled and cp:GetPrewarmPrivilege(Client,1,"排队预留队列")
+        reserved = cpEnabled and cp:GetPrewarmPrivilege(Client,1,"排队预留队列")
     end
-    
+---
+
     if reserved then
         position = self:GetQueueInsertPosition(self.ReservedQueue, Client)
         self:InsertIntoQueue(self.ReservedQueue, SteamID, position, "PIORITY_QUEUE_CHANGED_VIP")

@@ -126,8 +126,6 @@ local function EndGameElo(self)
 
     local winningTeam = lastRoundData.RoundInfo.winningTeam
     local gameLength = lastRoundData.RoundInfo.roundLength
-    local team1AverageSkill = 0
-    local team2AverageSkill = 0
 
     local team1Table = {}
     local team2Table = {}
@@ -144,28 +142,38 @@ local function EndGameElo(self)
             score = _teamEntry.score,
             hiveSkill = _playerSkill
         })
-        return _playerSkill * playTimeNormalized
         -- Shared.Message(string.format("%i %i %i",_steamId,_teamEntry.timePlayed,_teamEntry.score))
     end
 
-    local playerCount = 0
     for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
-        team1AverageSkill = team1AverageSkill + PopTeamEntry(team1Table,steamId,playerStat[1],playerStat.hiveSkill)
-        team2AverageSkill = team2AverageSkill + PopTeamEntry(team2Table,steamId,playerStat[2],playerStat.hiveSkill)
+        PopTeamEntry(team1Table,steamId,playerStat[kTeam1Index],playerStat.hiveSkill)
+        PopTeamEntry(team2Table,steamId,playerStat[kTeam2Index],playerStat.hiveSkill)
         playerCount = playerCount + 1
     end
-
+    
     if gameLength < self.Config.Elo.Restriction.Time or playerCount < self.Config.Elo.Restriction.Player then
         Shared.Message(string.format("[CNCR] End Game Result Restricted"))
         return
     end
     Shared.Message(string.format("[CNCR] End Game Resulting|Mode:%s Length:%i Players:%i WinTeam: %s|", gameMode , gameLength,playerCount , winningTeam))
 
+    local function GetTeamAvgSkill(_teamTable)
+        local count = 0
+        local sum = 0
+        for _,data in pairs(_teamTable) do
+            sum = sum + data.hiveSkill * data.playerTimeNormalized + data.commTimeNormalized
+            count = count + 1
+        end
+        return sum / count
+    end
+    local team1AverageSkill = GetTeamAvgSkill(team1Table)
+    local team2AverageSkill = GetTeamAvgSkill(team2Table)
+    
     local function RankCompare(a,b) return a.score > b.score end
     table.sort(team1Table,RankCompare)
     table.sort(team2Table,RankCompare)
 
-    local function ApplyRankTable(_rankTable, _teamTable, _eloMultiplier)
+    local function ApplyRankTable(_rankTable, _teamTable, _estimate)
         for _,data in pairs(_teamTable) do
             local steamId = data.steamId
 
@@ -180,11 +188,16 @@ local function EndGameElo(self)
             local tier,_ = GetPlayerSkillTier(data.hiveSkill)
             local tierString = tostring(tier)
             local playerConstant = self.Config.Elo.Constants.Tier[tierString] or self.Config.Elo.Constants.Default
-            _rankTable[steamId].playerD = _rankTable[steamId].playerD + math.floor(playerConstant * _eloMultiplier * data.playerTimeNormalized)
+            local playerDelta = math.floor(playerConstant * _estimate * data.playerTimeNormalized)
+            _rankTable[steamId].playerD = _rankTable[steamId].playerD + playerDelta
+            
             local commConstant = self.Config.Elo.Constants.CommanderTier[tierString] or self.Config.Elo.Constants.Default
-            _rankTable[steamId].commD = _rankTable[steamId].commD + math.floor(commConstant * _eloMultiplier * data.commTimeNormalized)
-            --Shared.Message(tierString .. " " .. tostring(_eloMultiplier) .. " " .. tostring(commConstant) .." ".. tostring(data.commTimeNormalized))
-            --Shared.Message(string.format("ID:%s T%s K:%s ES-EA:%s", steamId,tier,eloConstant,_delta))
+            local commDelta =  math.floor(commConstant * _estimate * data.commTimeNormalized)
+            _rankTable[steamId].commD = _rankTable[steamId].commD + commDelta
+
+            --Shared.Message(string.format("ID:%-10s T%-3i (P) T:%f K:%-3i F:%3i", steamId,tierString,data.playerTimeNormalized,playerConstant,playerDelta)
+            --        ..string.format("  (C) T:%f K:%-3i F:%3i",data.commTimeNormalized,commConstant,commDelta)
+            --)
         end
     end
 
@@ -198,8 +211,11 @@ local function EndGameElo(self)
     end
 
     local rankTable = {}
-    ApplyRankTable(rankTable,team1Table,team1S - 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill)/400)))
-    ApplyRankTable(rankTable,team2Table,team2S - 1.0 / (1 + math.pow(10,(team1AverageSkill - team2AverageSkill)/400)))
+    --Shared.Message("Team1:" .. tostring(team1AverageSkill))
+    local estimateA = 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill)/100))
+    ApplyRankTable(rankTable,team1Table,team1S - estimateA)
+    --Shared.Message("Team2:" .. tostring(team2AverageSkill))
+    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA))
 
     -- Shared.Message("[CNCR] Result")
 
