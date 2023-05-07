@@ -118,7 +118,7 @@ local prefixToModId =
 {
     ["infest"] = "2e813610",
     ["infect"] = "2e813610",
-    ["ns2.0"] = "a474e602",
+    ["ns2.0"] = "b12f2e4a",
     ["ns1.0"] = "b0087f28",
 }
 

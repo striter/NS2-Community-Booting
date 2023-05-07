@@ -136,7 +136,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			return
 		end
 
-		if self.Config.NewcomerForceJoin ~= -1 and skill < self.Config.NewcomerForceJoin then
+		if self.Config.NewcomerForceJoin ~= -1 and _player:GetPlayerSkill() < self.Config.NewcomerForceJoin then
 			self:Notify(_player, "您为 [新人优待玩家],已忽视限制加入!",priorColorTable,nil)
 			return
 		end
