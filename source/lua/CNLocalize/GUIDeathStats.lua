@@ -333,7 +333,7 @@ local function CHUDGetStatsString(message)
 		local pauseFunc = function() gStatsUI.titleBackground:Pause(6, "CHUD_DEATHSTATS", nil, fadeOutFunc) end
 		gStatsUI.titleBackground:SetColor(ConditionalValue(Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index, kMarineStatsColor, kAlienStatsColor), 2, "CHUD_DEATHSTATS", AnimateLinear, pauseFunc)
 		
-		gStatsUI.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "Last life stats", nil)
+		gStatsUI.actionIconGUI:ShowIcon(BindingsUI_GetInputValue("RequestMenu"), nil, "阵亡数据", nil)
 		gStatsUI.actionIconGUI:SetColor(ConditionalValue(Client.GetLocalPlayer():GetTeamNumber() == kTeam1Index, kMarineFontColor, kAlienFontColor))
 	end
 

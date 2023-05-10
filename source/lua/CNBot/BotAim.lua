@@ -2,12 +2,12 @@
 BotAim.kAccuracies =
 {
     --[kBotAccWeaponGroup.Bullets] = { 14.5, 16.5, 21, 25, 28.5, 34, 38.5 },
-    [kBotAccWeaponGroup.Bullets] = { 34, 34, 34, 34, 34, 34, 34 },
+    [kBotAccWeaponGroup.Bullets] = { 28.5, 28.5, 28.5, 28.5, 28.5, 28.5, 28.5 },
 
     -- These guys should be stonker
     --[kBotAccWeaponGroup.ExoMinigun] = { 23, 25, 28, 30, 35, 39, 43 },
     --[kBotAccWeaponGroup.ExoRailgun] = { 25, 28, 30, 32, 35, 39, 43 },
-    [kBotAccWeaponGroup.ExoMinigun] = { 43, 43, 43, 43, 43, 43, 43 },
+    [kBotAccWeaponGroup.ExoMinigun] = { 35, 35, 35, 35, 35, 35, 35 },
     [kBotAccWeaponGroup.ExoRailgun] = { 43, 43, 43, 43, 43, 43, 43 },
 
     -- Similar to "bullets", but caps off in higher tiers
