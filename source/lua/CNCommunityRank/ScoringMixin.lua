@@ -27,7 +27,7 @@ if Server then
     local baseCopyPlayerDataFrom = ScoringMixin.CopyPlayerDataFrom
     function ScoringMixin:CopyPlayerDataFrom(player)
         baseCopyPlayerDataFrom(self,player)
-        
+
         self.rankDelta = player.rankDelta
         self.rankCommDelta = player.rankCommDelta
         self.fakeBot = player.fakeBot

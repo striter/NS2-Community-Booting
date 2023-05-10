@@ -418,6 +418,10 @@ function Spectator:GetSpectatorMode()
     return self.modeInstance
 end
 
+function Spectator:GetSpectatorModeType()
+    return self.specMode
+end
+
 function Spectator:GetFollowMoveCameraDistance()
 
     local followTarget = Shared.GetEntity(self:GetFollowTargetId())
