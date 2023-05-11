@@ -9,3 +9,27 @@ function GetPlayerSkillTier(skill, isRookie, adagradSum, isBot)
     if skill <= 4100 then return 6, "SKILLTIER_SPECIALOPS", skill end
     return 7, "SKILLTIER_SANJISURVIVOR", skill
 end
+
+
+function SendPlayerCallingCardUpdate()
+
+    if Client.GetIsConnected() then
+
+        local kCardID = kDefaultPlayerCallingCard
+        if CNPersistent then
+            kCardID = CNPersistent.callingCardID or kDefaultPlayerCallingCard
+            if not GetIsCallingCardUnlocked(kCardID) then
+                kCardID = kDefaultPlayerCallingCard
+                CNPersistent.callingCardID = kCardID
+            end
+            GetMainMenu().navBar.playerScreen.callingCardCustomizer:SetCardId(kCardID)
+            GetMainMenu().navBar.playerScreen.callingCardCustomizer:UpdateAppearance()
+        end
+        
+        Client.SendNetworkMessage("SetPlayerCallingCard", {
+            callingCard = kCardID
+        })
+
+    end
+
+end

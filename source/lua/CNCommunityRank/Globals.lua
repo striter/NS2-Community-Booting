@@ -1,3 +1,11 @@
+
+kBabblerSurpriseCardItemId               = 13024--
+kChromaOnosCardItemId             = 13025--
+kPudgyCardItemId              = 13026--
+kDragonCardItemId = 13027
+
+kKittyKittyCardItemId = 13031
+
 gCommunityUnlocks = {
     [0]={
         kWoodAxeItemId,
@@ -93,9 +101,17 @@ gCommunityUnlocks = {
         kBattleGorgeShoulderPatchItemId,
         kTurboDrifterCardItemId,
         kBattleGorgeCardItemId,
+
+        kBabblerSurpriseCardItemId,
+        kChromaOnosCardItemId,
+        kPudgyCardItemId,
+        kDragonCardItemId,
     },
     [5]={
         kBlackArmorItemId,
         kForScienceCardItemId,
+        kKittyKittyCardItemId,
     }
 }
+
+

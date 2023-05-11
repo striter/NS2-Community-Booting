@@ -1,19 +1,4 @@
 
--- workaround because Las is lazy
-if AddHintModPanel then return end
-
-
-kModPanels = {}
-kModPanelsLoaded = false
-function AddHintModPanel(material, url,hint)
-    if not kModPanelsLoaded then
-        local panel = {["material"]= material,[ "url"]= url,["hint"]=hint}
-        table.insert(kModPanels, panel)
-    else
-        Log("AddModPanel was called too late")
-    end
-end
-
 ModLoader.SetupFileHook( "lua/NetworkMessages_Server.lua", "lua/CNBooting/NetworkMessages_Server.lua", "post")
 ModLoader.SetupFileHook( "lua/Gamerules.lua", "lua/CNBooting/Gamerules.lua", "post" )
 ModLoader.SetupFileHook( "lua/NS2Gamerules.lua", "lua/CNBooting/NS2Gamerules.lua", "post" )
@@ -28,3 +13,19 @@ ModLoader.SetupFileHook( "lua/Voting.lua", "lua/CNBooting/Voting.lua", "replace"
 ModLoader.SetupFileHook( "lua/VotingChangeMap.lua", "lua/CNBooting/VotingChangeMap.lua", "replace")
 ModLoader.SetupFileHook( "lua/GUIVoteMenu.lua", "lua/CNBooting/GUIVoteMenu.lua", "post")
 ModLoader.SetupFileHook( "lua/shine/core/shared/hook.lua", "lua/shine/gamemodehook.lua", "post" )
+
+Script.Load("lua/CNBooting/CNPersistent.lua")
+
+-- workaround because Las is lazy
+if AddHintModPanel then return end
+
+kModPanels = {}
+kModPanelsLoaded = false
+function AddHintModPanel(material, url,hint)
+    if not kModPanelsLoaded then
+        local panel = {["material"]= material,[ "url"]= url,["hint"]=hint}
+        table.insert(kModPanels, panel)
+    else
+        Log("AddModPanel was called too late")
+    end
+end

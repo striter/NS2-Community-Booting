@@ -149,3 +149,22 @@ function Plugin:Cleanup()
 	self.Enabled = false
 end
 
+-- Login Commander Bot At Logout
+function Plugin:PreOnCommanderLogin()
+	self.OverrideRookieMode = true
+end
+
+function Plugin:PreOnCommanderLogout()
+	self.OverrideRookieMode = self.dt.LoginCommanderBotAtLogout
+end
+
+function Plugin:GetRookieMode(GameInfo)
+	if self.OverrideRookieMode and self.dt.AllowPlayersToReplaceComBots ~= GameInfo.rookieMode then
+		return true
+	end
+end
+
+function Plugin:PostGetRookieMode()
+	self.OverrideRookieMode = false
+end
+-----

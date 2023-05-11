@@ -1,25 +1,12 @@
 Shared.RegisterNetworkMessage("SwitchLocalize", {})
 if Client then
-    local localConfigPath = "config://NS2CN/LocalFile.json"
-    
-    gForceLocalize = true
-    if GetFileExists(localConfigPath) then
-        local localConfig = io.open(localConfigPath, "r")
-        if localConfig then
-            local parsedFile = json.decode(localConfig:read("*all"))
-            gForceLocalize = parsedFile.forceLocalization or forceLocalization
-            io.close(localConfig)
-        end
-    end
-    
+    gForceLocalize = CNPersistent and CNPersistent.forceLocalization or true
     Client.HookNetworkMessage("SwitchLocalize", function(message)
         gForceLocalize = not gForceLocalize
-
-        local savedFile = io.open(localConfigPath, "w+")
-        if savedFile then
-            savedFile:write(json.encode({ forceLocalization = gForceLocalize }, { indent = true }))
-            io.close(savedFile)
-        end
+        if CNPersistent then
+            CNPersistent.forceLocalization = gForceLocalize
+            CNPersistentSave()
+        end 
     end )
     
     --Core
