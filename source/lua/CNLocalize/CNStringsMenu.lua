@@ -523,8 +523,10 @@ kTranslateMessage["THUNDERDOME_REWARDS_PULLOUT_TITLE"] = "匹配模式奖励"
 
 -- Calling cards
 kTranslateMessage["CALLINGCARD_CUSTOMIZER_TOOLTIP"] = "自定义击杀卡"
+
 kTranslateMessage["CALLINGCARD_TOOLTIP_EXTRA"] = "获取社区段位解锁!"
 kTranslateMessage["CALLINGCARD_DRAGON_TOOLTIP"] = "龙!"
+kTranslateMessage["CALLINGCARD_Chiikawa_TOOLTIP"] = "Chiikawa"
 kTranslateMessage["CALLINGCARD_KITTYKITTY_TOOLTIP"] = "猫猫"
 kTranslateMessage["CALLINGCARD_LOCKED_TOOLTIP_EXTRA"] = "暂无法解锁?"
 
