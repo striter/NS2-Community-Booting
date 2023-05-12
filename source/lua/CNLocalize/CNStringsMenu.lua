@@ -528,10 +528,14 @@ kTranslateMessage["CALLINGCARD_TOOLTIP_EXTRA"] = "获取社区段位解锁!"
 kTranslateMessage["CALLINGCARD_DRAGON_TOOLTIP"] = "龙!"
 kTranslateMessage["CALLINGCARD_Chiikawa_TOOLTIP"] = "Chiikawa"
 kTranslateMessage["CALLINGCARD_KITTYKITTY_TOOLTIP"] = "猫猫"
+kTranslateMessage["CALLINGCARD_UShouldDie_TOOLTIP"] = "有小代！"
+
 kTranslateMessage["CALLINGCARD_LOCKED_TOOLTIP_EXTRA"] = "暂无法解锁?"
 
 kLocales["CALLINGCARD_TOOLTIP_EXTRA"] = "Unlock by NS2CN community rank."
 kLocales["CALLINGCARD_DRAGON_TOOLTIP"] = "Dragon!"
 kLocales["CALLINGCARD_Chiikawa_TOOLTIP"] = "Chiikawa"
 kLocales["CALLINGCARD_KITTYKITTY_TOOLTIP"] = "Kitty Kitty"
+kLocales["CALLINGCARD_UShouldDie_TOOLTIP"] = "UShouldDie"
+
 kLocales["CALLINGCARD_LOCKED_TOOLTIP_EXTRA"] = "Do you want it?"
