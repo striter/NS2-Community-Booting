@@ -519,17 +519,17 @@ kTranslateMessage["MODS_STATE_5"] = "可用"
 kTranslateMessage["MODS_STATE_6"] = "解压"
 kTranslateMessage["MODS_SUBSCRIBED"] = "已订阅"
 
----ThunderDome
 kTranslateMessage["THUNDERDOME_REWARDS_PULLOUT_TITLE"] = "匹配模式奖励"
+
+-- Calling cards
 kTranslateMessage["CALLINGCARD_CUSTOMIZER_TOOLTIP"] = "自定义击杀卡"
-
 kTranslateMessage["CALLINGCARD_TOOLTIP_EXTRA"] = "获取社区段位解锁!"
-kLocales["CALLINGCARD_TOOLTIP_EXTRA"] = "Unlock by NS2CN community rank."
-
 kTranslateMessage["CALLINGCARD_DRAGON_TOOLTIP"] = "龙!"
-kLocales["CALLINGCARD_DRAGON_TOOLTIP"] = "Dragon!"
-
 kTranslateMessage["CALLINGCARD_KITTYKITTY_TOOLTIP"] = "猫猫"
-kTranslateMessage["CALLINGCARD_LOCKED_TOOLTIP_EXTRA"] = "想要吗?"
+kTranslateMessage["CALLINGCARD_LOCKED_TOOLTIP_EXTRA"] = "暂无法解锁?"
+
+kLocales["CALLINGCARD_TOOLTIP_EXTRA"] = "Unlock by NS2CN community rank."
+kLocales["CALLINGCARD_DRAGON_TOOLTIP"] = "Dragon!"
+kLocales["CALLINGCARD_Chiikawa_TOOLTIP"] = "Chiikawa"
 kLocales["CALLINGCARD_KITTYKITTY_TOOLTIP"] = "Kitty Kitty"
 kLocales["CALLINGCARD_LOCKED_TOOLTIP_EXTRA"] = "Do you want it?"

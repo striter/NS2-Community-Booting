@@ -6,7 +6,7 @@
 
 local localConfigPath = "config://NS2CN/LocalFile.json"
 
-CNPersistent = nil
+CNPersistent = { }
 
 --Read
 if GetFileExists(localConfigPath) then

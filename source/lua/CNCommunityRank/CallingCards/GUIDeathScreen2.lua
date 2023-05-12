@@ -4,19 +4,21 @@ local kBackgroundFadeInDelay = 0.45 -- When the black background starts fading i
 
 function GUIDeathScreen2:ShowBackground(show, instant)
 
-    -- local opacityTarget = show and 1 or 0
-    -- local currentOpacity = self:GetOpacity()
-    -- self:ClearPropertyAnimations("Opacity")
-    -- self:SetOpacity(currentOpacity) -- When clearing animations, it'll set it to animation's baseValue.
+     local opacityTarget = show and 1 or 0
+     local currentOpacity = self:GetOpacity()
+     self:ClearPropertyAnimations("Opacity")
+     self:SetOpacity(currentOpacity) -- When clearing animations, it'll set it to animation's baseValue.
 
-    -- if instant then
-    --     self:SetOpacity(opacityTarget)
-    -- else
-    --     self:AnimateProperty("Opacity", opacityTarget, MenuAnimations.DeathScreenFade)
-    -- end
+     if instant then
+         self:SetOpacity(opacityTarget)
+     else
+         self:AnimateProperty("Opacity", opacityTarget, MenuAnimations.DeathScreenFade)
+     end
 
 end
 
+local kShowingCardID = -1
+local callingCardStartTime = 0
 function GUIDeathScreen2:UpdateContentsFromKillerInfo()
 
     local killerInfo = GetAndClearKillerInfo()
@@ -25,6 +27,9 @@ function GUIDeathScreen2:UpdateContentsFromKillerInfo()
         return false
     end
 
+    kShowingCardID = killerInfo.CallingCard or kNaturalCausesCallingCard
+    callingCardStartTime = Shared.GetTime()
+    
     self:ShowDeathCinematic(true)
     self:CleanupTimedCallbacks()
 
@@ -36,16 +41,13 @@ function GUIDeathScreen2:UpdateContentsFromKillerInfo()
 
     -- Now we have the info ready, we can finally start updating the UI
     self.killerName:SetText(killerInfo.Name) -- Always available
-
+    local cardTextureDetails = GetCallingCardTextureDetails(kShowingCardID)
+    self.callingCard:SetTexture(cardTextureDetails.texture)
+    self.callingCard:SetTexturePixelCoordinates(cardTextureDetails.texCoords)
+    self.callingCard:SetVisible(true)
+    
     local context = killerInfo.Context
     if context == kDeathSource.Player or context == kDeathSource.Structure then -- We have information about the player who killed us (Structure = Commander)
-
-        -- All elements should be used here.
-        local cardTextureDetails = GetCallingCardTextureDetails(killerInfo.CallingCard)
-        self.callingCard:SetTexture(cardTextureDetails.texture)
-        self.callingCard:SetTexturePixelCoordinates(cardTextureDetails.texCoords)
-        self.callingCard:SetVisible(true)
-
         self.killerName:SetVisible(true)
 
         self.skillbadge:SetSteamID64(Shared.ConvertSteamId32To64(killerInfo.SteamId))
@@ -75,10 +77,7 @@ function GUIDeathScreen2:UpdateContentsFromKillerInfo()
 
     else -- Hiding skill badge, and right side (StructureNoCommander, DeathTrigger, KilledSelf), but everything else is visible.
 
-        local cardTextureDetails = GetCallingCardTextureDetails(killerInfo.CallingCard)
-        self.callingCard:SetTexture(cardTextureDetails.texture)
-        self.callingCard:SetTexturePixelCoordinates(cardTextureDetails.texCoords)
-        self.callingCard:SetVisible(true)
+
 
         self.killerName:SetVisible(true)
         self.skillbadge:SetVisible(false)
@@ -133,4 +132,17 @@ function GUIDeathScreen2:UpdateContentsFromKillerInfo()
 
     return true
 
+end
+
+
+local baseOnUpdate = GUIDeathScreen2.OnUpdate
+function GUIDeathScreen2:OnUpdate()
+    baseOnUpdate(self)
+    local isDead = PlayerUI_GetIsDead()
+    if isDead then
+        local isFrame,pixels = GetCallingCardTextureFrameDetails(kShowingCardID,Shared.GetTime() - callingCardStartTime,true)
+        if isFrame then
+            self.callingCard:SetTexturePixelCoordinates(pixels)
+        end
+    end
 end

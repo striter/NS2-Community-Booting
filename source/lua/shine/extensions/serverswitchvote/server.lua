@@ -234,13 +234,13 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 end
 
 function Plugin:CreateCommands()
-	local function RedirPlayersWithCount(_client,_serverIndex,_count)
-		self:RedirClients(GetConnectIP(_serverIndex),_count,true)
+	local function RedirPlayersWithCount(_client,_serverIndex,_count,_newcomer)
+		self:RedirClients(GetConnectIP(_serverIndex),_count,_newcomer)
 	end
 
 	local redirPlayersCommand = self:BindCommand( "sh_redir_count", "redir_count", RedirPlayersWithCount )
-	redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 6, Default=1 }
-	redirPlayersCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 16 }
-	redirPlayersCommand:AddParam{ Type = "boolean", Default = true }
-	redirPlayersCommand:Help( "示例: !redir_count 1 20 true. 将20个玩家(包括观战)迁移至服务器[1],并且排序为分数从下到上" )
+	redirPlayersCommand:AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 6, Default=1 }
+	redirPlayersCommand:AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }
+	redirPlayersCommand:AddParam{ Type = "boolean", Help = "是否新人",Default = true }
+	redirPlayersCommand:Help( "示例: !redir_count 1 20 true. 迁移[20]名[新人]去[1服]" )
 end

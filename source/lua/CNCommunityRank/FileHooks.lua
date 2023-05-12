@@ -13,4 +13,7 @@ ModLoader.SetupFileHook( "lua/DeathMessage_Client.lua", "lua/CNCommunityRank/Cal
 ModLoader.SetupFileHook( "lua/menu2/PlayerScreen/CallingCards/GUIMenuCallingCardCustomizer.lua", "lua/CNCommunityRank/CallingCards/GUIMenuCallingCardCustomizer.lua", "post")
 ModLoader.SetupFileHook( "lua/menu2/PlayerScreen/CallingCards/GUIMenuCallingCardData.lua", "lua/CNCommunityRank/CallingCards/GUIMenuCallingCardData.lua", "replace")
 
+ModLoader.SetupFileHook( "lua/menu2/PlayerScreen/CallingCards/GUIMenuCallingCard.lua", "lua/CNCommunityRank/CallingCards/GUIMenuCallingCard.lua", "post")
+
+
 

@@ -65,6 +65,7 @@ kCallingCards = enum({
     "LockedAndLoaded",
     
     "Dragon",
+    "Chiikawa",
     "KittyKitty",
 })
 
@@ -186,7 +187,8 @@ local kCallingCardData =
     [kCallingCards.LockedAndLoaded] = { texture = 1, idx = 42, itemId = kLockedLoadedCardItemId},
 
     [kCallingCards.Dragon] = { texture = 4 , idx = 0 , itemId = kDragonCardItemId},
-    [kCallingCards.KittyKitty] = { texture = "KittyKitty" , idx = 42 , dynamic = true, itemId = kKittyKittyCardItemId},
+    [kCallingCards.KittyKitty] = { texture = "KittyKitty" , frame = 24 , itemId = kKittyKittyCardItemId},
+    [kCallingCards.Chiikawa] = { texture = "Chiikawa" , frame = 12 ,loop = true, itemId = kChiikawaCardItemId},
 }
 
 local kCallingCardUnlockedTooltips =
@@ -241,13 +243,13 @@ local kCallingCardUnlockedTooltips =
 
 
     [kCallingCards.Dragon] = "CALLINGCARD_DRAGON_TOOLTIP",
+    [kCallingCards.Chiikawa] = "CALLINGCARD_Chiikawa_TOOLTIP",
     [kCallingCards.KittyKitty] = "CALLINGCARD_KITTYKITTY_TOOLTIP",
 }
 
 local kCallingCardLockedTooltipOverrides =
 {
     [kCallingCards.Rookie]          = "CALLINGCARD_ROOKIE_LOCKED_TOOLTIP",
-    [kCallingCards.Dragon]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
     [kCallingCards.KittyKitty]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
 }
 
@@ -261,11 +263,11 @@ end
 
 function GetCallingCardTextureDetails(callingCard)
 
-    local result = {}
     local data = kCallingCardData[callingCard]
 
     if not data then return end
 
+    local result = {}
     -- Get zero-based texture coordinates
     local callingCardSize = 512
     local nCols = 4
@@ -280,8 +282,8 @@ function GetCallingCardTextureDetails(callingCard)
     x2 = x1 + callingCardSize
     y2 = y1 + callingCardSize
     
-    result.dyanmic = data.dynamic
-    if result.dyanmic then
+    result.frame = data.frame
+    if result.frame then
         result.texture = kDynamicCardTextures[data.texture]
         result.texCoords = { 0, 0, 256, 256 }
     else
@@ -290,6 +292,35 @@ function GetCallingCardTextureDetails(callingCard)
     end
     return result
 
+end
+
+function GetCallingCardTextureFrameDetails(_cardID, _timeElapsed,deathscreen)
+    local data = kCallingCardData[_cardID]
+    if not data then return false end
+
+    local frameCount = data.frame
+    if not frameCount then return false end
+    
+    local framePerSecond = 12
+    local currentFrame = math.floor((_timeElapsed * framePerSecond))
+    local loop = data.loop or not deathscreen
+    if loop then currentFrame = currentFrame % frameCount end
+
+    local callingCardSize = 256
+
+    local nCols = 4
+    local x1, y1, x2, y2
+
+    local row = math.floor(currentFrame / nCols)
+    local col = currentFrame % nCols
+
+    x1 = (col * callingCardSize)
+    y1 = (row * callingCardSize)
+
+    x2 = x1 + callingCardSize
+    y2 = y1 + callingCardSize
+    
+    return true ,{ x1, y1, x2, y2 }
 end
 
 function GetIsCallingCardSystemOnly(callingCard)
