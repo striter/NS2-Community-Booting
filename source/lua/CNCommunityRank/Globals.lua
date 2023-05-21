@@ -6,7 +6,7 @@ kDragonCardItemId = 13027
 
 kKittyKittyCardItemId = 13031
 kChiikawaCardItemId = 13032
-
+kUShouldDieCardItemId = 13033
 
 gCommunityUnlocks = {
     [0]={
@@ -109,6 +109,7 @@ gCommunityUnlocks = {
         kPudgyCardItemId,
         kDragonCardItemId,
         kChiikawaCardItemId,
+        kUShouldDieCardItemId,
     },
     [5]={
         kBlackArmorItemId,

@@ -67,6 +67,7 @@ kCallingCards = enum({
     "Dragon",
     "Chiikawa",
     "KittyKitty",
+    "UShouldDie",
 })
 
 kCallingCardOptionKey = "customization/calling-card"
@@ -124,7 +125,7 @@ local temporaryDynamicCards = {}
 Shared.GetMatchingFileNames( "ui/callingcards/dynamic/*.dds", false, temporaryDynamicCards)
 for _, cardPath in ipairs(temporaryDynamicCards) do
     local _, _, cardName = string.find(cardPath, "ui/callingcards/dynamic/(.*).dds")
-    Shared.Message(cardName .. " " .. cardPath)
+    --Shared.Message(cardName .. " " .. cardPath)
     kDynamicCardTextures[cardName] = PrecacheAsset(cardPath)
 end
 temporaryDynamicCards = nil
@@ -187,8 +188,9 @@ local kCallingCardData =
     [kCallingCards.LockedAndLoaded] = { texture = 1, idx = 42, itemId = kLockedLoadedCardItemId},
 
     [kCallingCards.Dragon] = { texture = 4 , idx = 0 , itemId = kDragonCardItemId},
-    [kCallingCards.KittyKitty] = { texture = "KittyKitty" , frame = 24 , itemId = kKittyKittyCardItemId},
-    [kCallingCards.Chiikawa] = { texture = "Chiikawa" , frame = 12 ,loop = true, itemId = kChiikawaCardItemId},
+    [kCallingCards.KittyKitty] = { texture = "KittyKitty", frame = 24 ,rate = 12,size = 256 , itemId = kKittyKittyCardItemId},
+    [kCallingCards.Chiikawa] = { texture = "Chiikawa" , frame = 12 ,rate = 12 ,size = 256, loop = true, itemId = kChiikawaCardItemId},
+    [kCallingCards.UShouldDie] = { texture = "UShouldDie" , frame = 48 ,rate = 24 ,size = 128 , itemId = kUShouldDieCardItemId},
 }
 
 local kCallingCardUnlockedTooltips =
@@ -245,6 +247,7 @@ local kCallingCardUnlockedTooltips =
     [kCallingCards.Dragon] = "CALLINGCARD_DRAGON_TOOLTIP",
     [kCallingCards.Chiikawa] = "CALLINGCARD_Chiikawa_TOOLTIP",
     [kCallingCards.KittyKitty] = "CALLINGCARD_KITTYKITTY_TOOLTIP",
+    [kCallingCards.UShouldDie] = "CALLINGCARD_UShouldDie_TOOLTIP",
 }
 
 local kCallingCardLockedTooltipOverrides =
@@ -269,24 +272,25 @@ function GetCallingCardTextureDetails(callingCard)
 
     local result = {}
     -- Get zero-based texture coordinates
-    local callingCardSize = 512
-    local nCols = 4
-    local x1, y1, x2, y2
-
-    local row = math.floor(data.idx / nCols)
-    local col = data.idx % nCols
-
-    x1 = (col * callingCardSize)
-    y1 = (row * callingCardSize)
-
-    x2 = x1 + callingCardSize
-    y2 = y1 + callingCardSize
     
     result.frame = data.frame
     if result.frame then
         result.texture = kDynamicCardTextures[data.texture]
-        result.texCoords = { 0, 0, 256, 256 }
+        result.texCoords = { 0, 0, data.size, data.size }
     else
+        local callingCardSize = 512
+        local nCols = 4
+        local x1, y1, x2, y2
+
+        local row = math.floor(data.idx / nCols)
+        local col = data.idx % nCols
+
+        x1 = (col * callingCardSize)
+        y1 = (row * callingCardSize)
+
+        x2 = x1 + callingCardSize
+        y2 = y1 + callingCardSize
+        
         result.texture = kCallingCardTexturePallete[data.texture]
         result.texCoords = { x1, y1, x2, y2 }
     end
@@ -301,26 +305,26 @@ function GetCallingCardTextureFrameDetails(_cardID, _timeElapsed,deathscreen)
     local frameCount = data.frame
     if not frameCount then return false end
     
-    local framePerSecond = 12
-    local currentFrame = math.floor((_timeElapsed * framePerSecond))
+    local frameRate = data.rate
+    local currentFrame = math.floor((_timeElapsed * frameRate))
     local loop = data.loop or not deathscreen
     if loop then currentFrame = currentFrame % frameCount end
 
-    local callingCardSize = 256
+    local size = data.size
 
-    local nCols = 4
+    local nCols = math.floor (1024 / size)
     local x1, y1, x2, y2
 
     local row = math.floor(currentFrame / nCols)
     local col = currentFrame % nCols
 
-    x1 = (col * callingCardSize)
-    y1 = (row * callingCardSize)
+    x1 = (col * size)
+    y1 = (row * size)
 
-    x2 = x1 + callingCardSize
-    y2 = y1 + callingCardSize
+    x2 = x1 + size
+    y2 = y1 + size
     
-    return true ,{ x1, y1, x2, y2 }
+    return true , { x1, y1, x2, y2 }
 end
 
 function GetIsCallingCardSystemOnly(callingCard)

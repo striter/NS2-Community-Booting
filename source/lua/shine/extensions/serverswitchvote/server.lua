@@ -139,8 +139,9 @@ function Plugin:Initialise()
 	return true
 end
 
-function Plugin:OnFirstThink()
-	
+local function NotifyCrowdAdvert(self, _message)
+	Shine:NotifyDualColour(Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
+			253, 237, 236, _message)
 end
 
 function Plugin:OnEndGame(_winningTeam)
@@ -156,8 +157,7 @@ function Plugin:OnEndGame(_winningTeam)
 	local address = data.IP .. ":" .. data.Port
 	local amount = self.Config.CrowdAdvert.RedirCount
 	amount = amount > 0 and amount or playerCount / 2
-	Shine:NotifyDualColour( Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
-			253, 237, 236, string.format( self.Config.CrowdAdvert.Message,delay,amount,data.Name))
+	NotifyCrowdAdvert(self,string.format( self.Config.CrowdAdvert.Message,delay,amount,data.Name))
 	
 	if self.Config.CrowdAdvert.ResSlots > 0 then
 		Shared.ConsoleCommand(string.format("sh_setresslots %i", self.Config.CrowdAdvert.ResSlots))
@@ -225,7 +225,12 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 	
 	local count = _count
 	for _,data in pairs(clients) do
-		Server.SendNetworkMessage(data.client, "Redirect",{ ip = _targetIP }, true)
+		if Shine:HasAccess( data.client, "sh_adminmenu" ) then
+			Shine:NotifyDualColour(Shine.GetAllClients(),146, 43, 33,"[注意]",
+					253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
+		else
+			Server.SendNetworkMessage(data.client, "Redirect",{ ip = _targetIP }, true)
+		end
 		count = count - 1
 		if count <= 0 then
 			break
@@ -234,13 +239,21 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 end
 
 function Plugin:CreateCommands()
-	local function RedirPlayersWithCount(_client,_serverIndex,_count,_newcomer)
-		self:RedirClients(GetConnectIP(_serverIndex),_count,_newcomer)
-	end
-
-	local redirPlayersCommand = self:BindCommand( "sh_redir_count", "redir_count", RedirPlayersWithCount )
-	redirPlayersCommand:AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 6, Default=1 }
-	redirPlayersCommand:AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }
-	redirPlayersCommand:AddParam{ Type = "boolean", Help = "是否新人",Default = true }
-	redirPlayersCommand:Help( "示例: !redir_count 1 20 true. 迁移[20]名[新人]去[1服]" )
+	 self:BindCommand( "sh_redir_newcomer", "redir_newcomer", function(_client,_serverIndex,_count,_message)
+		 NotifyCrowdAdvert(self,_message)
+		self:RedirClients(GetConnectIP(_serverIndex),_count,true)
+	end):
+	AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 6, Default=1 }:
+	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
+	AddParam{ Type = "string", Help = "显示消息",Optional = true, Default = "服务器人满为患,开启被动分服." }:
+	Help( "示例: !redir_count 1 20 昂?. 迁移[20]名<新屁股>去[1服]" )
+	
+	self:BindCommand( "sh_redir_oldass", "redir_oldass", function(_client,_serverIndex,_count,_message)
+		NotifyCrowdAdvert(self,_message)
+		self:RedirClients(GetConnectIP(_serverIndex),_count,false)
+	end):
+	AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 6, Default=1 }:
+	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
+	AddParam{ Type = "string", Help = "显示消息",Optional = true,  Default = "服务器已人满为患,开启被动分服." }:
+	Help( "示例: !redir_count 1 20. 迁移[20]名<老屁股>去[1服]" )
 end

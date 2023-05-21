@@ -21,18 +21,18 @@ function Plugin:CreateCommands()
         end
     end
 
-    self:BindCommand("sh_kill","kill",KillSelf,true)
-    :Help( "不活了." )
+    self:BindCommand("sh_kill","kill",KillSelf,true):Help( "不活了." )
     
-    local function StunSelf(_client,scale)
+    local function StunTarget(_client, scale)
         local player = _client:GetControllingPlayer()
         if player and HasMixin(player, "Stun") and player:GetCanDie() then
             player:SetStun(10)
         end
     end
+    self:BindCommand("sh_stun","stun", StunTarget,true):Help( "开始睡觉(仅陆战队可用).")
 
-    self:BindCommand("sh_stun","stun",StunSelf,true)
-    :Help( "睡得很安详." )
+    self:BindCommand("sh_stun","stun_set",function(_client, _targetClient) StunTarget(_client,_targetClient) end,false):
+    AddParam{ Type = "client"}:Help( "强制睡觉(仅陆战队可用)." )
     
     local function SwitchLocalize(_client)
         Server.SendNetworkMessage(_client, "SwitchLocalize", {},true)
