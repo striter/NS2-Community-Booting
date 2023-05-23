@@ -23,16 +23,20 @@ function Plugin:CreateCommands()
 
     self:BindCommand("sh_kill","kill",KillSelf,true):Help( "不活了." )
     
-    local function StunTarget(_client, scale)
+    local function StunTarget(_client, _duration)
         local player = _client:GetControllingPlayer()
         if player and HasMixin(player, "Stun") and player:GetCanDie() then
-            player:SetStun(10)
+            player:SetStun(_duration)
         end
     end
-    self:BindCommand("sh_stun","stun", StunTarget,true):Help( "开始睡觉(仅陆战队可用).")
+    self:BindCommand("sh_stun","stun", StunTarget,true):
+    AddParam{ Type = "number", Help = "睡觉时间", Round = true, Min = 1, Max = 30, Optional = true, Default = 5 }:
+    Help( "开始睡觉(仅陆战队可用).")
 
-    self:BindCommand("sh_stun","stun_set",function(_client, _targetClient) StunTarget(_client,_targetClient) end,false):
-    AddParam{ Type = "client"}:Help( "强制睡觉(仅陆战队可用)." )
+    self:BindCommand("sh_stun_set","stun_set",function(_client, _targetClient,_duration) StunTarget(_targetClient,_duration) end,false):
+    AddParam{ Type = "client"}:
+    AddParam{ Type = "number", Help = "睡觉时间", Round = true, Min = 1, Max = 30, Optional = true, Default = 5 }:
+    Help( "强制睡觉(仅陆战队可用)." )
     
     local function SwitchLocalize(_client)
         Server.SendNetworkMessage(_client, "SwitchLocalize", {},true)
@@ -54,7 +58,7 @@ function Plugin:CreateCommands()
 	end
 
     self:BindCommand( "sh_scale", "scale", AdminScalePlayer )
-    :AddParam{ Type = "steamid" }
+    :AddParam{ Type = "client" }
     :AddParam{ Type = "number", Round = false, Min = 0.1, Max = 5, Optional = true, Default = 0.5 }
     :Help( "设置ID对应玩家的大小." )
 
