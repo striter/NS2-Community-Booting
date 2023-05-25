@@ -30,6 +30,11 @@ local Scripts = {
 
 Server.AddRestrictedFileHashes( "lua/shine/lib/gui/*.lua" )
 
+local tmpDate = os.date("*t", Shared.GetSystemTime())
+gCurrentMonth = tmpDate.month
+kCurrentDay = tmpDate.day
+kCurrentHour = tmpDate.hour
+
 Shine.BaseGamemode = "ns2"
 Shine.LoadScripts( Scripts )
 

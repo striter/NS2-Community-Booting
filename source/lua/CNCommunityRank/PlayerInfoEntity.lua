@@ -53,6 +53,7 @@ local networkVars =
     group = string.format("string (%d)", kMaxGroupName ),
     queueIndex = "integer (0 to 64)",
     reservedQueueIndex = "integer (0 to 64)",
+    lastSeenName = string.format("string(%d)",kMaxNameLength * 4),
 -----------
     adagradSum = "float",
     currentTech = "integer",
@@ -140,6 +141,7 @@ function PlayerInfoEntity:UpdateScore()
                 self.prewarmTime = scorePlayer.prewarmTime
                 self.queueIndex = scorePlayer.queueIndex
                 self.reservedQueueIndex = scorePlayer.reservedQueueIndex
+                self.lastSeenName = scorePlayer.lastSeenName
             -------------
                 self.adagradSum = scorePlayer:GetAdagradSum()
                 playerSkillOffset = scorePlayer:GetPlayerSkillOffset()

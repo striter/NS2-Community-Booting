@@ -259,15 +259,33 @@ function Plugin:ClientConnect( _client )
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
     
-    --Jeez wtf
     local groupName,groupData = GetUserGroup(_client)
-
     local player = _client:GetControllingPlayer()
     player:SetGroup(groupName)
-    player:SetPlayerExtraData(GetPlayerData(self,clientID))
-    
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
+    player:SetPlayerExtraData(GetPlayerData(self,clientID))
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
+end
+
+-- Last Seen Name Check
+function Plugin:PlayerEnter(_client)
+    local clientID = _client:GetUserId()
+    if clientID <= 0 then return end
+    
+    local player = _client:GetControllingPlayer()
+    local playerData = GetPlayerData(self,clientID)
+    playerData.lastSeenDay = playerData.lastSeenDay or -2
+    playerData.lastSeenName = playerData.lastSeenName or nil
+    
+    local playerName = player:GetName()
+    
+    if playerData.lastSeenName ~= playerName then
+        if math.abs(playerData.lastSeenDay - kCurrentDay) > 1 then
+            playerData.lastSeenDay = kCurrentDay
+            playerData.lastSeenName = playerName
+            player:SetPlayerExtraData(playerData)
+        end
+    end
 end
 
 function Plugin:CreateMessageCommands()

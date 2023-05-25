@@ -1,14 +1,20 @@
+kTranslateMessage["SB_AVGSKILL"]="%i 均分"
+kTranslateMessage["SB_COMMSKILL"]="%i 指挥"
 kTranslateMessage["CHAT_COMMANDER"]="[指挥]"
 kTranslateMessage["CHAT_NEWCOMER"]="[新兵]"
+kTranslateMessage["TEAM_PREFIX"]="(队内)"
+kTranslateMessage["TEAM_PREFIX_LOCATION"]="(队内,%s)"
+kTranslateMessage["ALL_PREFIX"]="(全局)"
+kTranslateMessage["LAST_SEEN_NAME"]="曾用名:"
 
 kLocales["CHAT_COMMANDER"]="[Commander]"
 kLocales["CHAT_NEWCOMER"]="[NewComer]"
-
-kTranslateMessage["SB_AVGSKILL"]="%i 均分"
-kTranslateMessage["SB_COMMSKILL"]="%i 指挥"
-
 kLocales["SB_AVGSKILL"]="%i Avg"
 kLocales["SB_COMMSKILL"]="%i Cmd"
+kLocales["TEAM_PREFIX"]="(Team)"
+kLocales["TEAM_PREFIX_LOCATION"]="(Team,%s)"
+kLocales["ALL_PREFIX"]="(All)"
+kLocales["LAST_SEEN_NAME"]="Last Seen Name:"
 
 kTranslateMessage["SKILLTIER_TOOLTIP"]="段位 %s"
 kTranslateMessage["SKILLTIER_UNKNOWN"]=":<未知>"
@@ -36,8 +42,6 @@ kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP_SPEC"] = "服务器当前无战场空�
 kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP"] = "当前服务器已满.\n*如果您拥有[预留位]则可以继续加入.\n*或你可以等待新的空位开启.\n*亦或者加入一个新的服务器."
 kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP_SPEC_AND_RS"] = "当前服务器已满.\n*如果您拥有[预留位]则可以继续加入.\n*或者你可以尝试观战."
 
-kTranslateMessage["TEAM"]="队内"
-kTranslateMessage["ALL"]="全局"
 
 kTranslateMessage["AFK_WARNING"]="你已经一动不动了%{timeAFK}d秒钟，达到%{maxAFKTime}d秒时你将会被服务器自动踢出。"
 kTranslateMessage["AIR_PURIFIER"]="空气净化器"

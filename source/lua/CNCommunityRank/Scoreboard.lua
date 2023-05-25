@@ -122,6 +122,7 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.ReservedQueueIndex = pie.reservedQueueIndex
         playerRecord.prewarmTier = pie.prewarmTier
         playerRecord.prewarmTime = pie.prewarmTime
+        playerRecord.lastSeenName = pie.lastSeenName
     ------------
 
         if playerRecord.IsCommander then

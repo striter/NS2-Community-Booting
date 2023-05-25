@@ -85,12 +85,13 @@ function Plugin:GetAdvertData(Client)
 end
 
 function Plugin:PlayerEnter( Client )
+	
 	local player = Client:GetControllingPlayer()
 	local groupData,userData = self:GetAdvertData(Client)
 	local prefix = userData.prefixColor or groupData.prefixColor
 	local enterColor = userData.enterColor or groupData.enterColor
 	local enterMessage = userData.enter or groupData.enter
-	
+
 	if #enterMessage > 0 then
 		Shine:NotifyDualColour( Shine.GetAllClients(), prefix[1], prefix[2], prefix[3],"[战区通知]",
 				enterColor[1], enterColor[2], enterColor[3], string.format(enterMessage,player:GetName()))

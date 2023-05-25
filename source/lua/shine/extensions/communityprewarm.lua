@@ -48,9 +48,6 @@ do
 end
 
 local kPrewarmColor = { 235, 152, 78 }
-local tmpDate = os.date("*t", Shared.GetSystemTime())
-local kCurrentDay = tmpDate.day
-local kCurrentHour = tmpDate.hour
 
 function Plugin:Initialise()
     self.PrewarmTracker = {}
@@ -86,7 +83,19 @@ end
 
 local function GetPlayerData(self, _clientID)
     if not self.MemberInfos[_clientID] then
-        self.MemberInfos[_clientID] = { tier = 0 , time = 0, credit = 0, name = "" }
+        --Initial
+        local initialTier = 0
+        local initialCredit = 0 
+        
+        local userData = Shine:GetUserData(_clientID)
+        local groupName = userData and userData.Group or nil
+        local groupData = groupName and Shine:GetGroupData(groupName) or nil
+        if groupData and groupData.PrewarmCredit then
+            initialCredit = groupData.PrewarmCredit
+            initialTier = 5
+        end
+        
+        self.MemberInfos[_clientID] = {name = "", time = 0, tier = initialTier ,  credit = initialCredit }
     end
     
     return self.MemberInfos[_clientID]
@@ -167,10 +176,18 @@ function Plugin:DispatchTomorrowPrivilege(_clients,_message)
     end
 end
 
+local function GetInGamePlayerCount()
+    local gameRules = GetGamerules()
+    if not gameRules then return 0 end
+    local team1Players,_,team1Bots = gameRules:GetTeam(kTeam1Index):GetNumPlayers()
+    local team2Players,_,team2Bots = gameRules:GetTeam(kTeam2Index):GetNumPlayers()
+    return  team1Players + team2Players - team1Bots - team2Bots 
+end
+
 local function Validate(self)
     if not PrewarmValidateEnable(self) then return end
 
-    if Shine.GetHumanPlayerCount() < self.Config.Restriction.Player then return end
+    if GetInGamePlayerCount() < self.Config.Restriction.Player then return end
     if self.Config.Validated then return end
     self.Config.Validated = true
 
@@ -266,7 +283,7 @@ function Plugin:SetGameState( Gamerules, State, OldState )
         if PrewarmValidateEnable(self) and not self.Config.Validated then
             for client in Shine.IterateClients() do
                 Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                        255, 255, 255,string.format("当前为预热局,当游戏开始/结束时[人数>%s]后,参与预热的玩家将获得当日[预热徽章]以及对应的[预热点].",
+                        255, 255, 255,string.format("当前为预热局,当游戏开始时[人数>%s]后,参与预热的玩家将获得当日[预热徽章]以及对应的[预热点].",
                                 self.Config.Restriction.Player))
             end
         end
@@ -275,7 +292,7 @@ end
 
 function Plugin:OnEndGame(_winningTeam)
     TrackAllClients(self)
-    Validate(self)
+    --Validate(self)
 end
 
 function Plugin:MapChange()
@@ -293,7 +310,7 @@ function Plugin:ClientConnect(_client)
             NotifyClient(self,_client,nil)
         else
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
-                    string.format("服务器为预热状态,待预热成功后(>=%s人),场内所有人都将获得激励.",self.Config.Restriction.Player) )
+                    string.format("服务器为预热状态,待预热成功后(开局时人数>=%s人),排名靠前的玩家将获得激励.",self.Config.Restriction.Player) )
         end
     end
 end
@@ -313,8 +330,6 @@ function Plugin:ClientDisconnect( _client )
 
     TrackClient(self,_client,clientID)
 end
-
-
 
 function Plugin:CreateMessageCommands()
     local setCommand = self:BindCommand( "sh_prewarm", "prewarm", function(_client) NotifyClient(self,_client,nil) end,true )

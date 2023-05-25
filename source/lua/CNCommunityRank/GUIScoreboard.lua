@@ -1130,13 +1130,13 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 
         local rankIconIndex = defaultRankIndex
-        if playerRecord.prewarmTier and playerRecord.prewarmTier > 0 then
-            rankIconIndex = 6 + playerRecord.prewarmTier
-        end
-
         local visible = not fakeBot and rankIconIndex > 0
         player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, rankIconIndex *80,80,(rankIconIndex +1)*80)
         player["CommunityRankIcon"]:SetIsVisible(visible)
+        
+        local prewarmIconIndex = (playerRecord.prewarmTier and playerRecord.prewarmTier > 0) and (playerRecord.prewarmTier + 6) or 0
+        player["CommunityPrewarmIcon"]:SetTexturePixelCoordinates(0, prewarmIconIndex * 80, 80 ,(prewarmIconIndex +1) * 80)
+        player["CommunityPrewarmIcon"]:SetIsVisible(prewarmIconIndex > 0)
 
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
@@ -1549,10 +1549,19 @@ function GUIScoreboard:CreatePlayerItem()
     communityRankIcon:SetTexture(kCommunityRankIconTexture)
     communityRankIcon:SetTexturePixelCoordinates(0, 80, 80, 160)
     playerItem:AddChild(communityRankIcon)
-
+    
+    local communityPrewarmIcon = GUIManager:CreateGraphicItem()
+    communityPrewarmIcon:SetSize(kCommunityRankIconSize * GUIScoreboard.kScalingFactor)
+    communityPrewarmIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
+    communityPrewarmIcon:SetStencilFunc(GUIItem.NotEqual)
+    communityPrewarmIcon:SetTexture(kCommunityRankIconTexture)
+    communityPrewarmIcon:SetTexturePixelCoordinates(0, 80, 80, 160)
+    playerItem:AddChild(communityPrewarmIcon)
+    
     -- Let's do a table here to easily handle the highlighting/clicking of icons
     -- It also makes it easy for other mods to add icons afterwards
     local iconTable = {}
+    table.insert(iconTable, communityPrewarmIcon)
     table.insert(iconTable, communityRankIcon)
     table.insert(iconTable, steamFriendIcon)
     table.insert(iconTable, playerVoiceIcon)
@@ -1562,7 +1571,7 @@ function GUIScoreboard:CreatePlayerItem()
              Voice = playerVoiceIcon, Status = statusItem, SkillIcon = playerSkillIcon, Score = scoreItem, Kills = killsItem,
              Assists = assistsItem, Deaths = deathsItem, Resources = resItem, Ping = pingItem,
              BadgeItems = badgeItems, Text = playerTextIcon,
-             SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon
+             SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon , CommunityPrewarmIcon = communityPrewarmIcon,
     }
 
 end

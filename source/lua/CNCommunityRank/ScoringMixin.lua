@@ -13,6 +13,7 @@ function ScoringMixin:__initmixin()
     self.emblem = 0
     self.queueIndex = 0
     self.reservedQueueIndex = 0
+    self.lastSeenName = ""
 end
 
 function ScoringMixin:GetPlayerSkill()
@@ -27,16 +28,16 @@ if Server then
     local baseCopyPlayerDataFrom = ScoringMixin.CopyPlayerDataFrom
     function ScoringMixin:CopyPlayerDataFrom(player)
         baseCopyPlayerDataFrom(self,player)
+        self.group = player.group
 
         self.rankDelta = player.rankDelta
         self.rankCommDelta = player.rankCommDelta
         self.fakeBot = player.fakeBot
         self.emblem = player.emblem
+        self.lastSeenName = player.lastSeenName
         
         self.prewarmTier = player.prewarmTier
         self.prewarmTime = player.prewarmTime
-        
-        self.group = player.group
         
         self.queueIndex = player.queueIndex
         self.reservedQueueIndex = player.reservedQueueIndex
@@ -47,6 +48,7 @@ if Server then
         self.rankCommDelta = dataTable.rankComm or 0
         self.fakeBot = dataTable.fakeBot or false
         self.emblem = dataTable.emblem or 0
+        self.lastSeenName = dataTable.lastSeenName or ""
     end
     
     function ScoringMixin:SetGroup(_group)

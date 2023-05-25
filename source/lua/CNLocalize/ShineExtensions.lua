@@ -53,11 +53,11 @@ if ICPlugin then
         if Data.LocationID > 0 then
             local Location = Shared.GetString( Data.LocationID )
             if StringFind( Location, "[^%s]" ) then
-                return StringFormat( "(队伍, %s) ", CNResolveLocation(Location) )
+                return StringFormat( Locale.ResolveString("TEAM_PREFIX_LOCATION"), CNResolveLocation(Location) )
             end
         end
 
-        return "(队伍) "
+        return Locale.ResolveString("TEAM_PREFIX")
     end
 
     local function IsVisibleToLocalPlayer( Player, TeamNumber )
@@ -113,7 +113,7 @@ if ICPlugin then
             Contents[ #Contents + 1 ] = TextElement( Locale.ResolveString("CHAT_NEWCOMER") .." " )
         end
 
-        local Prefix = "(全局) "
+        local Prefix = Locale.ResolveString("ALL_PREFIX")
         if Data.TeamOnly then
             Prefix = GetTeamPrefix( Data )
         end

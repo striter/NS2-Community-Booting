@@ -65,7 +65,9 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                             end
                             description = description .. "\n" .. skillTierString
 
-                            --description = description .. string.format("\nNS2ID: %i",playerRecord.SteamId)
+                            if playerRecord.lastSeenName ~= "" and playerRecord.lastSeenName ~= playerRecord.Name then
+                                description = description .. "\n" .. string.format( Locale.ResolveString("LAST_SEEN_NAME")) .. playerRecord.lastSeenName
+                            end
 
                             if playerRecord.prewarmTime > 0 then
                                 description = description .. "\n"

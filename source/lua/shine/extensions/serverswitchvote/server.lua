@@ -211,11 +211,11 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 
 		local player = Client:GetControllingPlayer()
 		if player then
-			table.insert(clients,{client = Client,priority = player:GetPlayerSkill()})
+			table.insert(clients,{ client = Client, priority = player:GetPlayerSkill()})
 		end
 	end
 
-	table.sort(clients,function (a,b)
+	table.sort(clients,function (a, b)
 		if _newcomer then
 			return a.priority < b.priority
 		else
@@ -225,11 +225,12 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 	
 	local count = _count
 	for _,data in pairs(clients) do
-		if Shine:HasAccess( data.client, "sh_adminmenu" ) then
-			Shine:NotifyDualColour(Shine.GetAllClients(),146, 43, 33,"[注意]",
+		local client =  data.client
+		if Shine:HasAccess(client, "sh_adminmenu" ) then
+			Shine:NotifyDualColour(client,146, 43, 33,"[注意]",
 					253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
 		else
-			Server.SendNetworkMessage(data.client, "Redirect",{ ip = _targetIP }, true)
+			Server.SendNetworkMessage(client, "Redirect",{ ip = _targetIP }, true)
 		end
 		count = count - 1
 		if count <= 0 then
