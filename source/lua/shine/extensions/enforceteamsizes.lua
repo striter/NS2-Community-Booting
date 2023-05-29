@@ -86,11 +86,11 @@ function Plugin:GetSkillLimited(_player)
 	end
 	
 	if skillLimited then
-		self:Notify(_player, string.format("您的分数(%i)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
-				skill,self.Config.SkillLimitMin,self.Config.SkillLimitMax < 0 and "∞" or self.Config.SkillLimitMax),
-				errorColorTable,nil)
-
 		if _player:GetTeamNumber() ~= kSpectatorIndex then
+			self:Notify(_player, string.format("您的分数(%i)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
+					skill,self.Config.SkillLimitMin,self.Config.SkillLimitMax < 0 and "∞" or self.Config.SkillLimitMax),
+					errorColorTable,nil)
+
 			local gamerules = GetGamerules()
 			if gamerules then gamerules:JoinTeam( _player, kSpectatorIndex, true,true ) end
 		end

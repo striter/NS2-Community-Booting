@@ -21,6 +21,9 @@ Plugin.DefaultConfig = {
 		ToServerDelay = 10,
 		Prefix = "[病危通知书]",
 		Message = "服务器要炸了",
+		FailInformCount = 40,
+		FailInformMessage = "距离自动换服还差%i人",
+		FailInformPrefix = "[换服提示]",
 	},
 }
 
@@ -126,6 +129,9 @@ end
 	Validator:AddFieldRule( "CrowdAdvert.ToServer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServer ))
 	Validator:AddFieldRule( "CrowdAdvert.ToServerDelay",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServerDelay ))
 	Validator:AddFieldRule( "CrowdAdvert.Message",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Message ))
+	Validator:AddFieldRule( "CrowdAdvert.FailInformPrefix",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.FailInformPrefix ))
+	Validator:AddFieldRule( "CrowdAdvert.FailInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.FailInformMessage ))
+	Validator:AddFieldRule( "CrowdAdvert.FailInformCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.FailInformCount ))
 end
 
 local function GetConnectIP(_index)
@@ -148,7 +154,21 @@ function Plugin:OnEndGame(_winningTeam)
 	if self.Config.CrowdAdvert.ToServer <= 0 then return end
 	
 	local playerCount = Shine.GetHumanPlayerCount()
-	if playerCount < self.Config.CrowdAdvert.PlayerCount then return end
+	if playerCount < self.Config.CrowdAdvert.PlayerCount then
+		if playerCount > self.Config.CrowdAdvert.FailInformCount then
+			local informMessage = string.format( self.Config.CrowdAdvert.FailInformMessage,self.Config.CrowdAdvert.PlayerCount - playerCount)
+			for client in Shine.IterateClients() do
+				local team = client:GetControllingPlayer():GetTeamNumber()
+				if team == kSpectatorIndex or team == kTeamReadyRoom then
+					Shine:NotifyDualColour(client,146, 43, 33,
+							self.Config.CrowdAdvert.FailInformPrefix,
+							253, 237, 236, informMessage)
+				end
+			end
+		end
+		
+		return
+	end
 	
 	local data = self.Config.Servers[self.Config.CrowdAdvert.ToServer]
 	if not data then return end 
@@ -242,12 +262,12 @@ end
 function Plugin:CreateCommands()
 	 self:BindCommand( "sh_redir_newcomer", "redir_newcomer", function(_client,_serverIndex,_count,_message)
 		 NotifyCrowdAdvert(self,_message)
-		self:RedirClients(GetConnectIP(_serverIndex),_count,true)
+		 self:RedirClients(GetConnectIP(_serverIndex),_count,true)
 	end):
 	AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 6, Default=1 }:
 	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
 	AddParam{ Type = "string", Help = "显示消息",Optional = true, Default = "服务器人满为患,开启被动分服." }:
-	Help( "示例: !redir_count 1 20 昂?. 迁移[20]名<新屁股>去[1服]" )
+	Help( "示例: !redir_newcomer 1 20 昂?. 迁移[20]名<新屁股>去[1服]" )
 	
 	self:BindCommand( "sh_redir_oldass", "redir_oldass", function(_client,_serverIndex,_count,_message)
 		NotifyCrowdAdvert(self,_message)
@@ -256,5 +276,5 @@ function Plugin:CreateCommands()
 	AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 6, Default=1 }:
 	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
 	AddParam{ Type = "string", Help = "显示消息",Optional = true,  Default = "服务器已人满为患,开启被动分服." }:
-	Help( "示例: !redir_count 1 20. 迁移[20]名<老屁股>去[1服]" )
+	Help( "示例: !redir_oldass 1 20. 迁移[20]名<老屁股>去[1服]" )
 end

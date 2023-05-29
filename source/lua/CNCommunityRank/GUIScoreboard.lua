@@ -1130,13 +1130,12 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 
         local rankIconIndex = defaultRankIndex
-        local visible = not fakeBot and rankIconIndex > 0
         player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, rankIconIndex *80,80,(rankIconIndex +1)*80)
-        player["CommunityRankIcon"]:SetIsVisible(visible)
+        player["CommunityRankIcon"]:SetIsVisible(not fakeBot and rankIconIndex > 0)
         
         local prewarmIconIndex = (playerRecord.prewarmTier and playerRecord.prewarmTier > 0) and (playerRecord.prewarmTier + 6) or 0
         player["CommunityPrewarmIcon"]:SetTexturePixelCoordinates(0, prewarmIconIndex * 80, 80 ,(prewarmIconIndex +1) * 80)
-        player["CommunityPrewarmIcon"]:SetIsVisible(prewarmIconIndex > 0)
+        player["CommunityPrewarmIcon"]:SetIsVisible(not fakeBot and prewarmIconIndex > 0)
 
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 

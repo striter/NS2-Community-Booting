@@ -176,6 +176,7 @@ function Plugin:CanStartVote( Team )
 		and ( self.NextVote <= SharedTime() or self.Config.FractionOfPlayersNeededInEarlyGame > 0 )
 end
 
+local surrenderResourceCheck = { "ns2", "NS2.0"}
 function Plugin:AddVote( Client, Team )
 	if not Client then return end
 
@@ -183,6 +184,15 @@ function Plugin:AddVote( Client, Team )
 	if Team ~= 1 and Team ~= 2 then return false, "spectators can't surrender!" end
 
 	if not self:CanStartVote( Team ) then return false, "can't start" end
+
+	local Player= Client:GetControllingPlayer()
+	local gameMode = Shine.GetGamemode()
+	if table.contains(surrenderResourceCheck,gameMode) then
+		if Player:GetPersonalResources() > 30 then
+			return false, "too many PRes"
+		end
+	end
+
 	local Success, Err = self.Votes[ Team ]:AddVote( Client )
 
 	if not Success then return false, Err end
@@ -289,38 +299,39 @@ function Plugin:AnnounceVote( Player, Team, VotesNeeded )
 	end
 end
 
+
 function Plugin:CreateCommands()
 	local function VoteSurrender( Client )
 		if not Client then return end
-
+	
 		local Player = Client:GetControllingPlayer()
 		if not Player then return end
-
+	
 		local Team = Player:GetTeamNumber()
-
+	
 		if not self.Votes[ Team ] then
 			self:NotifyTranslatedError( Player, "ERROR_WRONG_TEAM" )
-
+	
 			return
 		end
-
+		
 		local Success, Err = self:AddVote( Client, Team )
-
+	
 		if Success then
 			if self.Surrendered then return end
-
+	
 			local VotesNeeded = self.Votes[ Team ]:GetVotesNeeded()
-
+	
 			return self:AnnounceVote( Player, Team, VotesNeeded )
 		end
-
+	
 		if Err == "already voted" then
 			self:NotifyTranslatedError( Player, "ERROR_ALREADY_VOTED" )
+		elseif Err == "too many PRes" then
+			self:NotifyTranslatedError( Player, "ERROR_RESOURCE_AVAILABLE" )
 		else
 			self:NotifyTranslatedError( Player, "ERROR_ROUND_TIME" )
 		end
 	end
-	local VoteSurrenderCommand = self:BindCommand( "sh_votesurrender",
-		{ "surrender", "votesurrender", "surrendervote" }, VoteSurrender, true )
-	VoteSurrenderCommand:Help( "Votes to surrender the round." )
+	self:BindCommand( "sh_votesurrender", { "surrender", "votesurrender", "surrendervote", "remake" }, VoteSurrender, true ):Help( "Votes to surrender the round." )
 end

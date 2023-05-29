@@ -34,16 +34,8 @@ if Client then
     --Locations
     Script.Load("lua/CNLocalize/CNLocations.lua")
     function CNResolveLocation(input)
-        if not gForceLocalize then
-            return input
-        end
-
-        local locationName = kTranslateLocations[input]
-        if not locationName then
-            --Shared.Message("Location:{" .. input .. "} Untranslated")
-            locationName = input
-        end
-        return locationName
+        if not gForceLocalize then return input end
+        return kTranslateLocations[input] or input
     end
     
     ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "post")

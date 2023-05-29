@@ -118,7 +118,6 @@ kShinePluginsTranslations["basecommands"]["GAG_UNTIL_MAP_CHANGE"]="到换图之�
 kShinePluginsTranslations["basecommands"]["PERMANENTLY"]="永久"
 kShinePluginsTranslations["basecommands"]["FORCE_RANDOM"]="随机分队"
 kShinePluginsTranslations["basecommands"]["FORCE_RANDOM_TIP"]="使他们随机加入对局"
-kShinePluginsTranslations["basecommands"]["READY_ROOM"]="回到预备室"
 kShinePluginsTranslations["basecommands"]["READY_ROOM_TIP"]="使其回到预备室"
 kShinePluginsTranslations["basecommands"]["SET_TEAM"]="设置队伍"
 kShinePluginsTranslations["basecommands"]["FORCE_SET_TEAM"]="{TeamName} (强制)"
@@ -187,6 +186,7 @@ kShinePluginsTranslations["workshopupdater"]["MAP_CYCLE"]= "地图将 {TimeLeft:
 
 kShinePluginsTranslations["votesurrender"]={}
 kShinePluginsTranslations["votesurrender"]["ERROR_WRONG_TEAM"]="无法在当前队伍发起投降."
+kShinePluginsTranslations["votesurrender"]["ERROR_RESOURCE_AVAILABLE"]="还有大量的个人资源未被使用,你应该再试一试."
 kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_TIME"]="现在太早无法发起投降."
 kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_NOT_STARTED"]="对局还未开始,无法发起投票."
 kShinePluginsTranslations["votesurrender"]["ERROR_CANNOT_VOTE_ON_CURRENT_TEAM"]="无法在当前队伍发起投票."
@@ -219,6 +219,21 @@ kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_DISABLE_AUTO_HIVE_BASED"]=
 kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_ENABLE_AUTO_HIVE_BASED"]="{PlayerName} 投票[启用]基于分数的自动洗牌分队 (共需{VotesNeeded}票,还需{VotesNeeded:Pluralise: 票| 票})."
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[禁用]."
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_ENABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[启用]."
+
+kShinePluginsTranslations["voterandom"]["TEAM_SWITCH_DENIED_HIVE_BASED"]="你不应该在洗牌后并且人数平衡的情况下切换队伍,这会影响洗牌分配结果并直接影响对局."
+kShinePluginsTranslations["voterandom"]["TEAM_SWITCH_DENIED_KDR_BASED"]="你不应该在洗牌后并且人数平衡的情况下切换队伍,这会影响洗牌分配结果并直接影响对局."
+kShinePluginsTranslations["voterandom"]["TEAM_SWITCH_DENIED_RANDOM_BASED"]="你不应该在洗牌后并且人数平衡的情况下切换队伍,这会影响洗牌分配结果并直接影响对局."
+kShinePluginsTranslations["voterandom"]["TEAM_SWITCH_DENIED_SCORE_BASED"]="你不应该在洗牌后并且人数平衡的情况下切换队伍,这会影响洗牌分配结果并直接影响对局."
+
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_NEXT_ROUND_HIVE_BASED"]="洗牌分队将于下回合启用."
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_NEXT_ROUND_KDR_BASED"]="洗牌分队将于下回合启用."
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_NEXT_ROUND_RANDOM_BASED"]="洗牌分队将于下回合启用."
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_NEXT_ROUND_SCORE_BASED"]="洗牌分队将于下回合启用."
+
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_END_OF_ROUND_HIVE_BASED"] = "洗牌分队规则已于该局启用."
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_END_OF_ROUND_KDR_BASED"] = "洗牌分队规则已于该局启用."
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_END_OF_ROUND_RANDOM_BASED"] = "洗牌分队规则已于该局启用."
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_END_OF_ROUND_SCORE_BASED"] = "洗牌分队规则已于该局启用."
 
 -- PreGam
 kShinePluginsTranslations["pregame"]={}
@@ -263,6 +278,8 @@ kShinePluginsTranslations["mapvote"]["PLAYER_VOTED"]= "{TargetName}{Revote:BoolT
 kShinePluginsTranslations["mapvote"]["PLAYER_VOTED_PRIVATE"]= "你{Revote:BoolToPhrase:又投给了|投给了}{MapName}. （目前有{Votes}{Votes:Pluralise: 票| 票},总共有{TotalVotes}人参与了投票)"
 kShinePluginsTranslations["mapvote"]["WINNER_VOTES"]= "{MapName} 以 {Votes}/{TotalVotes} 的比例赢得了投票."
 kShinePluginsTranslations["mapvote"]["EXTENDING_TIME"]= "当前地图时间延长{Duration:Duration}"
+kShinePluginsTranslations["mapvote"]["TEAM_CHANGE_FAIL_VOTE"]= "换图投票正在进行,无法加入队伍."
+kShinePluginsTranslations["mapvote"]["TEAM_CHANGE_FAIL_MAP_CHANGE"]= "正在更换地图,无法加入队伍."
 
 kShinePluginsTranslations["mapvote"]["TIME_LEFT"]= "此地图还剩下{Duration:Duration}"
 
