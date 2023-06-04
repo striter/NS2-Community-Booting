@@ -983,6 +983,9 @@ kTranslateMessage["POWER_SURGE_TOOLTIP"]="*为目标建筑应急供电\n*应用�
 kTranslateMessage["NANO_SHIELD"]="纳米防护罩科技"
 kTranslateMessage["NANO_SHIELD_TOOLTIP"]="*降低目标短时间内的承受伤害"
 
+kTranslateMessage["EMPBLAST"] = "电磁脉冲"
+kTranslateMessage["AXE"] = "折叠斧"
+
 kTranslateMessage["HEAVYMACHINEGUN"]="重机枪"
 kTranslateMessage["HEAVY_MACHINE_GUN"]="重机枪"
 kTranslateMessage["HEAVY_MACHINE_GUN_DROP"]="发放重机枪"
