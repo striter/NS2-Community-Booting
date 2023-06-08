@@ -245,7 +245,7 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
     
     if _cost == 0 then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("您已使用[预热特权:%s]!", _privilege) )
+                255, 255, 255,string.format("当前拥有特权:[%s].", _privilege) )
         return true
     end
     
@@ -254,13 +254,13 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
         if credit >= _cost then
             data.credit = credit - _cost
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                    255, 255, 255,string.format("消耗[%s预热点]获得[预热特权:%s],剩余[%s预热点]!", _cost,_privilege,data.credit) )
+                    255, 255, 255,string.format("使用 %s [预热点],当前剩余 %s [预热点].\n已获得特权:[%s].", _cost,_privilege,data.credit) )
             return true
         end
         return false
     else
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("您的[预热点]不足!", _privilege) )
+                255, 255, 255,string.format("您的可用[预热点]不足.", _privilege) )
         return true
     end
 end
@@ -310,7 +310,7 @@ function Plugin:ClientConnect(_client)
             NotifyClient(self,_client,nil)
         else
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
-                    string.format("服务器为预热状态,待预热成功后(开局时人数>=%s人),排名靠前的玩家将获得激励.",self.Config.Restriction.Player) )
+                    string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
         end
     end
 end

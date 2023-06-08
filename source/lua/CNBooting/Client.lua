@@ -48,11 +48,14 @@ if kTranslateMessage then
     kTranslateMessage["STATUS_QUEUE_RESERVED"]="预留: %i"
 
     kTranslateMessage["COMMUNITY_PLAYTIME"]="今日在线: %s分钟"
-    kTranslateMessage["COMMUNITY_PREWARM"]="           < 预热贡献者 - %s >"
+    kTranslateMessage["COMMUNITY_PREWARM_1"]="           < 预热贡献者 - P0 >"
+    kTranslateMessage["COMMUNITY_PREWARM_2"]="           < 预热贡献者 - P1 >"
+    kTranslateMessage["COMMUNITY_PREWARM_3"]="           < 预热贡献者 - P2 >"
+    kTranslateMessage["COMMUNITY_PREWARM_4"]="           < 预热贡献者 - P3 >"
+    kTranslateMessage["COMMUNITY_PREWARM_5"]="           < 社区支持者 >"
 end
 
 if kLocales then
-    
     kLocales["VOTE_SWITCH_SERVER"] = "Vote Switch Server"
     kLocales["VOTE_SWITCH_SERVER_ELEMENT"] = "[i]<%s> : %s"
     kLocales["VOTE_SWITCH_SERVER_QUERY"] = "<%s> is starting a new game!"
@@ -101,5 +104,9 @@ if kLocales then
     kLocales["STATUS_QUEUE_RESERVED"]="Reserved: %i"
 
     kLocales["COMMUNITY_PLAYTIME"]="Online: %sm"
-    kLocales["COMMUNITY_PREWARM"]="           < Prewarmer - %s >"
+    kLocales["COMMUNITY_PREWARM_1"]="           <Prewarm Platinum>"
+    kLocales["COMMUNITY_PREWARM_2"]="           <Prewarm Golden>"
+    kLocales["COMMUNITY_PREWARM_3"]="           <Prewarm Silver>"
+    kLocales["COMMUNITY_PREWARM_4"]="           <Prewarm Contributor>"
+    kLocales["COMMUNITY_PREWARM_5"]="           <NS2CN Contributor>"
 end 

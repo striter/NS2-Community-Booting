@@ -11,8 +11,9 @@ Plugin.PrintName = "Enforced Team Size"
  - 3: Spec
  ]]
 Plugin.DefaultConfig = {
-	Team = { 14 , 14 , 5 },
+	Team = { 14 , 14 , 5},
 	IncreaseByForceJoins = true,
+	BlockSpectators = true,
 	SkillLimitMin = -1,
 	SkillLimitMax = -1,
 	NewcomerForceJoin = -1,
@@ -35,6 +36,7 @@ do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "Team",  Validator.IsType( "table", {} ))
 	Validator:AddFieldRule( "IncreaseByForceJoins",  Validator.IsType( "boolean", true ))
+	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", -1 ))
 	Validator:AddFieldRule( "SkillLimitMin",  Validator.IsType( "number", -1 ))
 	Validator:AddFieldRule( "SkillLimitMax",  Validator.IsType( "number", -1 ))
 	Validator:AddFieldRule( "NewcomerForceJoin",  Validator.IsType( "number", -1 ))
@@ -70,11 +72,15 @@ function Plugin:GetPlayerLimit(Gamerules,Team)
 		local maxPlayers = math.max(self:GetNumPlayers(Gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(Gamerules:GetTeam(kTeam2Index)))
 		playerLimit = math.max(playerLimit,maxPlayers)
 	end
-	return playerLimit
-end
 
-function Plugin:GetMaxPlayers(_gamerules)
-	return self:GetPlayerLimit(_gamerules,kTeam1Index) + self:GetPlayerLimit(_gamerules,kTeam2Index)
+	if Team == kSpectatorIndex and self.Config.BlockSpectators then
+		local leastPlayersInGame = self.Config.Team[kTeam1Index] + self.Config.Team[kTeam2Index]
+		local inServerPlayers = Shine.GetHumanPlayerCount()
+		if inServerPlayers < leastPlayersInGame then return 99 end 	--They are seeding
+		return inServerPlayers - leastPlayersInGame	--Join the game little f**k
+	end
+	
+	return playerLimit
 end
 
 function Plugin:GetSkillLimited(_player)
@@ -99,7 +105,7 @@ function Plugin:GetSkillLimited(_player)
 	return skillLimited
 end
 
-local kJoinTracker = { }
+local kTeamJoinTracker = { }
 local TeamNames = { "陆战队","卡拉异形","观战" }
 function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	if _shineForce then return end
@@ -112,40 +118,49 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	
 	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
 	local playerLimited = self:GetNumPlayers(_gamerules:GetTeam(_newTeam)) >= playerLimit
+	local forcePrivilegeTitle
+	local forceCredit
+	local available = true
 	if _newTeam == kSpectatorIndex then
 		if playerLimited then
 			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请进入游戏或加入有观战位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
-			return false
+			available =  false
+			forceCredit = 0
+			forcePrivilegeTitle = "预热观战位"
 		end
-		return 
+	else
+		if playerLimited then
+			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
+			available = false
+			forceCredit = 1
+			forcePrivilegeTitle = "预热入场通道"
+		end
 	end
 
-	local available = true
-	--Check if team is above MaxPlayers
-	if playerLimited then
-		self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
-		available = false
-	end
-
+	-- Use privilege
 	if available == false then
 		local client = Server.GetOwner(_player)
 		if not client or client:GetIsVirtual()  then return end
 
 		if Shine:HasAccess( client, "sh_priorslot" ) then
-			self:Notify(_player, "您为 [高级预留玩家],已忽视限制加入!",priorColorTable,nil)
+			self:Notify(_player, "您为[高级预留玩家],已忽视上述限制!",priorColorTable,nil)
 			return
 		end
 
 		if self.Config.NewcomerForceJoin ~= -1 and _player:GetPlayerSkill() < self.Config.NewcomerForceJoin then
-			self:Notify(_player, "您为 [新人优待玩家],已忽视限制加入!",priorColorTable,nil)
+			self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
 			return
 		end
-
+		
 		local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
 		if cpEnabled then
 			local userId = client:GetUserId()
-			if table.contains(kJoinTracker,userId) and cp:GetPrewarmPrivilege(client,0,"本局自由下场") then return end
-			if cp:GetPrewarmPrivilege(client,1,"自由下场") then table.insert(kJoinTracker,userId) return end
+			if table.contains(kTeamJoinTracker,userId) and cp:GetPrewarmPrivilege(client,0,"当局入场通道") then return end
+
+			if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
+				if forceCredit > 0 then table.insert(kTeamJoinTracker,userId) end
+				return
+			end
 		end
 	end
 	
@@ -154,7 +169,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 end
 
 function Plugin:OnEndGame(_winningTeam)
-	table.Empty(kJoinTracker)
+	table.Empty(kTeamJoinTracker)
 end
 
 local function RestrictionDisplay(self,_client)
@@ -194,16 +209,6 @@ function Plugin:CreateCommands()
 	self:BindCommand( "sh_restriction_size", "restriction_size", SetTeamSize)								 
 	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 0 }
 	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 0 }
-	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
-	:Help( "示例: !restriction_size 14 12 true. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人 并保存" )
-
-	local function SetSpectatorSize(_client, _size,_save)
-		self.Config.Team[kSpectatorIndex] = _size
-		if _save then self:SaveConfig() end
-	end
-
-	self:BindCommand( "sh_restriction_specsize", "restriction_specsize", SetSpectatorSize)
-	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = -1 }
 	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
 	:Help( "示例: !restriction_size 14 12 true. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人 并保存" )
 	

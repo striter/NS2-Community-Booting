@@ -74,7 +74,7 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                                 description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PLAYTIME"),playerRecord.prewarmTime)
 
                                 if playerRecord.prewarmTier > 0 then
-                                    description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PREWARM"),playerRecord.prewarmTier)
+                                    description = description .. "\n" .. Locale.ResolveString(string.format("COMMUNITY_PREWARM_%i",playerRecord.prewarmTier))
                                 end
                             end
                             
