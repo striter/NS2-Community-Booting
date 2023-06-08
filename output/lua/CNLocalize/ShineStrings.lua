@@ -187,8 +187,8 @@ kShinePluginsTranslations["workshopupdater"]["MAP_CYCLE"]= "地图将 {TimeLeft:
 kShinePluginsTranslations["votesurrender"]={}
 kShinePluginsTranslations["votesurrender"]["ERROR_WRONG_TEAM"]="无法在当前队伍发起投降."
 kShinePluginsTranslations["votesurrender"]["ERROR_RESOURCE_AVAILABLE"]="还有大量的个人资源未被使用,你应该再试一试."
-kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_TIME"]="现在太早无法发起投降."
-kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_NOT_STARTED"]="对局还未开始,无法发起投票."
+kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_TIME"]="当前为时过早,无法发起投降."
+kShinePluginsTranslations["votesurrender"]["ERROR_ALREADY_VOTED"]="你已经进行投降过了."
 kShinePluginsTranslations["votesurrender"]["ERROR_CANNOT_VOTE_ON_CURRENT_TEAM"]="无法在当前队伍发起投票."
 
 kShinePluginsTranslations["votealltalk"]={}
@@ -206,8 +206,6 @@ kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_ALIEN"]="队伍偏�
 kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_SET_NONE"]="队伍偏好已重置"
 kShinePluginsTranslations["voterandom"]["ACCEPT_FRIEND_GROUP_INVITE"]="接受组队"
 kShinePluginsTranslations["voterandom"]["DECLINE_FRIEND_GROUP_INVITE"]="拒绝组队"
-kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_FOR_DURATION_HIVE_BASED"]= "强制洗牌分队将持续 {Duration:Duration}."
-kShinePluginsTranslations["voterandom"]["TEAM_ENFORCING_TIMELIMIT_HIVE_BASED"]= "强制洗牌分队时限已到."
 kShinePluginsTranslations["voterandom"]["ERROR_NOT_ENOUGH_PLAYERS"] ="当前人数不足,无法洗牌分队."
 kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_HIVE_BASED"] = "{PlayerName} 投票洗牌分队 (还需{VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
 kShinePluginsTranslations["voterandom"]["SHUFFLING_TEAMS_SHUFFLE_HIVE"] = "基于玩家的战力洗牌."
@@ -220,7 +218,10 @@ kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_ENABLE_AUTO_HIVE_BASED"]="
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[禁用]."
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_ENABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[启用]."
 kShinePluginsTranslations["voterandom"]["PLACED_ON_RANDOM_TEAM"]="基于随机分队,你被移动到当前队伍."
-kShinePluginsTranslations["voterandom"]["PLACED_ON_HIVE_TEAM"]="基于洗牌分队,你被移动到当前丢五."
+kShinePluginsTranslations["voterandom"]["PLACED_ON_HIVE_TEAM"]="基于洗牌分队,你被移动到当前队伍."
+
+kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_FOR_DURATION_HIVE_BASED"]= "洗牌分队限制将持续{Duration:Duration}."
+kShinePluginsTranslations["voterandom"]["TEAM_ENFORCING_TIMELIMIT_HIVE_BASED"]= "洗牌分队限制已结束."
 
 kShinePluginsTranslations["voterandom"]["TEAM_SWITCH_DENIED_HIVE_BASED"]="你不应该在洗牌后并且人数平衡的情况下切换队伍,这会影响洗牌分配结果并直接影响对局."
 kShinePluginsTranslations["voterandom"]["TEAM_SWITCH_DENIED_KDR_BASED"]="你不应该在洗牌后并且人数平衡的情况下切换队伍,这会影响洗牌分配结果并直接影响对局."

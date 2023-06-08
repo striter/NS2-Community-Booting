@@ -812,10 +812,10 @@ kTranslateMessage["PULSEGRENADE_BUYDESCRIPTION"]="陆战队士兵常用的投掷
 kTranslateMessage["CLUSTERGRENADE_BUYDESCRIPTION"]="陆战队士兵常用的投掷物,爆炸后会生成一串子雷.\n*对建筑物有高额的伤害."
 kTranslateMessage["MINES_BUYDESCRIPTION"]="针对卡拉异形研发的智能感应地雷.\n*可以安放在任意墙体上.\n*当敌方单位靠近时爆炸造成高额伤害."
 
-kTranslateMessage["FLAMETHROWER_BUYDESCRIPTION"]="抑制异形建筑物的生长,同时也具备其战场适用性.\n*点燃敌方单位,灼烧地面形成伤害区域.\n*无护甲防护的单位受到高额伤害.\n-对护甲防护单位伤害有限."
-kTranslateMessage["GRENADELAUNCHER_BUYDESCRIPTION"]="应对卡拉异形群以及恼人的衍生建筑而研发的抛射武器.\n*抛物线弹道,高额的爆炸范围伤害.\n*对建筑物造成巨额伤害.\n-四发填装式弹仓."
-kTranslateMessage["HMG_BUYDESCRIPTION"]="阵地战使用的重型单兵机枪,造成高额的持续伤害.\n*容量高弹仓.\n*特制子弹带来的额外单位杀伤力.\n-射击精度较差.\n-装弹速度较慢."
-kTranslateMessage["SHOTGUN_BUYDESCRIPTION"]="霰弹枪是常规卡拉异形的克星,注重近距离交火的武器.\n*造成高额近距离伤害.\n-过高的散布及远距离衰减.\n-六发填装式弹仓."
+kTranslateMessage["FLAMETHROWER_BUYDESCRIPTION"]="抑制异形建筑物的生长,同时也具备其战场适用性.\n*点燃敌方单位,灼烧地面形成伤害区域.\n*火焰喷射能够净化空气污染并消除酸性投掷物.\n*缺少护甲防护的单位受到高额伤害.\n-对护甲防护单位伤害有限."
+kTranslateMessage["GRENADELAUNCHER_BUYDESCRIPTION"]="应对轻型卡拉异形集群以及恼人的异形生长物而研发的抛射武器.\n*抛物线弹道,爆炸范围伤害,对建筑物造成巨额伤害.\n-四发填装式弹仓,对大型机动单位伤害有限."
+kTranslateMessage["HMG_BUYDESCRIPTION"]="阵地战使用的重型单兵机枪,造成高额的持续伤害.\n*容量高弹仓提供持续火力.\n*大口径子弹带来的额外单位杀伤力.\n-射击精度较差.\n-较慢的装弹速度."
+kTranslateMessage["SHOTGUN_BUYDESCRIPTION"]="霰弹枪是常规卡拉异形的克星,注重近距离交火的武器.\n*造成巨量近距离伤害,撕碎一切中小型单位.\n-高额子弹散布以及距离衰减.\n-六发填装式弹仓."
 
 kTranslateMessage["BUYMENU_GROUPLABEL_SPECIAL"]="原型武器"
 kTranslateMessage["DUALMINIGUN_BUYDESCRIPTION"]="双臂都安装了 |转轮机枪| 的原型单兵机甲.\n*预热后造成大量持续伤害. -请当心转轮过热."
@@ -996,6 +996,7 @@ kTranslateMessage["FLAMETHROWER_DROP"]="发放喷火器"
 kTranslateMessage["FLAMETHROWER_TOOLTIP"]="能够施加点燃伤害，点燃会降低敌人的体力恢复速率，还能使敌方的一些建筑物暂时失效。对付易燃目标时有伤害加成。"
 
 kTranslateMessage["GRENADE"]="榴弹"
+kTranslateMessage["GRENADELAUNCHER"]="榴弹枪"
 kTranslateMessage["GRENADE_LAUNCHER"]="榴弹枪"
 kTranslateMessage["GRENADE_LAUNCHER_DROP"]="发放榴弹枪"
 kTranslateMessage["GRENADE_LAUNCHER_TOOLTIP"]="范围伤害,对建筑有毁灭效果."
