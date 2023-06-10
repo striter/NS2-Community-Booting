@@ -526,6 +526,7 @@ kTranslateMessage["MINE_TOOLTIP"]="内含一组地雷"
 kTranslateMessage["MINES"]="研发地雷"
 kTranslateMessage["MINIGUN"]="转轮机枪"
 kTranslateMessage["CLUSTERGRENADE"]="集束手雷"
+kTranslateMessage["GASGRENADE"]="毒气手雷"
 kTranslateMessage["PULSEGRENADE"]="电磁手雷"
 
 kTranslateMessage["MINIGUN_CLAW_TOOLTIP"]="BIND_PrimaryAttacktopunchwithClaw.HoldBIND_SecondaryAttacktofireminigun(unlimitedammobutcanoverheat).BIND_Jumptoactivatejumpjets."
@@ -986,6 +987,7 @@ kTranslateMessage["NANO_SHIELD_TOOLTIP"]="*降低目标短时间内的承受伤�
 kTranslateMessage["EMPBLAST"] = "电磁脉冲"
 kTranslateMessage["AXE"] = "折叠斧"
 
+kTranslateMessage["HMG"]="重机枪"
 kTranslateMessage["HEAVYMACHINEGUN"]="重机枪"
 kTranslateMessage["HEAVY_MACHINE_GUN"]="重机枪"
 kTranslateMessage["HEAVY_MACHINE_GUN_DROP"]="发放重机枪"

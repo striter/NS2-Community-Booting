@@ -254,7 +254,7 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
         if credit >= _cost then
             data.credit = credit - _cost
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                    255, 255, 255,string.format("使用 %s [预热点],当前剩余 %s [预热点].\n已获得特权:[%s].", _cost,_privilege,data.credit) )
+                    255, 255, 255,string.format("使用 %s [预热点],当前剩余 %s [预热点].\n已获得特权:<%s>.", _cost,data.credit,_privilege) )
             return true
         end
         return false

@@ -104,16 +104,17 @@ local function EloDebugMessage(self,_string)
     Shared.Message(_string)
 end
 
-local function RankPlayerDelta(self,_steamId,_delta,_commDelta)
+local function RankPlayerDelta(self, _steamId, _delta, _commDelta)
     local data = GetPlayerData(self,_steamId)
+    local client = Shine.GetClientByNS2ID(_steamId)
+    local player = client and client:GetControllingPlayer()
+
     data.rank = (data.rank or 0) + _delta
-    data.rankComm =  (data.rankComm or 0) + _commDelta
+    data.rankComm = (data.rankComm or 0) + _commDelta
     
-    local target = Shine.GetClientByNS2ID(_steamId)
-    if target then 
-        local player = target:GetControllingPlayer()
+    if player then
         data.rank = math.max(data.rank, -player.skill)
-        data.rankComm = math.max(data.rankComm, -player.skill)
+        data.rankComm = math.max(data.rankComm, -player.commSkill)
         player:SetPlayerExtraData(data)
     end
 end
@@ -220,7 +221,7 @@ local function EndGameElo(self)
 
     local rankTable = {}
     EloDebugMessage(self,"Team1:" .. tostring(team1AverageSkill))
-    local estimateA = 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill)/100))
+    local estimateA = 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill) / 400))
     ApplyRankTable(rankTable,team1Table,team1S - estimateA)
     EloDebugMessage(self,"Team2:" .. tostring(team2AverageSkill))
     ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA))
