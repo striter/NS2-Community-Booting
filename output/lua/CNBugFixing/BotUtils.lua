@@ -13,8 +13,12 @@ function GetNearestFiltered(from, ents, isValidFunc)
         if isValidFunc == nil or isValidFunc(ent) then
 
             local dist = GetDistanceToTouch( from, ent )
-            local straightDistanceXZ =(from:GetOrigin() - ent:GetOrigin()):GetLengthXZ()
-            if straightDistanceXZ < 5 then      --What if functions upon bugged?   (EG: bot pickup weapon returns a unreachable amount while its pretty close [maybe its due to pathfinding upon a "un-perfect polished" map]) 
+            
+            --What if functions upon bugged?   (EG: bot pickup weapon returns a unreachable amount while its pretty close [maybe its due to pathfinding upon a "un-perfect polished" map]) 
+            local srcOrigin = from.GetOrigin and from:GetOrigin() or from  --pos or entity
+            local targetOrigin = ent:GetOrigin()
+            local straightDistanceXZ = (srcOrigin - targetOrigin):GetLengthXZ()
+            if straightDistanceXZ < 5 then      --Fallback
                 dist = straightDistanceXZ
             end
             

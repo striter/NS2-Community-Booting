@@ -1,5 +1,5 @@
 
-local Plugin = Shine.Plugin( ... )
+local Plugin = ...
 
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityCommands.json"
@@ -38,12 +38,6 @@ function Plugin:CreateCommands()
     AddParam{ Type = "number", Help = "睡觉时间", Round = true, Min = 1, Max = 30, Optional = true, Default = 5 }:
     Help( "强制睡觉(仅陆战队可用)." )
     
-    local function SwitchLocalize(_client)
-        Server.SendNetworkMessage(_client, "SwitchLocalize", {},true)
-    end
-    self:BindCommand("sh_localizeswitch","localizeswitch",SwitchLocalize,true)
-    :Help( "Switch your localize mode,Rejoin required. 需要中文汉化的话请勿用(该操作将切换插件强制汉化状态)" )
-    
     --Admin comamnds
 	local function AdminScalePlayer( _client, _id, scale )
         local target = Shine.GetClientByNS2ID(_id)
@@ -76,11 +70,15 @@ function Plugin:CreateCommands()
     :AddParam{ Type = "number", Round = false, Min = 0.1, Max = 5, Optional = true, Default = 0.5 }
     :Help( "设置所有玩家的大小." )
 
+    local function SwitchLocalize(_client)
+        Server.SendNetworkMessage(_client, "SwitchLocalize", {},true)
+    end
+    self:BindCommand("sh_localize","localize",SwitchLocalize,true)
+        :Help( "Switch your localize mode,Rejoin required. 需要中文汉化的话请勿用(该操作将切换插件强制汉化状态)" )
+
 end
 
 
 function Plugin:Cleanup()
 	self.BaseClass.Cleanup( self )
 end
-
-return Plugin

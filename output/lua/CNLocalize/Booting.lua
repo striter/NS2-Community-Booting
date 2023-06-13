@@ -1,14 +1,25 @@
 Shared.RegisterNetworkMessage("SwitchLocalize", {})
 if Client then
-    gForceLocalize = CNPersistent and CNPersistent.forceLocalization or true
-    Client.HookNetworkMessage("SwitchLocalize", function(message)
-        gForceLocalize = not gForceLocalize
+    gForceLocalize = true
+    if CNPersistent then
+        if CNPersistent.forceLocalization ~= nil then
+            gForceLocalize = CNPersistent.forceLocalization
+        end
+    end
+
+    function SetLocalize(_value)
+        gForceLocalize = _value
         if CNPersistent then
             CNPersistent.forceLocalization = gForceLocalize
             CNPersistentSave()
-        end 
+        end
+    end
+    
+    Client.HookNetworkMessage("SwitchLocalize", function(message)
+        SetLocalize(not gForceLocalize)
     end )
     
+
     --Core
     if not kTranslateMessage then
         kTranslateMessage = {}
@@ -63,4 +74,4 @@ if Client then
     Locale.ChatFilter = CNChatFilter
 end
 
-Shared.Message("[CNCE] CN Booting Version 2023.04.13")
+Shared.Message("[CNCE] CN Booting Version 2023.06.14")
