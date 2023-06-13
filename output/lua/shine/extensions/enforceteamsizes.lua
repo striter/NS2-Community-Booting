@@ -137,34 +137,32 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		end
 	end
 
-	-- Use privilege
-	if available == false then
-		local client = Server.GetOwner(_player)
-		if not client or client:GetIsVirtual()  then return end
+	if available then return end
+	
+	local client = Server.GetOwner(_player)
+	if not client or client:GetIsVirtual()  then return end
 
-		if Shine:HasAccess( client, "sh_priorslot" ) then
-			self:Notify(_player, "您为[高级预留玩家],已忽视上述限制!",priorColorTable,nil)
+	if Shine:HasAccess( client, "sh_priorslot" ) then
+		self:Notify(_player, "您为[高级预留玩家],已忽视上述限制!",priorColorTable,nil)
+		return
+	end
+
+	if self.Config.NewcomerForceJoin ~= -1 and _player:GetPlayerSkill() < self.Config.NewcomerForceJoin then
+		self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
+		return
+	end
+	
+	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
+	if cpEnabled then
+		local userId = client:GetUserId()
+		if table.contains(kTeamJoinTracker,userId) and cp:GetPrewarmPrivilege(client,0,"当局入场通道") then return end
+
+		if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
+			if forceCredit > 0 then table.insert(kTeamJoinTracker,userId) end
 			return
-		end
-
-		if self.Config.NewcomerForceJoin ~= -1 and _player:GetPlayerSkill() < self.Config.NewcomerForceJoin then
-			self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
-			return
-		end
-		
-		local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-		if cpEnabled then
-			local userId = client:GetUserId()
-			if table.contains(kTeamJoinTracker,userId) and cp:GetPrewarmPrivilege(client,0,"当局入场通道") then return end
-
-			if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
-				if forceCredit > 0 then table.insert(kTeamJoinTracker,userId) end
-				return
-			end
 		end
 	end
 	
-	if available then return end
 	return false
 end
 
