@@ -75,9 +75,15 @@ function Plugin:CreateCommands()
     end
     self:BindCommand("sh_localize","localize",SwitchLocalize,true)
         :Help( "Switch your localize mode,Rejoin required. 需要中文汉化的话请勿用(该操作将切换插件强制汉化状态)" )
-
+    
+    local function WarnPopup(_client,_target,_message)
+        if not _target or _target:GetIsVirtual() then return end
+        Shine.SendNetworkMessage(_client, "Shine_PopupWarning", {Message = _message},true)
+    end
+    self:BindCommand("sh_warn_popup","warn_popup",WarnPopup)
+            :AddParam{ Type = "client" }
+            :AddParam{ Type = "string",Optional = true, TakeRestOfLine = true, Default = "不当的言行将会对他人造成严重影响!\n请注意你的行为!" }
 end
-
 
 function Plugin:Cleanup()
 	self.BaseClass.Cleanup( self )

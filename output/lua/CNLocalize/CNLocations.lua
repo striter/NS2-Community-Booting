@@ -381,3 +381,12 @@ kTranslateLocations["Long Halls"]="双重长走廊"
 kTranslateLocations["Ramp Room"]="坡道房"
 kTranslateLocations["JetPack Room"]="喷气背包快乐房"
 kTranslateLocations["Command Central"]="指挥中心"
+
+--co_legacy
+kTranslateLocations["Marine start"]="陆战队起点"
+kTranslateLocations["Central"]="中央大厅"
+kTranslateLocations["Acid Room"]="储酸室"
+kTranslateLocations["Hive Access"]="母巢通道"
+kTranslateLocations["Down Access"]="下层入口"
+kTranslateLocations["Pipe Corridor"]="管道走廊"
+

@@ -40,4 +40,17 @@ function Plugin:Initialise()
                     
                 })
     end )
-end 
+end
+
+Shine.HookNetworkMessage( "Shine_PopupWarning", function( Message )
+    CreateGUIObject("PopupWarning", GUIMenuPopupSimpleMessage, nil,
+            {
+                title = Locale.ResolveString("WARNING"),
+                message = Message.Message,
+                escDisabled = true,
+                buttonConfig =
+                {
+                    GUIPopupDialog.OkayButton,
+                },
+            })
+end )
