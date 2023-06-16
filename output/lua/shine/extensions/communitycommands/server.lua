@@ -78,7 +78,7 @@ function Plugin:CreateCommands()
     
     local function WarnPopup(_client,_target,_message)
         if not _target or _target:GetIsVirtual() then return end
-        Shine.SendNetworkMessage(_client, "Shine_PopupWarning", {Message = _message},true)
+        Shine.SendNetworkMessage(_target, "Shine_PopupWarning", {Message = _message},true)
     end
     self:BindCommand("sh_warn_popup","warn_popup",WarnPopup)
             :AddParam{ Type = "client" }
