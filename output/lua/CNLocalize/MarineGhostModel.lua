@@ -1,3 +1,5 @@
+
+local commandStationScreenPos = Vector(0, 0, 0)
 function MarineGhostModel:Update()
 
     local modelCoords = GhostModel.Update(self)
