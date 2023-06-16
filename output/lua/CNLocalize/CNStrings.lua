@@ -890,6 +890,7 @@ kTranslateMessage["FADE_TOOLTIP"]="致命的刺客\n*使用刀状骨骼挥砍\n*
 kTranslateMessage["SWIPE"]="劈砍"
 kTranslateMessage["BLINK"]="闪现"
 kTranslateMessage["BLINK_TOOLTIP"]="*快速切入切出战场.\n*朝任意方向加速.\n*持续释放保持高速."
+kTranslateMessage["STAB"]="蓄力一击"
 kTranslateMessage["STAB_BLINK"]="蓄力一击"
 kTranslateMessage["STAB_TOOLTIP"]="短暂蓄力,两只手同时出刀.\n*对目标造成巨大创伤.\n*对建筑造成双倍伤害.\n-消耗大量体力."
 kTranslateMessage["METABOLIZE"]="新陈代谢"

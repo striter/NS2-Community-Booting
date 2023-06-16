@@ -63,11 +63,12 @@ kCallingCards = enum({
     "Over9000Degrees",
     "DontBlink",
     "LockedAndLoaded",
-    
+
     "Dragon",
     "Chiikawa",
     "KittyKitty",
     "UShouldDie",
+    "Tom",
 })
 
 kCallingCardOptionKey = "customization/calling-card"
@@ -191,6 +192,7 @@ local kCallingCardData =
     [kCallingCards.KittyKitty] = { texture = "KittyKitty", frame = 24 ,rate = 12,size = 256 , itemId = kKittyKittyCardItemId},
     [kCallingCards.Chiikawa] = { texture = "Chiikawa" , frame = 12 ,rate = 12 ,size = 256, loop = true, itemId = kChiikawaCardItemId},
     [kCallingCards.UShouldDie] = { texture = "UShouldDie" , frame = 48 ,rate = 24 ,size = 128 , itemId = kUShouldDieCardItemId},
+    [kCallingCards.Tom] = { texture = "Tom" , frame = 29 ,rate = 14 ,size = 128 , itemId = kTomCardItemId},
 }
 
 local kCallingCardUnlockedTooltips =
@@ -246,8 +248,9 @@ local kCallingCardUnlockedTooltips =
 
     [kCallingCards.Dragon] = "CALLINGCARD_DRAGON_TOOLTIP",
     [kCallingCards.Chiikawa] = "CALLINGCARD_Chiikawa_TOOLTIP",
-    [kCallingCards.KittyKitty] = "CALLINGCARD_KITTYKITTY_TOOLTIP",
+    [kCallingCards.Tom] = "CALLINGCARD_TOM_TOOLTIP",
     [kCallingCards.UShouldDie] = "CALLINGCARD_UShouldDie_TOOLTIP",
+    [kCallingCards.KittyKitty] = "CALLINGCARD_KITTYKITTY_TOOLTIP",
 }
 
 local kCallingCardLockedTooltipOverrides =
@@ -272,7 +275,7 @@ function GetCallingCardTextureDetails(callingCard)
 
     local result = {}
     -- Get zero-based texture coordinates
-    
+
     result.frame = data.frame
     if result.frame then
         result.texture = kDynamicCardTextures[data.texture]
@@ -290,7 +293,7 @@ function GetCallingCardTextureDetails(callingCard)
 
         x2 = x1 + callingCardSize
         y2 = y1 + callingCardSize
-        
+
         result.texture = kCallingCardTexturePallete[data.texture]
         result.texCoords = { x1, y1, x2, y2 }
     end
@@ -304,11 +307,11 @@ function GetCallingCardTextureFrameDetails(_cardID, _timeElapsed,deathscreen)
 
     local frameCount = data.frame
     if not frameCount then return false end
-    
+
     local frameRate = data.rate
     local currentFrame = math.floor((_timeElapsed * frameRate))
     local loop = data.loop or not deathscreen
-    if loop then currentFrame = currentFrame % frameCount end
+    currentFrame = loop and (currentFrame % frameCount) or math.min(currentFrame,frameCount - 1)
 
     local size = data.size
 
@@ -323,7 +326,7 @@ function GetCallingCardTextureFrameDetails(_cardID, _timeElapsed,deathscreen)
 
     x2 = x1 + size
     y2 = y1 + size
-    
+
     return true , { x1, y1, x2, y2 }
 end
 
@@ -388,8 +391,8 @@ if Client then
             local ccUnlocked = GetIsCallingCardUnlocked(i) -- default check
 
             local willHideCard =
-                unobtainable
-                and (systemOnly or not hasCallingCard or not hasShoulderPad)
+            unobtainable
+                    and (systemOnly or not hasCallingCard or not hasShoulderPad)
 
             local hideReason = "none"
             if willHideCard then

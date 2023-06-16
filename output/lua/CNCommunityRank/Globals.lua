@@ -7,6 +7,8 @@ kDragonCardItemId = 13027
 kKittyKittyCardItemId = 13031
 kChiikawaCardItemId = 13032
 kUShouldDieCardItemId = 13033
+kTomCardItemId = 13034
+
 
 gCommunityUnlocks = {
     [0]={
@@ -59,7 +61,7 @@ gCommunityUnlocks = {
         kDamascusPurplePistolItemId,
         kDamascusPurpleRifleItemId,
 
-            kLockedLoadedCardItemId,
+        kLockedLoadedCardItemId,
         kDoNotBlinkCardItemId,
         kLazyGorgeCardItemId,
         kUrpaCardItemId,
@@ -110,6 +112,7 @@ gCommunityUnlocks = {
         kDragonCardItemId,
         kChiikawaCardItemId,
         kUShouldDieCardItemId,
+        kTomCardItemId,
     },
     [5]={
         kBlackArmorItemId,
