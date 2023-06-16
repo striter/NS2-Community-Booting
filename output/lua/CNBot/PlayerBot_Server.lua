@@ -5,6 +5,7 @@
     { name = "2E", isMale = true },
     { name = "莫莫", isMale = true },
     { name = "咖喱", isMale = true },
+    { name = "youngthink", isMale = true },
     
     -- previous one
     { name = "The Salty Sea Captain", isMale = true },
