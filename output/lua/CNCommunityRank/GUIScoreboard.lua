@@ -877,6 +877,9 @@ function GUIScoreboard:UpdateTeam(updateTeam)
     for index, player in ipairs(playerList) do
 
         local playerRecord = teamScores[currentPlayerIndex]
+        
+        local fakeBot = playerRecord.FakeBot
+        local hideRank = playerRecord.HideRank
         local playerName = playerRecord.Name
         local clientIndex = playerRecord.ClientIndex
         local steamId = GetSteamIdForClientIndex(clientIndex)
@@ -894,7 +897,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local currentPosition = Vector(player["Background"]:GetPosition())
         local playerStatus = isVisibleTeam and playerRecord.Status or "-"
         local isDead = isVisibleTeam and playerRecord.Status == deadString
-        local isSteamFriend = playerRecord.IsSteamFriend
+        local isSteamFriend = playerRecord.IsSteamFriend and not hideRank
         local playerSkill = playerRecord.IsCommander and playerRecord.CommSkill or playerRecord.Skill
         local adagradSum = playerRecord.AdagradSum
         local commanderColor = GUIScoreboard.kCommanderFontColor
@@ -914,11 +917,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             score = "*"
         end
 
-        local fakeBot = playerRecord.FakeBot
 
-        local defaultRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
+        local communityRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
 
-        local emblemIndex = defaultRankIndex
+        local emblemIndex = communityRankIndex
         if playerRecord.Emblem and playerRecord.Emblem ~= 0  then       --Override by emblem setting
             emblemIndex = playerRecord.Emblem
         end
@@ -1129,7 +1131,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Voice"]:SetIsVisible(ChatUI_GetClientMuted(clientIndex))
         player["Text"]:SetIsVisible(ChatUI_GetSteamIdTextMuted(steamId))
 
-        local rankIconIndex = defaultRankIndex
+        local rankIconIndex = communityRankIndex
         player["CommunityRankIcon"]:SetTexturePixelCoordinates(0, rankIconIndex *80,80,(rankIconIndex +1)*80)
         player["CommunityRankIcon"]:SetIsVisible(not fakeBot and rankIconIndex > 0)
         

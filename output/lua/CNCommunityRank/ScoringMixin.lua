@@ -7,6 +7,7 @@ function ScoringMixin:__initmixin()
     self.rankDelta = 0
     self.rankCommDelta = 0
     self.fakeBot = false
+    self.hideRank = false
     self.prewarmTier = 0
     self.prewarmTime = 0
     self.group = "RANK_INVALID"
@@ -33,6 +34,7 @@ if Server then
         self.rankDelta = player.rankDelta
         self.rankCommDelta = player.rankCommDelta
         self.fakeBot = player.fakeBot
+        self.hideRank = player.hideRank
         self.emblem = player.emblem
         self.lastSeenName = player.lastSeenName
         
@@ -47,6 +49,7 @@ if Server then
         self.rankDelta = dataTable.rank or 0
         self.rankCommDelta = dataTable.rankComm or 0
         self.fakeBot = dataTable.fakeBot or false
+        self.hideRank = dataTable.hideRank or false
         self.emblem = dataTable.emblem or 0
         self.lastSeenName = dataTable.lastSeenName or ""
     end

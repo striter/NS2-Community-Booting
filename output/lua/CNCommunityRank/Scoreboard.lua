@@ -116,13 +116,14 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.CommSkill = pie.commanderSkill
         
         playerRecord.FakeBot = pie.fakeBot
-        playerRecord.Group = pie.group
+        playerRecord.HideRank = pie.hideRank
         playerRecord.Emblem = pie.emblem
         playerRecord.QueueIndex = pie.queueIndex
         playerRecord.ReservedQueueIndex = pie.reservedQueueIndex
         playerRecord.prewarmTier = pie.prewarmTier
         playerRecord.prewarmTime = pie.prewarmTime
-        playerRecord.lastSeenName = pie.lastSeenName
+        playerRecord.Group = pie.hideRank and "RANK_DEFAULT" or pie.group    --Hide this shit
+        playerRecord.lastSeenName = pie.hideRank and "" or pie.lastSeenName
     ------------
 
         if playerRecord.IsCommander then

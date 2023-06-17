@@ -368,7 +368,27 @@ function Plugin:CreateMessageCommands()
 
     local botSwitchCommand = self:BindCommand( "sh_fakebot", "fakebot", FakeBotSwitch )
     botSwitchCommand:Help( "假扮成BOT." )
+    --Hide Rank
+    local function HideRankSwitchID(_client,_id)
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then
+            return
+        end
 
+        local data = GetPlayerData(self,target:GetUserId())
+        data.hideRank = not data.hideRank
+        target:GetControllingPlayer():SetPlayerExtraData(data)
+    end
+    
+    self:BindCommand( "sh_hiderank_set", "hiderank_set", HideRankSwitchID,true )
+        :AddParam{ Type = "steamid" }
+        :Help( "目标玩家的社区段位显示." )
+
+    local function HideRankSwitch(_client)
+        HideRankSwitchID(_client,_client:GetUserId())
+    end
+    self:BindCommand( "sh_hiderank", "hiderank", HideRankSwitch)
+        :Help( "切换社区段位显示." )
     --Emblem
     local function EmblemSetID(_client, _id, _emblem)
         local target = Shine.GetClientByNS2ID(_id)

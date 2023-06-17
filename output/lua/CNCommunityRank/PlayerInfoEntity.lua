@@ -47,6 +47,7 @@ local networkVars =
     commanderSkill = "integer",
     hiveskill = "integer" ,
     fakeBot = "boolean",
+    hideRank = "boolean",
     emblem = "integer (-64 to 64)",
     prewarmTier = "integer(0 to 16)",
     prewarmTime = "integer",
@@ -136,6 +137,7 @@ function PlayerInfoEntity:UpdateScore()
                 self.commanderSkill = scorePlayer:GetCommanderSkill()
                 self.group = scorePlayer.group
                 self.fakeBot = scorePlayer.fakeBot
+                self.hideRank = scorePlayer.hideRank
                 self.emblem = scorePlayer.emblem
                 self.prewarmTier = scorePlayer.prewarmTier
                 self.prewarmTime = scorePlayer.prewarmTime
