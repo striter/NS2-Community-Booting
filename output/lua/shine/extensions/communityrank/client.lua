@@ -101,11 +101,6 @@ local function openUrlNs2Panel(steam_id)
     openUrl(string.format('https://ns2panel.ocservers.com/%s/%s', 'player', steam_id), 'INFO_NS2PANEL');
 end
 
-local function openUrlObservatory(steam_id)
-    openUrl(string.format('https://observatory.morrolan.ch/player?steam_id=%s', steam_id), 'INFO_OBS');
-end
-
-
 function Plugin.GUIScoreboardSendKeyEvent(self, key, down)
     Plugin._GUIScoreboard = self
 
@@ -153,17 +148,17 @@ function Plugin.GUIScoreboardSendKeyEvent(self, key, down)
         teamColorBg = teamColorBg * 0.5
         
         local steamId = GetSteamIdForClientIndex(self.hoverPlayerClientIndex)
-        self.hoverMenu:AddButton('Obs 信息', teamColorBg, teamColorHighlight, textColor, function()
-          openUrlObservatory(steamId);
-        end);
+        --self.hoverMenu:AddButton('Obs 信息', teamColorBg, teamColorHighlight, textColor, function()
+        --  openUrlObservatory(steamId);
+        --end);
         
         self.hoverMenu:AddButton('NS2Panel 信息', teamColorBg, teamColorHighlight, textColor, function()
           openUrlNs2Panel(steamId);
         end);
           
-          self.hoverMenu:AddButton('复制NS2ID', teamColorBg, teamColorHighlight, textColor, function()
-              Shine.GUI.SetClipboardText(tostring(steamId))
-          end);
+        self.hoverMenu:AddButton('复制NS2ID', teamColorBg, teamColorHighlight, textColor, function()
+          Shine.GUI.SetClipboardText(tostring(steamId))
+        end);
       end
     end
 

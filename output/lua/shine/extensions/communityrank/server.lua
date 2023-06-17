@@ -119,7 +119,7 @@ local function RankPlayerDelta(self, _steamId, _delta, _commDelta)
     end
 end
 
-local eloEnable = { "ns2","NS2.0","NS1.0","siege+++"  }
+local eloEnable = { "ns2","NS2.0","NS1.0","Siege+++"  }
 local function EndGameElo(self)
     local gameMode = Shine.GetGamemode()
     if not table.contains(eloEnable,gameMode) then return end

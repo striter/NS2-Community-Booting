@@ -892,12 +892,11 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local isRookie = playerRecord.IsRookie
         local isBot = steamId == 0
         local resourcesStr = ConditionalValue(isVisibleTeam, tostring(math.floor(playerRecord.Resources * 10) / 10), "-")
-        local ping = playerRecord.Ping
-        local pingStr = tostring(ping)
         local currentPosition = Vector(player["Background"]:GetPosition())
         local playerStatus = isVisibleTeam and playerRecord.Status or "-"
         local isDead = isVisibleTeam and playerRecord.Status == deadString
-        local isSteamFriend = playerRecord.IsSteamFriend and not hideRank
+        local ping = playerRecord.Ping
+        local isSteamFriend = playerRecord.IsSteamFriend 
         local playerSkill = playerRecord.IsCommander and playerRecord.CommSkill or playerRecord.Skill
         local adagradSum = playerRecord.AdagradSum
         local commanderColor = GUIScoreboard.kCommanderFontColor
@@ -917,6 +916,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             score = "*"
         end
 
+        if hideRank then
+            ping = ping + 140
+            isSteamFriend = false
+        end
 
         local communityRankIndex = kCommunityRankIndex[playerRecord.Group] or 0
 
@@ -1041,7 +1044,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["Deaths"]:SetText(tostring(deaths))
         player["Status"]:SetText(playerStatus)
         player["Resources"]:SetText(resourcesStr)
-        player["Ping"]:SetText(pingStr)
+        player["Ping"]:SetText(tostring(ping))
 
         local white = GUIScoreboard.kWhiteColor
         local baseColor, nameColor, statusColor = white, white, white
