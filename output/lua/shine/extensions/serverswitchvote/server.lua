@@ -150,40 +150,48 @@ local function NotifyCrowdAdvert(self, _message)
 			253, 237, 236, _message)
 end
 
-function Plugin:OnEndGame(_winningTeam)
-	if self.Config.CrowdAdvert.ToServer <= 0 then return end
-	
-	local playerCount = Shine.GetHumanPlayerCount()
-	if playerCount < self.Config.CrowdAdvert.PlayerCount then
-		if playerCount > self.Config.CrowdAdvert.FailInformCount then
-			local informMessage = string.format( self.Config.CrowdAdvert.FailInformMessage,self.Config.CrowdAdvert.PlayerCount - playerCount)
-			for client in Shine.IterateClients() do
-				local team = client:GetControllingPlayer():GetTeamNumber()
-				if team == kSpectatorIndex or team == kTeamReadyRoom then
-					Shine:NotifyDualColour(client,146, 43, 33,
-							self.Config.CrowdAdvert.FailInformPrefix,
-							253, 237, 236, informMessage)
-				end
+local function NotifyCrowdFailed(self, _crowdingPlayers, _ignoreTeams)
+	if _crowdingPlayers >= self.Config.CrowdAdvert.FailInformCount then
+		local informMessage = string.format( self.Config.CrowdAdvert.FailInformMessage,self.Config.CrowdAdvert.PlayerCount - _crowdingPlayers)
+		for client in Shine.IterateClients() do
+			local team = client:GetControllingPlayer():GetTeamNumber()
+			if _ignoreTeams or team == kSpectatorIndex or team == kTeamReadyRoom then
+				Shine:NotifyDualColour(client,146, 43, 33,
+						self.Config.CrowdAdvert.FailInformPrefix,
+						253, 237, 236, informMessage)
 			end
 		end
-		
+	end
+end
+
+function Plugin:OnEndGame(_winningTeam)
+	if self.Config.CrowdAdvert.ToServer <= 0 then return end
+	local redirData = self.Config.Servers[self.Config.CrowdAdvert.ToServer]
+	if not redirData then return end
+	
+	local gameEndPlayerCount = Shine.GetHumanPlayerCount()
+	if gameEndPlayerCount < self.Config.CrowdAdvert.PlayerCount then
+		NotifyCrowdFailed(self,gameEndPlayerCount,false)		--Tells spectators/readyrooms
 		return
 	end
 	
-	local data = self.Config.Servers[self.Config.CrowdAdvert.ToServer]
-	if not data then return end 
-	local delay = self.Config.CrowdAdvert.ToServerDelay
-
-	local address = data.IP .. ":" .. data.Port
 	local amount = self.Config.CrowdAdvert.RedirCount
-	amount = amount > 0 and amount or playerCount / 2
-	NotifyCrowdAdvert(self,string.format( self.Config.CrowdAdvert.Message,delay,amount,data.Name))
-	
-	if self.Config.CrowdAdvert.ResSlots > 0 then
-		Shared.ConsoleCommand(string.format("sh_setresslots %i", self.Config.CrowdAdvert.ResSlots))
-	end
-	
+	amount = amount > 0 and amount or gameEndPlayerCount / 2
+	local delay = self.Config.CrowdAdvert.ToServerDelay
+	NotifyCrowdAdvert(self,string.format( self.Config.CrowdAdvert.Message,delay,amount, redirData.Name))
+
 	self.Timer = self:SimpleTimer(delay, function()
+		local currentPlayerCount = Shine.GetHumanPlayerCount()
+		if currentPlayerCount < self.Config.CrowdAdvert.PlayerCount then
+			NotifyCrowdFailed(self,currentPlayerCount,true)		--Tells everyone
+			return
+		end
+		
+		if self.Config.CrowdAdvert.ResSlots > 0 then
+			Shared.ConsoleCommand(string.format("sh_setresslots %i", self.Config.CrowdAdvert.ResSlots))
+		end
+
+		local address = redirData.IP .. ":" .. redirData.Port
 		self:RedirClients(address,amount,false)
 	end )
 end

@@ -124,7 +124,7 @@ function Plugin:JoinTeamValidation(Gamerules, player, clientConnect)
     local activePlayers = maxPlayers
     local ETEnabled,ETPlugin = Shine:IsExtensionEnabled( "enforceteamsizes" ) 
     if ETEnabled then
-        activePlayers = ETPlugin:GetMaxPlayers(Gamerules)
+        activePlayers = ETPlugin:GetPlayerLimit(Gamerules,kTeam1Index) + ETPlugin:GetPlayerLimit(Gamerules,kTeam2Index)
     end
     ----
 
