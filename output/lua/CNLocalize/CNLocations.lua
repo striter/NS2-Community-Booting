@@ -128,7 +128,7 @@ kTranslateLocations["Analysis"]="分析室"
 kTranslateLocations["Canopy"]="天井"
 kTranslateLocations["Bioreactors"]="生物反应器"
 kTranslateLocations["Seeding"]="育苗室"
-kTranslateLocations["Lobby"]="大厅"
+kTranslateLocations["Lobby"]="大堂"
 kTranslateLocations["Gallery"]="长廊"
 kTranslateLocations["Summit Reception"]="山巅接待处"
 kTranslateLocations["Reception"]="接待室"
@@ -390,3 +390,24 @@ kTranslateLocations["Hive Access"]="母巢通道"
 kTranslateLocations["Down Access"]="下层入口"
 kTranslateLocations["Pipe Corridor"]="管道走廊"
 
+--co_pulse
+kTranslateLocations["North"] = "北部"
+kTranslateLocations["South Hall"] = "南部大厅"
+kTranslateLocations["Hive"] = "母巢"
+kTranslateLocations["Down Hall"] = "下行大厅"
+
+--co_niveus
+kTranslateLocations["Bacterium Disposal"] = "细菌处理区"
+kTranslateLocations["Disposal Secondary Access"] = "处理区第二通道"
+kTranslateLocations["Disposal Access Passage"] = "处理区通道"
+kTranslateLocations["Bacterium Analysis"] = "细菌分析区"
+kTranslateLocations["Genetic Analysis"] = "基因分析区"
+kTranslateLocations["Corridor 12-B"] = "12-B 走廊"
+kTranslateLocations["Corridor 42-D"] = "42-D 走廊"
+kTranslateLocations["Path D"] = "D 通道"
+kTranslateLocations["G-3"] = "G-3 通道"
+kTranslateLocations["Gateway"] = "大门"
+
+
+--Tanith Redline
+kTranslateLocations["Induction Coils"] = "感应线圈"
