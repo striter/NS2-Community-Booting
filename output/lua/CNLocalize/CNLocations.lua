@@ -275,6 +275,7 @@ kTranslateLocations["System"]="系统区"
 kTranslateLocations["Gully Pass"]="山沟"
 kTranslateLocations["Mine Entrance"]="矿区入口"
 kTranslateLocations["Neon Walkway"]="霓虹步道"
+kTranslateLocations["Pipe Stream"]="管道流"
 kTranslateLocations["Dagon"]="达贡"
 kTranslateLocations["Southern Halls"]="南部大厅"
 kTranslateLocations["Aquarium"]="水族馆"
@@ -323,13 +324,12 @@ kTranslateLocations["Enclave"]="飞地"
 kTranslateLocations["South Basin"]="南清洁区"
 kTranslateLocations["Backhaul"]="返运室"
 
-
---230207
+--230207 ns2 mineral dev
 kTranslateLocations["Drill Site"]="钻探地点"
 kTranslateLocations["Rupture"]="断层"
 kTranslateLocations["Pump Station"]="水泵站"
 kTranslateLocations["Leak"]="管道"
-kTranslateLocations["Mineral Flitration"]="矿物过滤区"
+kTranslateLocations["Mineral Filtration"]="矿物过滤区"
 kTranslateLocations["Pump Control"]="水泵控制台"
 kTranslateLocations["Connection"]="连接区"
 kTranslateLocations["Generators"]="发电机组"
@@ -382,13 +382,85 @@ kTranslateLocations["Ramp Room"]="坡道房"
 kTranslateLocations["JetPack Room"]="喷气背包快乐房"
 kTranslateLocations["Command Central"]="指挥中心"
 
+--ns2_fracture
+kTranslateLocations["The Park"]="中央公园"
+kTranslateLocations["Upload"]="上行区"
+kTranslateLocations["Flow"]="流体区"
+kTranslateLocations["Preparation"]="准备室"
+kTranslateLocations["Cold Storage"]="冷藏室"
+kTranslateLocations["Quad"]="方形走廊"
+kTranslateLocations["The view"]="观景区"
+kTranslateLocations["Atlas"]="阿特拉斯"
+kTranslateLocations["Ceremony"]="教堂"
+kTranslateLocations["Screening"]="摄像室"
+kTranslateLocations["West Wing"]="西翼"
+kTranslateLocations["Antichamber"]="环绕回廊"
+kTranslateLocations["Uranus"]="环形入口"        --Didnt see any uranus there?
+
+--ns2_traid
+kTranslateLocations["Maint"]="维护区"
+kTranslateLocations["Glass Dome"]="玻璃穹顶"
+kTranslateLocations["Pipes"]="管道区"
+kTranslateLocations["Repository"]="仓库"
+kTranslateLocations["Melted"]="液态金属走廊"
+kTranslateLocations["Dome"]="穹顶"
+kTranslateLocations["Server Maintenance"]="机房维护"
+kTranslateLocations["Logistic"]="物流区"
+kTranslateLocations["Gantry"]="起重机操控"
+kTranslateLocations["E 3"]="区域3"
+kTranslateLocations["E 4"]="区域4"
+kTranslateLocations["E 5"]="区域5"
+kTranslateLocations["E 7"]="区域7"
+
+--ns2_dark
+kTranslateLocations["River"]="暗流"
+kTranslateLocations["Grizzly"]="棕熊洞穴"
+kTranslateLocations["Lagoon"]="环礁湖"
+kTranslateLocations["Geode"]="晶洞"
+kTranslateLocations["Mountain Pass"]="山巅入口"
+kTranslateLocations["Mineshaft"]="竖井"
+kTranslateLocations["Back Passage"]="备用通道"
+kTranslateLocations["Dig Site"]="挖掘场"
+kTranslateLocations["Shale Tunnel"]="页岩隧道"
+
+--ns2_stag
+kTranslateLocations["Escape Pods"]="逃生舱"
+kTranslateLocations["Entry"]="入口"
+kTranslateLocations["Cryo"] = "冷冻"
+kTranslateLocations["Chambers"]="处理区"
+kTranslateLocations["Cooling Tanks"]="冷却罐"
+kTranslateLocations["Airlock"]="气闸"
+kTranslateLocations["Drone Workshop"]="无人机工坊"
+kTranslateLocations["Storage Room B"]="仓库B"
+kTranslateLocations["Left Arms"]="左船翼"
+kTranslateLocations["Glance"]="扫描区"
+kTranslateLocations["Machine"]="机械"
+kTranslateLocations["Network"]="网状系统"
+kTranslateLocations["CPU"]="核心"
+kTranslateLocations["Stern"]="船尾"
+kTranslateLocations["Supply"]="补给区"
+kTranslateLocations["ArcSaber"]="箭型通道"
+
+--ns2_gorgon
+kTranslateLocations["Engine"]="引擎室"
+kTranslateLocations["Database"]="数据库"
+kTranslateLocations["South Tunnel"]="南部隧道"
+kTranslateLocations["East Passage"]="东部走廊"
+kTranslateLocations["Mineral Junction"]="矿场分岔路"
+kTranslateLocations["Oasis"]="绿洲"
+kTranslateLocations["Central Hub"]="中部大厅"
+
+--ns2_tanith_redline
+kTranslateLocations["Induction Coils"] = "感应线圈"
+
 --co_legacy
 kTranslateLocations["Marine start"]="陆战队起点"
 kTranslateLocations["Central"]="中央大厅"
 kTranslateLocations["Acid Room"]="储酸室"
 kTranslateLocations["Hive Access"]="母巢通道"
 kTranslateLocations["Down Access"]="下层入口"
-kTranslateLocations["Pipe Corridor"]="管道走廊"
+kTranslateLocations["Pipe"] = "管道"
+kTranslateLocations["Corridor"]="走廊"
 
 --co_pulse
 kTranslateLocations["North"] = "北部"
@@ -408,6 +480,30 @@ kTranslateLocations["Path-D"] = "通道D"
 kTranslateLocations["G-3"] = "G-3 通道"
 kTranslateLocations["Gateway"] = "工厂入口"
 
+--co_portals
+kTranslateLocations["Nautilus"] = "鹦鹉螺"
+kTranslateLocations["Circus"] = "马戏团"
+kTranslateLocations["Crystal Cave"] = "水晶洞穴"
+kTranslateLocations["Lava Cave"] = "岩浆洞穴"
+kTranslateLocations["Gravity Hub"] = "重力场"
+kTranslateLocations["Gorge Tunnel C"] = "C型通道"
+kTranslateLocations["Church of Onos"] = "Onos大堂"
 
---Tanith Redline
-kTranslateLocations["Induction Coils"] = "感应线圈"
+--co_volcanoDrop
+kTranslateLocations["Alien Spawn"] = "异形母巢"
+kTranslateLocations["Marine Spawn"] = "陆战队基地"
+kTranslateLocations["Phasegate Activates In Overtime"] = "传送门将在加时赛时启动"
+
+--co_fightbox
+kTranslateLocations["FightBox"] = "战斗区域"
+
+--co_spacefall
+kTranslateLocations["Pyramid"] = "金字塔"
+kTranslateLocations["Gate Room"] = "传送室"
+kTranslateLocations["Commissary"] = "休息室"
+kTranslateLocations["Control Room"] = "控制室"
+
+--gg_lego
+kTranslateLocations["Orange castle"] = "橙方城堡"
+kTranslateLocations["Blue Castle"] = "蓝方城堡"
+
