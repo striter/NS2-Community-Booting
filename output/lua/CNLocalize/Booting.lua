@@ -39,9 +39,10 @@ if Client then
     Locale.ResolveString = CNLocalizeResolve
     
     local baseGetCurrentLanguage = Locale.GetCurrentLanguage
-    function Locale:GetCurrentLanguage()
+    function CNGetCurrentLanguage()
         return gForceLocalize and "zhCN" or baseGetCurrentLanguage(self)
     end
+    Locale.GetCurrentLanguage = CNGetCurrentLanguage
     
     -- Fonts Fix
     ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "post")

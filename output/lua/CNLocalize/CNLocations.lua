@@ -404,9 +404,9 @@ kTranslateLocations["Bacterium Analysis"] = "细菌分析区"
 kTranslateLocations["Genetic Analysis"] = "基因分析区"
 kTranslateLocations["Corridor 12-B"] = "12-B 走廊"
 kTranslateLocations["Corridor 42-D"] = "42-D 走廊"
-kTranslateLocations["Path D"] = "D 通道"
+kTranslateLocations["Path-D"] = "通道D"
 kTranslateLocations["G-3"] = "G-3 通道"
-kTranslateLocations["Gateway"] = "大门"
+kTranslateLocations["Gateway"] = "工厂入口"
 
 
 --Tanith Redline
