@@ -246,9 +246,9 @@ local function EndGameElo(self)
     local estimateA = 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill) / 400))
     
     local rankTable = {}
-    ApplyRankTable(rankTable,team1Table,team1S - estimateA,0.75,0.25)     
+    ApplyRankTable(rankTable,team1Table,team1S - estimateA,1,0.5)     
     EloDebugMessage(self,"Team1:" .. tostring(team1AverageSkill))
-    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA),0.25,0.75)     
+    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA),0.5,1)     
     EloDebugMessage(self,"Team2:" .. tostring(team2AverageSkill))
 
     for steamId, rankOffset in pairs(rankTable) do

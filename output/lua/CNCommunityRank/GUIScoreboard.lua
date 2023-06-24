@@ -900,7 +900,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local playerSkill = playerRecord.IsCommander and playerRecord.CommSkill or playerRecord.Skill
         local playerSkillOffset = playerRecord.IsCommander and playerRecord.CommSkillOffset or playerRecord.SkillOffset
         
-        if teamNumber == kTeam1Index or teamNumber == kTeam2Index then
+        if playerSkillOffset and (teamNumber == kTeam1Index or teamNumber == kTeam2Index) then  --may be nil sometimes
             playerSkill = playerSkill + ((teamNumber == kTeam1Index) and -playerSkillOffset or playerSkillOffset)
         end
         
