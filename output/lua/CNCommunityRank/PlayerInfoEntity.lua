@@ -44,8 +44,9 @@ local networkVars =
     isSpectator = "boolean",
 ---------------
     playerSkill = "integer",
+    playerSkillOffset = "integer",
     commanderSkill = "integer",
-    hiveskill = "integer" ,
+    commanderSkillOffset = "integer",
     fakeBot = "boolean",
     hideRank = "boolean",
     emblem = "integer (-64 to 64)",
@@ -123,18 +124,24 @@ function PlayerInfoEntity:UpdateScore()
             self.teamNumber = scorePlayer:GetTeamNumber()
             self.callingCard = scorePlayer:GetCallingCard()
 
-            local playerSkillOffset, commanderSkill, commanderSkillOffset
+            local playerSkill,playerSkillOffset, commanderSkill, commanderSkillOffset
 
             if HasMixin(scorePlayer, "Scoring") then
 
+                playerSkill = scorePlayer:GetPlayerSkill()
+                playerSkillOffset = scorePlayer:GetPlayerSkillOffset()
+                commanderSkill = scorePlayer:GetCommanderSkill()
+                commanderSkillOffset = scorePlayer:GetCommanderSkillOffset()
+                
                 self.score = scorePlayer:GetScore()
                 self.kills = scorePlayer:GetKills()
                 self.assists = scorePlayer:GetAssistKills()
                 self.deaths = scorePlayer:GetDeaths()
-                self.hiveskill = scorePlayer.skill
             -------------
-                self.playerSkill = scorePlayer:GetPlayerSkill()
-                self.commanderSkill = scorePlayer:GetCommanderSkill()
+                self.playerSkill = playerSkill
+                self.playerSkillOffset = playerSkillOffset
+                self.commanderSkill = commanderSkill
+                self.commanderSkillOffset = commanderSkillOffset
                 self.group = scorePlayer.group
                 self.fakeBot = scorePlayer.fakeBot
                 self.hideRank = scorePlayer.hideRank
@@ -146,9 +153,6 @@ function PlayerInfoEntity:UpdateScore()
                 self.lastSeenName = scorePlayer.lastSeenName
             -------------
                 self.adagradSum = scorePlayer:GetAdagradSum()
-                playerSkillOffset = scorePlayer:GetPlayerSkillOffset()
-                commanderSkill = scorePlayer:GetCommanderSkill()
-                commanderSkillOffset = scorePlayer:GetCommanderSkillOffset()
                 local scoreClient = scorePlayer:GetClient()
                 Server.UpdatePlayerInfo( scoreClient, self.playerName, self.score )
 

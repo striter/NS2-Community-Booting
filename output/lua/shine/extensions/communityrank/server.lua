@@ -40,7 +40,9 @@ Plugin.DefaultConfig = {
     ["UserData"] = {
         ["55022511"] = {
             rank = -2000,
+            rankOffset = -200,
             rankComm = -500,
+            rankCommOffset = -200,
             fakeBot = true,
             emblem = 0,
         }
@@ -99,24 +101,41 @@ function Plugin:Cleanup()
 end
 
 ----Elo
+local function GetMarineSkill(player) return player.skill - player.skillOffset end
+local function GetAlienSkill(player) return player.skill + player.skillOffset end
+local function GetMarineCommanderSkill(player) return player.commSkill - player.commSkillOffset end
+local function GetAlienCommanderSkill(player) return player.commSkill + player.commSkillOffset end
+local abs = math.abs
+local min = math.min
+local max = math.max
+local function sign(value)
+    return value>0 and 1 or -1
+end
+
 local function EloDebugMessage(self,_string)
     if not self.Config.Elo.Debug then return end
     Shared.Message(_string)
 end
 
-local function RankPlayerDelta(self, _steamId, _delta, _commDelta)
-    local data = GetPlayerData(self,_steamId)
-    local client = Shine.GetClientByNS2ID(_steamId)
-    local player = client and client:GetControllingPlayer()
-
-    data.rank = (data.rank or 0) + _delta
-    data.rankComm = (data.rankComm or 0) + _commDelta
-    
-    if player then
-        data.rank = math.max(data.rank, -player.skill)
-        data.rankComm = math.max(data.rankComm, -player.commSkill)
+local function EloDataSanityCheck(data,player)
+    if player then      --Limit it for newcomers?
+        if data.rank then data.rank = max(data.rank, -player.skill) end
+        if data.rankComm then data.rankComm = max(data.rankComm, - player.commSkill) end
+        
+        -- How could one have offset greater than his skill?
+        --if data.rankOffset then data.rankOffset = sign(data.rankOffset) * min(abs(player.skill),abs(data.rankOffset)) end
+        --if data.rankCommOffset then data.rankCommOffset = sign(data.rankCommOffset) * min(abs(player.commSkill),abs(data.rankCommOffset)) end
         player:SetPlayerExtraData(data)
     end
+end
+local function RankPlayerDelta(self, _steamId, _marineDelta, _alienDelta, _marineCommDelta, _alienCommDelta)
+    local data = GetPlayerData(self,_steamId)
+    local client = Shine.GetClientByNS2ID(_steamId)
+    data.rank = (data.rank or 0) + (_marineDelta + _alienDelta) / 2
+    data.rankOffset = (data.rankOffset or 0) + (_alienDelta - _marineDelta) / 2
+    data.rankComm = (data.rankComm or 0) + (_marineCommDelta + _alienCommDelta) / 2
+    data.rankCommOffset = (data.rankCommOffset or 0) + (_alienCommDelta - _marineCommDelta) / 2
+    EloDataSanityCheck(data,client and client:GetControllingPlayer())
 end
 
 local eloEnable = { "ns2","NS2.0","NS1.0","Siege+++"  }
@@ -182,14 +201,16 @@ local function EndGameElo(self)
     table.sort(team1Table,RankCompare)
     table.sort(team2Table,RankCompare)
 
-    local function ApplyRankTable(_rankTable, _teamTable, _estimate)
+    local function ApplyRankTable(_rankTable, _teamTable, _estimate, _team1Param,_team2Param)
         for _,data in pairs(_teamTable) do
             local steamId = data.steamId
 
             if not _rankTable[steamId] then
                 _rankTable[steamId] = {
-                    playerD = 0,
-                    commD = 0,
+                    player1 = 0,
+                    player2 = 0,
+                    comm1 = 0,
+                    comm2 = 0,
                 }
             end
 
@@ -198,16 +219,19 @@ local function EndGameElo(self)
             local tierString = tostring(tier)
             local playerConstant = self.Config.Elo.Constants.Tier[tierString] or self.Config.Elo.Constants.Default
             local playerDelta = math.floor(playerConstant * _estimate * data.playerTimeNormalized)
-            _rankTable[steamId].playerD = _rankTable[steamId].playerD + playerDelta
             
             local commConstant = self.Config.Elo.Constants.CommanderTier[tierString] or self.Config.Elo.Constants.Default
             local commDelta =  math.floor(commConstant * _estimate * data.commTimeNormalized)
-            _rankTable[steamId].commD = _rankTable[steamId].commD + commDelta
 
-            EloDebugMessage(self,string.format("ID:%-10s T%-3i (P) T:%f K:%-3i F:%3i", steamId,tierString,data.playerTimeNormalized,playerConstant,playerDelta)
-                    ..string.format("  (C) T:%f K:%-3i F:%3i",data.commTimeNormalized,commConstant,commDelta)
-            )
-        end
+            _rankTable[steamId].player1 = _rankTable[steamId].player1 + playerDelta*_team1Param
+            _rankTable[steamId].comm1 = _rankTable[steamId].comm1 + commDelta*_team1Param
+            _rankTable[steamId].player2 = _rankTable[steamId].player2 + playerDelta*_team2Param
+            _rankTable[steamId].comm2 = _rankTable[steamId].comm2 + commDelta*_team2Param
+
+                EloDebugMessage(self,string.format("ID:%-10s T%-3i (P) T:%f K:%-3i F:%3i", steamId,tierString,data.playerTimeNormalized,playerConstant,playerDelta)
+                        ..string.format("  (C) T:%f K:%-3i F:%3i",data.commTimeNormalized,commConstant,commDelta)
+                )
+            end
     end
 
     local team1S, team2S
@@ -219,17 +243,18 @@ local function EndGameElo(self)
         team1S = .5; team2S = .5;
     end
 
-    local rankTable = {}
-    EloDebugMessage(self,"Team1:" .. tostring(team1AverageSkill))
     local estimateA = 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill) / 400))
-    ApplyRankTable(rankTable,team1Table,team1S - estimateA)
+    
+    local rankTable = {}
+    ApplyRankTable(rankTable,team1Table,team1S - estimateA,0.75,0.25)     
+    EloDebugMessage(self,"Team1:" .. tostring(team1AverageSkill))
+    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA),0.25,0.75)     
     EloDebugMessage(self,"Team2:" .. tostring(team2AverageSkill))
-    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA))
 
     for steamId, rankOffset in pairs(rankTable) do
-        if rankOffset.playerD ~= 0 or rankOffset.commD ~=0 then
-            RankPlayerDelta(self,steamId,rankOffset.playerD,rankOffset.commD)
-            EloDebugMessage(self,string.format("(ID:%-10s (P):%-5i (C):%-5i",steamId, rankOffset.playerD,rankOffset.commD))
+        if rankOffset.player1 ~= 0 or  rankOffset.player2 ~= 0 or rankOffset.comm1 ~=0 or rankOffset.comm2 ~= 0 then
+            RankPlayerDelta(self,steamId,rankOffset.player1,rankOffset.player2,rankOffset.comm1,rankOffset.comm2)   
+            EloDebugMessage(self,string.format("(ID:%-10s (P1):%-5i (P2):%-5i (C1):%-5i (C2):%-5i",steamId, rankOffset.player1,rankOffset.player2,rankOffset.comm1,rankOffset.comm2))
         end
     end
 
@@ -301,51 +326,105 @@ function Plugin:CreateMessageCommands()
     end
     
     --Elo
-    local function AdminRankReset( _client, _id )
+    
+    ----Reset
+    local function AdminRankResetPlayer(_client, _id )
         local target = Shine.GetClientByNS2ID(_id)
         if not target then return end
         if not CanSelfTargeting(_client,target) then return end
         
         local data = GetPlayerData(self,_id)
         data.rank = 0
-        data.rankComm = 0
+        data.rankOffset = 0
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
 
-    self:BindCommand( "sh_rank_reset", "rank_reset", AdminRankReset )
+    self:BindCommand( "sh_rank_reset_player", "rank_reset_player", AdminRankResetPlayer)
     :AddParam{ Type = "steamid" }
-    :Help( "重置玩家的段位(还原至NS2段位)." )
+    :Help( "重置玩家的[玩家段位](还原至NS2段位)." )
 
-    local function AdminRankPlayer( _client, _id, _rank ,_rankComm)
+    local function AdminRankResetCommander(_client, _id )
         local target = Shine.GetClientByNS2ID(_id)
         if not target then return end
         if not CanSelfTargeting(_client,target) then return end
-        
+
         local data = GetPlayerData(self,_id)
-        local player = target:GetControllingPlayer()
-        if _rank >= 0 then data.rank = _rank - player.skill end
-        if _rankComm >= 0 then data.rankComm = _rankComm - player.commSkill end
+        data.rankComm = 0
+        data.rankCommOffset = 0
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
 
-    local setCommand = self:BindCommand( "sh_rank_set", "rank_set", AdminRankPlayer )
-    :AddParam{ Type = "steamid" }
-    :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
-    :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
-    :Help( "设置对应玩家的[社区段位]及[指挥段位].例:!rank_set 55022511 -1 2800" )
-
-    local function AdminRankPlayerDelta( _client, _id, _offset,_commOffset )
+    self:BindCommand( "sh_rank_reset_comm", "rank_reset_comm", AdminRankResetCommander)
+        :AddParam{ Type = "steamid" }
+        :Help( "重置玩家的[指挥段位](还原至NS2段位)." )
+    
+    --Set       (Jezz ....)
+    local function AdminRankPlayer( _client, _id, _rankMarine ,_rankAlien)
         local target = Shine.GetClientByNS2ID(_id)
         if not target then return end
         if not CanSelfTargeting(_client,target) then return end
         
-        RankPlayerDelta(self,_id,_offset,_commOffset)
+        local player = target:GetControllingPlayer()
+        local data = GetPlayerData(self,_id)
+        _rankMarine = _rankMarine >= 0 and _rankMarine or GetMarineSkill(player)
+        _rankAlien = _rankAlien >= 0 and _rankAlien or GetAlienSkill(player)
+        data.rank = (_rankMarine + _rankAlien) / 2 - player.skill
+        data.rankOffset = (_rankAlien - _rankMarine) / 2 - player.skillOffset
+        EloDataSanityCheck(data,player)
     end
-    self:BindCommand( "sh_rank_delta", "rank_delta", AdminRankPlayerDelta )
+
+    self:BindCommand( "sh_rank_set_player", "rank_set_player", AdminRankPlayer )
+    :AddParam{ Type = "steamid" }
+    :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+    :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+    :Help( "设置对应玩家的[玩家段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
+
+    local function AdminRankPlayerCommander( _client, _id, _rankMarine ,_rankAlien)
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then return end
+        if not CanSelfTargeting(_client,target) then return end
+
+        local player = target:GetControllingPlayer()
+        local data = GetPlayerData(self,_id)
+        _rankMarine = _rankMarine >= 0 and _rankMarine or GetMarineCommanderSkill(player)
+        _rankAlien = _rankAlien >= 0 and _rankAlien or GetAlienCommanderSkill(player)
+        data.rankComm = (_rankMarine + _rankAlien) / 2 - player.commSkill
+        data.rankCommOffset = (_rankAlien - _rankMarine) / 2 - player.commSkillOffset
+        Shared.Message(tostring(data.rankComm) .. " " .. tostring(data.rankCommOffset))
+        EloDataSanityCheck(data,player)
+        Shared.Message(tostring(data.rankComm) .. " " .. tostring(data.rankCommOffset))
+    end
+
+    self:BindCommand( "sh_rank_set_comm", "rank_set_comm", AdminRankPlayerCommander )
+        :AddParam{ Type = "steamid" }
+        :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+        :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+        :Help( "设置对应玩家的[指挥段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
+    
+    --Delta
+    local function AdminRankDeltaPlayer(_client, _id, _marineDelta, _alienDelta )
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then return end
+        if not CanSelfTargeting(_client,target) then return end
+        RankPlayerDelta(self,_id,_marineDelta,_alienDelta,0,0)
+    end
+    self:BindCommand( "sh_rank_delta_player", "rank_delta_player", AdminRankDeltaPlayer)
     :AddParam{ Type = "steamid"}
     :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
     :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
-    :Help( "增减对应玩家的[社区段位]及[指挥段位].例:!rank_delta 55022511 100 -100" )
+    :Help( "增减对应玩家的[玩家段位].例:!rank_delta 55022511 100 -100" )
+
+    local function AdminRankDeltaCommander( _client, _id, _marineDelta,_alienDelta )
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then return end
+        if not CanSelfTargeting(_client,target) then return end
+        RankPlayerDelta(self,_id,0,0,_marineDelta,_alienDelta)
+    end
+    self:BindCommand( "sh_rank_delta_comm", "rank_delta_comm", AdminRankDeltaCommander )
+        :AddParam{ Type = "steamid"}
+        :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
+        :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
+        :Help( "增减对应玩家的[指挥段位].例:!rank_delta 55022511 100 -100" )
 
     --BOT
     local function FakeBotSwitchID(_client,_id)

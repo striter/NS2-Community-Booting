@@ -1,20 +1,28 @@
 ScoringMixin.networkVars.rankDelta = "integer"
+ScoringMixin.networkVars.rankOffsetDelta = "integer"
 ScoringMixin.networkVars.rankCommDelta = "integer"
+ScoringMixin.networkVars.rankCommOffsetDelta = "integer"
 
 local baseInitMixin = ScoringMixin.__initmixin
 function ScoringMixin:__initmixin()
     baseInitMixin(self)
-    self.rankDelta = 0
-    self.rankCommDelta = 0
-    self.fakeBot = false
-    self.hideRank = false
-    self.prewarmTier = 0
-    self.prewarmTime = 0
     self.group = "RANK_INVALID"
+    
+    self.rankDelta = 0 
+    self.rankOffsetDelta = 0  
+    self.rankCommDelta = 0 
+    self.rankCommOffsetDelta = 0
+    
+    self.fakeBot = false 
+    self.hideRank = false 
     self.emblem = 0
-    self.queueIndex = 0
-    self.reservedQueueIndex = 0
     self.lastSeenName = ""
+    
+    self.prewarmTier = 0  
+    self.prewarmTime = 0
+    
+    self.queueIndex = 0  
+    self.reservedQueueIndex = 0
 end
 
 function ScoringMixin:GetPlayerSkill()
@@ -25,14 +33,25 @@ function ScoringMixin:GetCommanderSkill()
     return math.max(0,self.commSkill + self.rankCommDelta)
 end
 
+function ScoringMixin:GetPlayerSkillOffset()
+    return math.max(0, self.skillOffset + self.rankOffsetDelta)
+end
+
+function ScoringMixin:GetCommanderSkillOffset()
+    return math.max(0,self.commSkillOffset + self.rankCommOffsetDelta)
+end
+
 if Server then
     local baseCopyPlayerDataFrom = ScoringMixin.CopyPlayerDataFrom
     function ScoringMixin:CopyPlayerDataFrom(player)
         baseCopyPlayerDataFrom(self,player)
         self.group = player.group
 
-        self.rankDelta = player.rankDelta
-        self.rankCommDelta = player.rankCommDelta
+        self.rankDelta = player.rankDelta   
+        self.rankOffsetDelta = player.rankOffsetDelta
+        self.rankCommDelta = player.rankCommDelta   
+        self.rankCommOffsetDelta = player.rankCommOffsetDelta
+        
         self.fakeBot = player.fakeBot
         self.hideRank = player.hideRank
         self.emblem = player.emblem
@@ -47,7 +66,10 @@ if Server then
 
     function ScoringMixin:SetPlayerExtraData(dataTable)
         self.rankDelta = dataTable.rank or 0
+        self.rankOffsetDelta = dataTable.rankOffset or 0
         self.rankCommDelta = dataTable.rankComm or 0
+        self.rankCommOffsetDelta = dataTable.rankCommOffset or 0
+        
         self.fakeBot = dataTable.fakeBot or false
         self.hideRank = dataTable.hideRank or false
         self.emblem = dataTable.emblem or 0

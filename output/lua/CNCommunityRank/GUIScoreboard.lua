@@ -898,6 +898,12 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local ping = playerRecord.Ping
         local isSteamFriend = playerRecord.IsSteamFriend 
         local playerSkill = playerRecord.IsCommander and playerRecord.CommSkill or playerRecord.Skill
+        local playerSkillOffset = playerRecord.IsCommander and playerRecord.CommSkillOffset or playerRecord.SkillOffset
+        
+        if teamNumber == kTeam1Index or teamNumber == kTeam2Index then
+            playerSkill = playerSkill + ((teamNumber == kTeam1Index) and -playerSkillOffset or playerSkillOffset)
+        end
+        
         local adagradSum = playerRecord.AdagradSum
         local commanderColor = GUIScoreboard.kCommanderFontColor
 

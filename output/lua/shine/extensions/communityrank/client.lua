@@ -37,11 +37,11 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
         for _, player in ipairs(playerList) do
             if not scoreboard.hoverMenu.background:GetIsVisible() and not MainMenu_GetIsOpened() then
                 
-                local playerRecord = teamScores[currentPlayerIndex]
-                if playerRecord == nil then return end
+                local pr = teamScores[currentPlayerIndex]
+                if pr == nil then return end
                 
                 local skillIcon = player.SkillIcon
-                if playerRecord.FakeBot then  --Fake BOT
+                if pr.FakeBot then  --Fake BOT
                     skillIcon:SetTexturePixelCoordinates(0, 1 * 32, 100, 2 * 32 - 1)
                     player["Ping"]:SetText(kZeroStr)
                 end
@@ -50,31 +50,29 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                     local mouseX, mouseY = Client.GetCursorPosScreen()
                     if skillIcon:GetIsVisible() and GUIItemContainsPoint(skillIcon, mouseX, mouseY) then
                         local description
-                        if playerRecord.FakeBot or playerRecord.SteamId == 0 then
+                        if pr.FakeBot or pr.SteamId == 0 then
                             description = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString("SKILLTIER_BOT"),-1)
                         else
                             description = skillIcon.tooltipText
                             
-                            description = description .. "\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(playerRecord.Group))
+                            description = description .. "\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(pr.Group))
 
-                            local skillTierString
-                            if playerRecord.CommSkill ~= playerRecord.Skill then
-                                skillTierString = string.format(Locale.ResolveString("SKILL_TIER_COMM"),playerRecord.Skill,playerRecord.CommSkill)
-                            else
-                                skillTierString = string.format(Locale.ResolveString("SKILL_TIER"),playerRecord.Skill)
+                            if pr.CommSkill > 0 then
+                                description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER_COMM"), pr.CommSkill - pr.CommSkillOffset, pr.CommSkill + pr.CommSkillOffset )
                             end
-                            description = description .. "\n" .. skillTierString
+                            description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER"), pr.Skill - pr.SkillOffset, pr.Skill + pr.SkillOffset)
 
-                            if playerRecord.lastSeenName ~= "" and playerRecord.lastSeenName ~= playerRecord.Name then
-                                description = description .. "\n" .. string.format( Locale.ResolveString("LAST_SEEN_NAME")) .. playerRecord.lastSeenName
+
+                            if pr.lastSeenName ~= "" and pr.lastSeenName ~= pr.Name then
+                                description = description .. "\n" .. string.format( Locale.ResolveString("LAST_SEEN_NAME")) .. pr.lastSeenName
                             end
 
-                            if playerRecord.prewarmTime > 0 then
+                            if pr.prewarmTime > 0 then
                                 description = description .. "\n"
-                                description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PLAYTIME"),playerRecord.prewarmTime)
+                                description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PLAYTIME"), pr.prewarmTime)
 
-                                if playerRecord.prewarmTier > 0 then
-                                    description = description .. "\n" .. Locale.ResolveString(string.format("COMMUNITY_PREWARM_%i",playerRecord.prewarmTier))
+                                if pr.prewarmTier > 0 then
+                                    description = description .. "\n" .. Locale.ResolveString(string.format("COMMUNITY_PREWARM_%i", pr.prewarmTier))
                                 end
                             end
                             

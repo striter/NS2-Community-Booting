@@ -113,7 +113,9 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.CallingCard = pie.callingCard
     ------------- Why
         playerRecord.Skill = pie.playerSkill
+        playerRecord.SkillOffset = pie.playerSkillOffset
         playerRecord.CommSkill = pie.commanderSkill
+        playerRecord.CommSkillOffset = pie.commanderSkillOffset
         
         playerRecord.FakeBot = pie.fakeBot
         playerRecord.HideRank = pie.hideRank

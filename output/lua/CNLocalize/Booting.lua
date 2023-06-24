@@ -56,6 +56,7 @@ if Client then
     end
     
     ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "post")
+    ModLoader.SetupFileHook("lua/GUIUnitStatus.lua", "lua/CNLocalize/GUIUnitStatus.lua", "replace")
     ModLoader.SetupFileHook("lua/Player_Client.lua", "lua/CNLocalize/Player_Client.lua", "post")
     ModLoader.SetupFileHook("lua/PhaseGate.lua", "lua/CNLocalize/PhaseGate.lua", "post")
     ModLoader.SetupFileHook("lua/Observatory.lua", "lua/CNLocalize/Observatory.lua", "post")
