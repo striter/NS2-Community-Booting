@@ -101,10 +101,10 @@ function Plugin:Cleanup()
 end
 
 ----Elo
-local function GetMarineSkill(player) return player.skill - player.skillOffset end
-local function GetAlienSkill(player) return player.skill + player.skillOffset end
-local function GetMarineCommanderSkill(player) return player.commSkill - player.commSkillOffset end
-local function GetAlienCommanderSkill(player) return player.commSkill + player.commSkillOffset end
+local function GetMarineSkill(player) return player.skill + player.skillOffset end
+local function GetAlienSkill(player) return player.skill - player.skillOffset end
+local function GetMarineCommanderSkill(player) return player.commSkill + player.commSkillOffset end
+local function GetAlienCommanderSkill(player) return player.commSkill - player.commSkillOffset end
 local abs = math.abs
 local min = math.min
 local max = math.max

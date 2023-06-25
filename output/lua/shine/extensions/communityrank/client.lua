@@ -58,9 +58,9 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                             description = description .. "\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(pr.Group))
 
                             if pr.CommSkill > 0 then
-                                description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER_COMM"), math.max(0,pr.CommSkill - pr.CommSkillOffset), math.max(0,pr.CommSkill + pr.CommSkillOffset) )
+                                description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER_COMM"), math.max(0,pr.CommSkill + pr.CommSkillOffset), math.max(0,pr.CommSkill - pr.CommSkillOffset) )
                             end
-                            description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER"), math.max(0,pr.Skill - pr.SkillOffset) , math.max(0,pr.Skill + pr.SkillOffset))
+                            description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER"), math.max(0,pr.Skill + pr.SkillOffset) , math.max(0,pr.Skill - pr.SkillOffset))
 
 
                             if pr.lastSeenName ~= "" and pr.lastSeenName ~= pr.Name then

@@ -901,7 +901,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local playerSkillOffset = playerRecord.IsCommander and playerRecord.CommSkillOffset or playerRecord.SkillOffset
         
         if playerSkillOffset and (teamNumber == kTeam1Index or teamNumber == kTeam2Index) then  --may be nil sometimes
-            playerSkill = playerSkill + ((teamNumber == kTeam1Index) and -playerSkillOffset or playerSkillOffset)
+            playerSkill = math.max(0, playerSkill + ((teamNumber == kTeam1Index) and playerSkillOffset or -playerSkillOffset))
         end
         
         local adagradSum = playerRecord.AdagradSum

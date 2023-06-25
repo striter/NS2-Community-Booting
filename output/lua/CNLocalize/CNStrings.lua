@@ -547,6 +547,7 @@ kTranslateMessage["NAME_TEAM_1"]="边境拓荒者部队"
 kTranslateMessage["NAME_TEAM_2"]="卡垃异形"
 kTranslateMessage["NANO_SHIELD_ACTIVE"]="纳米防护罩已激活"
 kTranslateMessage["NANO_SHIELD_DEFENSE"]="纳米防护罩"
+kTranslateMessage["NANO_SHIELD_DEFENSE_TOOLTIP"]="为目标添加纳米防护罩.\n*降低目标短时间内的承受伤害"
 
 kTranslateMessage["NEED_HEALING_HERE"]="此处需要治疗"
 kTranslateMessage["NEXT_MEDAL_TIME"]="更高一级奖牌所需用时"
