@@ -224,8 +224,8 @@ local function EndGameElo(self)
             local commDelta =  math.floor(commConstant * _estimate * data.commTimeNormalized)
 
             _rankTable[steamId].player1 = _rankTable[steamId].player1 + playerDelta*_team1Param
-            _rankTable[steamId].comm1 = _rankTable[steamId].comm1 + commDelta*_team1Param
             _rankTable[steamId].player2 = _rankTable[steamId].player2 + playerDelta*_team2Param
+            _rankTable[steamId].comm1 = _rankTable[steamId].comm1 + commDelta*_team1Param
             _rankTable[steamId].comm2 = _rankTable[steamId].comm2 + commDelta*_team2Param
 
                 EloDebugMessage(self,string.format("ID:%-10s T%-3i (P) T:%f K:%-3i F:%3i", steamId,tierString,data.playerTimeNormalized,playerConstant,playerDelta)
@@ -243,12 +243,13 @@ local function EndGameElo(self)
         team1S = .5; team2S = .5;
     end
 
-    local estimateA = 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill) / 400))
+    -- Quite dynamic(people join people leave), and with single legs exists average skill won't work,so treat both team equals
+    local estimateA = 0.5 -- 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill) / 400))     --What it should be...
     
     local rankTable = {}
-    ApplyRankTable(rankTable,team1Table,team1S - estimateA,1,0.5)     
+    ApplyRankTable(rankTable,team1Table,team1S - estimateA,1.25,0.75)     
     EloDebugMessage(self,"Team1:" .. tostring(team1AverageSkill))
-    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA),0.5,1)     
+    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA),0.75,1.25)     
     EloDebugMessage(self,"Team2:" .. tostring(team2AverageSkill))
 
     for steamId, rankOffset in pairs(rankTable) do

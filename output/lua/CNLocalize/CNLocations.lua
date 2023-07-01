@@ -311,13 +311,14 @@ kTranslateLocations["Lounge"]="休息室"
 kTranslateLocations["M0 N-Key"]="M0 N-关键点"
 kTranslateLocations["Elevator"]="电梯间"
 
---220305
+--220305 ns2 nexus
 kTranslateLocations["Reach"]="到达站"
 kTranslateLocations["Lockout"]="管制通道"
 kTranslateLocations["Staging"]="准备区"
 kTranslateLocations["Assembly"]="组装区"
 kTranslateLocations["North Basin"]="北清洁区"
-kTranslateLocations["Green Path"]="绿色小道"
+kTranslateLocations["Green"]="翠绿"
+kTranslateLocations["Path"]="小道"
 kTranslateLocations["Emerge"]="暴露区域"
 kTranslateLocations["Overhang"]="悬挂区"
 kTranslateLocations["Enclave"]="飞地"
