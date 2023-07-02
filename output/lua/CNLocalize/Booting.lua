@@ -73,6 +73,11 @@ if Client then
     ModLoader.SetupFileHook("lua/GUIDeathStats.lua", "lua/CNLocalize/GUIDeathStats.lua", "replace" )
     ModLoader.SetupFileHook("lua/ConfigFileUtility.lua", "lua/CNLocalize/ShineExtensions.lua", "post" )        --Shine localizes
 
+    --Customization
+    ModLoader.SetupFileHook("lua/menu2/PlayerScreen/Customize/GUIMenuCustomizeScreen.lua", "lua/CNLocalize/Customize/GUIMenuCustomizeScreen.lua", "replace" )
+    ModLoader.SetupFileHook("lua/menu2/PlayerScreen/GUIMenuPlayerScreen.lua", "lua/CNLocalize/Customize/GUIMenuPlayerScreen.lua", "replace" )
+    
+    
     --Chat Filter
     Script.Load("lua/CNLocalize/ChatFilters.lua")
     function CNChatFilter(input)

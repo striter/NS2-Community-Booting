@@ -132,9 +132,9 @@ local function RankPlayerDelta(self, _steamId, _marineDelta, _alienDelta, _marin
     local data = GetPlayerData(self,_steamId)
     local client = Shine.GetClientByNS2ID(_steamId)
     data.rank = (data.rank or 0) + (_marineDelta + _alienDelta) / 2
-    data.rankOffset = (data.rankOffset or 0) + (_alienDelta - _marineDelta) / 2
+    data.rankOffset = (data.rankOffset or 0) + (_marineDelta - _alienDelta) / 2
     data.rankComm = (data.rankComm or 0) + (_marineCommDelta + _alienCommDelta) / 2
-    data.rankCommOffset = (data.rankCommOffset or 0) + (_alienCommDelta - _marineCommDelta) / 2
+    data.rankCommOffset = (data.rankCommOffset or 0) + (_marineCommDelta - _alienCommDelta) / 2
     EloDataSanityCheck(data,client and client:GetControllingPlayer())
 end
 

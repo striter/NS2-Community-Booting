@@ -14,6 +14,8 @@ ModLoader.SetupFileHook( "lua/VotingChangeMap.lua", "lua/CNBooting/VotingChangeM
 ModLoader.SetupFileHook( "lua/GUIVoteMenu.lua", "lua/CNBooting/GUIVoteMenu.lua", "post")
 ModLoader.SetupFileHook( "lua/shine/core/shared/hook.lua", "lua/shine/gamemodehook.lua", "post" )
 
+ModLoader.SetupFileHook("lua/menu2/GUIMainMenuInGame.lua", "lua/CNBooting/GUI/GUIMainMenuInGame.lua", "post")
+
 Script.Load("lua/CNBooting/CNPersistent.lua")
 
 -- workaround because Las is lazy

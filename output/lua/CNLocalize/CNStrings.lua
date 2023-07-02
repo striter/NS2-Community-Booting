@@ -1245,7 +1245,6 @@ kTranslateMessage["SELECT_TUNNEL_EXIT"]="选择虫洞出口"
 kTranslateMessage["SELECT_TUNNEL_EXIT_TOOLTIP"]=""
 -- END
 
-
 kTranslateMessage["CONSUMED_STRUCTURE"]="%s (消耗)"
 kTranslateMessage["RECYCLED_STRUCTURE"]="%s (回收)"
 

@@ -53,6 +53,10 @@ if kTranslateMessage then
     kTranslateMessage["COMMUNITY_PREWARM_3"]="           < 预热贡献者 - P2 >"
     kTranslateMessage["COMMUNITY_PREWARM_4"]="           < 预热贡献者 - P3 >"
     kTranslateMessage["COMMUNITY_PREWARM_5"]="           < 社区支持者 >"
+
+    kTranslateMessage["COMMUNITY_GUI_BUTTON"]="点击查看社区指南"
+    kTranslateMessage["COMMUNITY_GROUP_BUTTON"]="加入我们的群聊"
+    
 end
 
 if kLocales then
@@ -109,4 +113,7 @@ if kLocales then
     kLocales["COMMUNITY_PREWARM_3"]="           <Prewarm Silver>"
     kLocales["COMMUNITY_PREWARM_4"]="           <Prewarm Contributor>"
     kLocales["COMMUNITY_PREWARM_5"]="           <NS2CN Contributor>"
-end 
+
+    kLocales["COMMUNITY_GUI_BUTTON"]="Check Our [Community Guide]"
+    kLocales["COMMUNITY_GROUP_BUTTON"]="Join our Q group"
+end

@@ -173,7 +173,6 @@ end
 local function RestrictionDisplay(self,_client)
 	local skillLimitMin = self.Config.SkillLimitMin
 	local skillLimitMax = self.Config.SkillLimitMax < 0 and "∞" or tostring(self.Config.SkillLimitMax)
-
 	self:Notify(_client,string.format("当前加入限制:陆战队:%s,卡拉异形:%s 分数限制:(%s至%s)", self.Config.Team[1], self.Config.Team[2],skillLimitMin,skillLimitMax),self.Config.MessageNameColor,nil)
 end
 
