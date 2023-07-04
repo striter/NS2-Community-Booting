@@ -4,6 +4,7 @@
 
 local Plugin = ...
 
+Plugin.DisableSideButton = true
 function Plugin:NetworkUpdate( Key, Old, New )
 	if Key == "ConcedeTime" then
 		kMinTimeBeforeConcede = New or kMinTimeBeforeConcede

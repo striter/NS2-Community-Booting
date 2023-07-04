@@ -260,24 +260,8 @@ function Plugin:CastVoteByPlayer( Gamerules, ID, Player )
 	if not Player then return end
 	if ID ~= kTechId.VoteConcedeRound then return end
 
-	local Client = Player:GetClient()
-	if not Client then return true end
-
-	local Team = Player:GetTeam():GetTeamNumber()
-	if not self.Votes[ Team ] then return true end
-
-	local Votes = self.Votes[ Team ]:GetVotes()
-	local Success, Err = self:AddVote( Client, Team )
-
-	-- We failed to add the vote, but we should still stop it going through NS2's system...
-	if not Success then return true end
-	-- We've surrendered, no need to say another player's voted.
-	if self.Surrendered then return true end
-
-	local VotesNeeded = self.Votes[ Team ]:GetVotesNeeded()
-
-	self:AnnounceVote( Player, Team, VotesNeeded )
-
+	self:VoteSurrender(Player)
+	
 	return true
 end
 
@@ -299,39 +283,41 @@ function Plugin:AnnounceVote( Player, Team, VotesNeeded )
 	end
 end
 
+function Plugin:VoteSurrender(Player)
+
+	if not Player then return end
+
+	local Team = Player:GetTeamNumber()
+	if not self.Votes[ Team ] then
+		self:NotifyTranslatedError( Player, "ERROR_WRONG_TEAM" )
+
+		return
+	end
+
+	local Success, Err = self:AddVote( Client, Team )
+
+	if Success then
+		if self.Surrendered then return end
+
+		local VotesNeeded = self.Votes[ Team ]:GetVotesNeeded()
+
+		return self:AnnounceVote( Player, Team, VotesNeeded )
+	end
+
+	if Err == "already voted" then
+		self:NotifyTranslatedError( Player, "ERROR_ALREADY_VOTED" )
+	elseif Err == "too many PRes" then
+		self:NotifyTranslatedError( Player, "ERROR_RESOURCE_AVAILABLE" )
+	else
+		self:NotifyTranslatedError( Player, "ERROR_ROUND_TIME" )
+	end
+end
 
 function Plugin:CreateCommands()
 	local function VoteSurrender( Client )
 		if not Client then return end
-	
 		local Player = Client:GetControllingPlayer()
-		if not Player then return end
-	
-		local Team = Player:GetTeamNumber()
-	
-		if not self.Votes[ Team ] then
-			self:NotifyTranslatedError( Player, "ERROR_WRONG_TEAM" )
-	
-			return
-		end
-		
-		local Success, Err = self:AddVote( Client, Team )
-	
-		if Success then
-			if self.Surrendered then return end
-	
-			local VotesNeeded = self.Votes[ Team ]:GetVotesNeeded()
-	
-			return self:AnnounceVote( Player, Team, VotesNeeded )
-		end
-	
-		if Err == "already voted" then
-			self:NotifyTranslatedError( Player, "ERROR_ALREADY_VOTED" )
-		elseif Err == "too many PRes" then
-			self:NotifyTranslatedError( Player, "ERROR_RESOURCE_AVAILABLE" )
-		else
-			self:NotifyTranslatedError( Player, "ERROR_ROUND_TIME" )
-		end
+		self:VoteSurrender(Player)
 	end
-	self:BindCommand( "sh_votesurrender", { "surrender", "votesurrender", "surrendervote", "remake" }, VoteSurrender, true ):Help( "Votes to surrender the round." )
+	self:BindCommand( "sh_votesurrender", { "surrender", "votesurrender", "surrendervote", "remake" }, VoteSurrender, true ):Help( "发起投降." )
 end

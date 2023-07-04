@@ -771,18 +771,19 @@ VoteMenu:AddPage("Main", function(self)
         local PluginButton = ActivePlugins[i]
 
         local Enabled, Plugin = Shine:IsExtensionEnabled(PluginNames[PluginButton])
-        local Text = Locale:GetPhrase("Core", PluginButton)
-        if Enabled then
+        
+        if Enabled and not Plugin.DisableSideButton then
+            local Text = Locale:GetPhrase("Core", PluginButton)
             Text = Plugin.GetVoteButtonText and Plugin:GetVoteButtonText() or Text
-        end
+            
+            local Button = self:AddSideButton(Text, ClickFuncs[PluginButton])
+            Button.Plugin = PluginButton
+            Button.DefaultText = Text
+            Button:SetDebugName(StringFormat("VoteMenu%sButton", PluginButton))
 
-        local Button = self:AddSideButton(Text, ClickFuncs[PluginButton])
-        Button.Plugin = PluginButton
-        Button.DefaultText = Text
-        Button:SetDebugName(StringFormat("VoteMenu%sButton", PluginButton))
-
-        if Enabled and Plugin and Plugin.OnVoteButtonCreated then
-            Plugin:OnVoteButtonCreated(Button, VoteMenu)
+            if Plugin.OnVoteButtonCreated then
+                Plugin:OnVoteButtonCreated(Button, VoteMenu)
+            end
         end
     end
 
