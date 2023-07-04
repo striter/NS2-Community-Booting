@@ -12,15 +12,15 @@ local TableEmpty = table.Empty
 local EventDispatcher = Shine.TypeDef()
 Shine.EventDispatcher = EventDispatcher
 
-function EventDispatcher:Init( EventListeners )
-	self.EventListeners = EventListeners
-	self.ListenersWithEvent = {}
+function EventDispatcher:Init(EventListeners)
+    self.EventListeners = EventListeners
+    self.ListenersWithEvent = {}
 
-	return self
+    return self
 end
 
 function EventDispatcher:FlushCache()
-	self.ListenersWithEvent = {}
+    self.ListenersWithEvent = {}
 end
 
 --[[
@@ -28,23 +28,23 @@ end
 
 	May wish to override with a protected call and error handling.
 ]]
-function EventDispatcher:CallEvent( Listener, Method, ... )
-	return Method( Listener, ... )
+function EventDispatcher:CallEvent(Listener, Method, ...)
+    return Method(Listener, ...)
 end
 
 --[[
 	Default behaviour determines any table with a function under the event name
 	is a valid event listener.
 ]]
-function EventDispatcher:IsListenerValidForEvent( Listener, Event )
-	return IsType( Listener[ Event ], "function" )
+function EventDispatcher:IsListenerValidForEvent(Listener, Event)
+    return IsType(Listener[Event], "function")
 end
 
 --[[
 	Default behaviour takes the value in the table as the listener.
 ]]
-function EventDispatcher:GetListener( ListenerEntry )
-	return ListenerEntry
+function EventDispatcher:GetListener(ListenerEntry)
+    return ListenerEntry
 end
 
 --[[
@@ -52,29 +52,31 @@ end
 	given event. This is then cached so that only those listeners are called
 	for the given event.
 ]]
-function EventDispatcher:GetListenersForEvent( Event )
-	local Listeners = self.ListenersWithEvent[ Event ]
-	if Listeners then return Listeners end
+function EventDispatcher:GetListenersForEvent(Event)
+    local Listeners = self.ListenersWithEvent[Event]
+    if Listeners then
+        return Listeners
+    end
 
-	local Count = 0
-	Listeners = {}
+    local Count = 0
+    Listeners = {}
 
-	for i = 1, #self.EventListeners do
-		local Listener = self:GetListener( self.EventListeners[ i ] )
-		if self:IsListenerValidForEvent( Listener, Event ) then
-			Count = Count + 1
-			Listeners[ Count ] = Listener
-		end
-	end
+    for i = 1, #self.EventListeners do
+        local Listener = self:GetListener(self.EventListeners[i])
+        if self:IsListenerValidForEvent(Listener, Event) then
+            Count = Count + 1
+            Listeners[Count] = Listener
+        end
+    end
 
-	Listeners.Count = Count
-	self.ListenersWithEvent[ Event ] = Listeners
+    Listeners.Count = Count
+    self.ListenersWithEvent[Event] = Listeners
 
-	return Listeners
+    return Listeners
 end
 
-local Dispatchers = CodeGen.MakeFunctionGenerator( {
-	Template = [[return function( self, Event{Arguments} )
+local Dispatchers = CodeGen.MakeFunctionGenerator({
+    Template = [[return function( self, Event{Arguments} )
 			local Listeners = self:GetListenersForEvent( Event )
 			for i = 1, Listeners.Count do
 				local a, b, c, d, e, f = self:CallEvent( Listeners[ i ], Listeners[ i ][ Event ]{Arguments} )
@@ -84,9 +86,9 @@ local Dispatchers = CodeGen.MakeFunctionGenerator( {
 			end
 		end
 	]],
-	ChunkName = "@lua/shine/lib/objects/event_dispatcher.lua/DispatchEvent",
-	InitialSize = 12
-} )
+    ChunkName = "@lua/shine/lib/objects/event_dispatcher.lua/DispatchEvent",
+    InitialSize = 12
+})
 
 --[[
 	Dispatches an event to all listeners that are listening for it.
@@ -94,21 +96,21 @@ local Dispatchers = CodeGen.MakeFunctionGenerator( {
 	Only checks the listeners once to determine which (if any) are listening for the event.
 	Subsequent calls use the cached list until the cache is flushed.
 ]]
-function EventDispatcher:DispatchEvent( Event, ... )
-	return Dispatchers[ select( "#", ... ) ]( self, Event, ... )
+function EventDispatcher:DispatchEvent(Event, ...)
+    return Dispatchers[select("#", ...)](self, Event, ...)
 end
 
-local Broadcasters = CodeGen.MakeFunctionGenerator( {
-	Template = [[return function( self, Event{Arguments} )
+local Broadcasters = CodeGen.MakeFunctionGenerator({
+    Template = [[return function( self, Event{Arguments} )
 			local Listeners = self:GetListenersForEvent( Event )
 			for i = 1, Listeners.Count do
 				self:CallEvent( Listeners[ i ], Listeners[ i ][ Event ]{Arguments} )
 			end
 		end
 	]],
-	ChunkName = "@lua/shine/lib/objects/event_dispatcher.lua/BroadcastEvent",
-	InitialSize = 12
-} )
+    ChunkName = "@lua/shine/lib/objects/event_dispatcher.lua/BroadcastEvent",
+    InitialSize = 12
+})
 
 --[[
 	Broadcasts an event to all listeners that are listening for it.
@@ -116,35 +118,35 @@ local Broadcasters = CodeGen.MakeFunctionGenerator( {
 	Unlike DispatchEvent, listeners returning values does not stop the event
 	from continuing. All listeners are guaranteed to receive the event.
 ]]
-function EventDispatcher:BroadcastEvent( Event, ... )
-	return Broadcasters[ select( "#", ... ) ]( self, Event, ... )
+function EventDispatcher:BroadcastEvent(Event, ...)
+    return Broadcasters[select("#", ...)](self, Event, ...)
 end
 
 --[[
 	A sub class of EventDispatcher that tracks events that have been called.
 ]]
-local TrackingEventDispatcher = Shine.TypeDef( EventDispatcher )
+local TrackingEventDispatcher = Shine.TypeDef(EventDispatcher)
 Shine.TrackingEventDispatcher = TrackingEventDispatcher
 
-function TrackingEventDispatcher:Init( EventListeners )
-	self.FiredEvents = {}
-	return EventDispatcher.Init( self, EventListeners )
+function TrackingEventDispatcher:Init(EventListeners)
+    self.FiredEvents = {}
+    return EventDispatcher.Init(self, EventListeners)
 end
 
 function TrackingEventDispatcher:ResetHistory()
-	TableEmpty( self.FiredEvents )
+    TableEmpty(self.FiredEvents)
 end
 
-function TrackingEventDispatcher:BroadcastEvent( Event, ... )
-	self.FiredEvents[ Event ] = true
-	return EventDispatcher.BroadcastEvent( self, Event, ... )
+function TrackingEventDispatcher:BroadcastEvent(Event, ...)
+    self.FiredEvents[Event] = true
+    return EventDispatcher.BroadcastEvent(self, Event, ...)
 end
 
-function TrackingEventDispatcher:DispatchEvent( Event, ... )
-	self.FiredEvents[ Event ] = true
-	return EventDispatcher.DispatchEvent( self, Event, ... )
+function TrackingEventDispatcher:DispatchEvent(Event, ...)
+    self.FiredEvents[Event] = true
+    return EventDispatcher.DispatchEvent(self, Event, ...)
 end
 
-function TrackingEventDispatcher:HasFiredEvent( Event )
-	return not not self.FiredEvents[ Event ]
+function TrackingEventDispatcher:HasFiredEvent(Event)
+    return not not self.FiredEvents[Event]
 end

@@ -7,6 +7,24 @@ if Client then
         end
     end
 
+    if gForceLocalize then
+        gCommunityGuideTable = {
+            mainPulloutTitle = "欢迎来到<物竞天择2中国社区>",
+            subPulloutTitle = "点击查看指南",
+
+            urlTitle = "物竞天择2中国社区 - 指南",
+            url = "https://docs.qq.com/doc/DUFlBR0ZJeFRiRnRi",
+        }
+    else
+        gCommunityGuideTable = {
+            mainPulloutTitle = "Welcome to <NS2CN>",
+            subPulloutTitle = "Click to read Guide",
+
+            urlTitle = "<NS2CN> Community Guide",
+            url = "https://docs.qq.com/doc/DUFVkbnBiSlVMb3Nx",
+        }
+    end
+
     function SetLocalize(_value)
         gForceLocalize = _value
         if CNPersistent then
@@ -76,7 +94,11 @@ if Client then
     --Customization
     ModLoader.SetupFileHook("lua/menu2/PlayerScreen/Customize/GUIMenuCustomizeScreen.lua", "lua/CNLocalize/Customize/GUIMenuCustomizeScreen.lua", "replace" )
     ModLoader.SetupFileHook("lua/menu2/PlayerScreen/GUIMenuPlayerScreen.lua", "lua/CNLocalize/Customize/GUIMenuPlayerScreen.lua", "replace" )
-    
+
+    --GUI
+    ModLoader.SetupFileHook("lua/menu2/GUIMainMenu.lua", "lua/CNLocalize/GUI/GUIMainMenu.lua", "post")
+    ModLoader.SetupFileHook("lua/menu2/NavBar/GUIMenuNavBar.lua", "lua/CNLocalize/GUI/GUIMenuNavBar.lua", "post")
+    ModLoader.SetupFileHook("lua/menu2/NavBar/Screens/News/GUIMenuNewsFeedPullout.lua", "lua/CNLocalize/GUI/GUIMenuNewsFeedPullout.lua", "replace")
     
     --Chat Filter
     Script.Load("lua/CNLocalize/ChatFilters.lua")

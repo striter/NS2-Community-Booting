@@ -16,44 +16,44 @@ local Stream = Shine.TypeDef()
 
 -- Expose some useful predicate functions.
 Predicates = {
-	Equals = function( Value )
-		return function( Entry )
-			return Entry == Value
-		end
-	end,
-	Has = function( Set )
-		return function( Entry )
-			return Set[ Entry ]
-		end
-	end,
-	Not = function( Predicate )
-		return function( Entry )
-			return not Predicate( Entry )
-		end
-	end,
-	And = function( Left, Right )
-		return function( Value )
-			return Left( Value ) and Right( Value )
-		end
-	end,
-	Or = function( Left, Right )
-		return function( Value )
-			return Left( Value ) or Right( Value )
-		end
-	end
+    Equals = function(Value)
+        return function(Entry)
+            return Entry == Value
+        end
+    end,
+    Has = function(Set)
+        return function(Entry)
+            return Set[Entry]
+        end
+    end,
+    Not = function(Predicate)
+        return function(Entry)
+            return not Predicate(Entry)
+        end
+    end,
+    And = function(Left, Right)
+        return function(Value)
+            return Left(Value) and Right(Value)
+        end
+    end,
+    Or = function(Left, Right)
+        return function(Value)
+            return Left(Value) or Right(Value)
+        end
+    end
 }
 
 --[[
 	Creates a stream containing the given values, but not referencing the original table.
 ]]
-function Stream.Of( Table )
-	return Stream( TableQuickCopy( Table ) )
+function Stream.Of(Table)
+    return Stream(TableQuickCopy(Table))
 end
 
-function Stream:Init( Table )
-	self.Data = Table
+function Stream:Init(Table)
+    self.Data = Table
 
-	return self
+    return self
 end
 
 --[[
@@ -61,34 +61,34 @@ end
 
 	Any value for which the predicate returns false will be removed.
 ]]
-function Stream:Filter( Predicate, Context )
-	local Size = #self.Data
-	local Offset = 0
+function Stream:Filter(Predicate, Context)
+    local Size = #self.Data
+    local Offset = 0
 
-	for i = 1, Size do
-		self.Data[ i - Offset ] = self.Data[ i ]
-		if not Predicate( self.Data[ i ], i, Context ) then
-			self.Data[ i ] = nil
-			Offset = Offset + 1
-		end
-	end
+    for i = 1, Size do
+        self.Data[i - Offset] = self.Data[i]
+        if not Predicate(self.Data[i], i, Context) then
+            self.Data[i] = nil
+            Offset = Offset + 1
+        end
+    end
 
-	for i = Size, Size - Offset + 1, -1 do
-		self.Data[ i ] = nil
-	end
+    for i = Size, Size - Offset + 1, -1 do
+        self.Data[i] = nil
+    end
 
-	return self
+    return self
 end
 
 --[[
 	Performs an action on all values in the stream, without changing the stream.
 ]]
-function Stream:ForEach( Function, Context )
-	for i = 1, #self.Data do
-		Function( self.Data[ i ], i, Context )
-	end
+function Stream:ForEach(Function, Context)
+    for i = 1, #self.Data do
+        Function(self.Data[i], i, Context)
+    end
 
-	return self
+    return self
 end
 
 --[[
@@ -96,12 +96,12 @@ end
 
 	All values in the stream are replaced with what the mapper function returns for them.
 ]]
-function Stream:Map( Mapper, Context )
-	for i = 1, #self.Data do
-		self.Data[ i ] = Mapper( self.Data[ i ], i, Context )
-	end
+function Stream:Map(Mapper, Context)
+    for i = 1, #self.Data do
+        self.Data[i] = Mapper(self.Data[i], i, Context)
+    end
 
-	return self
+    return self
 end
 
 --[[
@@ -109,18 +109,18 @@ end
 	This cannot contain nil values.
 ]]
 function Stream:Distinct()
-	local Seen = {}
-	local Out = {}
+    local Seen = {}
+    local Out = {}
 
-	for i = 1, #self.Data do
-		local Entry = self.Data[ i ]
-		if Entry ~= nil and not Seen[ Entry ] then
-			Seen[ Entry ] = true
-			Out[ #Out + 1 ] = Entry
-		end
-	end
+    for i = 1, #self.Data do
+        local Entry = self.Data[i]
+        if Entry ~= nil and not Seen[Entry] then
+            Seen[Entry] = true
+            Out[#Out + 1] = Entry
+        end
+    end
 
-	return Stream( Out )
+    return Stream(Out)
 end
 
 --[[
@@ -135,83 +135,83 @@ end
 	If no start value is provided, then the first step will be at index 2 in the stream,
 	with the current reducing value equal to the first value in the stream.
 ]]
-function Stream:Reduce( Consumer, StartValue, Context )
-	local ReducingValue = StartValue or self.Data[ 1 ]
-	local StartIndex = StartValue and 1 or 2
+function Stream:Reduce(Consumer, StartValue, Context)
+    local ReducingValue = StartValue or self.Data[1]
+    local StartIndex = StartValue and 1 or 2
 
-	for i = StartIndex, #self.Data do
-		ReducingValue = Consumer( ReducingValue, self.Data[ i ], i, Context )
-	end
+    for i = StartIndex, #self.Data do
+        ReducingValue = Consumer(ReducingValue, self.Data[i], i, Context)
+    end
 
-	return ReducingValue
+    return ReducingValue
 end
 
 --[[
 	Returns true if any value in the stream matches the given predicate.
 ]]
-function Stream:AnyMatch( Predicate, Context )
-	for i = 1, #self.Data do
-		if Predicate( self.Data[ i ], i, Context ) then
-			return true
-		end
-	end
-	return false
+function Stream:AnyMatch(Predicate, Context)
+    for i = 1, #self.Data do
+        if Predicate(self.Data[i], i, Context) then
+            return true
+        end
+    end
+    return false
 end
 
 --[[
 	Sorts the values in the stream with the given comparator, or nil for natural order.
 ]]
-function Stream:Sort( Comparator )
-	TableSort( self.Data, Comparator )
+function Stream:Sort(Comparator)
+    TableSort(self.Data, Comparator)
 
-	return self
+    return self
 end
 
 --[[
 	Sorts the values in the stream with the given comparator using a stable merge sort.
 ]]
-function Stream:StableSort( Comparator )
-	TableMergeSort( self.Data, Comparator )
+function Stream:StableSort(Comparator)
+    TableMergeSort(self.Data, Comparator)
 
-	return self
+    return self
 end
 
 --[[
 	Imposes a limit on the number of results.
 ]]
-function Stream:Limit( Limit )
-	for i = Limit + 1, #self.Data do
-		self.Data[ i ] = nil
-	end
+function Stream:Limit(Limit)
+    for i = Limit + 1, #self.Data do
+        self.Data[i] = nil
+    end
 
-	return self
+    return self
 end
 
 --[[
 	Concatenates the values in the stream into a single string based
 	on the string value returned by the transformation function.
 ]]
-function Stream:Concat( Separator, ToStringFunc )
-	ToStringFunc = ToStringFunc or tostring
+function Stream:Concat(Separator, ToStringFunc)
+    ToStringFunc = ToStringFunc or tostring
 
-	local Values = {}
+    local Values = {}
 
-	for i = 1, #self.Data do
-		Values[ i ] = ToStringFunc( self.Data[ i ] )
-	end
+    for i = 1, #self.Data do
+        Values[i] = ToStringFunc(self.Data[i])
+    end
 
-	return TableConcat( Values, Separator )
+    return TableConcat(Values, Separator)
 end
 
 --[[
 	Returns the current table of data for the stream.
 ]]
 function Stream:AsTable()
-	return self.Data
+    return self.Data
 end
 
 function Stream:GetCount()
-	return #self.Data
+    return #self.Data
 end
 
 Shine.Stream = Stream

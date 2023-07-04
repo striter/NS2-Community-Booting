@@ -8,21 +8,21 @@ local Controls = SGUI.Controls
 local Column = {}
 
 function Column:Initialise()
-	Controls.Panel.Initialise( self )
+    Controls.Panel.Initialise(self)
 
-	self:SetLayout( SGUI.Layout:CreateLayout( "Vertical" ), true )
+    self:SetLayout(SGUI.Layout:CreateLayout("Vertical"), true)
 end
 
-function Column:SetPadding( Padding )
-	self.Layout:SetPadding( Padding )
+function Column:SetPadding(Padding)
+    self.Layout:SetPadding(Padding)
 end
 
-function Column:GetContentSizeForAxis( Axis )
-	return self.Layout:GetContentSizeForAxis( Axis )
+function Column:GetContentSizeForAxis(Axis)
+    return self.Layout:GetContentSizeForAxis(Axis)
 end
 
-function Column:GetMaxSizeAlongAxis( Axis )
-	return self.Layout:GetMaxSizeAlongAxis( Axis )
+function Column:GetMaxSizeAlongAxis(Axis)
+    return self.Layout:GetMaxSizeAlongAxis(Axis)
 end
 
-SGUI:Register( "Column", Column, "Panel" )
+SGUI:Register("Column", Column, "Panel")

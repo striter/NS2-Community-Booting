@@ -214,6 +214,7 @@ function Plugin:OnDropAllWeapons(player)
 
 end
 
+local kPassThroughAdditional = 5
 local function CheckPlayerForcePurchase(self,player,purchaseTech, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
 	local client,tier = GetClientAndTier(player)
 	if client and tier > 0 then
@@ -222,10 +223,10 @@ local function CheckPlayerForcePurchase(self,player,purchaseTech, newTeamNumber,
 			local cost = LookupTechData(purchaseTech,kTechDataCostKey,0)
 			if cost > 0 then
 				local replaceMapName = LookupTechData(purchaseTech,kTechDataMapName)
-				player:AddResources(-cost)
+				player:AddResources(-cost + kPassThroughAdditional)
 				Shine:NotifyDualColour( player,
 						88, 214, 141, string.format("[新兵保护]",tier),
-						234, 250, 241, string.format("您的个人资源即将溢出,已消耗[%d]资源个人转化为科技/演化(该功能到达老兵段位后失效).",cost))
+						234, 250, 241, string.format("您的个人资源即将溢出,已消耗[%d+%d]个人资源转化为科技/演化(该功能到达老兵段位后失效).",cost, kPassThroughAdditional))
 				Shine:NotifyDualColour( player,
 						88, 214, 141, "[提示]",
 						234, 250, 241, "<物竞天择2>核心为科技追逐,过度积攒个人资源将导致您和您的队伍团队处于劣势!同时您所处的段位拥有[阵亡补偿],请利用该期间寻找游戏乐趣与最适合自己的职能定位." )

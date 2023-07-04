@@ -1,12 +1,11 @@
-﻿local kBotPersonalSettings = 
-{
+﻿local kBotPersonalSettings = {
     -- custom
     { name = "StriteR.", isMale = true },
     { name = "2E", isMale = true },
     { name = "莫莫", isMale = true },
     { name = "咖喱", isMale = true },
     { name = "youngthink", isMale = true },
-    
+
     -- previous one
     { name = "The Salty Sea Captain", isMale = true },
     { name = "Ashton M", isMale = true },
@@ -20,7 +19,7 @@
     { name = "Breadman", isMale = true },
     { name = "CharMomone", isMale = false },
     { name = "Chops", isMale = true },
-    { name = "Clon10", isMale = false},
+    { name = "Clon10", isMale = false },
     { name = "Comprox", isMale = true },
     { name = "CoolCookieCooks", isMale = true },
     { name = "Crispix", isMale = true },
@@ -48,17 +47,17 @@
     { name = "Matso", isMale = true },
     { name = "Mazza", isMale = true },
     { name = "McGlaspie", isMale = true },
-    { name = "Mephilles", isMale = true},
+    { name = "Mephilles", isMale = true },
     { name = "Mendasp", isMale = true },
     { name = "Michael D.", isMale = true },
-    { name = "MisterOizo", isMale = true},
+    { name = "MisterOizo", isMale = true },
     { name = "MonsieurEvil", isMale = true },
     { name = "Narfwak", isMale = true },
     { name = "Numerik", isMale = true },
     { name = "Obraxis", isMale = true },
     { name = "Ooghi", isMale = true },
     { name = "OwNzOr", isMale = true },
-    { name = "PaulWolfe", isMale = true},
+    { name = "PaulWolfe", isMale = true },
     { name = "Patrick8675", isMale = true },
     { name = "pSyk", isMale = true },
     { name = "Railo", isMale = true },
@@ -73,7 +72,7 @@
     { name = "SplatMan", isMale = true },
     { name = "Squeal Like a Pig", isMale = true },
     { name = "Steelcap", isMale = true },
-	{ name = "SteveRock", isMale = true },
+    { name = "SteveRock", isMale = true },
     { name = "Steven G.", isMale = true },
     { name = "Strayan", isMale = true },
     { name = "Sweets", isMale = true },

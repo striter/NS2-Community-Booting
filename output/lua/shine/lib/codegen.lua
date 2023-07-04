@@ -22,11 +22,11 @@ local CodeGen = {}
 	Output:
 		The generated string with all variables substituted.
 ]]
-local function ApplyTemplateValues( FunctionCode, TemplateValues )
-	Shine.TypeCheck( FunctionCode, "string", 1, "ApplyTemplateValues" )
-	Shine.TypeCheck( TemplateValues, "table", 2, "ApplyTemplateValues" )
+local function ApplyTemplateValues(FunctionCode, TemplateValues)
+    Shine.TypeCheck(FunctionCode, "string", 1, "ApplyTemplateValues")
+    Shine.TypeCheck(TemplateValues, "table", 2, "ApplyTemplateValues")
 
-	return ( StringGSub( FunctionCode, "{([^%s]+)}", TemplateValues ) )
+    return (StringGSub(FunctionCode, "{([^%s]+)}", TemplateValues))
 end
 CodeGen.ApplyTemplateValues = ApplyTemplateValues
 
@@ -43,13 +43,13 @@ CodeGen.ApplyTemplateValues = ApplyTemplateValues
 	Output:
 		The generated function.
 ]]
-local function GenerateTemplatedFunction( FunctionCode, ChunkName, TemplateValues, ... )
-	Shine.TypeCheck( FunctionCode, "string", 1, "GenerateTemplatedFunction" )
-	Shine.TypeCheck( ChunkName, { "string", "nil" }, 2, "GenerateTemplatedFunction" )
-	Shine.TypeCheck( TemplateValues, "table", 3, "GenerateTemplatedFunction" )
+local function GenerateTemplatedFunction(FunctionCode, ChunkName, TemplateValues, ...)
+    Shine.TypeCheck(FunctionCode, "string", 1, "GenerateTemplatedFunction")
+    Shine.TypeCheck(ChunkName, { "string", "nil" }, 2, "GenerateTemplatedFunction")
+    Shine.TypeCheck(TemplateValues, "table", 3, "GenerateTemplatedFunction")
 
-	local GeneratedFunctionCode = ApplyTemplateValues( FunctionCode, TemplateValues )
-	return load( GeneratedFunctionCode, ChunkName )( ... )
+    local GeneratedFunctionCode = ApplyTemplateValues(FunctionCode, TemplateValues)
+    return load(GeneratedFunctionCode, ChunkName)(...)
 end
 CodeGen.GenerateTemplatedFunction = GenerateTemplatedFunction
 
@@ -73,33 +73,33 @@ CodeGen.GenerateTemplatedFunction = GenerateTemplatedFunction
 	Output:
 		The generated function.
 ]]
-local function GenerateFunctionWithArguments( FunctionCode, NumArguments, ChunkName, ... )
-	Shine.TypeCheck( FunctionCode, "string", 1, "GenerateFunctionWithArguments" )
-	Shine.TypeCheck( NumArguments, "number", 2, "GenerateFunctionWithArguments" )
-	Shine.TypeCheck( ChunkName, { "function", "string", "nil" }, 3, "GenerateFunctionWithArguments" )
+local function GenerateFunctionWithArguments(FunctionCode, NumArguments, ChunkName, ...)
+    Shine.TypeCheck(FunctionCode, "string", 1, "GenerateFunctionWithArguments")
+    Shine.TypeCheck(NumArguments, "number", 2, "GenerateFunctionWithArguments")
+    Shine.TypeCheck(ChunkName, { "function", "string", "nil" }, 3, "GenerateFunctionWithArguments")
 
-	local Arguments = { "" }
-	if NumArguments < Huge then
-		for i = 1, NumArguments do
-			Arguments[ i + 1 ] = StringFormat( "Arg%d", i )
-		end
-	else
-		Arguments[ 2 ] = "..."
-	end
+    local Arguments = { "" }
+    if NumArguments < Huge then
+        for i = 1, NumArguments do
+            Arguments[i + 1] = StringFormat("Arg%d", i)
+        end
+    else
+        Arguments[2] = "..."
+    end
 
-	local ArgumentsList = TableConcat( Arguments, ", " )
-	local ArgumentsWithoutPrefix = TableConcat( Arguments, ", ", 2 )
-	local FinalChunkName
-	if type( ChunkName ) == "function" then
-		FinalChunkName = ChunkName( NumArguments )
-	else
-		FinalChunkName = ChunkName
-	end
+    local ArgumentsList = TableConcat(Arguments, ", ")
+    local ArgumentsWithoutPrefix = TableConcat(Arguments, ", ", 2)
+    local FinalChunkName
+    if type(ChunkName) == "function" then
+        FinalChunkName = ChunkName(NumArguments)
+    else
+        FinalChunkName = ChunkName
+    end
 
-	return GenerateTemplatedFunction( FunctionCode, FinalChunkName, {
-		Arguments = ArgumentsList,
-		FunctionArguments = ArgumentsWithoutPrefix
-	}, ... )
+    return GenerateTemplatedFunction(FunctionCode, FinalChunkName, {
+        Arguments = ArgumentsList,
+        FunctionArguments = ArgumentsWithoutPrefix
+    }, ...)
 end
 CodeGen.GenerateFunctionWithArguments = GenerateFunctionWithArguments
 
@@ -144,42 +144,42 @@ local NO_ARGS = {}
 		A table that provides a variation of the given template taking n arguments for each number key n.
 		If accessing an argument count that has not yet been generated, it is generated automatically.
 ]]
-function CodeGen.MakeFunctionGenerator( Options )
-	local Args = Shine.TypeCheckField( Options, "Args", { "table", "nil" }, "Options" ) or NO_ARGS
-	local ChunkName = Shine.TypeCheckField( Options, "ChunkName", { "function", "string", "nil" }, "Options" )
-	local NumArgs = Shine.TypeCheckField( Options, "NumArgs", { "number", "nil" }, "Options" ) or #Args
-	local Template = Shine.TypeCheckField( Options, "Template", "string", "Options" )
+function CodeGen.MakeFunctionGenerator(Options)
+    local Args = Shine.TypeCheckField(Options, "Args", { "table", "nil" }, "Options") or NO_ARGS
+    local ChunkName = Shine.TypeCheckField(Options, "ChunkName", { "function", "string", "nil" }, "Options")
+    local NumArgs = Shine.TypeCheckField(Options, "NumArgs", { "number", "nil" }, "Options") or #Args
+    local Template = Shine.TypeCheckField(Options, "Template", "string", "Options")
 
-	local OnFunctionGenerated = Options.OnFunctionGenerated
-	local HasCallback = Shine.IsCallable( OnFunctionGenerated )
+    local OnFunctionGenerated = Options.OnFunctionGenerated
+    local HasCallback = Shine.IsCallable(OnFunctionGenerated)
 
-	local Functions = setmetatable( {}, {
-		__index = function( self, NumArguments )
-			if type( NumArguments ) ~= "number" then
-				return nil
-			end
+    local Functions = setmetatable({}, {
+        __index = function(self, NumArguments)
+            if type(NumArguments) ~= "number" then
+                return nil
+            end
 
-			local Function = GenerateFunctionWithArguments(
-				Template, NumArguments, ChunkName, unpack( Args, 1, NumArgs )
-			)
+            local Function = GenerateFunctionWithArguments(
+                    Template, NumArguments, ChunkName, unpack(Args, 1, NumArgs)
+            )
 
-			self[ NumArguments ] = Function
+            self[NumArguments] = Function
 
-			if HasCallback then
-				OnFunctionGenerated( NumArguments, Function, true )
-			end
+            if HasCallback then
+                OnFunctionGenerated(NumArguments, Function, true)
+            end
 
-			return Function
-		end
-	} )
-	for i = 0, Options.InitialSize do
-		Functions[ i ] = GenerateFunctionWithArguments( Template, i, ChunkName, unpack( Args, 1, NumArgs ) )
-		if HasCallback then
-			OnFunctionGenerated( i, Functions[ i ], false )
-		end
-	end
+            return Function
+        end
+    })
+    for i = 0, Options.InitialSize do
+        Functions[i] = GenerateFunctionWithArguments(Template, i, ChunkName, unpack(Args, 1, NumArgs))
+        if HasCallback then
+            OnFunctionGenerated(i, Functions[i], false)
+        end
+    end
 
-	return Functions
+    return Functions
 end
 
 return CodeGen

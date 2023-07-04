@@ -16,51 +16,57 @@ local StringStartsWith = string.StartsWith
 local type = type
 
 if not DebugGetMetaField then
-	local DebugGetMetaTable = debug.getmetatable
-	DebugGetMetaField = function( Table, Field )
-		local MetaTable = DebugGetMetaTable( Table )
-		return MetaTable and MetaTable[ Field ]
-	end
-	debug.getmetafield = DebugGetMetaField
+    local DebugGetMetaTable = debug.getmetatable
+    DebugGetMetaField = function(Table, Field)
+        local MetaTable = DebugGetMetaTable(Table)
+        return MetaTable and MetaTable[Field]
+    end
+    debug.getmetafield = DebugGetMetaField
 end
 
 if not DebugIsCFunction then
-	DebugIsCFunction = function( Func )
-		assert( type( Func ) == "function", "bad argument #1 to 'iscfunction' (expected function)" )
-		local Info = DebugGetInfo( Func )
-		return not not ( Info and Info.what == "C" )
-	end
-	debug.iscfunction = DebugIsCFunction
+    DebugIsCFunction = function(Func)
+        assert(type(Func) == "function", "bad argument #1 to 'iscfunction' (expected function)")
+        local Info = DebugGetInfo(Func)
+        return not not (Info and Info.what == "C")
+    end
+    debug.iscfunction = DebugIsCFunction
 end
 
-local function ForEachUpValue( Func, Filter, Recursive, Done )
-	-- Don't attempt to inspect C-functions, their upvalues are forbidden (and of no legitimate use anyway).
-	if DebugIsCFunction( Func ) then return nil end
+local function ForEachUpValue(Func, Filter, Recursive, Done)
+    -- Don't attempt to inspect C-functions, their upvalues are forbidden (and of no legitimate use anyway).
+    if DebugIsCFunction(Func) then
+        return nil
+    end
 
-	--Avoid upvalue cycles (it is possible.)
-	Done = Done or {}
-	if Done[ Func ] then return nil end
+    --Avoid upvalue cycles (it is possible.)
+    Done = Done or {}
+    if Done[Func] then
+        return nil
+    end
 
-	Done[ Func ] = true
+    Done[Func] = true
 
-	local i = 1
-	while true do
-		local N, Val = DebugGetUpValue( Func, i )
-		if not N then break end
+    local i = 1
+    while true do
+        local N, Val = DebugGetUpValue(Func, i)
+        if not N then
+            break
+        end
 
-		if Filter( Func, N, Val, i ) then
-			return Val, i, Func
-		end
+        if Filter(Func, N, Val, i) then
+            return Val, i, Func
+        end
 
-		if Recursive and not Done[ Val ] and type( Val ) == "function" then
-			local LowerVal, j, Function = ForEachUpValue( Val, Filter, true, Done )
-			if LowerVal ~= nil then
-				return LowerVal, j, Function
-			end
-		end
+        if Recursive and not Done[Val] and type(Val) == "function" then
+            local LowerVal, j, Function = ForEachUpValue(Val, Filter, true, Done)
+            if LowerVal ~= nil then
+                return LowerVal, j, Function
+            end
+        end
 
-		i = i + 1
-	end
+        i = i + 1
+    end
 end
 
 --[[
@@ -75,10 +81,10 @@ end
 		2. Index at which the upvalue was found.
 		3. Function the upvalue was found first in.
 ]]
-function Shine.GetUpValue( Func, Name, Recursive )
-	return ForEachUpValue( Func, function( Function, N, Val, i )
-		return N == Name
-	end, Recursive )
+function Shine.GetUpValue(Func, Name, Recursive)
+    return ForEachUpValue(Func, function(Function, N, Val, i)
+        return N == Name
+    end, Recursive)
 end
 
 --[[
@@ -93,10 +99,10 @@ end
 		2. Index at which the upvalue was found.
 		3. Function the upvalue was found first in.
 ]]
-function Shine.FindUpValue( Func, Value, Recursive, Done )
-	return ForEachUpValue( Func, function( Function, N, Val, i )
-		return Val == Value
-	end, Recursive )
+function Shine.FindUpValue(Func, Value, Recursive, Done)
+    return ForEachUpValue(Func, function(Function, N, Val, i)
+        return Val == Value
+    end, Recursive)
 end
 
 --[[
@@ -107,14 +113,14 @@ end
 	Output:
 		Table of key, value upvalue pairs.
 ]]
-function Shine.GetUpValues( Func )
-	local Values = {}
+function Shine.GetUpValues(Func)
+    local Values = {}
 
-	ForEachUpValue( Func, function( Function, N, Val, i )
-		Values[ N ] = Val
-	end )
+    ForEachUpValue(Func, function(Function, N, Val, i)
+        Values[N] = Val
+    end)
 
-	return Values
+    return Values
 end
 
 --[[
@@ -128,14 +134,16 @@ end
 	Output:
 		Old value on success, or nil on failure.
 ]]
-function Shine.SetUpValue( Func, Name, Value, Recursive )
-	local OldValue, Index, Function = Shine.GetUpValue( Func, Name, Recursive )
+function Shine.SetUpValue(Func, Name, Value, Recursive)
+    local OldValue, Index, Function = Shine.GetUpValue(Func, Name, Recursive)
 
-	if not Index then return nil end
+    if not Index then
+        return nil
+    end
 
-	DebugSetUpValue( Function, Index, Value )
+    DebugSetUpValue(Function, Index, Value)
 
-	return OldValue
+    return OldValue
 end
 
 --[[
@@ -149,14 +157,16 @@ end
 	Output:
 		Old value on success, or nil on failure.
 ]]
-function Shine.SetUpValueByValue( Func, Value, NewValue, Recursive )
-	local OldValue, Index, Function = Shine.FindUpValue( Func, Value, Recursive )
+function Shine.SetUpValueByValue(Func, Value, NewValue, Recursive)
+    local OldValue, Index, Function = Shine.FindUpValue(Func, Value, Recursive)
 
-	if not Index then return nil end
+    if not Index then
+        return nil
+    end
 
-	DebugSetUpValue( Function, Index, NewValue )
+    DebugSetUpValue(Function, Index, NewValue)
 
-	return OldValue
+    return OldValue
 end
 
 --[[
@@ -167,12 +177,12 @@ end
 		2. Values to replace with.
 		3. Optional recursion.
 ]]
-function Shine.SetUpValues( Func, Values, Recursive, Done )
-	ForEachUpValue( Func, function( Function, N, Val, i )
-		if Values[ N ] then
-			DebugSetUpValue( Function, i, Values[ N ] )
-		end
-	end, Recursive )
+function Shine.SetUpValues(Func, Values, Recursive, Done)
+    ForEachUpValue(Func, function(Function, N, Val, i)
+        if Values[N] then
+            DebugSetUpValue(Function, i, Values[N])
+        end
+    end, Recursive)
 end
 
 --[[
@@ -187,29 +197,29 @@ end
 		The final table of upvalues that TargetFunc now has. Use this if you
 		want to then mimic further functions.
 ]]
-function Shine.MimicFunction( Func, TargetFunc, DifferingValues, Recursive )
-	local UpValues = Shine.GetUpValues( Func )
+function Shine.MimicFunction(Func, TargetFunc, DifferingValues, Recursive)
+    local UpValues = Shine.GetUpValues(Func)
 
-	if DifferingValues then
-		for Name, Value in pairs( DifferingValues ) do
-			UpValues[ Name ] = Value
-		end
-	end
+    if DifferingValues then
+        for Name, Value in pairs(DifferingValues) do
+            UpValues[Name] = Value
+        end
+    end
 
-	--Recursive here means we replace upvalues in the original function's function upvalues.
-	if Recursive and DifferingValues then
-		local Done = {}
-		for Name, Value in pairs( UpValues ) do
-			if type( Value ) == "function" then
-				Shine.SetUpValues( Value, DifferingValues, true, Done )
-			end
-		end
-	end
+    --Recursive here means we replace upvalues in the original function's function upvalues.
+    if Recursive and DifferingValues then
+        local Done = {}
+        for Name, Value in pairs(UpValues) do
+            if type(Value) == "function" then
+                Shine.SetUpValues(Value, DifferingValues, true, Done)
+            end
+        end
+    end
 
-	--We don't need to pass the recursive flag as we already did it above.
-	Shine.SetUpValues( TargetFunc, UpValues )
+    --We don't need to pass the recursive flag as we already did it above.
+    Shine.SetUpValues(TargetFunc, UpValues)
 
-	return UpValues
+    return UpValues
 end
 
 --[[
@@ -232,71 +242,73 @@ end
 
 	This avoids needing to constantly get up values.
 ]]
-function Shine.JoinUpValues( Func, TargetFunc, Mapping, Recursive )
-	local UpValueIndex = {}
-	local InverseMapping = {}
+function Shine.JoinUpValues(Func, TargetFunc, Mapping, Recursive)
+    local UpValueIndex = {}
+    local InverseMapping = {}
 
-	ForEachUpValue( Func, function( Function, Name, Value, i )
-		local MappedName = Mapping[ Name ]
-		if not MappedName then return end
+    ForEachUpValue(Func, function(Function, Name, Value, i)
+        local MappedName = Mapping[Name]
+        if not MappedName then
+            return
+        end
 
-		if type( MappedName ) == "table" then
-			if Shine.IsCallable( MappedName.Predicate ) and not MappedName.Predicate( Function, Name, Value ) then
-				return
-			end
+        if type(MappedName) == "table" then
+            if Shine.IsCallable(MappedName.Predicate) and not MappedName.Predicate(Function, Name, Value) then
+                return
+            end
 
-			MappedName = MappedName.Name
-		end
+            MappedName = MappedName.Name
+        end
 
-		UpValueIndex[ Name ] = {
-			Function = Function,
-			Index = i
-		}
-		InverseMapping[ MappedName ] = Name
-	end, Recursive )
+        UpValueIndex[Name] = {
+            Function = Function,
+            Index = i
+        }
+        InverseMapping[MappedName] = Name
+    end, Recursive)
 
-	ForEachUpValue( TargetFunc, function( Function, Name, Value, i )
-		if InverseMapping[ Name ] then
-			local UpValue = UpValueIndex[ InverseMapping[ Name ] ]
-			DebugUpValueJoin( TargetFunc, i, UpValue.Function, UpValue.Index )
-		end
-	end )
+    ForEachUpValue(TargetFunc, function(Function, Name, Value, i)
+        if InverseMapping[Name] then
+            local UpValue = UpValueIndex[InverseMapping[Name]]
+            DebugUpValueJoin(TargetFunc, i, UpValue.Function, UpValue.Index)
+        end
+    end)
 end
 
 Shine.UpValuePredicates = {
-	DefinedInFile = function( FileName )
-		local SourcePrefix = "@"..FileName
-		return function( Func, Name, Value )
-			local Info = DebugGetInfo( Func, "S" )
-			return StringStartsWith( Info.source, SourcePrefix )
-		end
-	end
+    DefinedInFile = function(FileName)
+        local SourcePrefix = "@" .. FileName
+        return function(Func, Name, Value)
+            local Info = DebugGetInfo(Func, "S")
+            return StringStartsWith(Info.source, SourcePrefix)
+        end
+    end
 }
 
 --[[
 	Returns a function that, when called, returns the current value stored in the
 	named upvalue of the given function.
 ]]
-function Shine.GetUpValueAccessor( Function, UpValue, Options )
-	local Value
-	local function GetValue()
-		return Value
-	end
-	local function SetValue( NewValue )
-		Value = NewValue
-	end
+function Shine.GetUpValueAccessor(Function, UpValue, Options)
+    local Value
+    local function GetValue()
+        return Value
+    end
+    local function SetValue(NewValue)
+        Value = NewValue
+    end
 
-	local UpValueParams = {
-		[ UpValue ] = {
-			Name = "Value",
-			Predicate = Options and Options.Predicate
-		}
-	}
-	local IsRecursive = Options and Options.Recursive
-	Shine.JoinUpValues( Function, GetValue, UpValueParams, IsRecursive )
-	Shine.JoinUpValues( Function, SetValue, UpValueParams, IsRecursive )
+    local UpValueParams = {
+        [UpValue] = {
+            Name = "Value",
+            Predicate = Options and Options.Predicate
+        }
+    }
+    local IsRecursive = Options and Options.Recursive
+    Shine.JoinUpValues(Function, GetValue, UpValueParams, IsRecursive)
+    Shine.JoinUpValues(Function, SetValue, UpValueParams, IsRecursive)
 
-	return GetValue, SetValue
+    return GetValue, SetValue
 end
 
 --[[
@@ -308,19 +320,21 @@ end
 	Output:
 		True if the object has the given type.
 ]]
-function Shine.IsType( Object, Type )
-	return type( Object ) == Type
+function Shine.IsType(Object, Type)
+    return type(Object) == Type
 end
 
 --[[
 	Determines if a given object is callable. That is, if it is a function
 	or its metatable has a __call meta-method.
 ]]
-function Shine.IsCallable( Object )
-	if type( Object ) == "function" then return true end
+function Shine.IsCallable(Object)
+    if type(Object) == "function" then
+        return true
+    end
 
-	local MetaCallField = DebugGetMetaField( Object, "__call" )
-	return type( MetaCallField ) == "function"
+    local MetaCallField = DebugGetMetaField(Object, "__call")
+    return type(MetaCallField) == "function"
 end
 
 --[[
@@ -332,12 +346,12 @@ end
 		3. Error level.
 		4. Format arguments for the error message.
 ]]
-function Shine.AssertAtLevel( Assertion, Error, Level, ... )
-	if not Assertion then
-		error( StringFormat( Error, ... ), Level )
-	end
+function Shine.AssertAtLevel(Assertion, Error, Level, ...)
+    if not Assertion then
+        error(StringFormat(Error, ...), Level)
+    end
 
-	return Assertion
+    return Assertion
 end
 
 --[[
@@ -348,59 +362,59 @@ end
 		2. Error message.
 		3. Format arguments for the error message.
 ]]
-function Shine.Assert( Assertion, Error, ... )
-	return Shine.AssertAtLevel( Assertion, Error, 2, ... )
+function Shine.Assert(Assertion, Error, ...)
+    return Shine.AssertAtLevel(Assertion, Error, 2, ...)
 end
 
 do
-	local TableConcat = table.concat
-	local function MatchesType( Value, Type )
-		local ArgType = type( Value )
-		local MatchesType = false
-		local ExpectedType = Type
+    local TableConcat = table.concat
+    local function MatchesType(Value, Type)
+        local ArgType = type(Value)
+        local MatchesType = false
+        local ExpectedType = Type
 
-		if type( Type ) == "table" then
-			for i = 1, #Type do
-				if ArgType == Type[ i ] then
-					MatchesType = true
-					break
-				end
-			end
+        if type(Type) == "table" then
+            for i = 1, #Type do
+                if ArgType == Type[i] then
+                    MatchesType = true
+                    break
+                end
+            end
 
-			ExpectedType = TableConcat( Type, " or " )
-		else
-			MatchesType = ArgType == Type
-		end
+            ExpectedType = TableConcat(Type, " or ")
+        else
+            MatchesType = ArgType == Type
+        end
 
-		return MatchesType, ExpectedType, ArgType
-	end
+        return MatchesType, ExpectedType, ArgType
+    end
 
-	--[[
-		Checks a value's type, and throws an error if it doesn't match.
-	]]
-	function Shine.TypeCheck( Arg, Type, ArgNumber, FuncName, Level )
-		local MatchesType, ExpectedType, ArgType = MatchesType( Arg, Type )
-		if not MatchesType then
-			error( StringFormat( "Bad argument #%i to '%s' (%s expected, got %s)",
-				ArgNumber, FuncName, ExpectedType, ArgType ), Level or 3 )
-		end
-		return Arg
-	end
+    --[[
+        Checks a value's type, and throws an error if it doesn't match.
+    ]]
+    function Shine.TypeCheck(Arg, Type, ArgNumber, FuncName, Level)
+        local MatchesType, ExpectedType, ArgType = MatchesType(Arg, Type)
+        if not MatchesType then
+            error(StringFormat("Bad argument #%i to '%s' (%s expected, got %s)",
+                    ArgNumber, FuncName, ExpectedType, ArgType), Level or 3)
+        end
+        return Arg
+    end
 
-	--[[
-		Checks a field's type, and throws an error if it doesn't match.
-	]]
-	function Shine.TypeCheckField( Table, FieldName, Type, ObjectName, Level )
-		local Value = Table[ FieldName ]
+    --[[
+        Checks a field's type, and throws an error if it doesn't match.
+    ]]
+    function Shine.TypeCheckField(Table, FieldName, Type, ObjectName, Level)
+        local Value = Table[FieldName]
 
-		local MatchesType, ExpectedType, ArgType = MatchesType( Value, Type )
-		if not MatchesType then
-			error( StringFormat( "Bad value for field '%s' on %s (%s expected, got %s)",
-				FieldName, ObjectName, ExpectedType, ArgType ), Level or 3 )
-		end
+        local MatchesType, ExpectedType, ArgType = MatchesType(Value, Type)
+        if not MatchesType then
+            error(StringFormat("Bad value for field '%s' on %s (%s expected, got %s)",
+                    FieldName, ObjectName, ExpectedType, ArgType), Level or 3)
+        end
 
-		return Value
-	end
+        return Value
+    end
 end
 
 --[[
@@ -411,153 +425,159 @@ end
 	Output:
 		Table of local values.
 ]]
-function Shine.GetLocals( StackLevel, NilValueMarker )
-	StackLevel = StackLevel and ( StackLevel + 1 ) or 2
+function Shine.GetLocals(StackLevel, NilValueMarker)
+    StackLevel = StackLevel and (StackLevel + 1) or 2
 
-	local i = 1
-	local Values = {}
-	local function ToValue( Value )
-		if Value == nil then
-			return NilValueMarker
-		end
-		return Value
-	end
+    local i = 1
+    local Values = {}
+    local function ToValue(Value)
+        if Value == nil then
+            return NilValueMarker
+        end
+        return Value
+    end
 
-	while true do
-		local Name, Value = DebugGetLocal( StackLevel, i )
-		if not Name then break end
+    while true do
+        local Name, Value = DebugGetLocal(StackLevel, i)
+        if not Name then
+            break
+        end
 
-		if Name ~= "(*temporary)" then
-			Values[ Name ] = ToValue( Value )
-		end
+        if Name ~= "(*temporary)" then
+            Values[Name] = ToValue(Value)
+        end
 
-		i = i + 1
-	end
+        i = i + 1
+    end
 
-	local Info = DebugGetInfo( StackLevel )
-	if Info and Info.isvararg and Info.what ~= "C" then
-		-- Var-args occupy negative indexes, starting at -1 for the first value.
-		i = 1
-		while true do
-			local Name, Value = DebugGetLocal( StackLevel, -i )
-			if not Name then
-				break
-			end
+    local Info = DebugGetInfo(StackLevel)
+    if Info and Info.isvararg and Info.what ~= "C" then
+        -- Var-args occupy negative indexes, starting at -1 for the first value.
+        i = 1
+        while true do
+            local Name, Value = DebugGetLocal(StackLevel, -i)
+            if not Name then
+                break
+            end
 
-			Values[ StringFormat( "select( %d, ... )", i ) ] = ToValue( Value )
+            Values[StringFormat("select( %d, ... )", i)] = ToValue(Value)
 
-			i = i + 1
-		end
+            i = i + 1
+        end
 
-		Values[ "select( \"#\", ... )" ] = i - 1
-	end
+        Values["select( \"#\", ... )"] = i - 1
+    end
 
-	if Info and Info.func and Info.what ~= "C" then
-		-- Extract upvalues if possible.
-		i = 1
-		while true do
-			local Name, Value = DebugGetUpValue( Info.func, i )
-			if not Name then
-				break
-			end
+    if Info and Info.func and Info.what ~= "C" then
+        -- Extract upvalues if possible.
+        i = 1
+        while true do
+            local Name, Value = DebugGetUpValue(Info.func, i)
+            if not Name then
+                break
+            end
 
-			-- Locals may be named the same as upvalues, in which case the upvalue is irrelevant here.
-			if Values[ Name ] == nil then
-				Values[ Name ] = ToValue( Value )
-			end
+            -- Locals may be named the same as upvalues, in which case the upvalue is irrelevant here.
+            if Values[Name] == nil then
+                Values[Name] = ToValue(Value)
+            end
 
-			i = i + 1
-		end
-	end
+            i = i + 1
+        end
+    end
 
-	return Values
+    return Values
 end
 
 do
-	local DebugTraceback = debug.traceback
-	local StringGSub = string.gsub
+    local DebugTraceback = debug.traceback
+    local StringGSub = string.gsub
 
-	--[[
-		Work around Lua 5.1 traceback behaviour where you must provide a string
-		to set the traceback level, which adds a useless line.
-	]]
-	function Shine.Traceback( Level )
-		local Trace = DebugTraceback( "", Level + 1 )
-		return ( StringGSub( Trace, "^([^\n]*)\n(.*)$", "%2" ) )
-	end
+    --[[
+        Work around Lua 5.1 traceback behaviour where you must provide a string
+        to set the traceback level, which adds a useless line.
+    ]]
+    function Shine.Traceback(Level)
+        local Trace = DebugTraceback("", Level + 1)
+        return (StringGSub(Trace, "^([^\n]*)\n(.*)$", "%2"))
+    end
 end
 
 do
-	local TableConcat = table.concat
-	local TypeNames = {
-		C = function( Info )
-			local Name = Info.name and StringFormat( "'%s'", Info.name )
-				or StringFormat( "<%s:%d>", Info.short_src, Info.linedefined or -1 )
-			return StringFormat( "function %s", Name )
-		end,
-		main = function() return "main chunk" end
-	}
-	TypeNames.Lua = TypeNames.C
+    local TableConcat = table.concat
+    local TypeNames = {
+        C = function(Info)
+            local Name = Info.name and StringFormat("'%s'", Info.name)
+                    or StringFormat("<%s:%d>", Info.short_src, Info.linedefined or -1)
+            return StringFormat("function %s", Name)
+        end,
+        main = function()
+            return "main chunk"
+        end
+    }
+    TypeNames.Lua = TypeNames.C
 
-	local NilMarker = setmetatable( {}, {
-		__tostring = function() return "nil" end,
-		__PrintAsString = true
-	} )
+    local NilMarker = setmetatable({}, {
+        __tostring = function()
+            return "nil"
+        end,
+        __PrintAsString = true
+    })
 
-	local INFO_MASK = "Snl"
-	function Shine.StackDump( Level )
-		Level = Level or 1
+    local INFO_MASK = "Snl"
+    function Shine.StackDump(Level)
+        Level = Level or 1
 
-		local CurrentLevel = Level + 1
-		local Info = DebugGetInfo( CurrentLevel, INFO_MASK )
-		local Output = { "Stack traceback:" }
+        local CurrentLevel = Level + 1
+        local Info = DebugGetInfo(CurrentLevel, INFO_MASK)
+        local Output = { "Stack traceback:" }
 
-		while Info do
-			local TypePrinter = TypeNames[ Info.what ]
-			Output[ #Output + 1 ] = StringFormat( "    %s:%d in %s", Info.short_src,
-				Info.currentline or -1, TypePrinter and TypePrinter( Info ) or "?" )
+        while Info do
+            local TypePrinter = TypeNames[Info.what]
+            Output[#Output + 1] = StringFormat("    %s:%d in %s", Info.short_src,
+                    Info.currentline or -1, TypePrinter and TypePrinter(Info) or "?")
 
-			local Locals = table.ToDebugString( Shine.GetLocals( CurrentLevel, NilMarker ), "        " )
-			if Locals ~= "" then
-				Output[ #Output + 1 ] = Locals
-			end
+            local Locals = table.ToDebugString(Shine.GetLocals(CurrentLevel, NilMarker), "        ")
+            if Locals ~= "" then
+                Output[#Output + 1] = Locals
+            end
 
-			CurrentLevel = CurrentLevel + 1
-			Info = DebugGetInfo( CurrentLevel, INFO_MASK )
-		end
+            CurrentLevel = CurrentLevel + 1
+            Info = DebugGetInfo(CurrentLevel, INFO_MASK)
+        end
 
-		return TableConcat( Output, "\n" )
-	end
+        return TableConcat(Output, "\n")
+    end
 end
 
 --[[
 	Builds an error handler function for use with xpcall. Reports and logs any errors encountered,
 	including the local values of the caller.
 ]]
-function Shine.BuildErrorHandler( ErrorType )
-	return function( Err )
-		local Trace = Shine.StackDump( 2 )
+function Shine.BuildErrorHandler(ErrorType)
+    return function(Err)
+        local Trace = Shine.StackDump(2)
 
-		Shine:DebugPrint( "%s: %s\n%s", true, ErrorType, Err, Trace )
-		Shine:AddErrorReport( StringFormat( "%s: %s", ErrorType, Err ), Trace )
+        Shine:DebugPrint("%s: %s\n%s", true, ErrorType, Err, Trace)
+        Shine:AddErrorReport(StringFormat("%s: %s", ErrorType, Err), Trace)
 
-		return Err
-	end
+        return Err
+    end
 end
 
 do
-	local SharedMessage = Shared.Message
-	local select = select
-	local tostring = tostring
-	local TableConcat = table.concat
+    local SharedMessage = Shared.Message
+    local select = select
+    local tostring = tostring
+    local TableConcat = table.concat
 
-	function LuaPrint( ... )
-		local Out = { ... }
+    function LuaPrint(...)
+        local Out = { ... }
 
-		for i = 1, select( "#", ... ) do
-			Out[ i ] = tostring( Out[ i ] )
-		end
+        for i = 1, select("#", ...) do
+            Out[i] = tostring(Out[i])
+        end
 
-		SharedMessage( TableConcat( Out, "\t" ) )
-	end
+        SharedMessage(TableConcat(Out, "\t"))
+    end
 end

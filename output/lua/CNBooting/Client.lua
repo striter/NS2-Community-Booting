@@ -116,4 +116,5 @@ if kLocales then
 
     kLocales["COMMUNITY_GUI_BUTTON"]="Check Our [Community Guide]"
     kLocales["COMMUNITY_GROUP_BUTTON"]="Join our Q group"
+    kLocales["COMMUNITY_WELCOME"]="欢迎来到<物竞天择2中国社区>"
 end

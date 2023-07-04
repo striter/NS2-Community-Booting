@@ -8,21 +8,21 @@ local Controls = SGUI.Controls
 local Row = {}
 
 function Row:Initialise()
-	Controls.Panel.Initialise( self )
+    Controls.Panel.Initialise(self)
 
-	self:SetLayout( SGUI.Layout:CreateLayout( "Horizontal" ), true )
+    self:SetLayout(SGUI.Layout:CreateLayout("Horizontal"), true)
 end
 
-function Row:SetPadding( Padding )
-	self.Layout:SetPadding( Padding )
+function Row:SetPadding(Padding)
+    self.Layout:SetPadding(Padding)
 end
 
-function Row:GetContentSizeForAxis( Axis )
-	return self.Layout:GetContentSizeForAxis( Axis )
+function Row:GetContentSizeForAxis(Axis)
+    return self.Layout:GetContentSizeForAxis(Axis)
 end
 
-function Row:GetMaxSizeAlongAxis( Axis )
-	return self.Layout:GetMaxSizeAlongAxis( Axis )
+function Row:GetMaxSizeAlongAxis(Axis)
+    return self.Layout:GetMaxSizeAlongAxis(Axis)
 end
 
-SGUI:Register( "Row", Row, "Panel" )
+SGUI:Register("Row", Row, "Panel")

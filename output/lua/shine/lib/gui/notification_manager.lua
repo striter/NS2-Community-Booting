@@ -16,48 +16,48 @@ local Notifications = {}
 local NotificationManager = {}
 
 local HINTS_FILE = "config://shine/Hints.json"
-local HintData = Shine.LoadJSONFile( HINTS_FILE ) or {}
+local HintData = Shine.LoadJSONFile(HINTS_FILE) or {}
 local HintTypes = {}
 local function UpdateHintData()
-	Shine.SaveJSONFile( HintData, HINTS_FILE )
+    Shine.SaveJSONFile(HintData, HINTS_FILE)
 end
 
 local Styles = {
-	[ NotificationType.INFO ] = "Info",
-	[ NotificationType.WARNING ] = "Warning",
-	[ NotificationType.ERROR ] = "Danger"
+    [NotificationType.INFO] = "Info",
+    [NotificationType.WARNING] = "Warning",
+    [NotificationType.ERROR] = "Danger"
 }
 
-local OFFSETX = HighResScaled( 32 )
-local OFFSETY = HighResScaled( 192 )
+local OFFSETX = HighResScaled(32)
+local OFFSETY = HighResScaled(192)
 
-local function OffsetAllNotifications( Offset, FromIndex, ToIndex )
-	local XPos = -OFFSETX:GetValue()
+local function OffsetAllNotifications(Offset, FromIndex, ToIndex)
+    local XPos = -OFFSETX:GetValue()
 
-	for i = FromIndex, ToIndex do
-		local Notification = Notifications[ i ]
-		if SGUI.IsValid( Notification ) then
-			local NewPos = Vector2( XPos - Notification:GetSize().x, Notification.TargetPos.y - Offset )
-			Notification.TargetPos = NewPos
-			Notification:MoveTo( nil, nil, NewPos, 0, 0.3 )
-		end
-	end
+    for i = FromIndex, ToIndex do
+        local Notification = Notifications[i]
+        if SGUI.IsValid(Notification) then
+            local NewPos = Vector2(XPos - Notification:GetSize().x, Notification.TargetPos.y - Offset)
+            Notification.TargetPos = NewPos
+            Notification:MoveTo(nil, nil, NewPos, 0, 0.3)
+        end
+    end
 end
 
-local MARGIN = HighResScaled( 16 )
-local PADDING = HighResScaled( 16 )
-local FLAIR_WIDTH = HighResScaled( 48 )
+local MARGIN = HighResScaled(16)
+local PADDING = HighResScaled(16)
+local FLAIR_WIDTH = HighResScaled(48)
 
-local function OnNotificationFadeOut( Notification )
-	for i = #Notifications, 1, -1 do
-		if Notifications[ i ] == Notification then
-			Notification:StopMoving()
-			TableRemove( Notifications, i )
-			-- Move any notifications above this one down to compensate for the gap.
-			OffsetAllNotifications( -Notification:GetSize().y - MARGIN:GetValue(), 1, i - 1 )
-			break
-		end
-	end
+local function OnNotificationFadeOut(Notification)
+    for i = #Notifications, 1, -1 do
+        if Notifications[i] == Notification then
+            Notification:StopMoving()
+            TableRemove(Notifications, i)
+            -- Move any notifications above this one down to compensate for the gap.
+            OffsetAllNotifications(-Notification:GetSize().y - MARGIN:GetValue(), 1, i - 1)
+            break
+        end
+    end
 end
 
 --[[
@@ -70,49 +70,51 @@ end
 	Output:
 		The created Notification SGUI object. Do not reposition or change its size.
 ]]
-function NotificationManager.AddNotification( Type, Message, Duration, Options )
-	Shine.AssertAtLevel( NotificationType[ Type ], "No such notification type: %s", 3, Type )
-	Shine.TypeCheck( Message, "string", 2, "AddNotification" )
-	Shine.TypeCheck( Duration, "number", 3, "AddNotification" )
+function NotificationManager.AddNotification(Type, Message, Duration, Options)
+    Shine.AssertAtLevel(NotificationType[Type], "No such notification type: %s", 3, Type)
+    Shine.TypeCheck(Message, "string", 2, "AddNotification")
+    Shine.TypeCheck(Duration, "number", 3, "AddNotification")
 
-	if Duration <= 0 then return end
+    if Duration <= 0 then
+        return
+    end
 
-	local W, H = SGUI.GetScreenSize()
+    local W, H = SGUI.GetScreenSize()
 
-	local Notification = SGUI:Create( "Notification" )
-	Notification:SetStyleName( Styles[ NotificationType[ Type ] ] or Styles[ Type ] )
-	Notification:SetAnchor( "BottomRight" )
-	Notification:SetPadding( PADDING:GetValue() )
-	Notification:SetMaxWidth( W * 0.25 )
-	Notification:SetFlairWidth( FLAIR_WIDTH:GetValue() )
-	local Font, Scale = SGUI.FontManager.GetHighResFont( SGUI.FontFamilies.Ionicons, 32 )
-	Notification:SetIconScale( Scale )
-	Notification:SetText( Message, SGUI.FontManager.GetHighResFont( "kAgencyFB", 27 ) )
-	Notification:SetOptions( Options )
-	Notification:SizeToContents()
-	Notification:SetPos( Vector2( -OFFSETX:GetValue(), -OFFSETY:GetValue() - Notification:GetSize().y ) )
+    local Notification = SGUI:Create("Notification")
+    Notification:SetStyleName(Styles[NotificationType[Type]] or Styles[Type])
+    Notification:SetAnchor("BottomRight")
+    Notification:SetPadding(PADDING:GetValue())
+    Notification:SetMaxWidth(W * 0.25)
+    Notification:SetFlairWidth(FLAIR_WIDTH:GetValue())
+    local Font, Scale = SGUI.FontManager.GetHighResFont(SGUI.FontFamilies.Ionicons, 32)
+    Notification:SetIconScale(Scale)
+    Notification:SetText(Message, SGUI.FontManager.GetHighResFont("kAgencyFB", 27))
+    Notification:SetOptions(Options)
+    Notification:SizeToContents()
+    Notification:SetPos(Vector2(-OFFSETX:GetValue(), -OFFSETY:GetValue() - Notification:GetSize().y))
 
-	-- Slide the notification in from the right, and fade in.
-	local TargetPos = Notification:GetPos() - Vector2( Notification:GetSize().x, 0 )
-	Notification.TargetPos = TargetPos
-	Notification:MoveTo( nil, nil, TargetPos, 0, 0.3 )
-	Notification:FadeIn()
-	Notification:FadeOutAfter( Duration, OnNotificationFadeOut )
+    -- Slide the notification in from the right, and fade in.
+    local TargetPos = Notification:GetPos() - Vector2(Notification:GetSize().x, 0)
+    Notification.TargetPos = TargetPos
+    Notification:MoveTo(nil, nil, TargetPos, 0, 0.3)
+    Notification:FadeIn()
+    Notification:FadeOutAfter(Duration, OnNotificationFadeOut)
 
-	-- Move all existing notifications up by the notification's size + margin.
-	OffsetAllNotifications( Notification:GetSize().y + MARGIN:GetValue(), 1, #Notifications )
+    -- Move all existing notifications up by the notification's size + margin.
+    OffsetAllNotifications(Notification:GetSize().y + MARGIN:GetValue(), 1, #Notifications)
 
-	Notifications[ #Notifications + 1 ] = Notification
+    Notifications[#Notifications + 1] = Notification
 
-	return Notification
+    return Notification
 end
 
-Shine.Hook.Add( "OnResolutionChanged", "SGUINotifications", function()
-	for i = 1, #Notifications do
-		Notifications[ i ]:Destroy()
-		Notifications[ i ] = nil
-	end
-end )
+Shine.Hook.Add("OnResolutionChanged", "SGUINotifications", function()
+    for i = 1, #Notifications do
+        Notifications[i]:Destroy()
+        Notifications[i] = nil
+    end
+end)
 
 --[[
 	Registers a hint type.
@@ -133,43 +135,45 @@ end )
 		   * MessageSource - the name of the locale message source.
 		   * NotificationType - optional notification type, defaults to NotificationType.INFO.
 ]]
-function NotificationManager.RegisterHint( Name, Params )
-	Shine.TypeCheck( Params, "table", 1, "RegisterHint" )
+function NotificationManager.RegisterHint(Name, Params)
+    Shine.TypeCheck(Params, "table", 1, "RegisterHint")
 
-	Shine.TypeCheckField( Params, "HintDuration", { "number", "nil" }, "Params" )
-	Shine.TypeCheckField( Params, "MaxTimes", { "number", "nil" }, "Params" )
-	Shine.TypeCheckField( Params, "MessageKey", { "string", "nil" }, "Params" )
-	Shine.TypeCheckField( Params, "NotificationType", { "string", "nil" }, "Params" )
-	Shine.TypeCheckField( Params, "Options", { "table", "nil" }, "Params" )
+    Shine.TypeCheckField(Params, "HintDuration", { "number", "nil" }, "Params")
+    Shine.TypeCheckField(Params, "MaxTimes", { "number", "nil" }, "Params")
+    Shine.TypeCheckField(Params, "MessageKey", { "string", "nil" }, "Params")
+    Shine.TypeCheckField(Params, "NotificationType", { "string", "nil" }, "Params")
+    Shine.TypeCheckField(Params, "Options", { "table", "nil" }, "Params")
 
-	if Params.MessageKey then
-		Shine.TypeCheckField( Params, "MessageSource", "string", "Params" )
-	else
-		Shine.TypeCheckField( Params, "MessageSupplier", "function", "Params" )
-	end
+    if Params.MessageKey then
+        Shine.TypeCheckField(Params, "MessageSource", "string", "Params")
+    else
+        Shine.TypeCheckField(Params, "MessageSupplier", "function", "Params")
+    end
 
-	if not Params.MaxTimes or Params.MaxTimes > 1 then
-		Shine.TypeCheckField( Params, "HintIntervalInSeconds", "number", "Params" )
-	end
+    if not Params.MaxTimes or Params.MaxTimes > 1 then
+        Shine.TypeCheckField(Params, "HintIntervalInSeconds", "number", "Params")
+    end
 
-	if Params.NotificationType then
-		Shine.AssertAtLevel( NotificationType[ Params.NotificationType ],
-			"No such notification type: %s", 3, Params.NotificationType )
-	end
+    if Params.NotificationType then
+        Shine.AssertAtLevel(NotificationType[Params.NotificationType],
+                "No such notification type: %s", 3, Params.NotificationType)
+    end
 
-	HintTypes[ Name ] = Params
+    HintTypes[Name] = Params
 end
 
 --[[
 	Disables the given hint, ensuring it is not displayed again.
 ]]
-function NotificationManager.DisableHint( Name )
-	local Data = HintData[ Name ] or {}
-	if Data.Disabled then return end
+function NotificationManager.DisableHint(Name)
+    local Data = HintData[Name] or {}
+    if Data.Disabled then
+        return
+    end
 
-	Data.Disabled = true
-	HintData[ Name ] = Data
-	UpdateHintData()
+    Data.Disabled = true
+    HintData[Name] = Data
+    UpdateHintData()
 end
 
 --[[
@@ -181,45 +185,47 @@ end
 	Otherwise the hint will display and its next display time and occurence count
 	will be updated.
 ]]
-function NotificationManager.DisplayHint( Name )
-	local Params = HintTypes[ Name ]
-	if not Params then return end
+function NotificationManager.DisplayHint(Name)
+    local Params = HintTypes[Name]
+    if not Params then
+        return
+    end
 
-	local Data = HintData[ Name ] or {}
-	if Data.Disabled or ( Data.NumTimesDisplayed or 0 ) >= ( Params.MaxTimes or math.huge ) then
-		-- No longer relevant, do not display.
-		return
-	end
+    local Data = HintData[Name] or {}
+    if Data.Disabled or (Data.NumTimesDisplayed or 0) >= (Params.MaxTimes or math.huge) then
+        -- No longer relevant, do not display.
+        return
+    end
 
-	local Now = OSTime()
-	if ( Data.NextHintTime or 0 ) > Now then
-		-- Displayed too recently.
-		return
-	end
+    local Now = OSTime()
+    if (Data.NextHintTime or 0) > Now then
+        -- Displayed too recently.
+        return
+    end
 
-	if not Params.MaxTimes or Params.MaxTimes > 1 then
-		Data.NextHintTime = Now + Params.HintIntervalInSeconds
-	end
+    if not Params.MaxTimes or Params.MaxTimes > 1 then
+        Data.NextHintTime = Now + Params.HintIntervalInSeconds
+    end
 
-	Data.NumTimesDisplayed = ( Data.NumTimesDisplayed or 0 ) + 1
-	HintData[ Name ] = Data
-	UpdateHintData()
+    Data.NumTimesDisplayed = (Data.NumTimesDisplayed or 0) + 1
+    HintData[Name] = Data
+    UpdateHintData()
 
-	local Message = Params.MessageSupplier and Params.MessageSupplier()
-		or Shine.Locale:GetPhrase( Params.MessageSource, Params.MessageKey )
-	local Type = Params.NotificationType or NotificationType.INFO
+    local Message = Params.MessageSupplier and Params.MessageSupplier()
+            or Shine.Locale:GetPhrase(Params.MessageSource, Params.MessageKey)
+    local Type = Params.NotificationType or NotificationType.INFO
 
-	NotificationManager.AddNotification(
-		Type,
-		Message,
-		Params.HintDuration or 5,
-		Params.Options
-	)
+    NotificationManager.AddNotification(
+            Type,
+            Message,
+            Params.HintDuration or 5,
+            Params.Options
+    )
 
-	if not Params.SuppressConsoleMessage then
-		-- Print to console so it can be referred back to.
-		Shared.Message( StringFormat( "[%s] %s", Styles[ Type ], Message ) )
-	end
+    if not Params.SuppressConsoleMessage then
+        -- Print to console so it can be referred back to.
+        Shared.Message(StringFormat("[%s] %s", Styles[Type], Message))
+    end
 end
 
 SGUI.NotificationManager = NotificationManager

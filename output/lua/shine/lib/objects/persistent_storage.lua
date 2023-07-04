@@ -17,16 +17,16 @@ Shine.Storage = Storage
 --[[
 	Construct a storage from a file path.
 ]]
-function Storage:Init( FilePath )
-	Shine.TypeCheck( FilePath, "string", 1, "Storage:Init()" )
-	Shine.AssertAtLevel( StringStartsWith( FilePath, "config://" ),
-		"A storage can only be created for a file under the config:// path.", 3 )
+function Storage:Init(FilePath)
+    Shine.TypeCheck(FilePath, "string", 1, "Storage:Init()")
+    Shine.AssertAtLevel(StringStartsWith(FilePath, "config://"),
+            "A storage can only be created for a file under the config:// path.", 3)
 
-	self.Data = Shine.LoadJSONFile( FilePath ) or {}
-	self.FilePath = FilePath
-	self.StorageSettings = { indent = false }
+    self.Data = Shine.LoadJSONFile(FilePath) or {}
+    self.FilePath = FilePath
+    self.StorageSettings = { indent = false }
 
-	return self
+    return self
 end
 
 --[[
@@ -34,7 +34,7 @@ end
 	values.
 ]]
 function Storage:Save()
-	return Shine.SaveJSONFile( self.Data, self.FilePath, self.StorageSettings )
+    return Shine.SaveJSONFile(self.Data, self.FilePath, self.StorageSettings)
 end
 
 --[[
@@ -48,12 +48,12 @@ end
 	to either save the changes made or roll them all back.
 ]]
 function Storage:BeginTransaction()
-	Shine.AssertAtLevel( not self.Transaction, "A transaction has already been started.", 3 )
-	self.Transaction = Shine.Map()
+    Shine.AssertAtLevel(not self.Transaction, "A transaction has already been started.", 3)
+    self.Transaction = Shine.Map()
 end
 
 function Storage:IsInTransaction()
-	return self.Transaction ~= nil
+    return self.Transaction ~= nil
 end
 
 --[[
@@ -62,14 +62,14 @@ end
 	This sets all values to the underlying data table, then saves to disk.
 ]]
 function Storage:Commit()
-	local DataToCommit = Shine.AssertAtLevel( self.Transaction, "No transaction has been started.", 3 )
-	self.Transaction = nil
+    local DataToCommit = Shine.AssertAtLevel(self.Transaction, "No transaction has been started.", 3)
+    self.Transaction = nil
 
-	for PathKey, Data in DataToCommit:Iterate() do
-		self:SetAtPath( Data.Value, unpack( Data.Path ) )
-	end
+    for PathKey, Data in DataToCommit:Iterate() do
+        self:SetAtPath(Data.Value, unpack(Data.Path))
+    end
 
-	self:Save()
+    self:Save()
 end
 
 --[[
@@ -77,13 +77,13 @@ end
 	call to BeginTransaction().
 ]]
 function Storage:Rollback()
-	Shine.AssertAtLevel( self.Transaction, "No transaction has been started.", 3 )
-	self.Transaction = nil
+    Shine.AssertAtLevel(self.Transaction, "No transaction has been started.", 3)
+    self.Transaction = nil
 end
 
-local function GetPathKey( ... )
-	-- Can get away with this because JSON cannot have number and string indices in the same object.
-	return Shine.Stream( { ... } ):Concat( "", tostring )
+local function GetPathKey(...)
+    -- Can get away with this because JSON cannot have number and string indices in the same object.
+    return Shine.Stream({ ... }):Concat("", tostring)
 end
 
 --[[
@@ -92,9 +92,9 @@ end
 	Returns the value at the given path if it has been set/updated in
 	the current transaction.
 ]]
-function Storage:GetInTransaction( ... )
-	local Entry = self.Transaction:Get( GetPathKey( ... ) )
-	return Entry and Entry.Value
+function Storage:GetInTransaction(...)
+    local Entry = self.Transaction:Get(GetPathKey(...))
+    return Entry and Entry.Value
 end
 
 --[[
@@ -103,24 +103,26 @@ end
 	When in a transaction, this will include values added/changed
 	during the transaction.
 ]]
-function Storage:GetAtPath( ... )
-	if self.Transaction then
-		local Result = self:GetInTransaction( ... )
-		if Result ~= nil then return Result end
-	end
+function Storage:GetAtPath(...)
+    if self.Transaction then
+        local Result = self:GetInTransaction(...)
+        if Result ~= nil then
+            return Result
+        end
+    end
 
-	local PathCount = select( "#", ... )
-	local Value = self.Data
+    local PathCount = select("#", ...)
+    local Value = self.Data
 
-	for i = 1, PathCount do
-		local Segment = select( i, ... )
-		Value = Value[ Segment ]
-		if Value == nil then
-			return nil
-		end
-	end
+    for i = 1, PathCount do
+        local Segment = select(i, ...)
+        Value = Value[Segment]
+        if Value == nil then
+            return nil
+        end
+    end
 
-	return Value
+    return Value
 end
 
 --[[
@@ -129,26 +131,26 @@ end
 	If any of the intermediate steps in the path are missing, they will be created
 	as new tables.
 ]]
-function Storage:SetAtPath( Value, ... )
-	-- If we're in a transaction, temporarily store the values outside the data table.
-	if self.Transaction then
-		self.Transaction:Add( GetPathKey( ... ), {
-			Value = Value,
-			Path = { ... }
-		} )
+function Storage:SetAtPath(Value, ...)
+    -- If we're in a transaction, temporarily store the values outside the data table.
+    if self.Transaction then
+        self.Transaction:Add(GetPathKey(...), {
+            Value = Value,
+            Path = { ... }
+        })
 
-		return
-	end
+        return
+    end
 
-	-- Otherwise, store as normal.
-	local PathCount = select( "#", ... )
-	local Parent = self.Data
-	if PathCount > 1 then
-		local Args = { ... }
-		Args[ #Args ] = nil
+    -- Otherwise, store as normal.
+    local PathCount = select("#", ...)
+    local Parent = self.Data
+    if PathCount > 1 then
+        local Args = { ... }
+        Args[#Args] = nil
 
-		Parent = TableBuild( self.Data, unpack( Args ) )
-	end
+        Parent = TableBuild(self.Data, unpack(Args))
+    end
 
-	Parent[ select( PathCount, ... ) ] = Value
+    Parent[select(PathCount, ...)] = Value
 end
