@@ -91,13 +91,35 @@ local function GetClientAndTier(player)
 	return client,tier
 end
 
+local function CheckPlayerForcePurchase(self, player, purchaseTech, defaultMapName)
+	local client,tier = GetClientAndTier(player)
+	if client and tier > 0 then
+		local pRes = player:GetResources()
+		if pRes > self.Config.RefundForcePurchase then
+			local cost = LookupTechData(purchaseTech,kTechDataCostKey,0)
+			if cost > 0 then
+				local replaceMapName = LookupTechData(purchaseTech,kTechDataMapName)
+				local additionalCost = math.floor(cost * 0.1) + 1
+				cost = cost + additionalCost
+				player:AddResources(-cost)
+				Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
+						234, 250, 241, string.format("您的个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为科技/演化(该功能到达特定段位后失效).",cost, additionalCost))
+				Shine:NotifyDualColour( player, 88, 214, 141, "[提示]",
+						234, 250, 241, "<物竞天择2>核心为科技追逐,过度积攒个人资源将导致您和您的队伍团队处于劣势!同时您所处的段位拥有[阵亡补偿],请利用该期间寻找游戏乐趣与最适合自己的职能定位." )
+				return replaceMapName
+			end
+		end
+	end
+	return defaultMapName
+end
+
 local kMarineRespawnEquipment = {
 	{map = LayMines.kMapName,info = "地雷 ",slot = 4 , refill=1, },
 	{map = PulseGrenadeThrower.kMapName ,info = "电磁手雷 ",slot = 5},
 	{map = Welder.kMapName,info = "焊枪 "}
 }
 
-function Plugin:OnMarineRespawn(playingTeam,player, origin, angles)
+local function CheckMarineGadgets(self,player)
 	if not Plugin.Config.MarineGears then return end
 
 	local client,tier = GetClientAndTier(player)
@@ -121,21 +143,45 @@ function Plugin:OnMarineRespawn(playingTeam,player, origin, angles)
 				resultString = (resultString or "") .. equipment.info
 			end
 		end
-		local weapon = player:GetWeaponInHUDSlot(kPrimaryWeaponSlot)
-		if weapon then
-			player:SetActiveWeapon(weapon:GetMapName())
-		end
 	end
 
 	if resultString then
 		Shine:NotifyDualColour( player,
 				88, 214, 141, string.format("[新晋-装备%i]",tier),
 				234, 250, 241, string.format("初始装备:%s 已派发", resultString))
+		return true
 	end
 	-- Shared.Message("[CNNP] New Comer Protection <Weapon Initalize>")
-
 end
 
+function Plugin:OnMarineRespawn(playingTeam,player, origin, angles)
+	local valid = CheckMarineGadgets(self,player)
+	if not GetHasTech(player,kTechId.ExosuitTech) then
+		mapName = CheckPlayerForcePurchase(self,player,kTechId.HeavyMachineGun,nil)
+		if mapName then
+			player:GiveItem(mapName)
+			valid = true
+		end 
+
+
+		local weapon = player:GetWeaponInHUDSlot(kPrimaryWeaponSlot)
+		if weapon then
+			player:SetActiveWeapon(weapon:GetMapName())
+		end
+	end
+end
+
+function Plugin:OnTeamSpectatorReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
+	if mapName == Marine.kMapName then
+		if GetHasTech(player,kTechId.ExosuitTech) then
+			mapName = CheckPlayerForcePurchase(self,player,kTechId.Exosuit,mapName)
+		end
+	elseif mapName == Skulk.kMapName then
+		mapName = CheckPlayerForcePurchase(self,player,kTechId.Onos,mapName)
+	end
+
+	return Player.Replace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
+end
 
 function Plugin:ClientConfirmConnect( Client )
 	if Client:GetIsVirtual() then return end
@@ -214,35 +260,7 @@ function Plugin:OnDropAllWeapons(player)
 
 end
 
-local kPassThroughAdditional = 8
-local function CheckPlayerForcePurchase(self,player,purchaseTech, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
-	local client,tier = GetClientAndTier(player)
-	if client and tier > 0 then
-		local pRes = player:GetResources()
-		if pRes > self.Config.RefundForcePurchase then
-			local cost = LookupTechData(purchaseTech,kTechDataCostKey,0)
-			if cost > 0 then
-				local replaceMapName = LookupTechData(purchaseTech,kTechDataMapName)
-				cost = cost + kPassThroughAdditional
-				player:AddResources(-cost)
-				Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
-						234, 250, 241, string.format("您的个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为科技/演化(该功能到达老兵段位后失效).",cost, kPassThroughAdditional))
-				Shine:NotifyDualColour( player, 88, 214, 141, "[提示]",
-						234, 250, 241, "<物竞天择2>核心为科技追逐,过度积攒个人资源将导致您和您的队伍团队处于劣势!同时您所处的段位拥有[阵亡补偿],请利用该期间寻找游戏乐趣与最适合自己的职能定位." )
-				
-				return Player.Replace(player,replaceMapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
-			end
-		end
-	end
-end
 
-function Plugin:OnTeamSpectatorReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
-	if mapName == Marine.kMapName then
-		return CheckPlayerForcePurchase(self,player,kTechId.Exosuit, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
-	elseif mapName == Skulk.kMapName then
-		return CheckPlayerForcePurchase(self,player,kTechId.Onos, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
-	end
-end
 
 function Plugin:Cleanup()
 	return self.BaseClass.Cleanup( self )

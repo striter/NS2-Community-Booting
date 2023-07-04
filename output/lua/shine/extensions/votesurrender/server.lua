@@ -294,7 +294,10 @@ function Plugin:VoteSurrender(Player)
 		return
 	end
 
-	local Success, Err = self:AddVote( Client, Team )
+	local Client = Player:GetClient()
+	if not Client then return end
+	
+	local Success, Err = self:AddVote(Client , Team )
 
 	if Success then
 		if self.Surrendered then return end
