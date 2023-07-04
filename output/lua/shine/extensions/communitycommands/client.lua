@@ -5,12 +5,12 @@ function Plugin:Initialise()
         Shine.Hook.Remove( "PlayerKeyPress", "LocalizeSelection" )
         
         if not CNPersistent then return end
-        if CNPersistent.forceLocalization ~= nil then return end
+        if CNPersistent.forceLocalize ~= nil then return end
         local playerName = GetNickName()
         CreateGUIObject("NS2CNLocalizeSelection", GUIMenuPopupSimpleMessage, nil,
                 {
                     title = "物竞天择2中文社区 - NS2CN",
-                    message = string.format("你好 <%s>!\n欢迎加入[物竞天择2中文社区]服务器!\n看起来你是第一次加入社区服务器.\n请选择你的语言偏好.\nHello <%s>!\nWelcome to [NS2CN] Community Server!\nIts your first time join our Server.\nPlease select your language.\nTips: Rejoin required to get menu re-translate",playerName,playerName),
+                    message = string.format("你好 <%s>!\n欢迎加入[物竞天择2中文社区]服务器!\n看起来你是第一次加入社区服务器.\n请选择你的语言偏好.\nHello <%s>!\nWelcome to [NS2CN] Community Server!\nIts your first time join our Server.\nPlease select your language.",playerName,playerName),
                     escDisabled = true,
                     buttonConfig =
                     {
@@ -23,6 +23,7 @@ function Plugin:Initialise()
                             callback = function(popup)
                                 SetLocalize(true)
                                 popup:Close()
+                                ChatUI_AddSystemMessage("不要忘记看一看位于主菜单底部的<社区指南>!")
                             end,
                         },
                         {
@@ -34,6 +35,7 @@ function Plugin:Initialise()
                             callback = function(popup)
                                 SetLocalize(false)
                                 popup:Close()
+                                ChatUI_AddSystemMessage("Rejoin/Reconnect required to get menu re-translate.\nThen you can check our <Community Guide> located at Main Menu Bottom!")
                             end,
                         }
                     },

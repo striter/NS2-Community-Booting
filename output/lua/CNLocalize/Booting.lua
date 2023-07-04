@@ -2,8 +2,8 @@ Shared.RegisterNetworkMessage("SwitchLocalize", {})
 if Client then
     gForceLocalize = true
     if CNPersistent then
-        if CNPersistent.forceLocalization ~= nil then
-            gForceLocalize = CNPersistent.forceLocalization
+        if CNPersistent.forceLocalize ~= nil then
+            gForceLocalize = CNPersistent.forceLocalize
         end
     end
 
@@ -28,7 +28,7 @@ if Client then
     function SetLocalize(_value)
         gForceLocalize = _value
         if CNPersistent then
-            CNPersistent.forceLocalization = gForceLocalize
+            CNPersistent.forceLocalize = gForceLocalize
             CNPersistentSave()
         end
     end
