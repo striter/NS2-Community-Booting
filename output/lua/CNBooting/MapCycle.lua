@@ -111,15 +111,14 @@ end
 
 local gameModePrefixes =
 {
-    "infest", "infext","ns2.0b","ns2.0","ns1.0","def"
+    "infest", "infext","ns2.0b","ns2.0","def"
 }
 
 local prefixToModId =
 {
     ["infest"] = "2e813610",
     ["infect"] = "2e813610",
-    ["ns2.0"] = "b12f2e4a",
-    ["ns1.0"] = "b0087f28",
+    ["ns2.0"] = "b2c1e36d",
 }
 
 -- Returns nil if the prefix doesn't match, or the real map name if it does match.

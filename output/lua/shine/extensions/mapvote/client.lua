@@ -659,8 +659,7 @@ do
 			infest = "Infest -",
 			infest = "Infest -",
 			def = "Defense -",
-			["ns1.0"] = "NS[1.0] -",
-			["ns2.0"] = "NS[2.0] -",
+			["ns2.0"] = "NS2.0 -",
 		}
 		KnownPrefixWords.infect = KnownPrefixWords.infest
 

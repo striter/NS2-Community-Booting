@@ -108,7 +108,6 @@ if Server then
         mapCount = AddMapPrefixesToVoteMenu(client,"infest", mapCount)
         mapCount = AddMapPrefixesToVoteMenu(client,"infect", mapCount)
         mapCount = AddMapPrefixesToVoteMenu(client,"def", mapCount)
-        mapCount = AddMapPrefixesToVoteMenu(client,"ns1.0", mapCount)
         mapCount = AddMapPrefixesToVoteMenu(client,"ns2.0", mapCount)
         
     end
