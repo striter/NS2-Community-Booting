@@ -317,7 +317,7 @@ end
 
 function Plugin:CreateMessageCommands()
     local function CanSelfTargeting(_client,_target)
-        local access = _client == nil or Shine:HasAccess(_client,"sh_host") 
+        local access = _client == nil or Shine:HasAccess(_client,"sh_host")
         if access then return true end
         if _target == _client then
             Shine:NotifyCommandError( _client, "你不应该对自己使用这个指令" )
@@ -325,24 +325,23 @@ function Plugin:CreateMessageCommands()
         end
         return true
     end
-    
     --Elo
-    
+
     ----Reset
     local function AdminRankResetPlayer(_client, _id )
         local target = Shine.GetClientByNS2ID(_id)
         if not target then return end
         if not CanSelfTargeting(_client,target) then return end
-        
+
         local data = GetPlayerData(self,_id)
         data.rank = 0
         data.rankOffset = 0
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
 
-    self:BindCommand( "sh_rank_reset_player", "rank_reset_player", AdminRankResetPlayer)
-    :AddParam{ Type = "steamid" }
-    :Help( "重置玩家的[玩家段位](还原至NS2段位)." )
+    self:BindCommand( "sh_rank_reset", "rank_reset", AdminRankResetPlayer)
+        :AddParam{ Type = "steamid" }
+        :Help( "重置玩家的[玩家段位](还原至NS2段位)." )
 
     local function AdminRankResetCommander(_client, _id )
         local target = Shine.GetClientByNS2ID(_id)
@@ -358,27 +357,27 @@ function Plugin:CreateMessageCommands()
     self:BindCommand( "sh_rank_reset_comm", "rank_reset_comm", AdminRankResetCommander)
         :AddParam{ Type = "steamid" }
         :Help( "重置玩家的[指挥段位](还原至NS2段位)." )
-    
+
     --Set       (Jezz ....)
     local function AdminRankPlayer( _client, _id, _rankMarine ,_rankAlien)
         local target = Shine.GetClientByNS2ID(_id)
         if not target then return end
         if not CanSelfTargeting(_client,target) then return end
-        
+
         local player = target:GetControllingPlayer()
         local data = GetPlayerData(self,_id)
         _rankMarine = _rankMarine >= 0 and _rankMarine or GetMarineSkill(player)
         _rankAlien = _rankAlien >= 0 and _rankAlien or GetAlienSkill(player)
         data.rank = (_rankMarine + _rankAlien) / 2 - player.skill
-        data.rankOffset = (_rankAlien - _rankMarine) / 2 - player.skillOffset
+        data.rankOffset = (_rankMarine - _rankAlien) / 2 - player.skillOffset
         EloDataSanityCheck(data,player)
     end
 
-    self:BindCommand( "sh_rank_set_player", "rank_set_player", AdminRankPlayer )
-    :AddParam{ Type = "steamid" }
-    :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
-    :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
-    :Help( "设置对应玩家的[玩家段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
+    self:BindCommand( "sh_rank_set", "rank_set", AdminRankPlayer )
+        :AddParam{ Type = "steamid" }
+        :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+        :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
+        :Help( "设置对应玩家的[玩家段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
 
     local function AdminRankPlayerCommander( _client, _id, _rankMarine ,_rankAlien)
         local target = Shine.GetClientByNS2ID(_id)
@@ -390,7 +389,7 @@ function Plugin:CreateMessageCommands()
         _rankMarine = _rankMarine >= 0 and _rankMarine or GetMarineCommanderSkill(player)
         _rankAlien = _rankAlien >= 0 and _rankAlien or GetAlienCommanderSkill(player)
         data.rankComm = (_rankMarine + _rankAlien) / 2 - player.commSkill
-        data.rankCommOffset = (_rankAlien - _rankMarine) / 2 - player.commSkillOffset
+        data.rankCommOffset = (_rankMarine - _rankAlien) / 2 - player.commSkillOffset
         Shared.Message(tostring(data.rankComm) .. " " .. tostring(data.rankCommOffset))
         EloDataSanityCheck(data,player)
         Shared.Message(tostring(data.rankComm) .. " " .. tostring(data.rankCommOffset))
@@ -401,7 +400,7 @@ function Plugin:CreateMessageCommands()
         :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
         :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
         :Help( "设置对应玩家的[指挥段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
-    
+
     --Delta
     local function AdminRankDeltaPlayer(_client, _id, _marineDelta, _alienDelta )
         local target = Shine.GetClientByNS2ID(_id)
@@ -409,11 +408,11 @@ function Plugin:CreateMessageCommands()
         if not CanSelfTargeting(_client,target) then return end
         RankPlayerDelta(self,_id,_marineDelta,_alienDelta,0,0)
     end
-    self:BindCommand( "sh_rank_delta_player", "rank_delta_player", AdminRankDeltaPlayer)
-    :AddParam{ Type = "steamid"}
-    :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
-    :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
-    :Help( "增减对应玩家的[玩家段位].例:!rank_delta 55022511 100 -100" )
+    self:BindCommand( "sh_rank_delta", "rank_delta", AdminRankDeltaPlayer)
+        :AddParam{ Type = "steamid"}
+        :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
+        :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
+        :Help( "增减对应玩家的[玩家段位].例:!rank_delta 55022511 100 -100" )
 
     local function AdminRankDeltaCommander( _client, _id, _marineDelta,_alienDelta )
         local target = Shine.GetClientByNS2ID(_id)
@@ -459,7 +458,7 @@ function Plugin:CreateMessageCommands()
         data.hideRank = not data.hideRank
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
-    
+
     self:BindCommand( "sh_hiderank_set", "hiderank_set", HideRankSwitchID,true )
         :AddParam{ Type = "steamid" }
         :Help( "目标玩家的社区段位显示." )

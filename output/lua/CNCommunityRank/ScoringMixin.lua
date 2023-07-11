@@ -34,11 +34,11 @@ function ScoringMixin:GetCommanderSkill()
 end
 
 function ScoringMixin:GetPlayerSkillOffset()
-    return math.max(0, self.skillOffset + self.rankOffsetDelta)
+    return self.skillOffset + self.rankOffsetDelta
 end
 
 function ScoringMixin:GetCommanderSkillOffset()
-    return math.max(0,self.commSkillOffset + self.rankCommOffsetDelta)
+    return self.commSkillOffset + self.rankCommOffsetDelta
 end
 
 if Server then

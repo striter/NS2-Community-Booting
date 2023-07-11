@@ -161,12 +161,12 @@ function Plugin:OnMarineRespawn(playingTeam,player, origin, angles)
 			player:GiveItem(mapName)
 			valid = true
 		end 
+	end
 
-
-		local weapon = player:GetWeaponInHUDSlot(kPrimaryWeaponSlot)
-		if weapon then
-			player:SetActiveWeapon(weapon:GetMapName())
-		end
+	if not valid then return end
+	local weapon = player:GetWeaponInHUDSlot(kPrimaryWeaponSlot)
+	if weapon then
+		player:SetActiveWeapon(weapon:GetMapName())
 	end
 end
 
