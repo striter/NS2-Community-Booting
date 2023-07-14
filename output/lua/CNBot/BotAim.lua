@@ -1,7 +1,7 @@
 ﻿BotAim.reactionTime = 0.25
 BotAim.kAccuracies = {
     --[kBotAccWeaponGroup.Bullets] = { 14.5, 16.5, 21, 25, 28.5, 34, 38.5 },
-    [kBotAccWeaponGroup.Bullets] = { 28.5, 28.5, 28.5, 28.5, 28.5, 28.5, 28.5 },
+    [kBotAccWeaponGroup.Bullets] = { 25, 25, 25, 25, 25, 25, 25 },
 
     -- These guys should be stonker
     --[kBotAccWeaponGroup.ExoMinigun] = { 23, 25, 28, 30, 35, 39, 43 },

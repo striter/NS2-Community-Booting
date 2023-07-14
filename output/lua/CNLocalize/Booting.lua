@@ -90,6 +90,7 @@ if Client then
     ModLoader.SetupFileHook("lua/GUIGameEndStats.lua", "lua/CNLocalize/GUIGameEndStats.lua", "replace" )
     ModLoader.SetupFileHook("lua/GUIDeathStats.lua", "lua/CNLocalize/GUIDeathStats.lua", "replace" )
     ModLoader.SetupFileHook("lua/ConfigFileUtility.lua", "lua/CNLocalize/ShineExtensions.lua", "post" )        --Shine localizes
+    ModLoader.SetupFileHook("lua/GUIWaypoints.lua", "lua/CNLocalize/GUIWaypoints.lua", "post" )
 
     --Customization
     ModLoader.SetupFileHook("lua/menu2/PlayerScreen/Customize/GUIMenuCustomizeScreen.lua", "lua/CNLocalize/Customize/GUIMenuCustomizeScreen.lua", "replace" )
