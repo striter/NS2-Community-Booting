@@ -11,7 +11,8 @@ Plugin.PrintName = "Enforced Team Size"
  - 3: Spec
  ]]
 Plugin.DefaultConfig = {
-	Team = { 14 , 14 , 5},
+	Team = { 12 , 12 , 5},
+	TeamForceJoin = 3,
 	IncreaseByForceJoins = true,
 	BlockSpectators = true,
 	SkillLimitMin = -1,
@@ -33,7 +34,8 @@ Plugin.EnabledGamemodes = {
 
 do
 	local Validator = Shine.Validator()
-	Validator:AddFieldRule( "Team",  Validator.IsType( "table", {} ))
+	Validator:AddFieldRule( "Team",  Validator.IsType( "table", Plugin.DefaultConfig.Team ))
+	Validator:AddFieldRule( "TeamForceJoin",  Validator.IsType( "number", Plugin.DefaultConfig.TeamForceJoin ))
 	Validator:AddFieldRule( "IncreaseByForceJoins",  Validator.IsType( "boolean", true ))
 	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", -1 ))
 	Validator:AddFieldRule( "SkillLimitMin",  Validator.IsType( "number", -1 ))
@@ -115,25 +117,35 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		return
 	end
 	
+	local playerNum = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
 	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
-	local playerLimited = self:GetNumPlayers(_gamerules:GetTeam(_newTeam)) >= playerLimit
+	local playerLimited = playerNum >= playerLimit
 	local forcePrivilegeTitle
 	local forceCredit
 	local available = true
+	local couldBeIgnored = true
+	local teamName = TeamNames[_newTeam]
 	if _newTeam == kSpectatorIndex then
 		if playerLimited then
-			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请进入游戏或加入有观战位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
+			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请尽快进入游戏!", teamName ,playerLimit),errorColorTable)
 			available =  false
 			forceCredit = 0
 			forcePrivilegeTitle = "预热观战位"
 		end
 	else
 		if playerLimited then
-			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位或加入有空位的服务器.", TeamNames[_newTeam] ,playerLimit),errorColorTable,nil)
+			local forceJoinLimit = playerLimit + self.Config.TeamForceJoin
+			if playerNum >= forceJoinLimit then
+				self:Notify(_player,string.format( "[%s]已爆满(>=%s),无法再增加任何玩家,请继续观战,等待空位/分服或加入有空位的服务器.", teamName ,forceJoinLimit),errorColorTable)
+				couldBeIgnored = false
+			else
+				self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位/分服或加入有空位的服务器.", teamName ,playerLimit),errorColorTable)
+			end 
 			available = false
 			forceCredit = 1
 			forcePrivilegeTitle = "预热入场通道"
 		end
+		
 	end
 
 	if available then return end
@@ -141,6 +153,9 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	local client = Server.GetOwner(_player)
 	if not client or client:GetIsVirtual()  then return end
 
+	if not couldBeIgnored then return false end
+
+	--Accesses
 	if Shine:HasAccess( client, "sh_priorslot" ) then
 		self:Notify(_player, "您为[高级预留玩家],已忽视上述限制!",priorColorTable,nil)
 		return

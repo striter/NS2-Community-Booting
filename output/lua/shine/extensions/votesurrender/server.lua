@@ -188,7 +188,7 @@ function Plugin:AddVote( Client, Team )
 	local Player= Client:GetControllingPlayer()
 	local gameMode = Shine.GetGamemode()
 	if table.contains(surrenderResourceCheck,gameMode) then
-		if Player:GetPersonalResources() > 50 then
+		if Player:GetPersonalResources() > 30 then
 			return false, "too many PRes"
 		end
 	end
