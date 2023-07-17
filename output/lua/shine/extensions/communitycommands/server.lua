@@ -39,14 +39,9 @@ function Plugin:CreateCommands()
     Help( "强制睡觉(仅陆战队可用)." )
     
     --Admin comamnds
-	local function AdminScalePlayer( _client, _id, scale )
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then 
-            return 
-        end
-
-        local player = target:GetControllingPlayer()
-        if not player.SetScale then return end
+	local function AdminScalePlayer( _client, _target, scale )
+        local player = _target:GetControllingPlayer()
+        if not player or not player.SetScale then return end
         player:SetScale(scale)
         Shine:AdminPrint( nil, "%s set %s scale to %s", true,  Shine.GetClientInfo( _client ), Shine.GetClientInfo( target ), scale )
 	end

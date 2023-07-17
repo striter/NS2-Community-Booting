@@ -17,6 +17,7 @@ Plugin.PrintName = "newcomerprotection"
 Plugin.HasConfig = true
 Plugin.ConfigName = "NewcomerProtection.json"
 Plugin.DefaultConfig = {
+	MinSkillToCommand = 0,
 	["Tier"] ={100,300,500},
 	["MarineGears"] = false,
 	["Refund"] = true,
@@ -41,6 +42,7 @@ Plugin.ConfigMigrationSteps = { }
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "BelowSkillNotify",  Validator.IsType( "number", Plugin.DefaultConfig.BelowSkillNotify ))
+	Validator:AddFieldRule( "MinSkillToCommand",  Validator.IsType( "number", Plugin.DefaultConfig.MinSkillToCommand ))
 	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
 	Validator:AddFieldRule( "ExtraNotifyMessage",  Validator.IsType( "string", "You are at a higher tier skill server,choose rookie server for better experience" ))
 	Validator:AddFieldRule( "Messages",  Validator.IsType( "table", Plugin.DefaultConfig.Messages))
@@ -78,7 +80,7 @@ local function GetClientAndTier(player)
 
 	local tier = 0
 	if client then
-		local skill = player:GetPlayerSkill()
+		local skill = player:GetPlayerTeamSkill()
 		for k,v in ipairs(Plugin.Config.Tier) do
 			if skill < v then
 				tier = k
@@ -170,6 +172,24 @@ function Plugin:OnMarineRespawn(playingTeam,player, origin, angles)
 	end
 end
 
+function Plugin:ValidateCommanderLogin( Gamerules, CommandStation, Player )
+	if self.Config.MinSkillToCommand <= 0 then return end
+	if Shine.GetHumanPlayerCount() < 20 then return end 	--They are seeding
+	
+	local Client = Shine.GetClientForPlayer( Player )
+	if not Client then return end
+	if Client:GetIsVirtual() then return end
+	
+	
+	local skill = Player:GetPlayerTeamSkill()
+	if skill < self.Config.MinSkillToCommand then
+		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",
+				213, 245, 227, string.format("由于服务器当前强度,你的玩家分数需要到达[%d]分时才能,成为该队的指挥!",self.Config.MinSkillToCommand))
+		return false
+	end
+end
+
+
 function Plugin:OnTeamSpectatorReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
 	if mapName == Marine.kMapName then
 		if GetHasTech(player,kTechId.ExosuitTech) then
@@ -187,7 +207,7 @@ function Plugin:ClientConfirmConnect( Client )
 
 	local player = Client:GetControllingPlayer()
 	if not player then return end
-	if player:GetPlayerSkill() > self.Config.BelowSkillNotify then return end
+	if player:GetPlayerTeamSkill() > self.Config.BelowSkillNotify then return end
 
 	if self.Config.ExtraNotify then
 		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",

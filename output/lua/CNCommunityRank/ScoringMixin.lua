@@ -41,6 +41,22 @@ function ScoringMixin:GetCommanderSkillOffset()
     return self.commSkillOffset + self.rankCommOffsetDelta
 end
 
+function ScoringMixin:GetPlayerTeamSkill()
+    assert(HasMixin(self, "Team"))
+    local team = self:GetTeamNumber()
+    local skill = self:GetPlayerSkill()
+
+    if team ~= kTeam1Index and team ~= kTeam2Index then
+        return self.skill   --just stick with the "average" for RR players
+    end
+
+    local skillOffset = self:GetPlayerSkillOffset()
+    return
+    ( team == kTeam1Index ) and
+            skill + skillOffset or
+            skill - skillOffset
+end
+
 if Server then
     local baseCopyPlayerDataFrom = ScoringMixin.CopyPlayerDataFrom
     function ScoringMixin:CopyPlayerDataFrom(player)

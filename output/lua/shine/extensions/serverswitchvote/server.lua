@@ -15,7 +15,7 @@ Plugin.DefaultConfig = {
 	},
 	CrowdAdvert = {
 		PlayerCount = 0,
-		RedirCount = 24,
+		RedirUntil = 28,
 		ResSlots = 32,
 		ToServer = 0,
 		ToServerDelay = 10,
@@ -123,7 +123,7 @@ end
 	Validator:AddFieldRule( "ClientVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.ClientVote ))
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
-	Validator:AddFieldRule( "CrowdAdvert.RedirCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.RedirCount ))
+	Validator:AddFieldRule( "CrowdAdvert.RedirUntil",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.RedirUntil ))
 	Validator:AddFieldRule( "CrowdAdvert.ResSlots",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ResSlots ))
 	Validator:AddFieldRule( "CrowdAdvert.Prefix",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Prefix ))
 	Validator:AddFieldRule( "CrowdAdvert.ToServer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServer ))
@@ -175,7 +175,7 @@ function Plugin:OnEndGame(_winningTeam)
 		return
 	end
 	
-	local amount = self.Config.CrowdAdvert.RedirCount
+	local amount = gameEndPlayerCount - self.Config.CrowdAdvert.RedirUntil
 	amount = amount > 0 and amount or gameEndPlayerCount / 2
 	local delay = self.Config.CrowdAdvert.ToServerDelay
 	NotifyCrowdAdvert(self,string.format( self.Config.CrowdAdvert.Message,delay,amount, redirData.Name))
