@@ -531,6 +531,7 @@ kTranslateMessage["CALLINGCARD_Chiikawa_TOOLTIP"] = "Chiikawa"
 kTranslateMessage["CALLINGCARD_KITTYKITTY_TOOLTIP"] = "猫猫"
 kTranslateMessage["CALLINGCARD_TOM_TOOLTIP"] = "汤姆"
 kTranslateMessage["CALLINGCARD_UShouldDie_TOOLTIP"] = "有小代！"
+kTranslateMessage["CALLINGCARD_GENSHIN_TOOLTIP"] = "原神"
 
 kTranslateMessage["CALLINGCARD_LOCKED_TOOLTIP_EXTRA"] = "暂无法解锁?"
 
@@ -540,6 +541,7 @@ kLocales["CALLINGCARD_Chiikawa_TOOLTIP"] = "Chiikawa"
 kLocales["CALLINGCARD_KITTYKITTY_TOOLTIP"] = "Kitty Kitty"
 kLocales["CALLINGCARD_UShouldDie_TOOLTIP"] = "U Should Die"
 kLocales["CALLINGCARD_TOM_TOOLTIP"] = "Tom"
+kLocales["CALLINGCARD_GENSHIN_TOOLTIP"] = "Genshin"
 
 kLocales["CALLINGCARD_LOCKED_TOOLTIP_EXTRA"] = "Do you want it?"
 

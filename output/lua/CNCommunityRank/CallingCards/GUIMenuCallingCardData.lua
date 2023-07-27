@@ -69,6 +69,7 @@ kCallingCards = enum({
     "KittyKitty",
     "UShouldDie",
     "Tom",
+    "Genshin",
 })
 
 kCallingCardOptionKey = "customization/calling-card"
@@ -193,6 +194,7 @@ local kCallingCardData =
     [kCallingCards.Chiikawa] = { texture = "Chiikawa" , frame = 12 ,rate = 12 ,size = 256, loop = true, itemId = kChiikawaCardItemId},
     [kCallingCards.UShouldDie] = { texture = "UShouldDie" , frame = 48 ,rate = 24 ,size = 128 , itemId = kUShouldDieCardItemId},
     [kCallingCards.Tom] = { texture = "Tom" , frame = 29 ,rate = 14 ,size = 128 , itemId = kTomCardItemId},
+    [kCallingCards.Genshin] = { texture = "Genshin" , frame = 16 ,rate = 12 ,size = 256 , itemId = kTomCardItemId},
 }
 
 local kCallingCardUnlockedTooltips =
@@ -251,12 +253,13 @@ local kCallingCardUnlockedTooltips =
     [kCallingCards.Tom] = "CALLINGCARD_TOM_TOOLTIP",
     [kCallingCards.UShouldDie] = "CALLINGCARD_UShouldDie_TOOLTIP",
     [kCallingCards.KittyKitty] = "CALLINGCARD_KITTYKITTY_TOOLTIP",
+    [kCallingCards.Genshin] = "CALLINGCARD_GENSHIN_TOOLTIP",
 }
 
 local kCallingCardLockedTooltipOverrides =
 {
     [kCallingCards.Rookie]          = "CALLINGCARD_ROOKIE_LOCKED_TOOLTIP",
-    [kCallingCards.KittyKitty]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
+    [kCallingCards.Genshin]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
 }
 
 function GetCallingCardLockedTooltipIdentifierOverride(callingCard)
