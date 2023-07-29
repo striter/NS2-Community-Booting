@@ -26,7 +26,7 @@ Plugin.DefaultConfig = {
         },
     },
     ["UserData"] = {
-        ["55022511"] = {tier = 0 , time = 100 , credit = 0 , name = "StriteR."}
+        ["55022511"] = {tier = 0 ,score = 0, time = 100 , credit = 0 , name = "StriteR."}
     },
 }
 
@@ -95,7 +95,7 @@ local function GetPlayerData(self, _clientID)
             initialTier = 5
         end
         
-        self.MemberInfos[_clientID] = {name = "", time = 0, tier = initialTier ,  credit = initialCredit }
+        self.MemberInfos[_clientID] = {name = "",score = 0, time = 0, tier = initialTier ,  credit = initialCredit }
     end
     
     return self.MemberInfos[_clientID]
@@ -122,7 +122,19 @@ local function TrackClient(self, client, _clientID)
     
     local data = GetPlayerData(self,_clientID)
     local player = client:GetControllingPlayer()
-    data.time = data.time + math.floor(now - self.PrewarmTracker[_clientID])
+    local team = player:GetTeamNumber()
+    
+    local trackedTime = math.floor(now - self.PrewarmTracker[_clientID])
+    data.time = data.time + trackedTime
+
+    if not self.Config.Validated then
+        local scoreScalar = 1
+        if team == kTeam1Index or team ==kTeam2Index then
+            scoreScalar = 2
+        end
+        data.score = data.score + trackedTime * scoreScalar
+    end
+    
     self.PrewarmTracker[_clientID] = now
     player:SetPrewarmData(data)
 end
@@ -186,12 +198,12 @@ end
 
 local function Validate(self)
     if not PrewarmValidateEnable(self) then return end
-
     if GetInGamePlayerCount() < self.Config.Restriction.Player then return end
+    
     if self.Config.Validated then return end
     self.Config.Validated = true
 
-    --Dispatch yesterdays award
+    --Dispatch lastday award
     for _,clientIDs in pairs(self.Config.TomorrowAward.UserData) do
         local clientID = tonumber(clientIDs)
         ValidateClient(self,clientID,nil,self.Config.TomorrowAward.Tier,self.Config.TomorrowAward.Credit)
@@ -203,7 +215,7 @@ local function Validate(self)
         table.insert(prewarmClients, { clientID = clientID, data = prewarmData})
     end
 
-    local function PrewarmCompare(a, b) return a.data.time > b.data.time end
+    local function PrewarmCompare(a, b) return a.data.score > b.data.score end
     table.sort(prewarmClients, PrewarmCompare)
     
     local nameList = ""
@@ -224,7 +236,7 @@ local function Validate(self)
         if not curTierData then break end
         ValidateClient(self, prewarmClient.clientID, prewarmClient.data,curTier, curTierData.Credit)
         if curTierData.Inform then  
-            nameList = nameList .. string.format("%s(%s分)|", prewarmClient.data.name, math.floor(prewarmClient.data.time / 60)) 
+            nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60)) 
         end
         currentIndex = currentIndex + 1
     end
@@ -234,6 +246,8 @@ local function Validate(self)
                 255, 255, 255,string.format("预热已达成,预热排名靠前的玩家:" .. nameList .. "等,感谢各位对预热做出的贡献.",
                         self.Config.Restriction.Player))
     end
+    
+    return true
     --SavePersistent(self)
 end
 
@@ -281,9 +295,29 @@ function Plugin:SetGameState( Gamerules, State, OldState )
         Validate(self)
 
         if PrewarmValidateEnable(self) and not self.Config.Validated then
+            local prewarmClients = {}
+            for clientID,prewarmData in pairs(self.MemberInfos) do
+                table.insert(prewarmClients, { clientID = clientID, data = prewarmData})
+            end
+
+            local function PrewarmCompare(a, b) return a.data.score > b.data.score end
+            table.sort(prewarmClients, PrewarmCompare)
+            local nameList = ""
+            local index = 0
+            for _, prewarmClient in pairs(prewarmClients) do
+                nameList = nameList .. string.format("%s(%i分) ", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60))
+                if index > 5 then       --Only the first 5
+                    break
+                end
+            end
+            
             for client in Shine.IterateClients() do
                 Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
                         255, 255, 255,string.format("当前为预热局,当游戏开始时[人数>%s]后,参与预热的玩家将获得当日[预热徽章]以及对应的[预热点].",
+                                self.Config.Restriction.Player))
+
+                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+                        255, 255, 255,string.format("目前的预热分数排名:" .. nameList,
                                 self.Config.Restriction.Player))
             end
         end

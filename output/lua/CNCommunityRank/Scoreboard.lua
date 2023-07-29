@@ -124,6 +124,7 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.ReservedQueueIndex = pie.reservedQueueIndex
         playerRecord.prewarmTier = pie.prewarmTier
         playerRecord.prewarmTime = pie.prewarmTime
+        playerRecord.prewarmScore = pie.prewarmScore
         playerRecord.Group = pie.hideRank and "RANK_DEFAULT" or pie.group    --Hide this shit
         playerRecord.lastSeenName = pie.hideRank and "" or pie.lastSeenName
     ------------

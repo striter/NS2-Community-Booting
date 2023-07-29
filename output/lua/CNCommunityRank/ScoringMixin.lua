@@ -20,6 +20,7 @@ function ScoringMixin:__initmixin()
     
     self.prewarmTier = 0  
     self.prewarmTime = 0
+    self.prewarmScore = 0
     
     self.queueIndex = 0  
     self.reservedQueueIndex = 0
@@ -51,6 +52,7 @@ function ScoringMixin:GetPlayerTeamSkill()
     end
 
     local skillOffset = self:GetPlayerSkillOffset()
+    
     return
     ( team == kTeam1Index ) and
             skill + skillOffset or
@@ -75,6 +77,7 @@ if Server then
         
         self.prewarmTier = player.prewarmTier
         self.prewarmTime = player.prewarmTime
+        self.prewarmScore = player.prewarmScore
         
         self.queueIndex = player.queueIndex
         self.reservedQueueIndex = player.reservedQueueIndex
@@ -111,7 +114,8 @@ if Server then
     
     function ScoringMixin:SetPrewarmData(dataTable)
         self.prewarmTier = dataTable.tier or 0
-        self.prewarmTime = math.floor((dataTable.time or 0) / 60)
+        self.prewarmTime = math.floor(dataTable.time or 0) / 60
+        self.prewarmScore = math.floor(dataTable.score or 0 ) / 60
     end
 end --End-Server
 

@@ -48,6 +48,7 @@ if kTranslateMessage then
     kTranslateMessage["STATUS_QUEUE_RESERVED"]="预留: %i"
 
     kTranslateMessage["COMMUNITY_PLAYTIME"]="今日在线: %s分钟"
+    kTranslateMessage["COMMUNITY_PREWARM"]="预热分数: %s分"
     kTranslateMessage["COMMUNITY_PREWARM_1"]="           < 预热贡献者 - P0 >"
     kTranslateMessage["COMMUNITY_PREWARM_2"]="           < 预热贡献者 - P1 >"
     kTranslateMessage["COMMUNITY_PREWARM_3"]="           < 预热贡献者 - P2 >"
@@ -108,6 +109,7 @@ if kLocales then
     kLocales["STATUS_QUEUE_RESERVED"]="Reserved %i"
 
     kLocales["COMMUNITY_PLAYTIME"]="Online %sm"
+    kLocales["COMMUNITY_PREWARM"]="Prewarm: %s*"
     kLocales["COMMUNITY_PREWARM_1"]="           <Prewarm Crystal>"
     kLocales["COMMUNITY_PREWARM_2"]="           <Prewarm Golden>"
     kLocales["COMMUNITY_PREWARM_3"]="           <Prewarm Silver>"

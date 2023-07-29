@@ -52,6 +52,7 @@ local networkVars =
     emblem = "integer (-64 to 64)",
     prewarmTier = "integer(0 to 16)",
     prewarmTime = "integer",
+    prewarmScore = "integer",
     group = string.format("string (%d)", kMaxGroupName ),
     queueIndex = "integer (0 to 64)",
     reservedQueueIndex = "integer (0 to 64)",
@@ -148,6 +149,7 @@ function PlayerInfoEntity:UpdateScore()
                 self.emblem = scorePlayer.emblem
                 self.prewarmTier = scorePlayer.prewarmTier
                 self.prewarmTime = scorePlayer.prewarmTime
+                self.prewarmScore = scorePlayer.prewarmScore
                 self.queueIndex = scorePlayer.queueIndex
                 self.reservedQueueIndex = scorePlayer.reservedQueueIndex
                 self.lastSeenName = scorePlayer.lastSeenName

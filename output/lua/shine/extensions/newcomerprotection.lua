@@ -242,7 +242,7 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 
 	if refund == 0 then return end
 
-	player:AddResources(refund)
+	refund = player:AddResources(refund)
 	Shine:NotifyDualColour( player,
 			88, 214, 141, string.format("[新兵保护]",tier),
 			234, 250, 241, string.format("已转入<%.2f>资源作为[阵亡补偿].",refund) )
