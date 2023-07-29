@@ -129,8 +129,8 @@ local function TrackClient(self, client, _clientID)
 
     if not self.Config.Validated then
         local scoreScalar = 1
-        if team == kTeam1Index or team ==kTeam2Index then
-            scoreScalar = 2
+        if team == kTeam1Index or team == kTeam2Index then
+            scoreScalar = 3
         end
         data.score = data.score + trackedTime * scoreScalar
     end
