@@ -306,7 +306,8 @@ function Plugin:SetGameState( Gamerules, State, OldState )
             local index = 0
             for _, prewarmClient in pairs(prewarmClients) do
                 nameList = nameList .. string.format("%s(%i分) ", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60))
-                if index > 5 then       --Only the first 5
+                index = index + 1
+                if index > 10 then       -- Show these guys
                     break
                 end
             end

@@ -69,7 +69,7 @@ function Plugin:OnFirstThink()
 	Shine.Hook.SetupClassHook("Player", "OnKill", "OnPlayerKill", "PassivePost")
 	Shine.Hook.SetupClassHook("Marine", "DropAllWeapons", "OnDropAllWeapons", "PassivePre")
 
-	Shine.Hook.SetupClassHook("MarineSpectator", "Replace", "OnMarineReplace", "ActivePre")
+	Shine.Hook.SetupClassHook("TeamSpectator", "Replace", "OnMarineReplace", "ActivePre")
 	Shine.Hook.SetupClassHook("MarineTeam", "RespawnPlayer", "OnMarineRespawn", "PassivePost")
 	Shine.Hook.SetupClassHook("Egg", "SpawnPlayer", "OnAlienRespawn", "Replace")
 	
@@ -192,9 +192,11 @@ function Plugin:OnMarineRespawn(team,player, origin, angles)
 end
 
 function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
-	if GetHasTech(player,kTechId.ExosuitTech) then
-		 if CheckPlayerForcePurchase(self,player,kTechId.Exosuit) then
-			mapName = Exo.kMapName	 
+	if mapName == Marine.kMapName then
+		if GetHasTech(player,kTechId.ExosuitTech) then
+			if CheckPlayerForcePurchase(self,player,kTechId.Exosuit) then
+				mapName = Exo.kMapName
+			end
 		end
 	end
 	return Player.Replace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
