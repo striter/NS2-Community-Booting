@@ -67,9 +67,12 @@ end
 
 function Plugin:OnFirstThink()
 	Shine.Hook.SetupClassHook("Player", "OnKill", "OnPlayerKill", "PassivePost")
-	Shine.Hook.SetupClassHook("MarineTeam", "RespawnPlayer", "OnMarineRespawn", "PassivePost")
 	Shine.Hook.SetupClassHook("Marine", "DropAllWeapons", "OnDropAllWeapons", "PassivePre")
-	Shine.Hook.SetupClassHook("TeamSpectator", "Replace", "OnTeamSpectatorReplace", "ActivePre")
+
+	Shine.Hook.SetupClassHook("MarineSpectator", "Replace", "OnMarineReplace", "ActivePre")
+	Shine.Hook.SetupClassHook("MarineTeam", "RespawnPlayer", "OnMarineRespawn", "PassivePost")
+	Shine.Hook.SetupClassHook("Egg", "SpawnPlayer", "OnAlienRespawn", "Replace")
+	
 end
 
 local function GetClientAndTier(player)
@@ -92,7 +95,7 @@ local function GetClientAndTier(player)
 	return client,tier
 end
 
-local function CheckPlayerForcePurchase(self, player, purchaseTech, defaultMapName)
+local function CheckPlayerForcePurchase(self, player, purchaseTech)
 	local client,tier = GetClientAndTier(player)
 	if client and tier > 0 then
 		local pRes = player:GetResources()
@@ -103,15 +106,15 @@ local function CheckPlayerForcePurchase(self, player, purchaseTech, defaultMapNa
 				local additionalCost = math.floor(cost * 0.1) + 1
 				cost = cost + additionalCost
 				player:AddResources(-cost)
+				player.lastUpgradeList = {}
 				Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
 						234, 250, 241, string.format("您的个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为科技/演化(该功能到达特定段位后失效).",cost, additionalCost))
 				Shine:NotifyDualColour( player, 88, 214, 141, "[提示]",
 						234, 250, 241, "<物竞天择2>核心为科技追逐,过度积攒个人资源将导致您和您的队伍团队处于劣势!同时您所处的段位拥有[阵亡补偿],请利用该期间寻找游戏乐趣与最适合自己的职能定位." )
-				return replaceMapName
+				return true
 			end
 		end
 	end
-	return defaultMapName
 end
 
 local kMarineRespawnEquipment = {
@@ -155,12 +158,28 @@ local function CheckMarineGadgets(self,player)
 	-- Shared.Message("[CNNP] New Comer Protection <Weapon Initalize>")
 end
 
-function Plugin:OnMarineRespawn(playingTeam,player, origin, angles)
+function Plugin:ValidateCommanderLogin( Gamerules, CommandStation, Player )
+	if self.Config.MinSkillToCommand <= 0 then return end
+	if Shine.GetHumanPlayerCount() < 20 then return end 	--They are seeding
+
+	local Client = Shine.GetClientForPlayer( Player )
+	if not Client then return end
+	if Client:GetIsVirtual() then return end
+
+	local skill = Player:GetPlayerTeamSkill()
+	if skill < self.Config.MinSkillToCommand then
+		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",
+				213, 245, 227, string.format("由于服务器当前强度,你的玩家分数需要到达[%d]分时才能,成为该队的指挥!",self.Config.MinSkillToCommand))
+		return false
+	end
+end
+
+function Plugin:OnMarineRespawn(team,player, origin, angles)
+
 	local valid = CheckMarineGadgets(self,player)
 	if not GetHasTech(player,kTechId.ExosuitTech) then
-		mapName = CheckPlayerForcePurchase(self,player,kTechId.HeavyMachineGun,nil)
-		if mapName then
-			player:GiveItem(mapName)
+		if CheckPlayerForcePurchase(self,player,kTechId.HeavyMachineGun) then
+			player:GiveItem(HeavyMachineGun.kMapName)
 			valid = true
 		end 
 	end
@@ -172,34 +191,74 @@ function Plugin:OnMarineRespawn(playingTeam,player, origin, angles)
 	end
 end
 
-function Plugin:ValidateCommanderLogin( Gamerules, CommandStation, Player )
-	if self.Config.MinSkillToCommand <= 0 then return end
-	if Shine.GetHumanPlayerCount() < 20 then return end 	--They are seeding
-	
-	local Client = Shine.GetClientForPlayer( Player )
-	if not Client then return end
-	if Client:GetIsVirtual() then return end
-	
-	
-	local skill = Player:GetPlayerTeamSkill()
-	if skill < self.Config.MinSkillToCommand then
-		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",
-				213, 245, 227, string.format("由于服务器当前强度,你的玩家分数需要到达[%d]分时才能,成为该队的指挥!",self.Config.MinSkillToCommand))
-		return false
-	end
-end
-
-
-function Plugin:OnTeamSpectatorReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
-	if mapName == Marine.kMapName then
-		if GetHasTech(player,kTechId.ExosuitTech) then
-			mapName = CheckPlayerForcePurchase(self,player,kTechId.Exosuit,mapName)
+function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
+	if GetHasTech(player,kTechId.ExosuitTech) then
+		 if CheckPlayerForcePurchase(self,player,kTechId.Exosuit) then
+			mapName = Exo.kMapName	 
 		end
-	elseif mapName == Skulk.kMapName then
-		mapName = CheckPlayerForcePurchase(self,player,kTechId.Onos,mapName)
+	end
+	return Player.Replace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
+end
+	 
+function Plugin:OnAlienRespawn(egg, player)
+	PROFILE("Egg:SpawnPlayer")
+
+	local queuedPlayer = player
+
+	if not queuedPlayer or egg.queuedPlayerId ~= nil then
+		queuedPlayer = Shared.GetEntity(egg.queuedPlayerId)
 	end
 
-	return Player.Replace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
+	if queuedPlayer ~= nil then
+
+		local queuedPlayer = player
+		if not queuedPlayer then
+			queuedPlayer = Shared.GetEntity(egg.queuedPlayerId)
+		end
+
+		-- Spawn player on top of egg
+		local spawnOrigin = Vector(egg:GetOrigin())
+		-- Move down to the ground.
+		local _, normal = GetSurfaceAndNormalUnderEntity(egg)
+		if normal.y < 1 then
+			spawnOrigin.y = spawnOrigin.y - (egg:GetExtents().y / 2) + 1
+		else
+			spawnOrigin.y = spawnOrigin.y - (egg:GetExtents().y / 2)
+		end
+
+		local gestationClass = egg:GetClassToGestate()
+
+		-- We must clear out queuedPlayerId BEFORE calling ReplaceRespawnPlayer
+		-- as this will trigger OnEntityChange() which would requeue this player.
+		egg.queuedPlayerId = nil
+
+		local team = queuedPlayer:GetTeam()
+		local success, player = team:ReplaceRespawnPlayer(queuedPlayer, spawnOrigin, queuedPlayer:GetAngles(), gestationClass)
+		player:SetCameraDistance(0)
+		player:SetHatched()
+		-- It is important that the player was spawned at the spot we specified.
+		assert(player:GetOrigin() == spawnOrigin)
+
+		if success then
+			SetPlayerStartingLocation(player)
+-------------
+			if CheckPlayerForcePurchase(self,player,kTechId.Onos) then		--It should be simple as hell,get the return val and check it
+				player:Replace(Onos.kMapName)
+			else
+				egg:PickUpgrades(player)
+			end
+--------------
+			egg:TriggerEffects("egg_death")
+			DestroyEntity(egg)
+
+			return true, player
+
+		end
+
+	end
+
+	return false, nil
+	
 end
 
 function Plugin:ClientConfirmConnect( Client )
@@ -244,8 +303,8 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 
 	refund = player:AddResources(refund)
 	Shine:NotifyDualColour( player,
-			88, 214, 141, string.format("[新兵保护]",tier),
-			234, 250, 241, string.format("已转入<%.2f>资源作为[阵亡补偿].",refund) )
+			88, 214, 141, string.format("[阵亡补偿]",tier),
+			234, 250, 241, string.format("已转入<%.2f>资源.",refund) )
 
 	local team = player:GetTeamNumber()
 	local messages = self.Config.Messages[team]
@@ -273,8 +332,8 @@ function Plugin:OnDropAllWeapons(player)
 		local refund = cost * refundPercentage
 		player:AddResources(refund)
 		Shine:NotifyDualColour( player,
-				88, 214, 141, string.format("[新兵保护]",tier),
-				234, 250, 241, string.format("已转入<%.2f>个人资源作为[武器回收补偿].",refund) )
+				88, 214, 141, string.format("[武器回收补偿]",tier),
+				234, 250, 241, string.format("已转入<%.2f>个人资源.",refund) )
 	end
 
 end

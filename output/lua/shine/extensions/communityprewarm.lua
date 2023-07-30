@@ -374,6 +374,12 @@ function Plugin:CreateMessageCommands()
     validateCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 4 }
     validateCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 15, Default = 3 }
     validateCommand:Help( "设置玩家的预热状态以及预热点数,例如!prewarm_validate 5 3.(设置玩家段位4并给予3点预热点)")
+
+    local resetCommand = self:BindCommand( "sh_prewarm_reset", "prewarm_reset", function(_client)
+        Reset(self)
+        SavePersistent(self)        
+    end,true )
+    resetCommand:Help( "重置服务器的预热状态与数据.")
 end
 
 return Plugin
