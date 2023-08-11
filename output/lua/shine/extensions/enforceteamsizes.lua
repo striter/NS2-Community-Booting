@@ -25,7 +25,6 @@ Plugin.DefaultConfig = {
 		Skill = 500,
 		Hour = 10,
 	},
-	KickOnRestricted = false,
 	MessageNameColor = {0, 255, 0 },
 }
 Plugin.CheckConfig = true
@@ -51,7 +50,6 @@ do
 	Validator:AddFieldRule( "HourLimitMin",  Validator.IsType( "number", Plugin.DefaultConfig.HourLimitMin ))
 	Validator:AddFieldRule( "HourLimitMax",  Validator.IsType( "number", Plugin.DefaultConfig.HourLimitMax ))
 	Validator:AddFieldRule( "NewComerBypass",  Validator.IsType( "table", Plugin.DefaultConfig.NewComerBypass ))
-	Validator:AddFieldRule( "KickOnRestricted",  Validator.IsType( "boolean", Plugin.DefaultConfig.KickOnRestricted ))
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
 	
 	Plugin.ConfigValidator = Validator
@@ -97,15 +95,13 @@ function Plugin:GetPlayerLimit(Gamerules,Team)
 end
 
 function Plugin:OnPlayerRestricted(_player)
-	local client = _player:GetClient()
-	if Shine:HasAccess(client, "sh_adminmenu" ) then return end
-	
-	if self.Config.KickOnRestricted then
-		local reason = "You are not supposed to be here"
-		client.DisconnectReason = reason
-		Server.DisconnectClient(client, reason )
-		return
-	end
+	--local client = _player:GetClient()
+	--if Shine:HasAccess(client, "sh_adminmenu" ) then return end
+	--
+	--	local reason = "You are not supposed to be here"
+	--	client.DisconnectReason = reason
+	--	Server.DisconnectClient(client, reason )
+	--	return
 	
 	if _player:GetTeamNumber() ~= kSpectatorIndex then
 		local gamerules = GetGamerules()

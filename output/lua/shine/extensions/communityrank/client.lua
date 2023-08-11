@@ -57,6 +57,9 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                             
                             description = description .. "\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(pr.Group))
 
+                            if pr.ns2TimePlayed > 0 then
+                                description = description .. "\n" .. string.format(Locale.ResolveString("NS2_TIME_PLAYED"),pr.ns2TimePlayed )
+                            end
                             if pr.CommSkill > 0 then
                                 description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER_COMM"), math.max(0,pr.CommSkill + pr.CommSkillOffset), math.max(0,pr.CommSkill - pr.CommSkillOffset) )
                             end
@@ -68,9 +71,6 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
 
                             if pr.prewarmTime > 0 then
                                 description = description .. "\n"
-                                if pr.ns2TimePlayed > 0 then
-                                    description = description .. "\n" .. string.format(Locale.ResolveString("NS2_TIME_PLAYED"),pr.ns2TimePlayed )
-                                end
                                 description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PLAYTIME"), pr.prewarmTime)
 
                                 if pr.prewarmScore > 0 then
