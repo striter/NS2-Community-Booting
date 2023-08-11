@@ -1,4 +1,5 @@
 local Plugin = Shine.Plugin( ... )
+Script.Load( "lua/shine/core/server/playerinfohub.lua" )
 
 Plugin.HasConfig = true
 Plugin.ConfigName = "EnforceTeamSizes.json"
@@ -17,7 +18,14 @@ Plugin.DefaultConfig = {
 	BlockSpectators = true,
 	SkillLimitMin = -1,
 	SkillLimitMax = -1,
-	NewcomerForceJoin = -1,
+	HourLimitMin = -1,
+	HourLimitMax = -1,
+	NewComerBypass = {
+		Enable = true,
+		Skill = 500,
+		Hour = 10,
+	},
+	KickOnRestricted = false,
 	MessageNameColor = {0, 255, 0 },
 }
 Plugin.CheckConfig = true
@@ -36,12 +44,16 @@ do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "Team",  Validator.IsType( "table", Plugin.DefaultConfig.Team ))
 	Validator:AddFieldRule( "TeamForceJoin",  Validator.IsType( "number", Plugin.DefaultConfig.TeamForceJoin ))
-	Validator:AddFieldRule( "IncreaseByForceJoins",  Validator.IsType( "boolean", true ))
-	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", -1 ))
-	Validator:AddFieldRule( "SkillLimitMin",  Validator.IsType( "number", -1 ))
-	Validator:AddFieldRule( "SkillLimitMax",  Validator.IsType( "number", -1 ))
-	Validator:AddFieldRule( "NewcomerForceJoin",  Validator.IsType( "number", -1 ))
+	Validator:AddFieldRule( "IncreaseByForceJoins",  Validator.IsType( "boolean", Plugin.DefaultConfig.IncreaseByForceJoins ))
+	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", Plugin.DefaultConfig.BlockSpectators ))
+	Validator:AddFieldRule( "SkillLimitMin",  Validator.IsType( "number", Plugin.DefaultConfig.SkillLimitMin ))
+	Validator:AddFieldRule( "SkillLimitMax",  Validator.IsType( "number", Plugin.DefaultConfig.SkillLimitMax ))
+	Validator:AddFieldRule( "HourLimitMin",  Validator.IsType( "number", Plugin.DefaultConfig.HourLimitMin ))
+	Validator:AddFieldRule( "HourLimitMax",  Validator.IsType( "number", Plugin.DefaultConfig.HourLimitMax ))
+	Validator:AddFieldRule( "NewComerBypass",  Validator.IsType( "table", Plugin.DefaultConfig.NewComerBypass ))
+	Validator:AddFieldRule( "KickOnRestricted",  Validator.IsType( "boolean", Plugin.DefaultConfig.KickOnRestricted ))
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
+	
 	Plugin.ConfigValidator = Validator
 end
 
@@ -84,26 +96,53 @@ function Plugin:GetPlayerLimit(Gamerules,Team)
 	return playerLimit
 end
 
-function Plugin:GetSkillLimited(_player)
+function Plugin:OnPlayerRestricted(_player)
+	local client = _player:GetClient()
+	if Shine:HasAccess(client, "sh_adminmenu" ) then return end
+	
+	if self.Config.KickOnRestricted then
+		local reason = "You are not supposed to be here"
+		client.DisconnectReason = reason
+		Server.DisconnectClient(client, reason )
+		return
+	end
+	
+	if _player:GetTeamNumber() ~= kSpectatorIndex then
+		local gamerules = GetGamerules()
+		if gamerules then gamerules:JoinTeam( _player, kSpectatorIndex, true,true ) end
+	end
+end
+
+function Plugin:GetPlayerRestricted(_player)
 	local skill = _player:GetPlayerSkill()
-	local skillLimited = false
-	skillLimited = skillLimited or (skill < self.Config.SkillLimitMin)
+	local skillLimited = skill < self.Config.SkillLimitMin
 	if self.Config.SkillLimitMax >= 0 then
 		skillLimited = skillLimited or skill >= self.Config.SkillLimitMax
 	end
 	
 	if skillLimited then
-		if _player:GetTeamNumber() ~= kSpectatorIndex then
-			self:Notify(_player, string.format("您的分数(%i)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
-					skill,self.Config.SkillLimitMin,self.Config.SkillLimitMax < 0 and "∞" or self.Config.SkillLimitMax),
-					errorColorTable,nil)
+		self:Notify(_player, string.format("您的分数(%i)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
+				skill,self.Config.SkillLimitMin,self.Config.SkillLimitMax < 0 and "∞" or self.Config.SkillLimitMax),
+				errorColorTable,nil)
+		self:OnPlayerRestricted(_player)
+		return true
+	end
 
-			local gamerules = GetGamerules()
-			if gamerules then gamerules:JoinTeam( _player, kSpectatorIndex, true,true ) end
-		end
+	local hour = Shine.PlayerInfoHub:GetSteamData(_player:GetClient():GetUserId()).PlayTime
+	local hourLimited = hour < self.Config.HourLimitMin
+	if self.Config.HourLimitMax >= 0 then
+		hourLimited = hourLimited or hour >= self.Config.HourLimitMax
+	end
+
+	if hourLimited then
+		self:Notify(_player, string.format("您的游戏时长(%i)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
+				hour,self.Config.HourLimitMin,self.Config.HourLimitMax < 0 and "∞" or self.Config.HourLimitMax),
+				errorColorTable,nil)
+		self:OnPlayerRestricted(_player)
+		return true
 	end
 	
-	return skillLimited
+	return false
 end
 
 local kTeamJoinTracker = { }
@@ -111,18 +150,18 @@ local TeamNames = { "陆战队","卡拉异形","观战" }
 function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	if _shineForce then return end
 	if _player:GetIsVirtual() then return end
-	local skillLimited = self:GetSkillLimited(_player)
+	local playerRestricted = self:GetPlayerRestricted(_player)
 	if _newTeam == kTeamReadyRoom then 
-		if skillLimited then return false end
+		if playerRestricted then return false end
 		return
 	end
-	
+
+	local available = not playerRestricted
 	local playerNum = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
 	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
 	local playerLimited = playerNum >= playerLimit
 	local forcePrivilegeTitle
 	local forceCredit
-	local available = true
 	local couldBeIgnored = true
 	local teamName = TeamNames[_newTeam]
 	if _newTeam == kSpectatorIndex then
@@ -161,14 +200,20 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		return
 	end
 
-	if self.Config.NewcomerForceJoin ~= -1 and _player:GetPlayerSkill() < self.Config.NewcomerForceJoin then
-		self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
-		return
+	local userId = client:GetUserId()
+	local steamData = Shine.PlayerInfoHub:GetSteamData(userId)
+	local newComerConfig = self.Config.NewComerBypass
+	if newComerConfig.Enable then
+		local isSkillNewComer = newComerConfig.Skill <= 0 or _player:GetPlayerSkill() < newComerConfig.Skill
+		local isHourNewComer = newComerConfig.Hour <= 0 or steamData.PlayTime < newComerConfig.Hour
+		if isSkillNewComer and isHourNewComer then
+			self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
+			return
+		end
 	end
 	
 	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
 	if cpEnabled then
-		local userId = client:GetUserId()
 		if table.contains(kTeamJoinTracker,userId) and cp:GetPrewarmPrivilege(client,0,"当局入场通道") then return end
 
 		if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
@@ -187,7 +232,13 @@ end
 local function RestrictionDisplay(self,_client)
 	local skillLimitMin = self.Config.SkillLimitMin
 	local skillLimitMax = self.Config.SkillLimitMax < 0 and "∞" or tostring(self.Config.SkillLimitMax)
-	self:Notify(_client,string.format("当前加入限制:陆战队:%s,卡拉异形:%s 分数限制:(%s至%s)", self.Config.Team[1], self.Config.Team[2],skillLimitMin,skillLimitMax),self.Config.MessageNameColor,nil)
+	local hourLimitMin = self.Config.HourLimitMin
+	local hourLimitMax = self.Config.HourLimitMax < 0  and "∞" or tostring(self.Config.HourLimitMax)
+	self:Notify(_client,string.format("当前人数限制:陆战队:%s,卡拉异形:%s\n分数限制:(%s至%s).时长限制:(%s至%s).", 
+			self.Config.Team[1], self.Config.Team[2],
+			skillLimitMin,skillLimitMax,
+			hourLimitMin,hourLimitMax
+	),self.Config.MessageNameColor,nil)
 end
 
 function Plugin:CreateCommands()
@@ -195,6 +246,7 @@ function Plugin:CreateCommands()
 	local function NotifyClient(_client)
 		RestrictionDisplay(self,_client:GetControllingPlayer())
 	end
+	
 	local function NofityAll()
 		for client in Shine.IterateClients() do
 			NotifyClient(client)
@@ -223,6 +275,19 @@ function Plugin:CreateCommands()
 	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
 	:Help( "示例: !restriction_size 14 12 true. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人 并保存" )
 	
+	local function SetHourLimit(_client, _min,_max,_save)
+		self.Config.HourLimitMin = _min
+		self.Config.HourLimitMax = _max
+
+		NofityAll()
+		if _save then self:SaveConfig() end
+	end
+	self:BindCommand( "sh_restriction_hour", "restriction_hour", SetHourLimit)
+	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
+	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
+	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
+	:Help( "示例: !restriction_skill 10 -1 true.将服务器的入场小时数设置为,[1000-∞],并且保存,-1代表无限制" )
+	
 	local function SetSkillLimit(_client, _min,_max,_save)
 		self.Config.SkillLimitMin = _min
 		self.Config.SkillLimitMax = _max
@@ -230,11 +295,11 @@ function Plugin:CreateCommands()
 		NofityAll()
 		if _save then self:SaveConfig() end
 	end
-	local skillCommand = self:BindCommand( "sh_restriction_skill", "restriction_skill", SetSkillLimit)
-	skillCommand:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
-	skillCommand:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
-	skillCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
-	skillCommand:Help( "示例: !restriction_skill 1000 -1 true.将服务器的入场分数设置为,[1000-∞],并且保存,-1代表无限制" )
+	self:BindCommand( "sh_restriction_skill", "restriction_skill", SetSkillLimit)
+	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
+	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
+	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
+	:Help( "示例: !restriction_skill 1000 -1 true.将服务器的入场分数设置为,[10-∞],并且保存,-1代表无限制" )
 end
 
 function Plugin:ClientConfirmConnect( Client )

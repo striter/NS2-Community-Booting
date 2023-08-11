@@ -127,6 +127,7 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.prewarmScore = pie.prewarmScore
         playerRecord.Group = pie.hideRank and "RANK_DEFAULT" or pie.group    --Hide this shit
         playerRecord.lastSeenName = pie.hideRank and "" or pie.lastSeenName
+        playerRecord.ns2TimePlayed = pie.ns2TimePlayed
     ------------
 
         if playerRecord.IsCommander then

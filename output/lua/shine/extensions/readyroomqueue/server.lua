@@ -307,7 +307,7 @@ function Plugin:Enqueue( Client )
     if not SteamID or SteamID < 1 then return end
 ---
     local ETEnabled,ETPlugin = Shine:IsExtensionEnabled( "enforceteamsizes" )
-    if ETEnabled and ETPlugin:GetSkillLimited(Client:GetControllingPlayer()) then return end
+    if ETEnabled and ETPlugin:GetPlayerRestricted(Client:GetControllingPlayer()) then return end
 --- 
     local position = self.PlayerQueue:Get( SteamID )
     if position then

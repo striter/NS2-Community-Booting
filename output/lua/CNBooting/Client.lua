@@ -44,6 +44,7 @@ if kTranslateMessage then
     
     kTranslateMessage["SKILL_TIER"]="段位分(P): [陆战队] %i\n                [卡拉异形] %i"
     kTranslateMessage["SKILL_TIER_COMM"]="指挥分(C): [陆战队] %i\n                [卡拉异形] %i"
+    kTranslateMessage["NS2_TIME_PLAYED"]="总游戏时长: %i小时"
     kTranslateMessage["STATUS_QUEUE"]="队列: %i"
     kTranslateMessage["STATUS_QUEUE_RESERVED"]="预留: %i"
 
@@ -94,6 +95,7 @@ if kLocales then
 
     kLocales["SKILL_TIER_COMM"]="Comm Tier(C) [Marine] %i\n                               [Alien] %i"
     kLocales["SKILL_TIER"]="Tier Score(P)   [Marine] %i\n                               [Alien] %i"
+    kLocales["NS2_TIME_PLAYED"]="NS2 Time Played: %ih"
     kLocales["RANK_HOST"] = ":Newcomer (C6)"
     kLocales["RANK_ADMIN"] = ":Admin (C5)"
     kLocales["RANK_C5"] = ":Onos (C5)"

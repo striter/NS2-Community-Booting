@@ -57,6 +57,7 @@ local networkVars =
     queueIndex = "integer (0 to 64)",
     reservedQueueIndex = "integer (0 to 64)",
     lastSeenName = string.format("string(%d)",kMaxNameLength * 4),
+    ns2TimePlayed = "integer",
 -----------
     adagradSum = "float",
     currentTech = "integer",
@@ -153,6 +154,7 @@ function PlayerInfoEntity:UpdateScore()
                 self.queueIndex = scorePlayer.queueIndex
                 self.reservedQueueIndex = scorePlayer.reservedQueueIndex
                 self.lastSeenName = scorePlayer.lastSeenName
+                self.ns2TimePlayed = scorePlayer.ns2TimePlayed
             -------------
                 self.adagradSum = scorePlayer:GetAdagradSum()
                 local scoreClient = scorePlayer:GetClient()

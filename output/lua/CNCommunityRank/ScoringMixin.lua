@@ -24,6 +24,8 @@ function ScoringMixin:__initmixin()
     
     self.queueIndex = 0  
     self.reservedQueueIndex = 0
+    
+    self.ns2TimePlayed = 0
 end
 
 function ScoringMixin:GetPlayerSkill()
@@ -81,6 +83,7 @@ if Server then
         
         self.queueIndex = player.queueIndex
         self.reservedQueueIndex = player.reservedQueueIndex
+        self.ns2TimePlayed = player.ns2TimePlayed
     end
 
     function ScoringMixin:SetPlayerExtraData(dataTable)
@@ -116,6 +119,10 @@ if Server then
         self.prewarmTier = dataTable.tier or 0
         self.prewarmTime = math.floor(dataTable.time or 0) / 60
         self.prewarmScore = math.floor(dataTable.score or 0 ) / 60
+    end
+    
+    function ScoringMixin:SetSteamData(steamData)
+        self.ns2TimePlayed = steamData.PlayTime
     end
 end --End-Server
 
