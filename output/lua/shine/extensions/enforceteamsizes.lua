@@ -14,7 +14,7 @@ Plugin.PrintName = "Enforced Team Size"
 Plugin.DefaultConfig = {
 	Team = { 12 , 12 , 5},
 	TeamForceJoin = 3,
-	IncreaseByForceJoins = true,
+	SlotCoveringBegin = 15,
 	BlockSpectators = true,
 	SkillLimitMin = -1,
 	SkillLimitMax = -1,
@@ -43,7 +43,7 @@ do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "Team",  Validator.IsType( "table", Plugin.DefaultConfig.Team ))
 	Validator:AddFieldRule( "TeamForceJoin",  Validator.IsType( "number", Plugin.DefaultConfig.TeamForceJoin ))
-	Validator:AddFieldRule( "IncreaseByForceJoins",  Validator.IsType( "boolean", Plugin.DefaultConfig.IncreaseByForceJoins ))
+	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
 	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", Plugin.DefaultConfig.BlockSpectators ))
 	Validator:AddFieldRule( "SkillLimitMin",  Validator.IsType( "number", Plugin.DefaultConfig.SkillLimitMin ))
 	Validator:AddFieldRule( "SkillLimitMax",  Validator.IsType( "number", Plugin.DefaultConfig.SkillLimitMax ))
@@ -79,7 +79,7 @@ end
 
 function Plugin:GetPlayerLimit(Gamerules,Team)
 	local playerLimit = self.Config.Team[Team]
-	if self.Config.IncreaseByForceJoins then
+	if Shared.GetTime() > self.Config.SlotCoveringBegins * 60 then
 		local maxPlayers = math.max(self:GetNumPlayers(Gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(Gamerules:GetTeam(kTeam2Index)))
 		playerLimit = math.max(playerLimit,maxPlayers)
 	end
