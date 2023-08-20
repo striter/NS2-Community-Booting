@@ -76,10 +76,9 @@ function Plugin:GetNumPlayers(Team)
 	return players - bots
 end
 
-
 function Plugin:GetPlayerLimit(Gamerules,Team)
 	local playerLimit = self.Config.Team[Team]
-	if Shared.GetTime() > self.Config.SlotCoveringBegins * 60 then
+	if Shared.GetTime() > self.Config.SlotCoveringBegin * 60 then
 		local maxPlayers = math.max(self:GetNumPlayers(Gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(Gamerules:GetTeam(kTeam2Index)))
 		playerLimit = math.max(playerLimit,maxPlayers)
 	end

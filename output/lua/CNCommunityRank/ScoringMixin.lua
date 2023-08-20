@@ -26,6 +26,7 @@ function ScoringMixin:__initmixin()
     self.reservedQueueIndex = 0
     
     self.ns2TimePlayed = 0
+    self.reputation = 0
 end
 
 function ScoringMixin:GetPlayerSkill()
@@ -84,6 +85,7 @@ if Server then
         self.queueIndex = player.queueIndex
         self.reservedQueueIndex = player.reservedQueueIndex
         self.ns2TimePlayed = player.ns2TimePlayed
+        self.reputation = player.reputation
     end
 
     function ScoringMixin:SetPlayerExtraData(dataTable)
@@ -96,6 +98,7 @@ if Server then
         self.hideRank = dataTable.hideRank or false
         self.emblem = dataTable.emblem or 0
         self.lastSeenName = dataTable.lastSeenName or ""
+        self.reputation = dataTable.reputation or 0
     end
     
     function ScoringMixin:SetGroup(_group)

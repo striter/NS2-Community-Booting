@@ -47,6 +47,8 @@ if kTranslateMessage then
     kTranslateMessage["NS2_TIME_PLAYED"]="总游戏时长: %i小时"
     kTranslateMessage["STATUS_QUEUE"]="队列: %i"
     kTranslateMessage["STATUS_QUEUE_RESERVED"]="预留: %i"
+    kTranslateMessage["COMMUNITY_REPUTATION_POSITIVE"]="信誉值: %s"
+    kTranslateMessage["COMMUNITY_REPUTATION_NEGATIVE"]="失信度: %s"
 
     kTranslateMessage["COMMUNITY_PLAYTIME"]="今日在线: %s分钟"
     kTranslateMessage["COMMUNITY_PREWARM"]="预热分数: %s分"
@@ -107,6 +109,8 @@ if kLocales then
     kLocales["RANK_LIVER"] = "Vokex (C3)"
     kLocales["RANK_INVALID"] = "Unknown (C?)"
     kLocales["COMMUNITY_RANK"]="NS2CN Tier %s"
+    kLocales["COMMUNITY_REPUTATION_POSITIVE"]="Reputation: %s"
+    kLocales["COMMUNITY_REPUTATION_NEGATIVE"]="Toxicity: %s"
     kLocales["STATUS_QUEUE"]="Queue %i"
     kLocales["STATUS_QUEUE_RESERVED"]="Reserved %i"
 

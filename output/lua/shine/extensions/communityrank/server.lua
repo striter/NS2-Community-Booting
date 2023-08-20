@@ -37,6 +37,19 @@ Plugin.DefaultConfig = {
         },
         Debug = false,
     },
+    Reputation = {
+        Enable = true,
+        Debug = true,
+        PenaltyStarts = 0,
+        PenaltyCheckInterval = 300,
+        RageQuit = {
+            CheckTime = 1200,
+            ActivePlayTime = 60,
+            DeltaQuit = -5,
+            DeltaCover = 5,
+            DeltaLoseRecover = 2,
+        }
+    },
     ["UserData"] = {
         ["55022511"] = {
             rank = -2000,
@@ -54,6 +67,12 @@ Plugin.CheckConfigTypes = true
 do
     local Validator = Shine.Validator()
     Validator:AddFieldRule( "UserData",  Validator.IsType( "table", Plugin.DefaultConfig.UserData ))
+    Validator:AddFieldRule( "Reputation",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation ))
+    Validator:AddFieldRule( "Reputation.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Reputation.Debug ))
+    Validator:AddFieldRule( "Reputation.Enable",  Validator.IsType( "boolean", Plugin.DefaultConfig.Reputation.Enable ))
+    Validator:AddFieldRule( "Reputation.PenaltyStarts",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.PenaltyStarts ))
+    Validator:AddFieldRule( "Reputation.PenaltyCheckInterval",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.PenaltyCheckInterval ))
+    Validator:AddFieldRule( "Reputation.RageQuit",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit ))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
@@ -100,6 +119,54 @@ function Plugin:Cleanup()
     return self.BaseClass.Cleanup( self )
 end
 
+-- Triggers
+function Plugin:OnFirstThink()
+    ReadPersistent(self)
+    self:OnReputationCheck()
+    Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
+end
+
+function Plugin:OnEndGame(_winningTeam)
+    local lastRoundData = CHUDGetLastRoundStats();
+    if not lastRoundData then
+        Shared.Message("[CNCR] ERROR Option 'savestats' not enabled ")
+        return
+    end
+    
+    self:EndGameElo(lastRoundData)
+    self:EndGameReputation(lastRoundData)
+    SavePersistent(self)
+end
+
+function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
+    self:RageQuitValidate(Player,NewTeam)
+end
+
+function Plugin:ClientDisconnect( _client )
+    self:RageQuitValidate(_client:GetControllingPlayer(),kTeamReadyRoom)
+end
+
+local function GetUserGroup(Client)
+    local userData = Shine:GetUserData(Client)
+
+    local groupName = userData and userData.Group or nil
+    local Group = groupName and Shine:GetGroupData(groupName) or Shine:GetDefaultGroup()
+
+    return groupName and groupName or "RANK_DEFAULT" , Group
+end
+
+function Plugin:ClientConnect( _client )
+    local clientID = _client:GetUserId()
+    if clientID <= 0 then return end
+
+    local groupName,groupData = GetUserGroup(_client)
+    local player = _client:GetControllingPlayer()
+    player:SetGroup(groupName)
+    Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
+    player:SetPlayerExtraData(GetPlayerData(self,clientID))
+    --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
+end
+
 ----Elo
 local function GetMarineSkill(player) return player.skill + player.skillOffset end
 local function GetAlienSkill(player) return player.skill - player.skillOffset end
@@ -139,17 +206,12 @@ local function RankPlayerDelta(self, _steamId, _marineDelta, _alienDelta, _marin
 end
 
 local eloEnable = { "ns2","NS2.0","Siege+++"  }
-local function EndGameElo(self)
+function Plugin:EndGameElo(lastRoundData)
     local gameMode = Shine.GetGamemode()
     if not table.contains(eloEnable,gameMode) then return end
 
     if not self.Config.Elo.Check then return end
 
-    local lastRoundData = CHUDGetLastRoundStats();
-    if not lastRoundData then
-        EloDebugMessage(self,"[CNCR] ERROR Option 'savestats' not enabled ")
-        return
-    end
 
     local winningTeam = lastRoundData.RoundInfo.winningTeam
     local gameLength = lastRoundData.RoundInfo.roundLength
@@ -261,37 +323,152 @@ local function EndGameElo(self)
 
 end
 
-
--- Triggers
-function Plugin:OnFirstThink()
-    ReadPersistent(self)
-    Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
+--Reputation
+local function ReputationPlayerDelta(self, _steamId, _delta)
+    local data = GetPlayerData(self,_steamId)
+    data.reputation = (data.reputation or 0) + _delta
+    local client = Shine.GetClientByNS2ID(_steamId)
+    if not client then return end
+    client:GetControllingPlayer():SetPlayerExtraData(data)
 end
 
-function Plugin:OnEndGame(_winningTeam)
-    EndGameElo(self)
-    SavePersistent(self)
+local function ReputationDebugMessage(self,_string)
+    if not self.Config.Reputation.Debug then return end
+    Shared.Message(_string)
 end
 
-local function GetUserGroup(Client)
-	local userData = Shine:GetUserData(Client)
+local function ReputationEnabled(self)
+    if not self.Config.Reputation.Enable then return false end
+    return true
+end
 
-    local groupName = userData and userData.Group or nil
-    local Group = groupName and Shine:GetGroupData(groupName) or Shine:GetDefaultGroup()
+local kRageQuitType = enum({ 'None','Quit','Cover' })
+local kRageQuitTracker = { }
+function Plugin:OnReputationCheck()
+    if not ReputationEnabled(self) then return end
+    if GetGamerules():GetGameStarted() then
+        for Client in Shine.IterateClients() do
+            local player = Client:GetControllingPlayer()
+            local steamId = Client:GetUserId()
+            local data = GetPlayerData(self,steamId)
+            local reputation = data.reputation or 0
+            if reputation < self.Config.Reputation.PenaltyStarts then      -- make some dic to save these penalties,but why should i make clean code for shits?
+                if player:isa("Marine") then
+                    local random = math.random(1,3)
+                    if random == 1 then
+                        local weapon = player:GetWeaponInHUDSlot(1)
+                        if weapon then
+                            player:Drop(weapon,true,true)
+                        end
+                    elseif random == 2 then
+                        player:SetStun(1)
+                    else
+                        player:SetParasited(nil)
+                    end
+                elseif player:isa("Exo") then
+                    player:SetParasited(nil)
+                elseif player:isa("Alien") then
+                    local random = math.random(1,3)
+                    if random == 1 then
+                        player:SetVelocity(-player:GetVelocity())
+                        player:DisableGroundMove(1)
+                    elseif random == 2 then
+                        player:DeductAbilityEnergy(50)
+                    else
+                        player:DeductHealth(player:GetMaxHealth()*0.1)
+                    end 
+                end
+
+            end
+        end
+    end
     
-	return groupName and groupName or "RANK_DEFAULT" , Group
+    self:SimpleTimer( self.Config.Reputation.PenaltyCheckInterval, function()
+        self:OnReputationCheck()
+    end )
 end
 
-function Plugin:ClientConnect( _client )
-    local clientID = _client:GetUserId()
-    if clientID <= 0 then return end
+function Plugin:RageQuitValidate(Player,NewTeam)
+    if not ReputationEnabled(self) then return end
+    if not GetGamerules():GetGameStarted() then return end
+    if Shared:GetTime() < self.Config.Reputation.RageQuit.CheckTime then return end     --Only validate when join a late game
+    if Player:GetIsVirtual() then return end
+    local clientId = Player:GetClient():GetUserId()
+    if NewTeam == 1 or NewTeam == 2 then        --Join team1 or 2
+        if kRageQuitTracker[clientId] == kRageQuitType.Quit then        --Rejoin
+            kRageQuitTracker[clientId] = kRageQuitType.None
+        else
+            kRageQuitTracker[clientId] = kRageQuitType.Cover
+        end
+    else                    --Quit
+
+        local playTime = Player:GetPlayTime()
+        if playTime < self.Config.Reputation.RageQuit.ActivePlayTime then return end
+        
+        if kRageQuitTracker[clientId] == kRageQuitType.Cover then       --But leave
+            kRageQuitTracker[clientId] = kRageQuitType.None
+        else
+            kRageQuitTracker[clientId] = kRageQuitType.Quit
+        end
+    end
+end
+
+
+function Plugin:EndGameReputation(lastRoundData)
+    if not ReputationEnabled(self) then return end
+    local winningTeamType = lastRoundData.RoundInfo.winningTeam
+    local losingTeam
+    if winningTeamType == kMarineTeamType then
+        losingTeam = kAlienTeamType
+    elseif winningTeamType == kAlienTeamType then
+        losingTeam = kMarineTeamType
+    end
+
+    if table.count(kRageQuitTracker) > 0 then
+        ReputationDebugMessage(self,string.format("Rage quitters:"))
+        for steamId,rageQuitType in pairs(kRageQuitTracker) do
+            local reputationDelta = 0
+            if rageQuitType == kRageQuitType.Quit then
+                reputationDelta = self.Config.Reputation.RageQuit.DeltaQuit
+                ReputationPlayerDelta(self,steamId, reputationDelta)
+            end
+            ReputationDebugMessage(self,string.format("(ID:%-10s  (Delta):%-5i",steamId,reputationDelta))
+        end
+    end
+
+    if losingTeam ~= nil then
+        ReputationDebugMessage(self,string.format("Covers:  Win:%s Lose:%s",winningTeamType,losingTeam))
+        for Client in Shine.IterateClients() do
+            if not Client:GetIsVirtual() then
+                local clientId = Client:GetUserId()
+                local rageQuitType = kRageQuitTracker[clientId] or kRageQuitType.None
+                local player = Client:GetControllingPlayer()
+                local steamId = Client:GetUserId()
+                local playTime = player:GetPlayTime()
+                local team =  player:GetTeamNumber()
+                if playTime > self.Config.Reputation.RageQuit.ActivePlayTime
+                        and team == losingTeam
+                        and rageQuitType ~= kRageQuitType.Quit
+                then
+                    local reputationDelta = rageQuitType == kRageQuitType.Cover and self.Config.Reputation.RageQuit.DeltaCover or 0
+
+                    local data = GetPlayerData(self,steamId)
+                    local reputation = data.reputation or 0
+                    if reputation < 0 then
+                        reputationDelta = reputationDelta + self.Config.Reputation.RageQuit.DeltaLoseRecover
+                    end
+
+                    if reputationDelta ~=0 then
+                        ReputationPlayerDelta(self,steamId, reputationDelta)
+                    end
+                    ReputationDebugMessage(self,string.format("(ID:%-10s (Time):%-5i (team):%-5i (type:):%-5s (Delta):%-5i",steamId, playTime,team,EnumToString(kRageQuitType,rageQuitType),reputationDelta))
+
+                end
+            end
+        end
+    end
     
-    local groupName,groupData = GetUserGroup(_client)
-    local player = _client:GetControllingPlayer()
-    player:SetGroup(groupName)
-    Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
-    player:SetPlayerExtraData(GetPlayerData(self,clientID))
-    --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
+    table.clear(kRageQuitTracker)
 end
 
 -- Last Seen Name Check
@@ -316,7 +493,11 @@ function Plugin:PlayerEnter(_client)
 end
 
 function Plugin:CreateMessageCommands()
-    local function CanSelfTargeting(_client,_target)
+    local function AdminErrorNotify(_client)
+        Shine:NotifyCommandError( _client, "ID对应的玩家未找到" )
+    end
+    
+    local function CanEloSelfTargeting(_client, _target)
         local access = _client == nil or Shine:HasAccess(_client,"sh_host")
         if access then return true end
         if _target == _client then
@@ -326,43 +507,36 @@ function Plugin:CreateMessageCommands()
         return true
     end
     --Elo
-
-    ----Reset
-    local function AdminRankResetPlayer(_client, _id )
+    self:BindCommand( "sh_rank_reset", "rank_reset", function(_client, _id )     ----Reset
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then return end
-        if not CanSelfTargeting(_client,target) then return end
+        if not target then AdminErrorNotify(_client) return end
+        if not CanEloSelfTargeting(_client,target) then return end
 
         local data = GetPlayerData(self,_id)
         data.rank = 0
         data.rankOffset = 0
         target:GetControllingPlayer():SetPlayerExtraData(data)
-    end
-
-    self:BindCommand( "sh_rank_reset", "rank_reset", AdminRankResetPlayer)
+    end)
         :AddParam{ Type = "steamid" }
         :Help( "重置玩家的[玩家段位](还原至NS2段位)." )
 
-    local function AdminRankResetCommander(_client, _id )
+    self:BindCommand( "sh_rank_reset_comm", "rank_reset_comm",function(_client, _id )
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then return end
-        if not CanSelfTargeting(_client,target) then return end
+        if not target then AdminErrorNotify(_client) return end
+        if not CanEloSelfTargeting(_client,target) then return end
 
         local data = GetPlayerData(self,_id)
         data.rankComm = 0
         data.rankCommOffset = 0
         target:GetControllingPlayer():SetPlayerExtraData(data)
-    end
-
-    self:BindCommand( "sh_rank_reset_comm", "rank_reset_comm", AdminRankResetCommander)
+    end)
         :AddParam{ Type = "steamid" }
         :Help( "重置玩家的[指挥段位](还原至NS2段位)." )
 
-    --Set       (Jezz ....)
-    local function AdminRankPlayer( _client, _id, _rankMarine ,_rankAlien)
+    self:BindCommand( "sh_rank_set", "rank_set", function( _client, _id, _rankMarine ,_rankAlien)     --Set       (Jezz ....)
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then return end
-        if not CanSelfTargeting(_client,target) then return end
+        if not target then AdminErrorNotify(_client) return end
+        if not CanEloSelfTargeting(_client,target) then return end
 
         local player = target:GetControllingPlayer()
         local data = GetPlayerData(self,_id)
@@ -371,18 +545,16 @@ function Plugin:CreateMessageCommands()
         data.rank = (_rankMarine + _rankAlien) / 2 - player.skill
         data.rankOffset = (_rankMarine - _rankAlien) / 2 - player.skillOffset
         EloDataSanityCheck(data,player)
-    end
-
-    self:BindCommand( "sh_rank_set", "rank_set", AdminRankPlayer )
+    end )
         :AddParam{ Type = "steamid" }
         :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
         :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
         :Help( "设置对应玩家的[玩家段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
-
-    local function AdminRankPlayerCommander( _client, _id, _rankMarine ,_rankAlien)
+    
+    self:BindCommand( "sh_rank_set_comm", "rank_set_comm", function( _client, _id, _rankMarine ,_rankAlien)
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then return end
-        if not CanSelfTargeting(_client,target) then return end
+        if not target then AdminErrorNotify(_client) return end
+        if not CanEloSelfTargeting(_client,target) then return end
 
         local player = target:GetControllingPlayer()
         local data = GetPlayerData(self,_id)
@@ -393,45 +565,69 @@ function Plugin:CreateMessageCommands()
         Shared.Message(tostring(data.rankComm) .. " " .. tostring(data.rankCommOffset))
         EloDataSanityCheck(data,player)
         Shared.Message(tostring(data.rankComm) .. " " .. tostring(data.rankCommOffset))
-    end
-
-    self:BindCommand( "sh_rank_set_comm", "rank_set_comm", AdminRankPlayerCommander )
+    end )
         :AddParam{ Type = "steamid" }
         :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
         :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
         :Help( "设置对应玩家的[指挥段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
 
-    --Delta
-    local function AdminRankDeltaPlayer(_client, _id, _marineDelta, _alienDelta )
+    self:BindCommand( "sh_rank_delta", "rank_delta", function (_client, _id, _marineDelta, _alienDelta )     --Delta
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then return end
-        if not CanSelfTargeting(_client,target) then return end
+        if not target then AdminErrorNotify(_client) return end
+        if not CanEloSelfTargeting(_client,target) then return end
         RankPlayerDelta(self,_id,_marineDelta,_alienDelta,0,0)
-    end
-    self:BindCommand( "sh_rank_delta", "rank_delta", AdminRankDeltaPlayer)
+    end)
         :AddParam{ Type = "steamid"}
         :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
         :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
         :Help( "增减对应玩家的[玩家段位].例:!rank_delta 55022511 100 -100" )
 
-    local function AdminRankDeltaCommander( _client, _id, _marineDelta,_alienDelta )
+    self:BindCommand( "sh_rank_delta_comm", "rank_delta_comm", function( _client, _id, _marineDelta,_alienDelta )
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then return end
-        if not CanSelfTargeting(_client,target) then return end
+        if not target then AdminErrorNotify(_client) return end
+        if not CanEloSelfTargeting(_client,target) then return end
         RankPlayerDelta(self,_id,0,0,_marineDelta,_alienDelta)
-    end
-    self:BindCommand( "sh_rank_delta_comm", "rank_delta_comm", AdminRankDeltaCommander )
+    end )
         :AddParam{ Type = "steamid"}
         :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
         :AddParam{ Type = "number", Round = true, Min = -5000, Max = 5000, Optional = true, Default = 0 }
         :Help( "增减对应玩家的[指挥段位].例:!rank_delta 55022511 100 -100" )
+        
+    --Reputation
+    self:BindCommand( "sh_rep_delta", "rep_delta", function( _client, _id, _delta )
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then AdminErrorNotify(_client) return end
+        ReputationPlayerDelta(self,_id,_delta)
+    end)
+        :AddParam{ Type = "steamid"}
+        :AddParam{ Type = "number", Round = true, Min = -500, Max = 500, Optional = true, Default = 0 }
+        :Help( "增减对应玩家的[性欲分].例:!rep_delta 55022511 500" )
 
+    self:BindCommand( "sh_rep_reset", "rep_reset",function( _client, _id, _delta )
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then AdminErrorNotify(_client) return end
+        local data = GetPlayerData(self,_id)
+        data.reputation = 0
+        target:GetControllingPlayer():SetPlayerExtraData(data)
+    end )
+    :AddParam{ Type = "steamid"}
+    :Help( "重置玩家的[性欲分].例:!rep_reset 55022511" )
+    
+    self:BindCommand( "sh_rep_set", "rep_set",function( _client, _id, _amount )
+        local target = Shine.GetClientByNS2ID(_id)
+        if not target then AdminErrorNotify(_client) return end
+        local data = GetPlayerData(self,_id)
+        data.reputation = _amount
+        target:GetControllingPlayer():SetPlayerExtraData(data)
+    end )
+        :AddParam{ Type = "steamid"}
+        :AddParam{ Type = "number", Round = true, Min = -500, Max = 500, Optional = true, Default = 0 }
+        :Help( "设置玩家的[性欲分].例:!rep_set 55022511 500" )
+    
     --BOT
     local function FakeBotSwitchID(_client,_id)
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then
-            return
-        end
+        if not target then AdminErrorNotify(_client) return end
 
         local data = GetPlayerData(self,target:GetUserId())
         data.fakeBot = not data.fakeBot
@@ -447,12 +643,11 @@ function Plugin:CreateMessageCommands()
 
     local botSwitchCommand = self:BindCommand( "sh_fakebot", "fakebot", FakeBotSwitch )
     botSwitchCommand:Help( "假扮成BOT." )
+    
     --Hide Rank
     local function HideRankSwitchID(_client,_id)
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then
-            return
-        end
+        if not target then AdminErrorNotify(_client) return end
 
         local data = GetPlayerData(self,target:GetUserId())
         data.hideRank = not data.hideRank
@@ -471,7 +666,7 @@ function Plugin:CreateMessageCommands()
     --Emblem
     local function EmblemSetID(_client, _id, _emblem)
         local target = Shine.GetClientByNS2ID(_id)
-        if not target then return  end
+        if not target then AdminErrorNotify(_client) return end
 
         local data = GetPlayerData(self,target:GetUserId())
         data.emblem = _emblem

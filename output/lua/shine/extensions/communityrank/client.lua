@@ -54,23 +54,24 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                             description = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString("SKILLTIER_BOT"),-1)
                         else
                             description = skillIcon.tooltipText
-                            
-                            description = description .. "\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(pr.Group))
-
-                            if pr.ns2TimePlayed > 0 then
-                                description = description .. "\n" .. string.format(Locale.ResolveString("NS2_TIME_PLAYED"),pr.ns2TimePlayed )
-                            end
                             if pr.CommSkill > 0 then
                                 description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER_COMM"), math.max(0,pr.CommSkill + pr.CommSkillOffset), math.max(0,pr.CommSkill - pr.CommSkillOffset) )
                             end
                             description = description .. "\n" .. string.format(Locale.ResolveString("SKILL_TIER"), math.max(0,pr.Skill + pr.SkillOffset) , math.max(0,pr.Skill - pr.SkillOffset))
-
+                            if pr.ns2TimePlayed > 0 then
+                                description = description .. "\n" .. string.format(Locale.ResolveString("NS2_TIME_PLAYED"),pr.ns2TimePlayed )
+                            end
+                            
                             if pr.lastSeenName ~= "" and pr.lastSeenName ~= pr.Name then
                                 description = description .. "\n" .. string.format( Locale.ResolveString("LAST_SEEN_NAME")) .. pr.lastSeenName
                             end
 
+                            description = description .. "\n\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(pr.Group))
+                            if pr.reputation ~= 0 then
+                                description = description .. "\n" .. (pr.reputation > 0 and string.format(Locale.ResolveString("COMMUNITY_REPUTATION_POSITIVE"),pr.reputation ) 
+                                        or string.format(Locale.ResolveString("COMMUNITY_REPUTATION_NEGATIVE"),-pr.reputation ))
+                            end
                             if pr.prewarmTime > 0 then
-                                description = description .. "\n"
                                 description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PLAYTIME"), pr.prewarmTime)
 
                                 if pr.prewarmScore > 0 then
