@@ -138,6 +138,12 @@ function Plugin:OnEndGame(_winningTeam)
     SavePersistent(self)
 end
 
+function Plugin:SetGameState( Gamerules, State, OldState )
+    if State == kGameState.Countdown then
+        self:OnReputationRoundStart()
+    end
+end
+
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
     self:RageQuitValidate(Player,NewTeam)
 end
@@ -342,17 +348,38 @@ local function ReputationEnabled(self)
     return true
 end
 
+local kRageQuitColorTable = { 236, 112, 99 }
 local kRageQuitType = enum({ 'None','Quit','Cover' })
 local kRageQuitTracker = { }
+function Plugin:OnReputationRoundStart()
+    for Client in Shine.IterateClients() do
+        local player = Client:GetControllingPlayer()
+        local steamId = Client:GetUserId()
+        local data = GetPlayerData(self,steamId)
+        local reputation = data.reputation or 0
+        local team = player:GetTeamNumber()
+        if reputation < self.Config.Reputation.PenaltyStarts
+            and (team == 1 or team == 2)
+        then
+            Shine:NotifyDualColour( player, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
+                    255, 255, 255,"由于您近期的行为导致信誉值过低,将在接下来的对局中受到不可预期的惩罚.请规范自身的游戏行为以提升信誉值.",true, data )
+        end
+    end
+end
+
 function Plugin:OnReputationCheck()
     if not ReputationEnabled(self) then return end
     if GetGamerules():GetGameStarted() then
         for Client in Shine.IterateClients() do
             local player = Client:GetControllingPlayer()
+            local team = player:GetTeamNumber()
+            
             local steamId = Client:GetUserId()
             local data = GetPlayerData(self,steamId)
             local reputation = data.reputation or 0
-            if reputation < self.Config.Reputation.PenaltyStarts then      -- make some dic to save these penalties,but why should i make clean code for shits?
+            if reputation < self.Config.Reputation.PenaltyStarts
+                    and (team == 1 or team == 2)
+            then
                 if player:isa("Marine") then
                     local random = math.random(1,3)
                     if random == 1 then
@@ -368,17 +395,17 @@ function Plugin:OnReputationCheck()
                 elseif player:isa("Exo") then
                     player:SetParasited(nil)
                 elseif player:isa("Alien") then
-                    local random = math.random(1,3)
+                    local random = math.random(1,2)
                     if random == 1 then
                         player:SetVelocity(-player:GetVelocity())
                         player:DisableGroundMove(1)
                     elseif random == 2 then
                         player:DeductAbilityEnergy(50)
-                    else
-                        player:DeductHealth(player:GetMaxHealth()*0.1)
-                    end 
+                    end
                 end
 
+                --data.reputation = reputation + 1
+                --player:SetPlayerExtraData(data)
             end
         end
     end
