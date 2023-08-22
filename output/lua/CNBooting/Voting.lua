@@ -118,11 +118,13 @@ if Server then
             end
         end
 
-        --if voteName == "VoteAddCommanderBots" then
-        --    if not VotingAddCommanderBotsAllowed() then
-        --        return kVoteCannotStartReason.UnsupportedGamemode
-        --    end
-        --end
+        if voteName == "VoteAddCommanderBots" then
+            local gameMode = GetGamemode()
+            local allowded = gameMode == "ns2" or gameMode == "NS2.0"
+            if not allowded then
+                return kVoteCannotStartReason.UnsupportedGamemode
+            end
+        end
 
         if voteName == "VotingForceEvenTeams" then
             if GetGamerules():GetGameStarted() then
@@ -538,10 +540,10 @@ end
 
 Script.Load("lua/VotingChangeMap.lua")
 Script.Load("lua/VotingResetGame.lua")
+Script.Load("lua/VotingAddCommanderBots.lua")
 Script.Load("lua/VotingKickPlayer.lua")
 --Script.Load("lua/VotingRandomizeRR.lua")
 --Script.Load("lua/VotingForceEvenTeams.lua")
---Script.Load("lua/VotingAddCommanderBots.lua")
 
 if Shared.GetThunderdomeEnabled() then
     Script.Load("lua/VotingThunderdomeRematch.lua")

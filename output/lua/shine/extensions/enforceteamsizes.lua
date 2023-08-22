@@ -20,6 +20,7 @@ Plugin.DefaultConfig = {
 	SkillLimitMax = -1,
 	HourLimitMin = -1,
 	HourLimitMax = -1,
+	KickOnRestricted = false,
 	NewComerBypass = {
 		Enable = true,
 		Skill = 500,
@@ -45,6 +46,7 @@ do
 	Validator:AddFieldRule( "TeamForceJoin",  Validator.IsType( "number", Plugin.DefaultConfig.TeamForceJoin ))
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
 	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", Plugin.DefaultConfig.BlockSpectators ))
+	Validator:AddFieldRule( "KickOnRestricted",  Validator.IsType( "boolean", Plugin.DefaultConfig.KickOnRestricted ))
 	Validator:AddFieldRule( "SkillLimitMin",  Validator.IsType( "number", Plugin.DefaultConfig.SkillLimitMin ))
 	Validator:AddFieldRule( "SkillLimitMax",  Validator.IsType( "number", Plugin.DefaultConfig.SkillLimitMax ))
 	Validator:AddFieldRule( "HourLimitMin",  Validator.IsType( "number", Plugin.DefaultConfig.HourLimitMin ))
@@ -94,18 +96,21 @@ function Plugin:GetPlayerLimit(Gamerules,Team)
 end
 
 function Plugin:OnPlayerRestricted(_player)
-	--local client = _player:GetClient()
-	--if Shine:HasAccess(client, "sh_adminmenu" ) then return end
-	--
-	--	local reason = "You are not supposed to be here"
-	--	client.DisconnectReason = reason
-	--	Server.DisconnectClient(client, reason )
-	--	return
+	local client = _player:GetClient()
+	if Shine:HasAccess(client, "sh_adminmenu" ) then return false end
+
+	if self.Config.KickOnRestricted then
+		local reason = "Rookie Server,SMURF is not allowed."
+		client.DisconnectReason = reason
+		Server.DisconnectClient(client, reason )
+		return true
+	end
 	
 	if _player:GetTeamNumber() ~= kSpectatorIndex then
 		local gamerules = GetGamerules()
 		if gamerules then gamerules:JoinTeam( _player, kSpectatorIndex, true,true ) end
 	end
+	return true
 end
 
 function Plugin:GetPlayerRestricted(_player)
@@ -119,8 +124,7 @@ function Plugin:GetPlayerRestricted(_player)
 		self:Notify(_player, string.format("您的分数(%i)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
 				skill,self.Config.SkillLimitMin,self.Config.SkillLimitMax < 0 and "∞" or self.Config.SkillLimitMax),
 				errorColorTable,nil)
-		self:OnPlayerRestricted(_player)
-		return true
+		return self:OnPlayerRestricted(_player)
 	end
 
 	local hour = Shine.PlayerInfoHub:GetSteamData(_player:GetClient():GetUserId()).PlayTime
@@ -133,10 +137,9 @@ function Plugin:GetPlayerRestricted(_player)
 		self:Notify(_player, string.format("您的游戏时长(%i)不在服务器限制内(%s-%s),请继续观战或加入其他服务器.",
 				hour,self.Config.HourLimitMin,self.Config.HourLimitMax < 0 and "∞" or self.Config.HourLimitMax),
 				errorColorTable,nil)
-		self:OnPlayerRestricted(_player)
-		return true
+		return self:OnPlayerRestricted(_player)
 	end
-	
+
 	return false
 end
 
@@ -196,10 +199,10 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	end
 
 	local userId = client:GetUserId()
-	local steamData = Shine.PlayerInfoHub:GetSteamData(userId)
 	local newComerConfig = self.Config.NewComerBypass
 	if newComerConfig.Enable then
 		local isSkillNewComer = newComerConfig.Skill <= 0 or _player:GetPlayerSkill() < newComerConfig.Skill
+		local steamData = Shine.PlayerInfoHub:GetSteamData(userId)
 		local isHourNewComer = newComerConfig.Hour <= 0 or steamData.PlayTime < newComerConfig.Hour
 		if isSkillNewComer and isHourNewComer then
 			self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
@@ -304,17 +307,25 @@ end
 
 --Restrict teams also at voterandom
 function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
-	local  Gamerules = GetGamerules()
+	local Gamerules = GetGamerules()
 	local team1Max = Gamerules:GetTeam(kTeam1Index):GetNumPlayers()
 	local team2Max = Gamerules:GetTeam(kTeam2Index):GetNumPlayers()
 	local maxPlayer = math.max( team1Max, team2Max )
 
 	for i = 1, 2 do
-		local teamRestriction = self.Config.Team[i]
-		local teamMaxPlayer = math.max( teamRestriction, maxPlayer )
-		for j = #TeamMembers[i], teamMaxPlayer + 1, -1 do
-			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )				--Move player into the ready room
-			TeamMembers[i][j] = nil				--remove the player's entry in the table
+		local teamMaxPlayer = math.max( self.Config.Team[i], maxPlayer )
+		local inTeamCount = 0
+		for j = 1, #TeamMembers[i] do
+			local player = TeamMembers[i][j]
+			if self:GetPlayerRestricted(player) then
+				--pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )				--Move player into the ready room
+				TeamMembers[i][j] = nil				--remove the player's entry in the table
+			else		--Push a player inside team
+				inTeamCount = inTeamCount + 1
+				if inTeamCount == teamMaxPlayer then
+					break
+				end
+			end
 		end
 	end
 end

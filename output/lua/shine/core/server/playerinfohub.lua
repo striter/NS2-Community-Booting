@@ -44,7 +44,7 @@ local function ProcessQueue()
 		end
 	end
 
-	Shine.TimedHTTPRequest(node[1], "GET", OnSuccess, OnTimeout, 15)
+	Shine.TimedHTTPRequest(node[1], "GET", OnSuccess, OnTimeout, 20)
 end
 
 local function AddToHTTPQueue( Address, OnSuccess, OnTimeout)
@@ -81,7 +81,7 @@ function PlayerInfoHub:OnConnect( Client )
 		local returnVal = JsonDecode( Response )
 		returnVal = returnVal and returnVal.response and returnVal.response.games and returnVal.response.games[1]
 		if not returnVal then
-			steamData.PlayTime = 0
+			steamData.PlayTime = -2
 			return
 		else
 			steamData.PlayTime = returnVal.playtime_forever and returnVal.playtime_forever / 60 or 0

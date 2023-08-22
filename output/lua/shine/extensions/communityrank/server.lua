@@ -119,6 +119,7 @@ function Plugin:Cleanup()
     return self.BaseClass.Cleanup( self )
 end
 
+local kRankAvailableGameModes = { "ns2", "NS2.0", "Siege+++"  }
 -- Triggers
 function Plugin:OnFirstThink()
     ReadPersistent(self)
@@ -132,10 +133,11 @@ function Plugin:OnEndGame(_winningTeam)
         Shared.Message("[CNCR] ERROR Option 'savestats' not enabled ")
         return
     end
-    
+
+    local gameMode = Shine.GetGamemode()
+    if not table.contains(kRankAvailableGameModes,gameMode) then return end
     self:EndGameElo(lastRoundData)
     self:EndGameReputation(lastRoundData)
-    SavePersistent(self)
 end
 
 function Plugin:SetGameState( Gamerules, State, OldState )
@@ -211,10 +213,7 @@ local function RankPlayerDelta(self, _steamId, _marineDelta, _alienDelta, _marin
     EloDataSanityCheck(data,client and client:GetControllingPlayer())
 end
 
-local eloEnable = { "ns2","NS2.0","Siege+++"  }
 function Plugin:EndGameElo(lastRoundData)
-    local gameMode = Shine.GetGamemode()
-    if not table.contains(eloEnable,gameMode) then return end
 
     if not self.Config.Elo.Check then return end
 
