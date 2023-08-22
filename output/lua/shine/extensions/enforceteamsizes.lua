@@ -97,7 +97,10 @@ end
 
 function Plugin:OnPlayerRestricted(_player)
 	local client = _player:GetClient()
-	if Shine:HasAccess(client, "sh_adminmenu" ) then return false end
+	if Shine:HasAccess(client, "sh_adminmenu" ) then
+		self:Notify(_player,"检测到您为管理员,请引导玩家前往合适的场所进行游玩(勿带头炸鱼)!",errorColorTable)
+		return false 
+	end
 
 	if self.Config.KickOnRestricted then
 		local reason = "Rookie Server,SMURF is not allowed."
