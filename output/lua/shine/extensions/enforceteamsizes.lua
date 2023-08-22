@@ -148,13 +148,12 @@ local TeamNames = { "陆战队","卡拉异形","观战" }
 function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	if _shineForce then return end
 	if _player:GetIsVirtual() then return end
-	local playerRestricted = self:GetPlayerRestricted(_player)
 	if _newTeam == kTeamReadyRoom then 
-		if playerRestricted then return false end
+		if self:GetPlayerRestricted(_player) then return false end
 		return
 	end
 
-	local available = not playerRestricted
+	local available = not self:GetPlayerRestricted(_player)
 	local playerNum = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
 	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
 	local playerLimited = playerNum >= playerLimit
