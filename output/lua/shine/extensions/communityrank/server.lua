@@ -138,6 +138,7 @@ function Plugin:OnEndGame(_winningTeam)
     if not table.contains(kRankAvailableGameModes,gameMode) then return end
     self:EndGameElo(lastRoundData)
     self:EndGameReputation(lastRoundData)
+    SavePersistent(self)
 end
 
 function Plugin:SetGameState( Gamerules, State, OldState )
