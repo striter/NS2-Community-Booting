@@ -13,8 +13,8 @@ Plugin.DefaultConfig = {
         Player = 12,
     },
     ["Tier"] = {
-        [1] = { Count = 2, Credit = 15,Inform = true, },
-        [2] = { Count = 3, Credit = 10,Inform = true },
+        [1] = { Count = 2, Credit = 15,Rank = -200,Inform = true, },
+        [2] = { Count = 3, Credit = 10,Rank = -100,Inform = true },
         [3] = { Count = 10, Credit = 5 },
         [4] = { Count = 99, Credit = 1 },
     },
@@ -30,6 +30,7 @@ Plugin.DefaultConfig = {
     },
 }
 
+Plugin.kPrefix = "[战局预热]" 
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 do
@@ -107,7 +108,7 @@ local function NotifyClient(self, _client, _data)
 
     local data = _data or GetPlayerData(self,_client:GetUserId())
     if data.credit > 0 then
-        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
                 255, 255, 255,string.format("当日剩余%s[预热点],可作用于[投票-换图提名]或者[自由下场]等特权,每日清空记得用完哦!", data.credit) )
     end
 end
@@ -147,7 +148,7 @@ local function TrackAllClients(self)
     end
 end
 
-local function ValidateClient(self, _clientID, _data, _tier, _credit)
+local function ValidateClient(self, _clientID, _data, _tier, _credit,_rank)
     _data = _data or GetPlayerData(self,_clientID)
     _data.tier = _tier
     _data.credit = _data.credit + _credit
@@ -155,8 +156,22 @@ local function ValidateClient(self, _clientID, _data, _tier, _credit)
     local client = Shine.GetClientByNS2ID(_clientID)
     if not client then return end
 
-    client:GetControllingPlayer():SetPrewarmData(_data)
-    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
+    local player = client:GetControllingPlayer()
+    
+    if _rank then
+        local EFEnabled, EFPlugin = Shine:IsExtensionEnabled( "enforceteamsizes" )
+        local CREnabled, CRPlugin = Shine:IsExtensionEnabled( "communityrank" )
+        if EFEnabled and CREnabled then
+            if EFPlugin:GetPlayerSkillLimited(player) then
+                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix, 255, 255, 255,"您为非服务器目标分段玩家,但鉴于你的积极贡献行为,已为您调整分数.若作出不符分段的行为将受到惩罚(分数还原或封禁).")
+                Shared.ConsoleCommand(string.format("sh_rank_delta %s %s %s", _clientID,_rank,_rank))
+            end
+        end
+    end
+
+
+    player:SetPrewarmData(_data)
+    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewPParmColor[3],self.kPrefix,255, 255, 255,
             string.format("激励已派发,以获得[预热徽章%s]及[%s预热点],感谢您的付出!",_tier,_credit) )
 end
 
@@ -183,7 +198,7 @@ function Plugin:DispatchTomorrowPrivilege(_clients,_message)
     end
 
     for client in Shine.IterateClients() do
-        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
                 255, 255, 255,string.format("%s成功,参与其中的%i名玩家将于明日获得对应的换服激励.",_message,#_clients))
     end
 end
@@ -234,17 +249,21 @@ local function Validate(self)
         end
         
         if not curTierData then break end
-        ValidateClient(self, prewarmClient.clientID, prewarmClient.data,curTier, curTierData.Credit)
-        if curTierData.Inform then  
+        
+        ValidateClient(self, prewarmClient.clientID, prewarmClient.data,curTier, curTierData.Credit,curTierData.Rank)
+        
+        if curTierData.Inform then
             nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60)) 
         end
+        
         currentIndex = currentIndex + 1
     end
     
+    local informMessage = string.format("已达成,排名靠前的玩家:" .. nameList .. "等,感谢各位做出的积极贡献.",
+            self.Config.Restriction.Player)
     for client in Shine.IterateClients() do
-        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                255, 255, 255,string.format("预热已达成,预热排名靠前的玩家:" .. nameList .. "等,感谢各位对预热做出的贡献.",
-                        self.Config.Restriction.Player))
+        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
+                                        255, 255, 255, informMessage)
     end
     
     return true
@@ -258,7 +277,7 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
     if not data.tier or data.tier <= 0 then return end
     
     if _cost == 0 then
-        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
                 255, 255, 255,string.format("当前拥有特权:[%s].", _privilege) )
         return true
     end
@@ -267,13 +286,13 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
         local credit = data.credit or 0
         if credit >= _cost then
             data.credit = credit - _cost
-            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
                     255, 255, 255,string.format("使用 %s [预热点],当前剩余 %s [预热点].\n已获得特权:<%s>.", _cost,data.credit,_privilege) )
             return true
         end
         return false
     else
-        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
                 255, 255, 255,string.format("您的可用[预热点]不足.", _privilege) )
         return true
     end
@@ -312,14 +331,14 @@ function Plugin:SetGameState( Gamerules, State, OldState )
                 end
             end
             
+            local message1 = string.format("分数记录中,当正式开局时[人数>%s]后,分数靠前玩家将获得当日[预热徽章]以及对应的[预热点].", self.Config.Restriction.Player)
+            local message2 = string.format("当前排名:" .. nameList, self.Config.Restriction.Player)
             for client in Shine.IterateClients() do
-                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                        255, 255, 255,string.format("当前为预热局,当游戏开始时[人数>%s]后,参与预热的玩家将获得当日[预热徽章]以及对应的[预热点].",
-                                self.Config.Restriction.Player))
+                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
+                        255, 255, 255,message1)
 
-                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",
-                        255, 255, 255,string.format("目前的预热分数排名:" .. nameList,
-                                self.Config.Restriction.Player))
+                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
+                        255, 255, 255,message2)
             end
         end
     end
@@ -344,7 +363,7 @@ function Plugin:ClientConnect(_client)
         if self.Config.Validated then
             NotifyClient(self,_client,nil)
         else
-            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],"[战局预热]",255, 255, 255,
+            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                     string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
         end
     end
@@ -381,6 +400,10 @@ function Plugin:CreateMessageCommands()
         SavePersistent(self)        
     end,true )
     resetCommand:Help( "重置服务器的预热状态与数据.")
+end
+
+function Plugin:IsPrewarming() 
+    return not self.Config.Validated
 end
 
 return Plugin

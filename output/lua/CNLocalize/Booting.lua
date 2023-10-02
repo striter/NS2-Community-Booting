@@ -63,7 +63,7 @@ if Client then
     Locale.GetCurrentLanguage = CNGetCurrentLanguage
     
     -- Fonts Fix
-    ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "post")
+    ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "replace")
     ModLoader.SetupFileHook("lua/GUI/FontGlobals.lua", "lua/CNLocalize/FontGlobals.lua", "replace")
 
     --Locations

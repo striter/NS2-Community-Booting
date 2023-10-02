@@ -109,11 +109,17 @@ end
 
 function Plugin:OnPlayerRestricted(_player,_newTeam)
 	local client = _player:GetClient()
+	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
+	if cpEnabled and cp:IsPrewarming() then
+		self:Notify(_player,"目前为预热局,你可以自由下场,完成后可获得排名对应的限制减免(切勿炸鱼).",errorColorTable)
+		return false
+	end
+	
 	if Shine:HasAccess(client, "sh_adminmenu" ) then
 		self:Notify(_player,"检测到您为管理员,请引导玩家前往合适的场所进行游玩(切勿炸鱼)!",errorColorTable)
 		return false
 	end
-
+	
 	local operationData = self.Config.RestrictedOperation
 	local operation = operationData.Operation
 	if operation == Plugin.RestrictedOperation.SPECTATOR then
@@ -142,22 +148,30 @@ function Plugin:OnPlayerRestricted(_player,_newTeam)
 	return true
 end
 
-function Plugin:GetPlayerRestricted(_player,_team)
+function Plugin:GetPlayerSkillLimited(_player,_team)
+
 	local skill = _player:GetPlayerSkill() or 0
 	local offset = _player.GetPlayerSkillOffset and _player:GetPlayerSkillOffset() or 0
 	if _team == 1 or _team == 2 then
-		skill =  _team == 1 and ( skill + offset) or ( skill - offset)
-		skill = math.max(skill,0)
+		skill = skill + offset
+	elseif _team == 2 then
+		skill = skill - offset
 	end
-	
+
+	skill = math.max(skill,0)
 	local skillLimited = skill < self.Config.SkillLimitMin
 	if self.Config.SkillLimitMax > 0 then
 		skillLimited = skillLimited or skill >= self.Config.SkillLimitMax
 	end
 	
+	return skillLimited,skill
+end
+
+function Plugin:GetPlayerRestricted(_player,_team)
+	local skillLimited, finalSkill =  self:GetPlayerSkillLimited(_player,_team)
 	if skillLimited then
 		self:Notify(_player, string.format("您的分数(%i)不在服务器限制内(%s-%s).",
-				skill,self.Config.SkillLimitMin,self.Config.SkillLimitMax < 0 and "∞" or self.Config.SkillLimitMax),
+				finalSkill,self.Config.SkillLimitMin,self.Config.SkillLimitMax < 0 and "∞" or self.Config.SkillLimitMax),
 				errorColorTable,nil)
 		return self:OnPlayerRestricted(_player,_team)
 	end
@@ -339,7 +353,9 @@ end
 
 function Plugin:ClientConfirmConnect( Client )
 	if Client:GetIsVirtual() then return end
-	RestrictionDisplay(self,Client)
+	if not self:GetPlayerRestricted(Client:GetControllingPlayer()) then
+		RestrictionDisplay(self,Client)
+	end
 end
 
 --Restrict teams also at voterandom
@@ -350,20 +366,11 @@ function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
 	local maxPlayer = math.max( team1Max, team2Max )
 
 	for i = 1, 2 do
-		local teamMaxPlayer = math.max( self.Config.Team[i], maxPlayer )
-		local inTeamCount = 0
-		local teamShuffleCount = #TeamMembers[i]
-		for j = teamShuffleCount, 1, -1 do
-			local player = TeamMembers[i][j]
-			if self:GetPlayerRestricted(player,i) then
-				table.remove(TeamMembers[i], j)	--remove the player's entry in the table
-			else		--Push a player inside team
-				inTeamCount = inTeamCount + 1
-				if inTeamCount > teamMaxPlayer then
-					pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )
-					TeamMembers[i][j] = nil				--remove the player's entry in the table
-				end
-			end
+		local teamRestriction = self.Config.Team[i]
+		local teamMaxPlayer = math.max( teamRestriction, maxPlayer )
+		for j = #TeamMembers[i], teamMaxPlayer + 1, -1 do
+			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )				--Move player into the ready room
+			TeamMembers[i][j] = nil
 		end
 	end
 end
