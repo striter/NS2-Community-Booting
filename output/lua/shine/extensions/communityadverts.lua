@@ -125,7 +125,7 @@ function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
 	elseif NewTeam == kTeamReadyRoom then
 		Shine:NotifyDualColour( Player.client,
 		93, 173, 226,"[预备室]",
-		214, 234, 248, "你已进入预备室.\n*在战局开始的情况下请尽快加入游戏.\n*贴近广告牌按[E]互动查看文档.\n*按[M]呼出服务器菜单.")
+		214, 234, 248, "*在战局开始的情况下请尽快加入游戏.\n*贴近广告牌按[E]互动查看文档.\n*按[M]呼出服务器菜单.")
 	end
 end
 

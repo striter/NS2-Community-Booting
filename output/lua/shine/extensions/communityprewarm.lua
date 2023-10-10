@@ -171,7 +171,7 @@ local function ValidateClient(self, _clientID, _data, _tier, _credit,_rank)
 
 
     player:SetPrewarmData(_data)
-    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewPParmColor[3],self.kPrefix,255, 255, 255,
+    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
             string.format("激励已派发,以获得[预热徽章%s]及[%s预热点],感谢您的付出!",_tier,_credit) )
 end
 

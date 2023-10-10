@@ -24,8 +24,10 @@ Plugin.DefaultConfig = {
 	SkillLimitMax = -1,
 	HourLimitMin = -1,
 	HourLimitMax = -1,
+	
 	RestrictedOperation = 
 	{
+		MinPlayerCount = 16,
 		Operation = Plugin.RestrictedOperation.SPECTATOR,
 		Reason = "Rookie Server, No Smurf Is Allowed!",
 		BanMinute = -1,
@@ -58,6 +60,7 @@ do
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
 	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", Plugin.DefaultConfig.BlockSpectators ))
 	Validator:AddFieldRule( "RestrictedOperation", Validator.IsType( "table", Plugin.DefaultConfig.RestrictedOperation ) )
+	Validator:AddFieldRule( "RestrictedOperation.MinPlayerCount", Validator.IsType( "number", Plugin.DefaultConfig.RestrictedOperation.MinPlayerCount ) )
 
 	Validator:AddFieldRule( "SkillLimitMin",  Validator.IsType( "number", Plugin.DefaultConfig.SkillLimitMin ))
 	Validator:AddFieldRule( "SkillLimitMax",  Validator.IsType( "number", Plugin.DefaultConfig.SkillLimitMax ))
@@ -109,9 +112,9 @@ end
 
 function Plugin:OnPlayerRestricted(_player,_newTeam)
 	local client = _player:GetClient()
-	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-	if cpEnabled and cp:IsPrewarming() then
-		self:Notify(_player,"目前为预热局,你可以自由下场,完成后可获得排名对应的限制减免(切勿炸鱼).",errorColorTable)
+	
+	if Shine.GetHumanPlayerCount() < self.Config.RestrictedOperation.MinPlayerCount then
+		self:Notify(_player,"目前为预热局,你可以自由下场,完成预热后可获得排名对应的限制减免(炸鱼将承担相应后果).",errorColorTable)
 		return false
 	end
 	
