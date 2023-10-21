@@ -107,6 +107,16 @@ if Client then
         return string.gsub(input, "%w+",kChatFilters)
     end
     Locale.ChatFilter = CNChatFilter
+
+
+    local function OnConsoleHttp(url)
+        Shared.Message("Pending:" .. url)
+        Shared.SendHTTPRequest(url,"GET",{},function(response)
+            Shared.Message(response) 
+        end)
+    end
+    
+    Event.Hook("Console_http", OnConsoleHttp)
 end
 
 Shared.Message("[CNCE] CN Booting Version 2023.06.14")

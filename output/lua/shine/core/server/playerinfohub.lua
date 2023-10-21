@@ -93,6 +93,26 @@ function PlayerInfoHub:OnConnect( Client )
 	end,nil )
 end
 
+function PlayerInfoHub:SetCommunityData(steamId,data)
+	Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users/%s",steamId),"POST",{mtd = "DELETE"})		--Try delete previous onee
+
+	data.id = steamId
+	Shared.SendHTTPRequest("http://127.0.0.1:3000/users","POST",data		--Pop a new one
+			--,function(response)
+			--	Print("response: " .. response )
+			--end
+	)
+end
+
+function PlayerInfoHub:GetCommunityData(steamId,onSuccessfulCallBack)
+	local queryURL = StringFormat( "http://127.0.0.1:3000/users/%s" ,steamId )
+	AddToHTTPQueue( queryURL, function( response,errorCode )
+		local returnVal = JsonDecode(response)
+		if not returnVal or not returnVal.id then return end
+		onSuccessfulCallBack(returnVal) 
+	end,nil )
+end
+
 Shine.Hook.Add( "ClientConnect", "GetPlayerInfo", function( Client )
 	PlayerInfoHub:OnConnect( Client )
 end )

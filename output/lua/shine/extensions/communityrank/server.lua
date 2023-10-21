@@ -50,23 +50,24 @@ Plugin.DefaultConfig = {
             DeltaLoseRecover = 2,
         }
     },
-    ["UserData"] = {
-        ["55022511"] = {
-            rank = -2000,
-            rankOffset = -200,
-            rankComm = -500,
-            rankCommOffset = -200,
-            fakeBot = true,
-            emblem = 0,
-        }
-    },
+    --["UserData"] = {
+    --    ["55022511"] = {
+    --        rank = -2000,
+    --        rankOffset = -200,
+    --        rankComm = -500,
+    --        rankCommOffset = -200,
+    --        fakeBot = true,
+    --        emblem = 0,
+    --    }
+    --},
 }
+
 
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 do
     local Validator = Shine.Validator()
-    Validator:AddFieldRule( "UserData",  Validator.IsType( "table", Plugin.DefaultConfig.UserData ))
+    --Validator:AddFieldRule( "UserData",  Validator.IsType( "table", Plugin.DefaultConfig.UserData ))
     Validator:AddFieldRule( "Reputation",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation ))
     Validator:AddFieldRule( "Reputation.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Reputation.Debug ))
     Validator:AddFieldRule( "Reputation.Enable",  Validator.IsType( "boolean", Plugin.DefaultConfig.Reputation.Enable ))
@@ -89,19 +90,23 @@ function Plugin:Initialise()
 end
 
 local function ReadPersistent(self)
-    for k,v in pairs(self.Config.UserData) do
-        self.MemberInfos[tonumber(k)] = v
-    end
+    --for k,v in pairs(self.Config.UserData) do
+    --    self.MemberInfos[tonumber(k)] = v
+    --end
 end
 
 local function SavePersistent(self)
+
     for k,v in pairs(self.MemberInfos) do
-        self.Config.UserData[tostring(k)] = v
+        Shine.PlayerInfoHub:SetCommunityData(k,v)
+        --self.Config.UserData[tostring(k)] = v
     end
-    self:SaveConfig()
+    --self:SaveConfig()
 end
 
 local function GetPlayerData(self,steamId)
+    assert(steamId~=0)
+    
     if not self.MemberInfos[steamId] then
         self.MemberInfos[steamId] = { }
     end
@@ -172,7 +177,18 @@ function Plugin:ClientConnect( _client )
     local player = _client:GetControllingPlayer()
     player:SetGroup(groupName)
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
-    player:SetPlayerExtraData(GetPlayerData(self,clientID))
+    
+    local localData = self.MemberInfos[clientID]
+    if localData then
+        player:SetPlayerExtraData(localData)
+        return
+    end
+    
+    Shine.PlayerInfoHub:GetCommunityData(clientID,function(data)
+        self.MemberInfos[clientID] = data
+        player:SetPlayerExtraData(data)
+    end )
+    
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
 
@@ -355,14 +371,16 @@ function Plugin:OnReputationRoundStart()
     for Client in Shine.IterateClients() do
         local player = Client:GetControllingPlayer()
         local steamId = Client:GetUserId()
-        local data = GetPlayerData(self,steamId)
-        local reputation = data.reputation or 0
-        local team = player:GetTeamNumber()
-        if reputation < self.Config.Reputation.PenaltyStarts
-            and (team == 1 or team == 2)
-        then
-            Shine:NotifyDualColour( player, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
-                    255, 255, 255,"由于您近期的行为导致信誉值过低,将在接下来的对局中受到不可预期的惩罚.请规范自身的游戏行为以提升信誉值.",true, data )
+        if steamId > 0 then
+            local data = GetPlayerData(self,steamId)
+            local reputation = data.reputation or 0
+            local team = player:GetTeamNumber()
+            if reputation < self.Config.Reputation.PenaltyStarts
+                    and (team == 1 or team == 2)
+            then
+                Shine:NotifyDualColour( player, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
+                        255, 255, 255,"由于您近期的行为导致信誉值过低,将在接下来的对局中受到不可预期的惩罚.请规范自身的游戏行为以提升信誉值.",true, data )
+            end
         end
     end
 end

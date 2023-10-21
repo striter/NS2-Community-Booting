@@ -29,8 +29,5 @@ BotAim.kAccuracies = {
     --TODO Add Exo weapons?
 }
 
-BotAim.kBotTurnSpeeds =
-{
-    ["DevouredPlayer"] = 1.0,       --?
-    ["Prowler"] = 1.0,
-}
+BotAim.kBotTurnSpeeds["DevouredPlayer"] = 1.0       --?
+BotAim.kBotTurnSpeeds["Prowler"] = 1.0
