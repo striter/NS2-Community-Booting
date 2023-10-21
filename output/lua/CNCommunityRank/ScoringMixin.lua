@@ -94,8 +94,8 @@ if Server then
         self.rankCommDelta = dataTable.rankComm or 0
         self.rankCommOffsetDelta = dataTable.rankCommOffset or 0
         
-        self.fakeBot = dataTable.fakeBot or false
-        self.hideRank = dataTable.hideRank or false
+        self.fakeBot = dataTable.fakeBot == 1
+        self.hideRank = dataTable.hideRank == 1
         self.emblem = dataTable.emblem or 0
         self.lastSeenName = dataTable.lastSeenName or ""
         self.reputation = dataTable.reputation or 0

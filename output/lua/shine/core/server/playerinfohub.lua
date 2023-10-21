@@ -93,24 +93,40 @@ function PlayerInfoHub:OnConnect( Client )
 	end,nil )
 end
 
-function PlayerInfoHub:SetCommunityData(steamId,data)
-	Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users/%s",steamId),"POST",{mtd = "DELETE"})		--Try delete previous onee
+function PlayerInfoHub:RegisterCommunityData(steamId)
+	Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users",steamId),"POST",{id = steamId}
+	--,function(response)
+	--	Print("response: " .. response )
+	--end
+	)
+end
 
-	data.id = steamId
-	Shared.SendHTTPRequest("http://127.0.0.1:3000/users","POST",data		--Pop a new one
+function PlayerInfoHub:SetCommunityData(steamId,data)
+
+	local output = table.copyDict(data)
+	output.mtd = "PUT"
+	output.id = steamId
+
+	Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users/%s",steamId),"POST",output
 			--,function(response)
 			--	Print("response: " .. response )
 			--end
 	)
 end
 
-function PlayerInfoHub:GetCommunityData(steamId,onSuccessfulCallBack)
+
+function PlayerInfoHub:GetCommunityData(steamId,onSuccessfulCallBack,onFailedCallback)
 	local queryURL = StringFormat( "http://127.0.0.1:3000/users/%s" ,steamId )
 	AddToHTTPQueue( queryURL, function( response,errorCode )
 		local returnVal = JsonDecode(response)
-		if not returnVal or not returnVal.id then return end
+		if not returnVal or not returnVal.id then
+			Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users",steamId),"POST",{id = steamId})
+			onFailedCallback()
+			return
+		end
+		
 		onSuccessfulCallBack(returnVal) 
-	end,nil )
+	end,onFailedCallback )
 end
 
 Shine.Hook.Add( "ClientConnect", "GetPlayerInfo", function( Client )

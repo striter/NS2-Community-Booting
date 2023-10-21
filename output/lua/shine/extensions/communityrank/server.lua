@@ -98,7 +98,9 @@ end
 local function SavePersistent(self)
 
     for k,v in pairs(self.MemberInfos) do
-        Shine.PlayerInfoHub:SetCommunityData(k,v)
+        if not v.fakeData then
+            Shine.PlayerInfoHub:SetCommunityData(k,v)
+        end
         --self.Config.UserData[tostring(k)] = v
     end
     --self:SaveConfig()
@@ -108,7 +110,7 @@ local function GetPlayerData(self,steamId)
     assert(steamId~=0)
     
     if not self.MemberInfos[steamId] then
-        self.MemberInfos[steamId] = { }
+        self.MemberInfos[steamId] = { fakeData = true }
     end
     
     return self.MemberInfos[steamId]
@@ -178,16 +180,23 @@ function Plugin:ClientConnect( _client )
     player:SetGroup(groupName)
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
     
-    local localData = self.MemberInfos[clientID]
-    if localData then
+    local localData = GetPlayerData(self,clientID)
+    if not localData.fakeData then
         player:SetPlayerExtraData(localData)
         return
     end
     
-    Shine.PlayerInfoHub:GetCommunityData(clientID,function(data)
+    
+    Shine.PlayerInfoHub:GetCommunityData(clientID,function(data)        --Successful
         self.MemberInfos[clientID] = data
+        local Client = Shine.GetClientByNS2ID( clientID )
+        if not Client then return end
+        local Player = Client:GetControllingPlayer()
+        if not Player then return end
         player:SetPlayerExtraData(data)
-    end )
+    end ,function()     --Empty or time out
+        self.MemberInfos[clientID].fakeData = nil
+    end)
     
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
@@ -675,7 +684,7 @@ function Plugin:CreateMessageCommands()
         if not target then AdminErrorNotify(_client) return end
 
         local data = GetPlayerData(self,target:GetUserId())
-        data.fakeBot = not data.fakeBot
+        data.fakeBot = data.fakeBot == 1 and 0 or 1
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
     local botCommand = self:BindCommand( "sh_fakebot_set", "fakebot_set", FakeBotSwitchID )
@@ -695,7 +704,7 @@ function Plugin:CreateMessageCommands()
         if not target then AdminErrorNotify(_client) return end
 
         local data = GetPlayerData(self,target:GetUserId())
-        data.hideRank = not data.hideRank
+        data.hideRank = data.hideRank == 1 and 0 or 1
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
 
