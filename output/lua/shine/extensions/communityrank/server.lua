@@ -171,6 +171,15 @@ local function GetUserGroup(Client)
     return groupName and groupName or "RANK_DEFAULT" , Group
 end
 
+
+local function GetNumber(_value)
+    return _value and tonumber(_value) or nil
+end
+
+local function GetBoolean(_value)
+    return _value and 1 or nil
+end
+
 function Plugin:ClientConnect( _client )
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
@@ -195,9 +204,13 @@ function Plugin:ClientConnect( _client )
         if not Player then return end
         
         --Resolver,but why other number works?
-        data.fakeBot = data.fakeBot and tonumber(data.fakeBot) or 0
-        data.hideRank = data.hideRank and tonumber(data.hideRank) or 0
-
+        data.fakeBot = GetBoolean(data.fakeBot)
+        data.hideRank = GetBoolean(data.hideRank)
+        data.rank = GetNumber(data.rank)
+        data.rankOffset = GetNumber(data.rankOffset)
+        data.rankComm = GetNumber(data.rankComm)
+        data.rankCommOffset = GetNumber(data.rankCommOffset)
+        data.reputation = GetNumber(data.reputation)
 
         player:SetPlayerExtraData(data)
     end ,function()     --Empty or time out
