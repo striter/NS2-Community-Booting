@@ -193,6 +193,12 @@ function Plugin:ClientConnect( _client )
         if not Client then return end
         local Player = Client:GetControllingPlayer()
         if not Player then return end
+        
+        --Resolver,but why other number works?
+        data.fakeBot = data.fakeBot and tonumber(data.fakeBot) or 0
+        data.hideRank = data.hideRank and tonumber(data.hideRank) or 0
+
+
         player:SetPlayerExtraData(data)
     end ,function()     --Empty or time out
         self.MemberInfos[clientID].fakeData = nil
