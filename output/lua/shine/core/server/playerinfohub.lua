@@ -93,16 +93,43 @@ function PlayerInfoHub:OnConnect( Client )
 	end,nil )
 end
 
-function PlayerInfoHub:RegisterCommunityData(steamId)
-	Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users",steamId),"POST",{id = steamId}
-	--,function(response)
-	--	Print("response: " .. response )
-	--end
-	)
+Shine.Hook.Add( "PostloadConfig", "LoadCommunityUsers", function()
+	local queryURL = "http://127.0.0.1:3000/users"
+	AddToHTTPQueue( queryURL, function( response,errorCode )
+		local receive = JsonDecode(response)
+		if not receive then return end
+		
+		PlayerInfoHub.CommunityData = {}
+		for _,v in pairs(receive) do
+			local id = tonumber(v.id)
+			PlayerInfoHub.CommunityData[id] = v
+		end
+		--PlayerInfoHub.CommunityData = JsonDecode(response)
+	end )
+end )
+
+
+function PlayerInfoHub:GetCommunityData(steamId)
+
+	if not PlayerInfoHub.CommunityData then
+		return nil
+	end
+	
+	local localData = PlayerInfoHub.CommunityData[steamId]
+	if not localData then
+		Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users",steamId),"POST",{id = steamId})
+		return nil
+	end
+	return localData
 end
+
 
 function PlayerInfoHub:SetCommunityData(steamId,data)
 
+	if PlayerInfoHub.CommunityData then
+		PlayerInfoHub.CommunityData[steamId] = data
+	end
+	
 	local output = table.copyDict(data)
 	output.mtd = "PUT"
 	output.id = steamId
@@ -114,20 +141,6 @@ function PlayerInfoHub:SetCommunityData(steamId,data)
 	)
 end
 
-
-function PlayerInfoHub:GetCommunityData(steamId,onSuccessfulCallBack,onFailedCallback)
-	local queryURL = StringFormat( "http://127.0.0.1:3000/users/%s" ,steamId )
-	AddToHTTPQueue( queryURL, function( response,errorCode )
-		local returnVal = JsonDecode(response)
-		if not returnVal or not returnVal.id then
-			Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users",steamId),"POST",{id = steamId})
-			onFailedCallback()
-			return
-		end
-		
-		onSuccessfulCallBack(returnVal) 
-	end,onFailedCallback )
-end
 
 Shine.Hook.Add( "ClientConnect", "GetPlayerInfo", function( Client )
 	PlayerInfoHub:OnConnect( Client )

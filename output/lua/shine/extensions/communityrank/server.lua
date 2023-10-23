@@ -177,7 +177,7 @@ local function GetNumber(_value)
 end
 
 local function GetBoolean(_value)
-    return _value and 1 or nil
+    return (_value and _value == "1") and 1 or 0
 end
 
 function Plugin:ClientConnect( _client )
@@ -188,34 +188,24 @@ function Plugin:ClientConnect( _client )
     local player = _client:GetControllingPlayer()
     player:SetGroup(groupName)
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
-    
+
     local localData = GetPlayerData(self,clientID)
-    if not localData.fakeData then
-        player:SetPlayerExtraData(localData)
-        return
+    local data = Shine.PlayerInfoHub:GetCommunityData(clientID)
+    if not data then
+        localData.fakeData = true
     end
     
-    
-    Shine.PlayerInfoHub:GetCommunityData(clientID,function(data)        --Successful
-        self.MemberInfos[clientID] = data
-        local Client = Shine.GetClientByNS2ID( clientID )
-        if not Client then return end
-        local Player = Client:GetControllingPlayer()
-        if not Player then return end
-        
-        --Resolver,but why other number works?
-        data.fakeBot = GetBoolean(data.fakeBot)
-        data.hideRank = GetBoolean(data.hideRank)
-        data.rank = GetNumber(data.rank)
-        data.rankOffset = GetNumber(data.rankOffset)
-        data.rankComm = GetNumber(data.rankComm)
-        data.rankCommOffset = GetNumber(data.rankCommOffset)
-        data.reputation = GetNumber(data.reputation)
-
-        player:SetPlayerExtraData(data)
-    end ,function()     --Empty or time out
-        self.MemberInfos[clientID].fakeData = nil
-    end)
+    self.MemberInfos[clientID] = data
+    --Resolver,but why other number works?
+    data.fakeBot = GetBoolean(data.fakeBot)
+    data.hideRank = GetBoolean(data.hideRank)
+    data.rank = GetNumber(data.rank)
+    data.rankOffset = GetNumber(data.rankOffset)
+    data.rankComm = GetNumber(data.rankComm)
+    data.rankCommOffset = GetNumber(data.rankCommOffset)
+    data.reputation = GetNumber(data.reputation)
+    data.fakeData = nil
+    player:SetPlayerExtraData(data)
     
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
@@ -421,6 +411,8 @@ function Plugin:OnReputationCheck()
             local team = player:GetTeamNumber()
             
             local steamId = Client:GetUserId()
+            if steamId <=0 then return end
+            
             local data = GetPlayerData(self,steamId)
             local reputation = data.reputation or 0
             if reputation < self.Config.Reputation.PenaltyStarts

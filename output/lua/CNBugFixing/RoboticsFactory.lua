@@ -43,3 +43,24 @@ if Server then
 
     end
 end
+
+function RoboticsFactory:OnTag(tagName)
+
+    PROFILE("RoboticsFactory:OnTag")
+
+    if self.open and self.builtEntity and self.researchId ~= Entity.invalidId and tagName == "end" then
+
+        if self.builtEntity:GetIsDestroyed() then return end        --Safe Check
+
+        self.builtEntity:Rollout(self, RoboticsFactory.kRolloutLength)
+        self.builtEntity = nil
+    end
+
+
+    if tagName == "open_start" then
+        self:TriggerEffects("robofactory_door_open")
+    elseif tagName == "close_start" then
+        self:TriggerEffects("robofactory_door_close")
+    end
+
+end
