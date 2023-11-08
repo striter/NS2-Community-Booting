@@ -44,15 +44,6 @@ Plugin.DefaultConfig = {
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 
-Plugin.EnabledGamemodes = {
-	[ "ns2" ] = true,
-	[ "NS2.0" ] = true,
-	[ "NS2.0beta" ] = true,
-	[ 'Siege+++' ] = true,
-	[ 'GunGame' ] = true,
-	[ 'Combat' ] = true,
-}
-
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "Team",  Validator.IsType( "table", Plugin.DefaultConfig.Team ))

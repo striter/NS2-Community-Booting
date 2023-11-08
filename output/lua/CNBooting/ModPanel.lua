@@ -67,14 +67,18 @@ if Client then
     local webView = nil
     function ModPanel:OnUse()
         -- GetMainMenu():Open()
+        Log("Loading URL: %s", self.url)
+        if Shine then
+            Shine:OpenWebpage(self.url, self.hint)
+            return
+        end
+
         if webView then
             GetGUIManager():DestroyGUIScript(webView)
         end
-        
         webView = GetGUIManager():CreateGUIScript("GUIWebView")
-        Log("Loading URL: %s", self.url)
         webView:LoadUrl(self.url, Client.GetScreenWidth() * 0.5, Client.GetScreenHeight() * 0.7)
-        
+
         webView:GetBackground():SetAnchor(GUIItem.Middle, GUIItem.Center)
         webView:GetBackground():SetPosition(-webView:GetBackground():GetSize() / 2)
         webView:GetBackground():SetLayer(kGUILayerMainMenuWeb)

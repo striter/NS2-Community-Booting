@@ -76,7 +76,7 @@ function PlayerInfoHub:OnConnect( Client )
 	 ]]
 	if steamData.Validated then return end
 	steamData.Validated = true
-	
+
 	AddToHTTPQueue( StringFormat( "http://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=372C1D52A38C8F6685153E2D87EDE66F&SteamId=%s&appids_filter[0]=4920", SteamId64 ), function( Response )
 		local returnVal = JsonDecode( Response )
 		returnVal = returnVal and returnVal.response and returnVal.response.games and returnVal.response.games[1]
@@ -93,32 +93,40 @@ function PlayerInfoHub:OnConnect( Client )
 	end,nil )
 end
 
-Shine.Hook.Add( "PostloadConfig", "LoadCommunityUsers", function()
+
+function PlayerInfoHub:QueryDBIfNeeded()
+	if PlayerInfoHub.queried then return end
+	PlayerInfoHub.queried = true
+
+	Shared.Message("[CNPIH] TryQuery")
+	--Query from DB
 	local queryURL = "http://127.0.0.1:3000/users"
 	AddToHTTPQueue( queryURL, function( response,errorCode )
+		if not response then return end
+
+		PlayerInfoHub.CommunityData = { }
 		local receive = JsonDecode(response)
-		if not receive then return end
-		
-		PlayerInfoHub.CommunityData = {}
 		for _,v in pairs(receive) do
 			local id = tonumber(v.id)
 			PlayerInfoHub.CommunityData[id] = v
 		end
-		--PlayerInfoHub.CommunityData = JsonDecode(response)
+		Shared.Message("[CNPIH] Query Finished: Length" .. tostring(#response))
+		Shine.Hook.Broadcast("OnCommunityDBReceived")
 	end )
-end )
+end
 
-
-function PlayerInfoHub:GetCommunityData(steamId)
+function PlayerInfoHub:GetCommunityData(_steamId)
+	PlayerInfoHub:QueryDBIfNeeded()
 
 	if not PlayerInfoHub.CommunityData then
 		return nil
 	end
 	
-	local localData = PlayerInfoHub.CommunityData[steamId]
+	local localData = PlayerInfoHub.CommunityData[_steamId]
 	if not localData then
-		Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users",steamId),"POST",{id = steamId})
-		return nil
+		localData = { id = _steamId }
+		Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users", _steamId),"POST",localData)
+		PlayerInfoHub.CommunityData[_steamId] = localData
 	end
 	return localData
 end
@@ -126,18 +134,20 @@ end
 
 function PlayerInfoHub:SetCommunityData(steamId,data)
 
-	if PlayerInfoHub.CommunityData then
-		PlayerInfoHub.CommunityData[steamId] = data
+	if not PlayerInfoHub.CommunityData then 
+		return 
 	end
 	
+	PlayerInfoHub.CommunityData[steamId] = data
+
 	local output = table.copyDict(data)
 	output.mtd = "PUT"
 	output.id = steamId
 
 	Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users/%s",steamId),"POST",output
-			--,function(response)
-			--	Print("response: " .. response )
-			--end
+	--,function(response)
+	--	Print("response: " .. response )
+	--end
 	)
 end
 

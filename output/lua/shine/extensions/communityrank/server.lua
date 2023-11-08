@@ -180,33 +180,46 @@ local function GetBoolean(_value)
     return (_value and _value == "1") and 1 or 0
 end
 
+
+function Plugin:UpdateClientData(client, clientID, rawData)
+    self.MemberInfos[clientID] = rawData
+    --Resolver,but why other number works?
+    rawData.fakeData = nil
+    rawData.fakeBot = GetBoolean(rawData.fakeBot)
+    rawData.hideRank = GetBoolean(rawData.hideRank)
+    rawData.rank = GetNumber(rawData.rank)
+    rawData.rankOffset = GetNumber(rawData.rankOffset)
+    rawData.rankComm = GetNumber(rawData.rankComm)
+    rawData.rankCommOffset = GetNumber(rawData.rankCommOffset)
+    rawData.reputation = GetNumber(rawData.reputation)
+    client:GetControllingPlayer():SetPlayerExtraData(rawData)
+end
+
+function Plugin:OnCommunityDBReceived()
+    for client in Shine.IterateClients() do
+        local clientID = client:GetUserId()
+        if clientID > 0 then
+            local data = Shine.PlayerInfoHub:GetCommunityData(clientID)
+            self:UpdateClientData(client,clientID,data)
+        end
+    end
+end
+
 function Plugin:ClientConnect( _client )
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
 
     local groupName,groupData = GetUserGroup(_client)
-    local player = _client:GetControllingPlayer()
-    player:SetGroup(groupName)
+    _client:GetControllingPlayer():SetGroup(groupName)
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
 
     local localData = GetPlayerData(self,clientID)
     local data = Shine.PlayerInfoHub:GetCommunityData(clientID)
     if not data then
         localData.fakeData = true
+        return
     end
-    
-    self.MemberInfos[clientID] = data
-    --Resolver,but why other number works?
-    data.fakeBot = GetBoolean(data.fakeBot)
-    data.hideRank = GetBoolean(data.hideRank)
-    data.rank = GetNumber(data.rank)
-    data.rankOffset = GetNumber(data.rankOffset)
-    data.rankComm = GetNumber(data.rankComm)
-    data.rankCommOffset = GetNumber(data.rankCommOffset)
-    data.reputation = GetNumber(data.reputation)
-    data.fakeData = nil
-    player:SetPlayerExtraData(data)
-    
+    self:UpdateClient(_client,clientID,data)
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
 
