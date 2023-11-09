@@ -102,7 +102,7 @@ function PlayerInfoHub:QueryDBIfNeeded()
 	--Query from DB
 	local queryURL = "http://127.0.0.1:3000/users"
 	AddToHTTPQueue( queryURL, function( response,errorCode )
-		if not response then return end
+		if not response or #response == 0 then return end
 
 		PlayerInfoHub.CommunityData = { }
 		local receive = JsonDecode(response)

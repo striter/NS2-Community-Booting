@@ -181,18 +181,18 @@ local function GetBoolean(_value)
 end
 
 
-function Plugin:UpdateClientData(client, clientID, rawData)
-    self.MemberInfos[clientID] = rawData
-    --Resolver,but why other number works?
-    rawData.fakeData = nil
-    rawData.fakeBot = GetBoolean(rawData.fakeBot)
-    rawData.hideRank = GetBoolean(rawData.hideRank)
-    rawData.rank = GetNumber(rawData.rank)
-    rawData.rankOffset = GetNumber(rawData.rankOffset)
-    rawData.rankComm = GetNumber(rawData.rankComm)
-    rawData.rankCommOffset = GetNumber(rawData.rankCommOffset)
-    rawData.reputation = GetNumber(rawData.reputation)
-    client:GetControllingPlayer():SetPlayerExtraData(rawData)
+function Plugin:OnClientDBReceived(client, clientID, rawData)
+    local resolvedData = {
+        fakeBot = GetBoolean(rawData.fakeBot),
+        hideRank = GetBoolean(rawData.hideRank),
+        rank = GetNumber(rawData.rank),
+        rankOffset = GetNumber(rawData.rankOffset),
+        rankComm = GetNumber(rawData.rankComm),
+        rankCommOffset = GetNumber(rawData.rankCommOffset),
+        reputation = GetNumber(rawData.reputation),
+    }
+    self.MemberInfos[clientID] = resolvedData
+    client:GetControllingPlayer():SetPlayerExtraData(resolvedData)
 end
 
 function Plugin:OnCommunityDBReceived()
@@ -200,7 +200,7 @@ function Plugin:OnCommunityDBReceived()
         local clientID = client:GetUserId()
         if clientID > 0 then
             local data = Shine.PlayerInfoHub:GetCommunityData(clientID)
-            self:UpdateClientData(client,clientID,data)
+            self:OnClientDBReceived(client,clientID,data)
         end
     end
 end
@@ -210,16 +210,19 @@ function Plugin:ClientConnect( _client )
     if clientID <= 0 then return end
 
     local groupName,groupData = GetUserGroup(_client)
-    _client:GetControllingPlayer():SetGroup(groupName)
+    local player = _client:GetControllingPlayer()
+    player:SetGroup(groupName)
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
 
     local localData = GetPlayerData(self,clientID)
-    local data = Shine.PlayerInfoHub:GetCommunityData(clientID)
-    if not data then
-        localData.fakeData = true
-        return
+    if not localData.fakeData then      --Already resolved
+        player:SetPlayerExtraData(localData)
+        return 
     end
-    self:UpdateClient(_client,clientID,data)
+    
+    local data = Shine.PlayerInfoHub:GetCommunityData(clientID)
+    if not data then return end
+    self:OnClientDBReceived(_client,clientID,data)
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
 
