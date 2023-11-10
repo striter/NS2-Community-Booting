@@ -27,6 +27,10 @@ Plugin.DefaultConfig = {
 	Constrains = {
 		Mode = Plugin.SkillLimitMode.NONE,
 		MinPlayerCount = 16,
+		Constant = {
+			MinSkill = -1,
+			MaxSkill = -1,
+		}
 	},
 	
 	RestrictedOperation = 
@@ -54,8 +58,8 @@ do
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
 	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", Plugin.DefaultConfig.BlockSpectators ))
 	Validator:AddFieldRule( "RestrictedOperation", Validator.IsType( "table", Plugin.DefaultConfig.RestrictedOperation ) )
-	Validator:AddFieldRule( "RestrictedOperation.MinPlayerCount", Validator.IsType( "number", Plugin.DefaultConfig.RestrictedOperation.MinPlayerCount ) )
 	Validator:AddFieldRule( "Constrains", Validator.IsType( "table", Plugin.DefaultConfig.Constrains ) )
+	Validator:AddFieldRule( "Constrains.Constant", Validator.IsType( "table", Plugin.DefaultConfig.Constrains.Constant ) )
 
 	Validator:AddFieldRule( "NewComerBypass",  Validator.IsType( "table", Plugin.DefaultConfig.NewComerBypass ))
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
@@ -70,8 +74,8 @@ function Plugin:Initialise()
 	self.Enabled = true
 
 	self.Constrains = {
-		MinSKill = -1,
-		MaxSkill = -1,
+		MinSkill = self.Config.Constrains.Constant.MinSkill,
+		MaxSkill = self.Config.Constrains.Constant.MaxSkill,
 		--MinHour = -1,
 		--MaxHour = -1,
 	}
@@ -180,7 +184,9 @@ function Plugin:UpdateConstrains()
 	self:StopTimer()
 	local config = self.Config.Constrains
 	local type = config.Mode
-	if type == Plugin.SkillLimitMode.NONE then return end
+	if type == Plugin.SkillLimitMode.NONE then
+		return 
+	end
 
 	local skillTable = {}
 	for client in Shine.IterateClients() do
@@ -205,9 +211,9 @@ function Plugin:UpdateConstrains()
 		local finalValue = skillTable[math.min(#skillTable,count)].skill
 	
 		if type == Plugin.SkillLimitMode.PRO then
-			min = finalValue - 10
+			min = finalValue - 1
 		else
-			max = finalValue + 10
+			max = finalValue + 1
 		end
 		
 		self.Constrains.MinSkill = min
@@ -224,7 +230,7 @@ function Plugin:GetPlayerSkillLimited(_player,_team)
 	local skill = math.max(_player:GetPlayerSkill(),0)
 	local skillLimited = skill < self.Constrains.MinSkill
 	if self.Constrains.MaxSkill > 0 then
-		skillLimited = skillLimited or skill >= self.Constrains.MaxSkill
+		skillLimited = skillLimited or skill > self.Constrains.MaxSkill
 	end
 	
 	return skillLimited,skill
@@ -347,7 +353,7 @@ local function RestrictionDisplay(self,_client)
 	--local hourLimitMin = self.Constrains.MinHour
 	--local hourLimitMax = self.Constrains.MaxHour < 0  and "∞" or tostring(self.Constrains.MaxHour)
 	local addition = self.Config.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" 
-				or (self.Config.Constrains.Mode == Plugin.SkillLimitMode.PRO and "高分局动态" or "新兵局动态") 
+				or (self.Config.Constrains.Mode == Plugin.SkillLimitMode.PRO and "动态高分" or "动态新兵") 
 	self:Notify(_client,string.format("当前人数限制:陆战队:%s,卡拉异形:%s\n分数限制:[%s - %s]%s.", 
 			self.Config.Team[1], self.Config.Team[2],
 			skillLimitMin,skillLimitMax,
