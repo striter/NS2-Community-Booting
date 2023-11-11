@@ -22,11 +22,15 @@
 ]]
 
 local Shine = Shine
+local Hook = Shine.Hook
 
 local Floor = math.floor
 local pairs = pairs
+local rawget = rawget
 local rawset = rawset
 local StringExplode = string.Explode
+local StringFormat = string.format
+local TableGetKeys = table.GetKeys
 local tonumber = tonumber
 local type = type
 
@@ -34,211 +38,274 @@ local RealData = {}
 local Registered = {}
 local DataTableMeta = {}
 
-function DataTableMeta:__index(Key)
-    if DataTableMeta[Key] then
-        return DataTableMeta[Key]
-    end
-    if not RealData[self] then
-        return nil
-    end
+function DataTableMeta:__index( Key )
+	if DataTableMeta[ Key ] then return DataTableMeta[ Key ] end
+	if not RealData[ self ] then return nil end
 
-    return RealData[self][Key]
+	return RealData[ self ][ Key ]
 end
 
-function DataTableMeta:__SetChangeCallback(Table, Func)
-    rawset(self, "__OnChange", Func)
-    rawset(self, "__Host", Table)
+function DataTableMeta:__SetChangeCallback( Table, Func )
+	rawset( self, "__OnChange", Func )
+	rawset( self, "__Host", Table )
+end
+
+local function DefineDataTableEntity( Name )
+	class( Name )( Entity )
+
+	local DataTableClass = _G[ Name ]
+	DataTableClass.kMapName = Name
+	return DataTableClass
+end
+
+local function GetFieldNetworkMessageName( DTName, Key )
+	return StringFormat( "%s/%s", DTName, Key )
 end
 
 if Server then
-    local getmetatable = getmetatable
-    local StringFormat = string.format
+	local getmetatable = getmetatable
 
-    -- These are the same, but doing it this way makes it more future proof.
-    local AngleMeta = getmetatable(Angles())
-    local VectorMeta = getmetatable(Vector())
+	-- These are the same, but doing it this way makes it more future proof.
+	local AngleMeta = getmetatable( Angles() )
+	local VectorMeta = getmetatable( Vector() )
 
-    local TypeCheckers = {
-        angle = tonumber,
-        angles = function(Value)
-            return getmetatable(Value) == AngleMeta and Value:isa("Angles") and Value or nil
-        end,
-        boolean = function(Value)
-            if type(Value) == "boolean" then
-                return Value
-            end
+	local TypeCheckers = {
+		angle = tonumber,
+		angles = function( Value )
+			return getmetatable( Value ) == AngleMeta and Value:isa( "Angles" ) and Value or nil
+		end,
+		boolean = function( Value )
+			if type( Value ) == "boolean" then
+				return Value
+			end
 
-            return nil
-        end,
-        entityid = tonumber,
-        enum = tonumber,
-        float = tonumber,
-        integer = function(Value)
-            Value = tonumber(Value)
+			return nil
+		end,
+		entityid = tonumber,
+		enum = tonumber,
+		float = tonumber,
+		integer = function( Value )
+			Value = tonumber( Value )
 
-            if not Value then
-                return nil
-            end
+			if not Value then return nil end
 
-            return Floor(Value)
-        end,
-        resource = tonumber,
-        string = function(Value)
-            return type(Value) == "string" and Value or nil
-        end,
-        time = tonumber,
-        vector = function(Value)
-            return getmetatable(Value) == VectorMeta and Value:isa("Vector") and Value or nil
-        end
-    }
-    TypeCheckers.position = TypeCheckers.vector
+			return Floor( Value )
+		end,
+		resource = tonumber,
+		string = function( Value )
+			return type( Value ) == "string" and Value or nil
+		end,
+		time = tonumber,
+		vector = function( Value )
+			return getmetatable( Value ) == VectorMeta and Value:isa( "Vector" ) and Value or nil
+		end
+	}
+	TypeCheckers.position = TypeCheckers.vector
 
-    local function TypeCheck(Type, Value)
-        return TypeCheckers[Type](Value)
-    end
+	local function TypeCheck( Type, Value )
+		return TypeCheckers[ Type ]( Value )
+	end
 
-    function DataTableMeta:__newindex(Key, Value)
-        local FieldType = self.__Values[Key]
-        if not FieldType then
-            return
-        end
+	function DataTableMeta:__newindex( Key, Value )
+		local FieldType = rawget( self, "__Values" )[ Key ]
+		if not FieldType then return end
 
-        local Cached = RealData[self][Key]
-        if Cached == Value then
-            return
-        end
+		local CoercedValue = TypeCheck( FieldType, Value )
+		if CoercedValue == nil then
+			error( StringFormat( "Invalid value provided for datatable field %s (expected %s, got %s)",
+				Key, FieldType, type( Value ) ), 2 )
+		elseif CoercedValue ~= RealData[ self ][ Key ] then
+			RealData[ self ][ Key ] = CoercedValue
 
-        local CoercedValue = TypeCheck(FieldType, Value)
-        if CoercedValue == nil then
-            error(StringFormat("Invalid value provided for datatable field %s (expected %s, got %s)",
-                    Key, FieldType, type(Value)), 2)
-        end
+			self:__SendChange( Key, CoercedValue )
+		end
+	end
 
-        RealData[self][Key] = CoercedValue
+	function DataTableMeta:__SendChange( Key, Value )
+		local Access = rawget( self, "__Access" )
+		local Name = rawget( self, "__Name" )
 
-        self:__SendChange(Key, CoercedValue)
-    end
+		local NetworkMessageName = GetFieldNetworkMessageName( Name, Key )
 
-    function DataTableMeta:__SendChange(Key, Value)
-        if self.__Access and self.__Access[Key] then
-            local Clients = Shine:GetClientsWithAccess(self.__Access[Key])
+		if Access and Access[ Key ] then
+			local Clients = Shine:GetClientsWithAccess( Access[ Key ] )
 
-            for i = 1, #Clients do
-                local Client = Clients[i]
+			for i = 1, #Clients do
+				local Client = Clients[ i ]
+				if Client then
+					Shine.SendNetworkMessage( Client, NetworkMessageName, { [ Key ] = Value }, true )
+				end
+			end
 
-                if Client then
-                    Shine.SendNetworkMessage(Client, self.__Name .. Key,
-                            { [Key] = Value }, true)
-                end
-            end
+			return
+		end
 
-            return
-        end
+		Shine.SendNetworkMessage( NetworkMessageName, { [ Key ] = Value }, true )
 
-        Shine.SendNetworkMessage(self.__Name .. Key, { [Key] = Value }, true)
-    end
+		-- If there's a predicted entity, update its network variable too.
+		local DTEntity = rawget( self, "__Entity" )
+		if DTEntity then
+			DTEntity[ Key ] = Value
+		end
+	end
 
-    function DataTableMeta:__SendAll()
-        if self.__Access then
-            for Key, Value in pairs(RealData[self]) do
-                self:__SendChange(Key, Value)
-            end
+	function DataTableMeta:__SendAll()
+		local Access = rawget( self, "__Access" )
+		if Access then
+			for Key, Value in pairs( RealData[ self ] ) do
+				self:__SendChange( Key, Value )
+			end
+			return
+		end
+		Shine.SendNetworkMessage( rawget( self, "__Name" ), RealData[ self ], true )
+	end
 
-            return
-        end
+	--[[
+		Creates and returns a serverside datatable object.
 
-        Shine.SendNetworkMessage(self.__Name, RealData[self], true)
-    end
+		This can read and write data, which will be automatically sent to relevant clients.
 
-    --[[
-        Creates and returns a serverside datatable object.
+		Inputs: Message name, message values, default values, access requirement if applicable.
+		Output: Datatable object.
+	]]
+	function Shine:CreateDataTable( Name, Values, Defaults, Access, Predicted )
+		local Register = Registered[ Name ]
 
-        This can read and write data, which will be automatically sent to relevant clients.
+		if Register then
+			for Key, Value in pairs( Defaults ) do
+				Register[ Key ] = Value
+			end
 
-        Inputs: Message name, message values, default values, access requirement if applicable.
-        Output: Datatable object.
-    ]]
-    function Shine:CreateDataTable(Name, Values, Defaults, Access)
-        local Register = Registered[Name]
+			return Register
+		end
 
-        if Register then
-            for Key, Value in pairs(Defaults) do
-                Register[Key] = Value
-            end
+		Shared.RegisterNetworkMessage( Name, Values )
 
-            return Register
-        end
+		local ValueTypeNames = {}
+		for Key, Type in pairs( Values ) do
+			local FirstWord = StringExplode( Type, " ", true )[ 1 ]
+			if not TypeCheckers[ FirstWord ] then
+				error( StringFormat( "Unsupported datatable variable type for key '%s': %s", Key, Type ), 2 )
+			end
 
-        Shared.RegisterNetworkMessage(Name, Values)
+			ValueTypeNames[ Key ] = FirstWord
 
-        for Key, Type in pairs(Values) do
-            Shared.RegisterNetworkMessage(Name .. Key, { [Key] = Type })
+			Shared.RegisterNetworkMessage( GetFieldNetworkMessageName( Name, Key ), { [ Key ] = Type } )
+		end
 
-            local FirstWord = StringExplode(Type, " ", true)[1]
+		local DT = {
+			__Name = Name,
+			__Access = Access,
+			__Values = ValueTypeNames
+		}
+		RealData[ DT ] = {}
 
-            Values[Key] = FirstWord
-        end
+		local Data = RealData[ DT ]
+		for Key, Default in pairs( Defaults ) do
+			local FieldType = ValueTypeNames[ Key ]
+			if FieldType then
+				Default = TypeCheck( FieldType, Default )
+				Data[ Key ] = Default
+			end
+		end
 
-        local DT = {
-            __Name = Name,
-            __Values = Values,
-            __Access = Access
-        }
+		if Predicted then
+			-- Prediction VM can't receive network messages, it can only see entities. Thus the datatable needs to be
+			-- represented by an entity as well as network messages.
+			local DataTableClass = DefineDataTableEntity( Name )
+			local Keys = TableGetKeys( Values )
+			local Logger = Shine.Logger
 
-        RealData[DT] = {}
+			function DataTableClass:OnCreate()
+				Entity.OnCreate( self )
 
-        local Data = RealData[DT]
+				-- This is a global utility entity, so always network it.
+				self:SetPropagate( Entity.Propagate_Always )
+				self:SetUpdates( false )
 
-        for Key, Default in pairs(Defaults) do
-            Data[Key] = Default
-        end
+				-- Initialise the datatable values on creation, future updates are handled by __newindex above.
+				for i = 1, #Keys do
+					local Value = Data[ Keys[ i ] ]
+					if Value ~= nil then
+						self[ Keys[ i ] ] = Value
+					end
+				end
+			end
 
-        Registered[Name] = DT
+			function DataTableClass:OnDestroy()
+				Logger:Warn( "Datatable entity %s is being destroyed, this will break prediction VM networking!", Name )
+			end
 
-        return setmetatable(DT, DataTableMeta)
-    end
+			Shared.LinkClassToMap( Name, DataTableClass.kMapName, Values )
 
-    -- Obey permissions...
-    Shine.Hook.Add("ClientConnect", "DataTablesUpdate", function(Client)
-        for Table, Data in pairs(RealData) do
-            if not Table.__Access then
-                Shine.SendNetworkMessage(Client, Table.__Name, Data, true)
-            else
-                local Access = Table.__Access
+			Hook.Add( "MapPostLoad", function()
+				local EntityName = DataTableClass.kMapName
+				local DTEntity = Server.CreateEntity( EntityName )
+				assert( DTEntity, "Failed to create datatable entity!" )
+				rawset( DT, "__Entity", DTEntity )
+			end )
 
-                for Key, Value in pairs(Data) do
-                    if not Access[Key] or Shine:HasAccess(Client, Access[Key]) then
-                        Shine.SendNetworkMessage(Client, Table.__Name .. Key,
-                                { [Key] = Value }, true)
-                    end
-                end
-            end
-        end
-    end)
+			Hook.CallAfterFileLoad( "lua/NS2Gamerules.lua", function()
+				-- Protect the entity from being destroyed whenever the gamerules resets the game world.
+				NS2Gamerules.resetProtectedEntities[ #NS2Gamerules.resetProtectedEntities + 1 ] = Name
+			end )
+		end
 
-    return
+		Registered[ Name ] = DT
+
+		return setmetatable( DT, DataTableMeta )
+	end
+
+	-- Obey permissions...
+	Hook.Add( "ClientConnect", "DataTablesUpdate", function( Client )
+		for Table, Data in pairs( RealData ) do
+			local Access = rawget( Table, "__Access" )
+			local Name = rawget( Table, "__Name" )
+			if not Access then
+				Shine.SendNetworkMessage( Client, Name, Data, true )
+			else
+				for Key, Value in pairs( Data ) do
+					if not Access[ Key ] or Shine:HasAccess( Client, Access[ Key ] ) then
+						Shine.SendNetworkMessage(
+							Client,
+							GetFieldNetworkMessageName( Name, Key ),
+							{ [ Key ] = Value },
+							true
+						)
+					end
+				end
+			end
+		end
+	end )
+
+	return
 end
 
 -- Refuse creation/editing keys on the client.
-function DataTableMeta:__newindex(Key, Value)
+function DataTableMeta:__newindex( Key, Value )
 
 end
 
 -- Process a complete network message.
-function DataTableMeta:ProcessComplete(Data)
-    for Key, Value in pairs(Data) do
-        RealData[self][Key] = Value
-    end
+function DataTableMeta:ProcessComplete( Data )
+	for Key, Value in pairs( Data ) do
+		RealData[ self ][ Key ] = Value
+	end
+end
+
+local function OnDataUpdated( self, Key, Value )
+	local OldValue = RealData[ self ][ Key ]
+	RealData[ self ][ Key ] = Value
+
+	local OnChange = rawget( self, "__OnChange" )
+	if OnChange then
+		OnChange( rawget( self, "__Host" ), Key, OldValue, Value )
+	end
 end
 
 -- Processes a partial network message.
-function DataTableMeta:ProcessPartial(Key, Data)
-    local Old = RealData[self][Key]
-    RealData[self][Key] = Data[Key]
-
-    if self.__OnChange then
-        self.__OnChange(self.__Host, Key, Old, Data[Key])
-    end
+function DataTableMeta:ProcessPartial( Key, Data )
+	return OnDataUpdated( self, Key, Data[ Key ] )
 end
 
 --[[
@@ -246,50 +313,101 @@ end
 
 	The client side version can only read values, it cannot write.
 ]]
-function Shine:CreateDataTable(Name, Values, Defaults, Access)
-    local Register = Registered[Name]
+function Shine:CreateDataTable( Name, Values, Defaults, Access, Predicted )
+	local Register = Registered[ Name ]
 
-    if Register then
-        for Key, Value in pairs(Defaults) do
-            if not Access[Key] then
-                Register[Key] = Value
-            end
-        end
+	if Register then
+		for Key, Value in pairs( Defaults ) do
+			if not Access[ Key ] then
+				Register[ Key ] = Value
+			end
+		end
 
-        return Register
-    end
+		return Register
+	end
 
-    Shared.RegisterNetworkMessage(Name, Values)
+	if not Predict then
+		Shared.RegisterNetworkMessage( Name, Values )
+	end
 
-    local DT = {
-        __Name = Name,
-        __Values = Values,
-        __Access = Access
-    }
+	local DT = {
+		__Name = Name,
+		__Values = Values,
+		__Access = Access
+	}
 
-    RealData[DT] = {}
+	RealData[ DT ] = {}
 
-    local Data = RealData[DT]
+	local Data = RealData[ DT ]
 
-    for Key, Type in pairs(Values) do
-        if not Access[Key] then
-            Data[Key] = Defaults[Key]
-        end
+	if Predicted then
+		local DataTableClass = DefineDataTableEntity( Name )
+		local Keys = TableGetKeys( Values )
+		local NumKeys = #Keys
 
-        local ID = Name .. Key
+		local Logger = Shine.Logger
 
-        Shared.RegisterNetworkMessage(ID, { [Key] = Type })
+		function DataTableClass:OnCreate()
+			Entity.OnCreate( self )
 
-        Shine.HookNetworkMessage(ID, function(Data)
-            return DT:ProcessPartial(Key, Data)
-        end)
-    end
+			self:SetPropagate( Entity.Propagate_Always )
+			self:SetUpdates( false )
 
-    Shine.HookNetworkMessage(Name, function(Data)
-        return DT:ProcessComplete(Data)
-    end)
+			if Predict then
+				local LastSeenState = {}
+				for i = 1, #Keys do
+					local Key = Keys[ i ]
+					LastSeenState[ Key ] = Data[ Key ]
+				end
 
-    Registered[Name] = DT
+				-- Prediction VM can only "think" in OnProcessMove and doesn't fire field watcher callbacks...
+				Hook.Add( "OnProcessMove", self, function()
+					for i = 1, NumKeys do
+						local Key = Keys[ i ]
+						local LastState = LastSeenState[ Key ]
+						local NewState = self[ Key ]
+						if LastState ~= NewState then
+							LastSeenState[ Key ] = NewState
+							OnDataUpdated( DT, Key, NewState )
+							Logger:Trace(
+								"Datatable %s changed key '%s' from %s to %s",
+								Name,
+								Key,
+								LastState,
+								NewState
+							)
+						end
+					end
+				end )
+			end
+		end
 
-    return setmetatable(DT, DataTableMeta)
+		Shared.LinkClassToMap( Name, DataTableClass.kMapName, Values )
+	end
+
+	for Key, Type in pairs( Values ) do
+		if not Access[ Key ] then
+			Data[ Key ] = Defaults[ Key ]
+		end
+
+		if not Predict then
+			local ID = GetFieldNetworkMessageName( Name, Key )
+
+			Shared.RegisterNetworkMessage( ID, { [ Key ] = Type } )
+
+			Shine.HookNetworkMessage( ID, function( Data )
+				return DT:ProcessPartial( Key, Data )
+			end )
+		end
+	end
+
+	if not Predict then
+		Shine.HookNetworkMessage( Name, function( Data )
+			return DT:ProcessComplete( Data )
+		end )
+	end
+
+	Registered[ Name ] = DT
+
+	return setmetatable( DT, DataTableMeta )
 end

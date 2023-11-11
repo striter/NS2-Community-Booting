@@ -44,7 +44,6 @@
 	"MAP_NOT_ON_LIST": "{MapName} is not on the map list.",
 	"NOMINATE_FAIL": "You cannot nominate the current map.",
 	"NOMINATE_DENIED": "You have reached the limit of nominations permitted.",
-	"NOMINATE_DENIED_ACCESS": "You need access to nominate.Like [CommunityRank] or [Pre-warmer]",
 	"ALREADY_NOMINATED": "{MapName} has already been nominated.",
 	"RECENTLY_PLAYED": "{MapName} was recently played and cannot be voted for yet.",
 	"NOMINATIONS_FULL": "Nominations are full.",

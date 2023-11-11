@@ -5,9 +5,7 @@
 	and optionally, a function to check for timing out.
 ]]
 
-if Client then
-    return
-end
+if Client then return end
 
 local Shine = Shine
 
@@ -21,127 +19,123 @@ local VoteMeta = {}
 VoteMeta.__index = VoteMeta
 
 function VoteMeta:Initialise()
-    self.Voted = {}
-    self.Votes = 0
+	self.Voted = {}
+	self.Votes = 0
 end
 
-function VoteMeta:SetVotesNeeded(Func)
-    self.VotesNeeded = Func
+function VoteMeta:SetVotesNeeded( Func )
+	self.VotesNeeded = Func
 end
 
-function VoteMeta:SetOnSuccess(Func)
-    self.OnSuccess = Func
+function VoteMeta:SetOnSuccess( Func )
+	self.OnSuccess = Func
 end
 
-function VoteMeta:SetTimeout(Func)
-    self.Timeout = Func
+function VoteMeta:SetTimeout( Func )
+	self.Timeout = Func
 end
 
-function VoteMeta:SetTimeoutDuration(DurationInSeconds)
-    self:SetTimeout(function(self)
-        if self.LastVoted and SharedTime() - self.LastVoted > DurationInSeconds then
-            self:Reset()
-        end
-    end)
+function VoteMeta:SetTimeoutDuration( DurationInSeconds )
+	self:SetTimeout( function( self )
+		if self.LastVoted and SharedTime() - self.LastVoted > DurationInSeconds then
+			self:Reset()
+		end
+	end )
 end
 
 function VoteMeta:Think()
-    self:Timeout()
+	self:Timeout()
 end
 
 function VoteMeta:Reset()
-    TableEmpty(self.Voted)
-    self.Votes = 0
-    self.LastVoted = nil
+	TableEmpty( self.Voted )
+	self.Votes = 0
+	self.LastVoted = nil
 
-    if self.OnReset then
-        self:OnReset()
-    end
+	if self.OnReset then
+		self:OnReset()
+	end
 end
 
-function VoteMeta:RemoveVote(Client)
-    if self.Voted[Client] then
-        self.Voted[Client] = nil
-        self.Votes = Max(self.Votes - 1, 0)
-        return true
-    end
+function VoteMeta:RemoveVote( Client )
+	if self.Voted[ Client ] then
+		self.Voted[ Client ] = nil
+		self.Votes = Max( self.Votes - 1, 0 )
+		return true
+	end
 
-    return false
+	return false
 end
 
-function VoteMeta:ClientDisconnect(Client)
-    self:RemoveVote(Client)
+function VoteMeta:ClientDisconnect( Client )
+	self:RemoveVote( Client )
 
-    -- Wait a tick, as some vote results may attempt to act on the disconnecting
-    -- player.
-    Shine.Timer.Simple(0, function()
-        -- The total required votes may have decreased without
-        -- removing any votes, thus the vote could pass now.
-        self:CheckForSuccess()
-    end)
+	-- Wait a tick, as some vote results may attempt to act on the disconnecting
+	-- player.
+	Shine.Timer.Simple( 0, function()
+		-- The total required votes may have decreased without
+		-- removing any votes, thus the vote could pass now.
+		self:CheckForSuccess()
+	end )
 end
 
-function VoteMeta:AddVote(Client)
-    if self.Voted[Client] then
-        return false, "already voted"
-    end
+function VoteMeta:AddVote( Client )
+	if self.Voted[ Client ] then return false, "already voted" end
 
-    self.Voted[Client] = true
-    self.Votes = self.Votes + 1
+	self.Voted[ Client ] = true
+	self.Votes = self.Votes + 1
 
-    self.LastVoted = SharedTime()
+	self.LastVoted = SharedTime()
 
-    self:CheckForSuccess()
+	self:CheckForSuccess()
 
-    return true
+	return true
 end
 
 function VoteMeta:CheckForSuccess()
-    if self.Votes <= 0 then
-        return false
-    end
+	if self.Votes <= 0 then return false end
 
-    if self.Votes >= self.VotesNeeded() then
-        self.LastSuccessTime = SharedTime()
-        self.OnSuccess()
-        self:Reset()
+	if self.Votes >= self.VotesNeeded() then
+		self.LastSuccessTime = SharedTime()
+		self.OnSuccess()
+		self:Reset()
 
-        return true
-    end
+		return true
+	end
 
-    return false
+	return false
 end
 
 function VoteMeta:HasSucceededOnLastVote()
-    return self.LastSuccessTime == SharedTime()
+	return self.LastSuccessTime == SharedTime()
 end
 
-function VoteMeta:GetHasClientVoted(Client)
-    return self.Voted[Client] ~= nil
+function VoteMeta:GetHasClientVoted( Client )
+	return self.Voted[ Client ] ~= nil
 end
 
 function VoteMeta:GetVotesNeeded()
-    return Max(self.VotesNeeded() - self.Votes, 0)
+	return Max( self.VotesNeeded() - self.Votes, 0 )
 end
 
 function VoteMeta:GetVotes()
-    return self.Votes
+	return self.Votes
 end
 
 function VoteMeta:__tostring()
-    return StringFormat("Vote[%s / %s]", self.Votes, self.VotesNeeded())
+	return StringFormat( "Vote[%s / %s]", self.Votes, self.VotesNeeded() )
 end
 
-function Shine:CreateVote(VotesNeeded, OnSuccess, Timeout)
-    local Vote = setmetatable({}, VoteMeta)
-    Vote:SetVotesNeeded(VotesNeeded)
-    Vote:SetOnSuccess(OnSuccess)
+function Shine:CreateVote( VotesNeeded, OnSuccess, Timeout )
+	local Vote = setmetatable( {}, VoteMeta )
+	Vote:SetVotesNeeded( VotesNeeded )
+	Vote:SetOnSuccess( OnSuccess )
 
-    if Timeout then
-        Vote:SetTimeout(Timeout)
-    end
+	if Timeout then
+		Vote:SetTimeout( Timeout )
+	end
 
-    Vote:Initialise()
+	Vote:Initialise()
 
-    return Vote
+	return Vote
 end

@@ -211,9 +211,9 @@ function Plugin:UpdateConstrains()
 		local finalValue = skillTable[math.min(#skillTable,count)].skill
 	
 		if type == Plugin.SkillLimitMode.PRO then
-			min = finalValue - 1
+			min = self.Config.Constrains.Constant.MinSkill
 		else
-			max = finalValue + 1
+			max = math.max(self.Config.Constrains.Constant.MaxSkill,finalValue + 1)
 		end
 		
 		self.Constrains.MinSkill = min

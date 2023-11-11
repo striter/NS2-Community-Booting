@@ -5,41 +5,41 @@
 local StringFormat = string.format
 
 local BaseElement = require "shine/lib/gui/richtext/elements/base"
-local Spacer = Shine.TypeDef(BaseElement)
+local Spacer = Shine.TypeDef( BaseElement )
 
-function Spacer:Init(Params)
-    self.AutoWidth = Params.AutoWidth
-    self.IgnoreOnNewLine = Params.IgnoreOnNewLine
-    return self
+function Spacer:Init( Params )
+	self.AutoWidth = Params.AutoWidth
+	self.IgnoreOnNewLine = Params.IgnoreOnNewLine
+	return self
 end
 
-function Spacer:Split(Index, TextSizeProvider, Segments, MaxWidth)
-    self.OriginalElement = Index
-    self.Width = self.AutoWidth:GetValue(MaxWidth, nil, 1)
-    self.WidthWithoutSpace = self.IgnoreOnNewLine and 0 or self.Width
+function Spacer:Split( Index, TextSizeProvider, Segments, MaxWidth )
+	self.OriginalElement = Index
+	self.Width = self.AutoWidth:GetValue( MaxWidth, nil, 1, TextSizeProvider.TextHeight )
+	self.WidthWithoutSpace = self.IgnoreOnNewLine and 0 or self.Width
 
-    Segments[#Segments + 1] = self
+	Segments[ #Segments + 1 ] = self
 end
 
-function Spacer:GetWidth(TextSizeProvider, MaxWidth)
-    local Width = self.AutoWidth:GetValue(MaxWidth, nil, 1)
-    return Width, self.IgnoreOnNewLine and 0 or Width
+function Spacer:GetWidth( TextSizeProvider, MaxWidth )
+	local Width = self.AutoWidth:GetValue( MaxWidth, nil, 1, TextSizeProvider.TextHeight )
+	return Width, self.IgnoreOnNewLine and 0 or Width
 end
 
-function Spacer:MakeElement(Context)
-    if Context.CurrentIndex == 1 and self.IgnoreOnNewLine then
-        return
-    end
+function Spacer:MakeElement( Context )
+	if Context.CurrentIndex == 1 and self.IgnoreOnNewLine then
+		return
+	end
 
-    Context.NextMargin = (Context.NextMargin or 0) + self.Width
+	Context.NextMargin = ( Context.NextMargin or 0 ) + self.Width
 end
 
 function Spacer:Copy()
-    return Spacer(self)
+	return Spacer( self )
 end
 
 function Spacer:__tostring()
-    return StringFormat("Spacer (%s)", self.Width or self.AutoWidth)
+	return StringFormat( "Spacer (%s)", self.Width or self.AutoWidth )
 end
 
 return Spacer

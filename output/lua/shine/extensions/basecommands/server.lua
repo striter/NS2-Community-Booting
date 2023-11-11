@@ -368,10 +368,7 @@ do
 	end
 
 	function Plugin:IsSpectatorAllTalk( Listener )
-		local teamNumber = Listener:GetTeamNumber()
-		local allTalkTeam = teamNumber == ( kSpectatorIndex or 3 )
-		allTalkTeam = allTalkTeam or teamNumber == (kTeamReadyRoom or 4)
-		return self.Config.AllTalkSpectator and allTalkTeam
+		return self.Config.AllTalkSpectator and Listener:GetTeamNumber() == ( kSpectatorIndex or 3 )
 	end
 
 	-- Will need updating if it changes in NS2Gamerules...
@@ -501,7 +498,7 @@ function Plugin:ClientDisconnect( Client )
 	Histories[ Client ] = nil
 
 	if self.PluginClients then
-		self.PluginClients[ Client ] = nil
+		self.PluginClients:Remove( Client )
 	end
 
 	self:RemoveAllTalkPreference( Client )
@@ -999,13 +996,12 @@ function Plugin:CreateAdminCommands()
 
 	do
 		local function SaveEnabledState( Name, PluginTable )
-			if PluginTable.IsBeta then
-				Shine.Config.ActiveExtensions[ Name ] = nil
-				Shine.Config.ActiveBetaExtensions[ Name ] = true
-			else
-				Shine.Config.ActiveExtensions[ Name ] = true
-			end
+			Shine.Config.ActiveExtensions[ Name ] = true
 			Shine:SaveConfig()
+
+			-- Notify admins of the change in plugin state. This results in a second message as the plugin hook will
+			-- have sent one already, but this ensures that the ConfiguredAsEnabled flag is correct.
+			self:SendPluginStateUpdate( Name, true )
 		end
 
 		local function LoadPlugin( Client, Name, Save )
@@ -1080,6 +1076,8 @@ function Plugin:CreateAdminCommands()
 				Shine.Config.ActiveExtensions[ Name ] = false
 				Shine:SaveConfig()
 
+				self:SendPluginStateUpdate( Name, false )
+
 				local Message = StringFormat( "Plugin '%s' now set to disabled in config.", Name )
 				Shine:SendAdminNotification( Client, Shine.NotificationType.INFO, Message )
 
@@ -1102,6 +1100,8 @@ function Plugin:CreateAdminCommands()
 		if Save then
 			Shine.Config.ActiveExtensions[ Name ] = false
 			Shine:SaveConfig()
+
+			self:SendPluginStateUpdate( Name, false )
 		end
 	end
 	local UnloadPluginCommand = self:BindCommand( "sh_unloadplugin", nil, UnloadPlugin )
@@ -1486,66 +1486,52 @@ function Plugin:CreateMessageCommands()
 		MaxLength = 128, Help = "message" }
 	CSayCommand:Help( "Displays a message in the centre of all player's screens." )
 
-	local function GagPlayer(Client, TargetClient, Duration )
-		if TargetClient:GetIsVirtual() then
+	local function GagPlayer( Client, Target, Duration )
+		if Target:GetIsVirtual() then
 			NotifyError( Client, "ERROR_GAG_BOT", nil, "Bots cannot be gagged" )
 			return
 		end
 
-		self.Gagged[ TargetClient:GetUserId() ] = Duration == 0 and true or SharedTime() + Duration
-		
+		self.Gagged[ Target:GetUserId() ] = Duration == 0 and true or SharedTime() + Duration
+
+		local TargetPlayer = Target:GetControllingPlayer()
+		local TargetName = TargetPlayer and TargetPlayer:GetName() or "<unknown>"
 		local DurationString = string.TimeToString( Duration )
+
 		Shine:AdminPrint( nil, "%s gagged %s%s", true,
 			Shine.GetClientInfo( Client ),
-			Shine.GetClientInfo(TargetClient),
+			Shine.GetClientInfo( Target ),
 			Duration == 0 and "" or " for "..DurationString )
 
-		self:NotifyGagStatus(TargetClient)
+		self:SendTranslatedMessage( Client, "PLAYER_GAGGED", {
+			TargetName = TargetName,
+			Duration = Duration
+		} )
 	end
 	local GagCommand = self:BindCommand( "sh_gag", "gag", GagPlayer )
 	GagCommand:AddParam{ Type = "client" }
 	GagCommand:AddParam{ Type = "time", Round = true, Min = 0, Max = 1800, Optional = true, Default = 0 }
-	GagCommand:Help( "禁言该玩家,参数为秒,0为换图前都禁言.!gag StriteR. 660" )
+	GagCommand:Help( "Silences the given player's chat. If no duration is given, it will hold for the remainder of the map." )
 
-	local function GagID(Client, ID ,Duration)
-		self.Gagged[ ID ] = true
-		local TargetClient = Shine.GetClientByNS2ID( ID )
-		if not TargetClient then return end
-
-		local DurationString = string.TimeToString( Duration )
-		Shine:AdminPrint( nil, "%s gagged %s%s", true,
-				Shine.GetClientInfo( Client ),
-				Shine.GetClientInfo(TargetClient),
-				Duration == 0 and "" or " for "..DurationString )
-		
-		self.Gagged[ TargetClient:GetUserId() ] = Duration == 0 and true or SharedTime() + Duration
-		self:NotifyGagStatus(TargetClient)
-	end
-	self:BindCommand( "sh_gagid", "gagid", GagID)
-		:AddParam{ Type = "steamid" }
-		:AddParam{ Type = "time", Round = true, Min = 0, Max = 1800, Optional = true, Default = 0 }
-		:Help( "临时禁言该玩家,参数为秒,0为换图前都禁言.!gagid 55022511 600" )
-	
-	local function GagIDPermanent(Client, ID )
+	local function GagID( Client, ID )
 		self.Config.GaggedPlayers[ tostring( ID ) ] = true
-		self.Gagged[ ID ] = true
 		self:SaveConfig()
-		
+
+		self.Gagged[ ID ] = true
+
 		Shine:AdminPrint( nil, "%s gagged %s permanently.", true,
 			Shine.GetClientInfo( Client ), ID )
 
-		local TargetClient = Shine.GetClientByNS2ID( ID )
-		if TargetClient then
+		local Target = Shine.GetClientByNS2ID( ID )
+		if Target then
 			self:SendTranslatedMessage( Client, "PLAYER_GAGGED_PERMANENTLY", {
-				TargetName = Shine.GetClientName(TargetClient)
+				TargetName = Shine.GetClientName( Target )
 			} )
-
-			self:NotifyGagStatus(TargetClient)
 		end
 	end
-	self:BindCommand( "sh_gagid0", "gagid0", GagIDPermanent)
+	self:BindCommand( "sh_gagid", "gagid", GagID )
 		:AddParam{ Type = "steamid" }
-		:Help( "永久禁言该玩家.!sh_gagid 55022511" )
+		:Help( "Silences the given Steam ID's chat permanently until ungagged, persisting between map changes." )
 
 	local function UngagID( Client, ID )
 		local IDAsString = tostring( ID )
@@ -1563,23 +1549,15 @@ function Plugin:CreateMessageCommands()
 
 		Shine:AdminPrint( nil, "%s ungagged %s.", true,
 			Shine.GetClientInfo( Client ), IDAsString )
-
-		local TargetClient = Shine.GetClientByNS2ID( ID )
-		if TargetClient then
-			Shine:TranslatedNotifyDualColour( TargetClient, kUngagColor[ 1 ], kUngagColor[ 2 ], kUngagColor[ 3 ],
-					"NOTIFY_PREFIX", 255, 255, 255, "BE_UNGAGGED",self.__Name)
-		end
 	end
 	self:BindCommand( "sh_ungagid", "ungagid", UngagID )
 		:AddParam{ Type = "steamid" }
 		:Help( "Stops silencing the given Steam ID's chat if they have been gagged with sh_gagid." )
 
-	
-	local kUngagColor = {88, 214, 141}
-	local function UngagPlayer(Client, TargetClient)
-		local TargetPlayer = TargetClient:GetControllingPlayer()
+	local function UngagPlayer( Client, Target )
+		local TargetPlayer = Target:GetControllingPlayer()
 		local TargetName = TargetPlayer and TargetPlayer:GetName() or "<unknown>"
-		local TargetID = TargetClient:GetUserId() or 0
+		local TargetID = Target:GetUserId() or 0
 
 		if not self.Gagged[ TargetID ] then
 			NotifyError( Client, "ERROR_NOT_GAGGED", {
@@ -1596,12 +1574,10 @@ function Plugin:CreateMessageCommands()
 			self.Config.GaggedPlayers[ IDAsString ] = nil
 			self:SaveConfig()
 		end
-		Shine:TranslatedNotifyDualColour( TargetClient, kUngagColor[ 1 ], kUngagColor[ 2 ], kUngagColor[ 3 ],
-				"NOTIFY_PREFIX", 255, 255, 255, "BE_UNGAGGED",self.__Name)
 
 		Shine:AdminPrint( nil, "%s ungagged %s", true,
 			Shine.GetClientInfo( Client ),
-			Shine.GetClientInfo(TargetClient) )
+			Shine.GetClientInfo( Target ) )
 
 		self:SendTranslatedMessage( Client, "PLAYER_UNGAGGED", {
 			TargetName = TargetName
@@ -1867,30 +1843,11 @@ function Plugin:IsClientGagged( Client )
 	return false
 end
 
-function Plugin:NotifyGagStatus(_client)
-
-	local clientID = _client:GetUserId()
-	if clientID <= 0 then return end
-
-	local GagData = self.Gagged[ clientID ]
-
-	if not GagData then return false end
-	local gagPermanent = self.Config.GaggedPlayers[tostring(clientID)]
-	if gagPermanent then return Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED_PERMANENT" ) end
-	if GagData then return Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED" ) end
-end
-
-
-function Plugin:ClientConnect( _client )
-	self:NotifyGagStatus(_client)
-end
-
 --[[
 	Facilitates the gag command.
 ]]
 function Plugin:PlayerSay( Client, Message )
 	if self:IsClientGagged( Client ) then
-		self:NotifyGagStatus(Client)
 		return ""
 	end
 end
@@ -1899,63 +1856,122 @@ function Plugin:ReceiveRequestMapData( Client, Data )
 	if not Shine:GetPermission( Client, "sh_changelevel" ) then return end
 
 	local Cycle = MapCycle_GetMapCycle()
-
 	if not Cycle or not Cycle.maps then
 		return
 	end
 
 	local Maps = Cycle.maps
 
+	local Enabled, MapVotePlugin = Shine:IsExtensionEnabled( "mapvote" )
+	if Enabled then
+		-- Send map mod information to the client upfront to ensure previews work.
+		MapVotePlugin:SendMapMods(
+			Client,
+			Shine.Stream.Of( Maps ):Map( function( Map )
+				return IsType( Map, "table" ) and Map.map or Map
+			end ):AsTable()
+		)
+		MapVotePlugin:SendMapPrefixes( Client )
+	end
+
+	local KnownDefaultMaps = {}
+	for i = 1, Server.GetNumMaps() do
+		local ModID = Server.GetMapModId( i )
+		local MapName = Server.GetMapName( i )
+		if not ModID or ModID == "0" then
+			KnownDefaultMaps[ MapName ] = true
+		end
+	end
+
 	for i = 1, #Maps do
 		local Map = Maps[ i ]
 		local IsTable = IsType( Map, "table" )
-
 		local MapName = IsTable and Map.map or Map
+		local Data = {
+			Name = MapName,
+			IsMod = not KnownDefaultMaps[ MapName ]
+		}
 
-		self:SendNetworkMessage( Client, "MapData", { Name = MapName }, true )
+		local MapMods = IsTable and Map.mods
+		if IsType( MapMods, "table" ) then
+			-- Extract up to the first 10 mods as there's only keys for these in the network message.
+			-- Maps normally should have only one or two mods (one for the map, and one for the gamemode).
+			for i = 1, 10 do
+				local ModID = MapMods[ i ]
+				local SerialisedModID = ""
+				if IsType( ModID, "number" ) then
+					SerialisedModID = StringFormat( "%x", ModID )
+				elseif IsType( ModID, "string" ) and tonumber( ModID, 16 ) then
+					SerialisedModID = ModID
+				end
+				Data[ "Mod"..i ] = SerialisedModID
+			end
+		else
+			-- Have to populate empty string values, no optional fields.
+			for i = 1, 10 do
+				Data[ "Mod"..i ] = ""
+			end
+		end
+
+		self:SendNetworkMessage( Client, "MapData", Data, true )
 	end
 end
 
+local function IsPluginConfiguredAsEnabled( Plugin )
+	return not not Shine.Config.ActiveExtensions[ Plugin ]
+end
+
 function Plugin:ReceiveRequestPluginData( Client, Data )
-	if not Shine:GetPermission( Client, "sh_loadplugin" )
-	and not Shine:GetPermission( Client, "sh_unloadplugin" ) then
+	if not Shine:GetPermission( Client, "sh_loadplugin" ) and not Shine:GetPermission( Client, "sh_unloadplugin" ) then
 		return
 	end
 
 	self:SendNetworkMessage( Client, "PluginTabAuthed", {}, true )
 
-	self.PluginClients = self.PluginClients or {}
+	self.PluginClients = self.PluginClients or Shine.UnorderedSet()
+	self.PluginClients:Add( Client )
 
-	self.PluginClients[ Client ] = true
-
-	local Plugins = Shine.AllPlugins
-
-	for Plugin in pairs( Plugins ) do
+	for Plugin in pairs( Shine.AllPlugins ) do
 		local Enabled = Shine:IsExtensionEnabled( Plugin )
-		self:SendNetworkMessage( Client, "PluginData", { Name = Plugin, Enabled = Enabled }, true )
+		self:SendNetworkMessage(
+			Client,
+			"PluginData",
+			{
+				Name = Plugin,
+				Enabled = Enabled,
+				ConfiguredAsEnabled = IsPluginConfiguredAsEnabled( Plugin )
+			},
+			true
+		)
 	end
 end
 
+function Plugin:SendPluginStateUpdate( Name, Enabled )
+	local Clients = self.PluginClients
+	if not Clients or Clients:GetCount() == 0 then return end
+
+	self:SendNetworkMessage(
+		Clients:AsList(),
+		"PluginData",
+		{
+			Name = Name,
+			Enabled = Enabled,
+			ConfiguredAsEnabled = IsPluginConfiguredAsEnabled( Name )
+		},
+		true
+	)
+end
+
 function Plugin:OnPluginLoad( Name, Plugin, Shared )
+	-- Shared plugins are already updated on every client, and the admin menu listens for it. Only need to network
+	-- server-side plugin changes here.
 	if Shared then return end
 
-	local Clients = self.PluginClients
-
-	if not Clients then return end
-
-	for Client in pairs( Clients ) do
-		self:SendNetworkMessage( Client, "PluginData", { Name = Name, Enabled = true }, true )
-	end
+	self:SendPluginStateUpdate( Name, true )
 end
 
 function Plugin:OnPluginUnload( Name, Plugin, Shared )
 	if Shared then return end
 
-	local Clients = self.PluginClients
-
-	if not Clients then return end
-
-	for Client in pairs( Clients ) do
-		self:SendNetworkMessage( Client, "PluginData", { Name = Name, Enabled = false }, true )
-	end
+	self:SendPluginStateUpdate( Name, false )
 end

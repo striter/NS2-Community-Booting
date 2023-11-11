@@ -645,7 +645,7 @@ function Hook.ReplaceLocalFunction( TargetFunc, UpvalueName, Replacement, Differ
 	return Value
 end
 
-do
+if not Predict then
 	--[[
 		Event hooks.
 	]]
@@ -717,6 +717,16 @@ do
 		BroadcastOnce "MapPostLoad"
 	end
 	Event.Hook( "MapPostLoad", MapPostLoad )
+end
+
+if Predict then
+	Hook.CallAfterFileLoad( "lua/Player.lua", function()
+		SetupClassHook( "Player", "OnProcessMove", "OnProcessMove", "PassivePre", { OverrideWithoutWarning = true } )
+	end )
+	Hook.CallAfterFileLoad( "lua/Spectator.lua", function()
+		SetupClassHook( "Spectator", "OnProcessMove", "OnProcessMove", "PassivePre", { OverrideWithoutWarning = true } )
+	end )
+	return
 end
 
 do

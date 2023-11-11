@@ -2,6 +2,8 @@
 	Shine ban system.
 ]]
 
+local JSON = require "shine/lib/json"
+
 local Shine = Shine
 local Hook = Shine.Hook
 
@@ -47,13 +49,13 @@ Plugin.OnUnbannedHookName = "OnPlayerUnbanned"
 local Hooked
 
 Plugin.DefaultConfig = {
-	Banned = {},
+	Banned = JSON.Object(),
 	DefaultBanTime = 60, -- Default of 1 hour ban if a time is not given.
 	GetBansFromWeb = false,
 	GetBansWithPOST = false, -- Should we use POST with extra keys to get bans?
 	BansURL = "",
 	BansSubmitURL = "",
-	BansSubmitArguments = {},
+	BansSubmitArguments = JSON.Object(),
 	MaxSubmitRetries = 3,
 	SubmitTimeout = 5,
 	VanillaConfigUpToDate = false,
@@ -158,7 +160,7 @@ function Plugin:LoadBansFromWeb()
 		if BansData.Banned then
 			Edited = true
 			self.Config.Banned = BansData.Banned
-		elseif BansData[ 1 ] and BanData[ 1 ].id then
+		elseif BansData[ 1 ] and BansData[ 1 ].id then
 			Edited = true
 			self.Config.Banned = self:NS2ToShine( BansData )
 		end

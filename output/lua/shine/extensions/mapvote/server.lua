@@ -19,7 +19,7 @@ local tonumber = tonumber
 local xpcall = xpcall
 
 local Plugin, PluginName = ...
-Plugin.Version = "1.13"
+Plugin.Version = "1.14"
 
 Plugin.HasConfig = true
 Plugin.ConfigName = "MapVote.json"
@@ -32,6 +32,9 @@ Plugin.MaxNominationsType = table.AsEnum{
 }
 Plugin.MaxOptionsExceededAction = table.AsEnum{
 	"ADD_MAP", "REPLACE_MAP", "SKIP"
+}
+Plugin.GroupCycleMode = table.AsEnum{
+	"SEQUENTIAL", "WEIGHTED_CHOICE"
 }
 
 Plugin.DefaultConfig = {
@@ -51,6 +54,10 @@ Plugin.DefaultConfig = {
 	ForcedMaps = {}, -- Maps that must always be in the vote list.
 	DontExtend = {}, -- Maps that should never have an extension option.
 	IgnoreAutoCycle = {}, -- Maps that should not be cycled to unless voted for.
+	-- How to cycle through groups.
+	-- SEQUENTIAL means groups will advance as a sequence, with each map change advancing to the next group in the list.
+	-- WEIGHTED_CHOICE will select maps from each group based on its configured weighting.
+	GroupCycleMode = Plugin.GroupCycleMode.SEQUENTIAL,
 
 	Constraints = {
 		StartVote = {
@@ -126,9 +133,7 @@ Plugin.DefaultConfig = {
 		-- ADD_MAP will add the map regardless.
 		-- REPLACE_MAP will remove a map from the current options that was not a nomination.
 		-- SKIP will stop adding nominations.
-		MaxOptionsExceededAction = Plugin.MaxOptionsExceededAction.ADD_MAP,
-		
-		AccessCheck = false,
+		MaxOptionsExceededAction = Plugin.MaxOptionsExceededAction.ADD_MAP
 	},
 
 	VoteLengthInMinutes = 1, -- Time in minutes a vote should last before failing.
@@ -285,6 +290,11 @@ Plugin.ConfigMigrationSteps = {
 		VersionTo = "1.13",
 		Apply = Shine.Migrator()
 			:AddField( { "VoteSettings", "ConsiderSpectatorsDuringActiveRound" }, true )
+	},
+	{
+		VersionTo = "1.14",
+		Apply = Shine.Migrator()
+			:AddField( "GroupCycleMode", Plugin.GroupCycleMode.SEQUENTIAL )
 	}
 }
 
@@ -309,6 +319,10 @@ do
 	local StringUpper = string.upper
 
 	local Validator = Shine.Validator()
+	Validator:AddFieldRule(
+		"GroupCycleMode",
+		Validator.InEnum( Plugin.GroupCycleMode, Plugin.DefaultConfig.GroupCycleMode )
+	)
 	Validator:AddFieldRule( "ForceChangeWhenSecondsLeft", Validator.Min( 0 ) )
 	Validator:AddFieldRule( "RoundLimit", Validator.Min( 0 ) )
 	Validator:AddFieldRule( "ChangeDelayInSeconds", Validator.Min( 0 ) )
@@ -326,7 +340,6 @@ do
 	Validator:AddFieldRule( "Nominations.MinTotalValue", Validator.Min( 0 ) )
 	Validator:AddFieldRule( "Nominations.MaxOptionsExceededAction",
 		Validator.InEnum( Plugin.MaxOptionsExceededAction, Plugin.DefaultConfig.Nominations.MaxOptionsExceededAction ) )
-	Validator:AddFieldRule( "Nominations.AccessCheck", Validator.IsType( "boolean", false ) )
 
 	Validator:AddFieldRule( "VotingMode", Validator.InEnum( Plugin.VotingMode, Plugin.DefaultConfig.VotingMode ) )
 	Validator:AddFieldRule( "MaxVoteChoicesPerPlayer", Validator.Clamp( 1, 255 ) )
@@ -772,7 +785,6 @@ function Plugin:CreateCommands()
 		return true
 	end
 
-	local priorColorTable = { 235, 152, 78 }
 	local function Nominate( Client, Map )
 		local SteamID = Client and Client:GetUserId() or "Console"
 		local Player, PlayerName = GetPlayerData( Client )
@@ -811,21 +823,6 @@ function Plugin:CreateCommands()
 
 			return
 		end
-
----
-		if self.Config.Nominations.AccessCheck then
-			local accesss =  Shine:HasAccess( Client , "sh_nominateaccess")
-			if not accesss then
-				local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-				accesss = cpEnabled and cp:GetPrewarmPrivilege(Client,0.25,"换图提名")
-			end
-
-			if not accesss then
-				NotifyError(Player,"NOMINATE_DENIED_ACCESS",nil,"You need access to nominate")
-				return
-			end
-		end
-----
 
 		local IsConditional = self:IsConditionalMap( self.MapOptions[ Map ] )
 
