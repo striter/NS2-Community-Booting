@@ -6,3 +6,15 @@ ModLoader.SetupFileHook("lua/NS2Gamerules.lua", "lua/CNBugFixing/NS2Gamerules.lu
 ModLoader.SetupFileHook("lua/RoboticsFactory.lua", "lua/CNBugFixing/RoboticsFactory.lua", "post")
 ModLoader.SetupFileHook("lua/bots/BotUtils.lua", "lua/CNBugFixing/BotUtils.lua", "post" )
 --ModLoader.SetupFileHook("lua/Cyst.lua", "lua/CNBugFixing/Cyst.lua", "post")
+
+--From LoadCrashFix
+if Client then
+    if Shared.ConsoleCommand then
+        Shared.ConsoleCommand("f_cache false")
+    else
+        Event.Hook("LoadComplete", function()
+            Shared.ConsoleCommand("f_cache false")
+        end)
+    end
+end
+ 
