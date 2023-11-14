@@ -1,4 +1,4 @@
-
+--Merges with rollout fix
 function RoboticsFactory:ManufactureEntity()
 
     local mapName = LookupTechData(self.researchId, kTechDataMapName)
@@ -21,7 +21,38 @@ function RoboticsFactory:ManufactureEntity()
 
 end
 
+function RoboticsFactory:CancelRollout()
+
+    self:ClearResearch()
+    self.open = false
+
+end
+
+function RoboticsFactory:OnTag(tagName)
+
+    PROFILE("RoboticsFactory:OnTag")
+
+    if self.open and self.builtEntity and self.researchId ~= Entity.invalidId and tagName == "open_end" then
+        if self.builtEntity:GetIsDestroyed() then
+            self:CancelRollout()
+        else
+            self.builtEntity:Rollout(self, RoboticsFactory.kRolloutLength)
+        end
+
+        self.builtEntity = nil
+
+    end
+
+    if tagName == "open_start" then
+        self:TriggerEffects("robofactory_door_open")
+    elseif tagName == "close_start" then
+        self:TriggerEffects("robofactory_door_close")
+    end
+
+end
+
 if Server then
+    
     function RoboticsFactory:ManufactureEntity()
 
         local mapName = LookupTechData(self.researchId, kTechDataMapName)
@@ -42,25 +73,16 @@ if Server then
         return builtEntity
 
     end
-end
 
-function RoboticsFactory:OnTag(tagName)
+    function RoboticsFactory:OnEntityChange(oldEntityId, newEntityId)
 
-    PROFILE("RoboticsFactory:OnTag")
+        if self.builtEntity and self.builtEntity:GetId() == oldEntityId then
+            local ent = oldEntityId and Shared.GetEntity(oldEntityId)
+            if not ent or not ent:GetIsAlive()then
+                self.builtEntity = nil
+                self:CancelRollout()
+            end
+        end
 
-    if self.open and self.builtEntity and self.researchId ~= Entity.invalidId and tagName == "end" then
-
-        if self.builtEntity:GetIsDestroyed() then return end        --Safe Check
-
-        self.builtEntity:Rollout(self, RoboticsFactory.kRolloutLength)
-        self.builtEntity = nil
     end
-
-
-    if tagName == "open_start" then
-        self:TriggerEffects("robofactory_door_open")
-    elseif tagName == "close_start" then
-        self:TriggerEffects("robofactory_door_close")
-    end
-
 end

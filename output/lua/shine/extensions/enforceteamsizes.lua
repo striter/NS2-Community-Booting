@@ -85,7 +85,9 @@ function Plugin:Initialise()
 end
 
 function Plugin:OnFirstThink()
-	self:UpdateConstrains()
+	self.Timer = self:SimpleTimer( 30, function()
+		self:UpdateConstrains()
+	end )
 end
 
 

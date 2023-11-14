@@ -858,10 +858,10 @@ do
 				return
 			end
 
-			-- Don't move non-rookies on rookie servers.
-			if IsRookieMode and not Player:GetIsRookie() then
-				return
-			end
+			-- Don't move non-rookies on rookie servers.		--have to show rookie mode in the browser , sorry
+			--if IsRookieMode and not Player:GetIsRookie() then
+			--	return
+			--end
 
 			local IsImmune = IsCommander or Shine:HasAccess( Client, "sh_randomimmune" )
 			local IsPlayingTeam = Team == 1 or Team == 2
@@ -1447,7 +1447,7 @@ function Plugin:IsPlayerEligibleForShuffle( AFKKick, Player, IsRookieMode )
 	end
 
 	if
-		( IsRookieMode and not Player:GetIsRookie() ) or
+		--( IsRookieMode and not Player:GetIsRookie() ) or
 		( AFKKick and self:IsClientAFK( AFKKick, Client ) ) or
 		Shine:HasAccess( Client, "sh_randomimmune" )
 	then

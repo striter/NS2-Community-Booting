@@ -269,7 +269,7 @@ kShinePluginsTranslations["voterandom"]["PLAYER_VOTED_ENABLE_AUTO_HIVE_BASED"]="
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[禁用]."
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_ENABLED_HIVE_BASED"]="基于分数的自动洗牌分队已[启用]."
 kShinePluginsTranslations["voterandom"]["PLACED_ON_RANDOM_TEAM"]="基于随机分队,你被移动到当前队伍."
-kShinePluginsTranslations["voterandom"]["PLACED_ON_HIVE_TEAM"]="基于洗牌分队,你被移动到当前队伍."
+kShinePluginsTranslations["voterandom"]["PLACED_ON_HIVE_TEAM"]="基于洗牌分队以及目前的双方分数差,你将移动[到加入后两队分数差更少]的队伍."
 
 kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_FOR_DURATION_HIVE_BASED"]= "洗牌分队限制将持续{Duration:Duration}."
 kShinePluginsTranslations["voterandom"]["TEAM_ENFORCING_TIMELIMIT_HIVE_BASED"]= "洗牌分队限制已结束."
