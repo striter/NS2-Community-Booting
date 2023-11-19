@@ -70,6 +70,9 @@ end
 local priorColorTable = { 235, 152, 78 }
 local errorColorTable = { 236, 112, 99 }
 
+local kTeamJoinTracker = { }
+local kRestrictionJoinTracker = {}
+
 function Plugin:Initialise()
 	self.Enabled = true
 
@@ -85,7 +88,7 @@ function Plugin:Initialise()
 end
 
 function Plugin:OnFirstThink()
-	self.Timer = self:SimpleTimer( 30, function()
+	self.Timer = self:SimpleTimer( 5, function()
 		self:UpdateConstrains()
 	end )
 end
@@ -121,13 +124,17 @@ end
 
 function Plugin:OnPlayerRestricted(_player,_newTeam)
 	local client = _player:GetClient()
-	
+
+	local clientId = client:GetUserId()
 	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
 	if cpEnabled then
-		if cp:GetPrewarmPrivilege(client,0,"预热入场优待") then
-			self:Notify(_player,"您为今日预热玩家,可以越过限制下场,请勿利用该特权炸鱼!.",errorColorTable)
+		if cp:GetPrewarmPrivilege(client,1,"预热越限通道") then
+			self:Notify(_player,"您为今日预热玩家,可以越过限制下场,请勿利用该特权做出不符合规范的行为!.",errorColorTable)
+			table.insert(kTeamJoinTracker,clientId)
 			return false
 		end
+		
+		if table.contains(kTeamJoinTracker,clientId) and cp:GetPrewarmPrivilege(client,0,"预热越限通道") then return false end
 	end
 
 	if Shine:HasAccess(client, "sh_adminmenu" ) then
@@ -190,10 +197,10 @@ function Plugin:UpdateConstrains()
 		return 
 	end
 
-	local skillTable = {}
+	local clientSkillTable = {}
 	for client in Shine.IterateClients() do
 		if not client:GetIsVirtual() then
-			table.insert(skillTable, { skill = client:GetControllingPlayer():GetPlayerSkill() })
+			table.insert(clientSkillTable, { skill = client:GetControllingPlayer():GetPlayerSkill() })
 		end
 	end
 	
@@ -204,13 +211,14 @@ function Plugin:UpdateConstrains()
 		return a.skill < b.skill
 	end
 	
-	if #skillTable > 0 then
-		table.sort(skillTable,RankCompare)
+	if #clientSkillTable > 0 then
+		table.sort(clientSkillTable,RankCompare)
 		
-		local count = config.MinPlayerCount
+		local connectingClientCount = Server.GetNumClientsTotal() - #clientSkillTable
+		local validateClientCount = config.MinPlayerCount - connectingClientCount
 		local min = -1
 		local max = -1
-		local finalValue = skillTable[math.min(#skillTable,count)].skill
+		local finalValue = clientSkillTable[math.min(#clientSkillTable, validateClientCount)].skill
 	
 		if type == Plugin.SkillLimitMode.PRO then
 			min = self.Config.Constrains.Constant.MinSkill
@@ -266,7 +274,6 @@ function Plugin:GetPlayerRestricted(_player,_team)
 	return false
 end
 
-local kTeamJoinTracker = { }
 local TeamNames = { "陆战队","卡拉异形","观战" }
 function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	if _shineForce then return end
@@ -347,6 +354,7 @@ end
 
 function Plugin:OnEndGame(_winningTeam)
 	table.Empty(kTeamJoinTracker)
+	table.Empty(kRestrictionJoinTracker)
 end
 
 local function RestrictionDisplay(self,_client)

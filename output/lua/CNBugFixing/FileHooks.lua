@@ -8,13 +8,13 @@ ModLoader.SetupFileHook("lua/bots/BotUtils.lua", "lua/CNBugFixing/BotUtils.lua",
 --ModLoader.SetupFileHook("lua/Cyst.lua", "lua/CNBugFixing/Cyst.lua", "post")
 
 --From LoadCrashFix
---if Client then
---    if Shared.ConsoleCommand then
---        Shared.ConsoleCommand("f_cache false")
---    else
---        Event.Hook("LoadComplete", function()
---            Shared.ConsoleCommand("f_cache false")
---        end)
---    end
---end
+if Client then
+    if Shared.ConsoleCommand then
+        Shared.ConsoleCommand("f_cache true")
+    else
+        Event.Hook("LoadComplete", function()
+            Shared.ConsoleCommand("f_cache true")
+        end)
+    end
+end
  

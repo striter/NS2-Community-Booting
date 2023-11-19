@@ -1382,7 +1382,7 @@ function Plugin:JoinTeam( Gamerules, Player, NewTeam, Force, ShineForce )
 
 	-- Don't block them from going back to the ready room at the end of the round.
 	if Gamestate == kGameState.Team1Won or Gamestate == kGameState.Team2Won
-	or GameState == kGameState.Draw then return end
+	or Gamestate == kGameState.Draw then return end
 
 	if not self.EnforcementPolicy:IsActive( self ) then return end
 

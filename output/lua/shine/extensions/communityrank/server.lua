@@ -44,6 +44,7 @@ Plugin.DefaultConfig = {
         PenaltyCheckInterval = 300,
         RageQuit = {
             CheckTime = 1200,
+            MinPlayer = 12,
             ActivePlayTime = 60,
             DeltaQuit = -5,
             DeltaCover = 5,
@@ -74,6 +75,7 @@ do
     Validator:AddFieldRule( "Reputation.PenaltyStarts",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.PenaltyStarts ))
     Validator:AddFieldRule( "Reputation.PenaltyCheckInterval",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.PenaltyCheckInterval ))
     Validator:AddFieldRule( "Reputation.RageQuit",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit ))
+    Validator:AddFieldRule( "Reputation.RageQuit.MinPlayer",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.MinPlayer ))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
@@ -470,10 +472,14 @@ function Plugin:OnReputationCheck()
 end
 
 function Plugin:RageQuitValidate(Player,NewTeam)
-    if not ReputationEnabled(self) then return end
-    if not GetGamerules():GetGameStarted() then return end
-    if Shared:GetTime() < self.Config.Reputation.RageQuit.CheckTime then return end     --Only validate when join a late game
+    if not ReputationEnabled(self)
+        or not GetGamerules():GetGameStarted() 
+        or Shine.GetHumanPlayerCount() <= self.Config.Reputation.RageQuit.MinPlayer
+        or Shared:GetTime() < self.Config.Reputation.RageQuit.CheckTime 
+            then return end     --Only validate when join a late game
+    
     if Player:GetIsVirtual() then return end
+    
     local clientId = Player:GetClient():GetUserId()
     if NewTeam == 1 or NewTeam == 2 then        --Join team1 or 2
         if kRageQuitTracker[clientId] == kRageQuitType.Quit then        --Rejoin

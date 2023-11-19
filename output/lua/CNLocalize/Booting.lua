@@ -118,5 +118,3 @@ if Client then
     --
     --Event.Hook("Console_http", OnConsoleHttp)
 end
-
-Shared.Message("[CNCE] CN Booting Version 2023.06.14")
