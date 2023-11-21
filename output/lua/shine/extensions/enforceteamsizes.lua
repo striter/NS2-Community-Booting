@@ -88,7 +88,7 @@ function Plugin:Initialise()
 end
 
 function Plugin:OnFirstThink()
-	self.Timer = self:SimpleTimer( 5, function()
+	self.Timer = self:SimpleTimer( 60, function()
 		self:UpdateConstrains()
 	end )
 end
@@ -198,7 +198,9 @@ function Plugin:UpdateConstrains()
 	end
 
 	local clientSkillTable = {}
+	--local activeClientCount = 0
 	for client in Shine.IterateClients() do
+		--activeClientCount = activeClientCount + 1
 		if not client:GetIsVirtual() then
 			table.insert(clientSkillTable, { skill = client:GetControllingPlayer():GetPlayerSkill() })
 		end
@@ -214,8 +216,8 @@ function Plugin:UpdateConstrains()
 	if #clientSkillTable > 0 then
 		table.sort(clientSkillTable,RankCompare)
 		
-		local connectingClientCount = Server.GetNumClientsTotal() - #clientSkillTable
-		local validateClientCount = config.MinPlayerCount - connectingClientCount
+		--local connectingClientCount = Server.GetNumClientsTotal() - activeClientCount
+		local validateClientCount = config.MinPlayerCount -- - connectingClientCount
 		local min = -1
 		local max = -1
 		local finalValue = clientSkillTable[math.min(#clientSkillTable, validateClientCount)].skill
@@ -230,7 +232,7 @@ function Plugin:UpdateConstrains()
 		self.Constrains.MaxSkill = max
 	end
 		
-	self.Timer = self:SimpleTimer( 5, function()
+	self.Timer = self:SimpleTimer( 60, function()
 		self:UpdateConstrains()
 	end )
 end

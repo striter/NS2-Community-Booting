@@ -20,6 +20,8 @@ kShinePluginsTranslations={}
 kShinePluginsTranslations["Core"]={}
 kShinePluginsTranslations["Core"]["Map Vote"]="换图投票"
 kShinePluginsTranslations["Core"]["Shuffle"]="洗牌分队"
+kShinePluginsTranslations["Core"]["CLIENT_SETTINGS"]="客户端设置"
+kShinePluginsTranslations["Core"]["GENERAL_CLIENT_SETTINGS"]="通用"
 
 kShinePluginsTranslations["Core"]["Surrender"]="投降 /remake"
 kShinePluginsTranslations["Core"]["Unstuck"]="尝试脱困"
@@ -27,7 +29,6 @@ kShinePluginsTranslations["Core"]["MOTD"]="日常信息"
 kShinePluginsTranslations["Core"]["CLIENT_CONFIG_MENU"]="Shine本地设置"
 kShinePluginsTranslations["Core"]["ADMIN_MENU"]="管理菜单"
 kShinePluginsTranslations["Core"]["ADMIN_MENU"]="管理菜单"
-
 
 kShinePluginsTranslations["Core"]["NS2_MENU_OPTIONS_TITLE"]="SHINE 设置"
 kShinePluginsTranslations["Core"]["NS2_MENU_OPEN_CLIENT_CONFIG"]="打开客户端设置界面"
@@ -48,6 +49,7 @@ kShinePluginsTranslations["Core"]["INFO_NS2PANEL"]= "玩家数据 -NS2Panel"
 kShinePluginsTranslations["Core"]["OPEN_IN_STEAM"]= "用Steam页面打开"
 kShinePluginsTranslations["Core"]["LOADING"]= "加载中,请稍后."
 kShinePluginsTranslations["Core"]["NS2CN_WELCOME"]= "欢迎来到<物竞天择2中国社区>"
+kShinePluginsTranslations["Core"]["PLUGIN_VERSION"]= "版本 {Version}"
 
 kShinePluginsTranslations["chatbox"]={}
 kShinePluginsTranslations["chatbox"]["SAY_ALL"]="对所有人发言"
@@ -246,6 +248,13 @@ kShinePluginsTranslations["votealltalk"]={}
 kShinePluginsTranslations["votealltalk"]["NOTIFY_PREFIX"]="[全局语音投票]"
 
 kShinePluginsTranslations["voterandom"]={}
+
+kShinePluginsTranslations["voterandom"]["CLIENT_CONFIG_TAB"] = "洗牌分队/组队"
+kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE"] = "默认队伍偏好:"
+kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_HELP"] = "队伍偏好基于双方最优选择.服务器设置以及玩家数量,意味着您无法每次都加入自己期望的队伍(单腿不可取)."
+kShinePluginsTranslations["voterandom"]["TEAM_PREFERENCE_CHANGE_HINT"] = "加入队伍或使用按键加入来选择队伍偏好,将使服务器尝试把你洗入预期的队伍."
+
+kShinePluginsTranslations["voterandom"]["NONE"] = "都可以"
 kShinePluginsTranslations["voterandom"]["NOTIFY_PREFIX"]="[洗牌分队]"
 kShinePluginsTranslations["voterandom"]["DISABLE_AUTO_SHUFFLE"]="关闭自动洗牌"
 kShinePluginsTranslations["voterandom"]["AUTO_SHUFFLE_DISABLE_TOOLTIP"]="投票关闭自动洗牌"
@@ -289,6 +298,48 @@ kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_END_OF_ROUND_KDR_B
 kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_END_OF_ROUND_RANDOM_BASED"] = "洗牌分队规则已于该局启用."
 kShinePluginsTranslations["voterandom"]["TEAMS_SHUFFLED_UNTIL_END_OF_ROUND_SCORE_BASED"] = "洗牌分队规则已于该局启用."
 
+kShinePluginsTranslations["voterandom"]["ERROR_FRIEND_GROUP_FULL"] = "您无法将 {PlayerName} 拉入你的小队,队伍已满"
+kShinePluginsTranslations["voterandom"]["ERROR_TARGET_FRIEND_GROUP_FULL"] = "{PlayerName} 的小队已满."
+kShinePluginsTranslations["voterandom"]["ERROR_TARGET_IN_FRIEND_GROUP"] = "{PlayerName} 正处于其他队伍,无法组队."
+kShinePluginsTranslations["voterandom"]["ERROR_TARGET_OPTED_OUT"] = "{PlayerName} 拒绝接受任何组队邀请."
+kShinePluginsTranslations["voterandom"]["ERROR_BLOCKED_BY_SERVER"] = "您没有组队的权限."
+
+kShinePluginsTranslations["voterandom"]["LEAVE_FRIEND_GROUP"] = "离开小队."
+kShinePluginsTranslations["voterandom"]["ADD_TO_FRIEND_GROUP"] = "将其拉入小队."
+kShinePluginsTranslations["voterandom"]["JOIN_FRIEND_GROUP"] = "加入小队."
+kShinePluginsTranslations["voterandom"]["REMOVE_FROM_FRIEND_GROUP"] = "移除小队."
+
+kShinePluginsTranslations["voterandom"]["FRIEND_GROUP_JOIN_TYPE"] = "当玩家尝试与你组队时:"
+kShinePluginsTranslations["voterandom"]["ALLOW_ALL"] = "立刻加入."
+kShinePluginsTranslations["voterandom"]["REQUIRE_INVITE"] = "询问我是否接受."
+kShinePluginsTranslations["voterandom"]["BLOCK"] = "从不接受."
+
+kShinePluginsTranslations["voterandom"]["AUTO_ACCEPT_STEAM_FRIEND_GROUP_INVITES_DESCRIPTION"] = "自动接受来自好友的组队邀请."
+
+kShinePluginsTranslations["voterandom"]["FRIEND_GROUP_LEADER_TYPE"] = "当我是队长时."
+kShinePluginsTranslations["voterandom"]["ALLOW_ALL_TO_JOIN"] = "允许任何人加入."
+kShinePluginsTranslations["voterandom"]["LEADER_ADD_ONLY"] = "只允许由我添加玩家."
+
+kShinePluginsTranslations["voterandom"]["FRIEND_GROUP_HINT"] = "想和好友组队吗?通过[TAB]计分板,左键点击玩家并组队,洗牌系统将尝试把你们分到同一阵营"
+kShinePluginsTranslations["voterandom"]["FRIEND_GROUP_INVITE_HINT"] = "组队邀请将显示在这里,按钮在选项下方.或使用计分板/界面显示鼠标并点击"
+
+kShinePluginsTranslations["voterandom"]["ADDED_TO_FRIEND_GROUP"] = "{PlayerName} 将你拉入了他的小队."
+kShinePluginsTranslations["voterandom"]["SENT_INVITE_TO_FRIEND_GROUP"] = "已邀请 {PlayerName} 假如你的小队."
+kShinePluginsTranslations["voterandom"]["INVITED_TO_FRIEND_GROUP"] = "{PlayerName} 邀请你加入他的队伍."
+kShinePluginsTranslations["voterandom"]["INVITE_ACCEPTED"] = "{PlayerName} 接受了你的组队邀请."
+kShinePluginsTranslations["voterandom"]["INVITE_REJECTED"] = "{PlayerName} 拒绝了你的组队邀请."
+kShinePluginsTranslations["voterandom"]["SELF_INVITE_ACCEPTED"] = "你已加入 {PlayerName}的队伍."
+kShinePluginsTranslations["voterandom"]["REMOVED_FROM_GROUP"] = "{PlayerName} 已将你从他的小队移除."
+
+kShinePluginsTranslations["voterandom"]["ERROR_CANNOT_INVITE_NOT_LEADER"] = "只有队长可以邀请他人."
+kShinePluginsTranslations["voterandom"]["ERROR_TARGET_ALREADY_INVITED"] = "{PlayerName} 已有邀请函."
+kShinePluginsTranslations["voterandom"]["ERROR_MUST_BE_INVITED_TO_GROUP"] = "只能通过被动邀请加入 {PlayerName} 的队伍."
+kShinePluginsTranslations["voterandom"]["ERROR_INVITE_ON_COOLDOWN"] = "再次邀请 {PlayerName} 前请等待一段时间."
+kShinePluginsTranslations["voterandom"]["ERROR_CANNOT_REMOVE_NOT_LEADER"] = "你无法移除 {PlayerName} ,仅有队长有权力."
+
+kShinePluginsTranslations["voterandom"]["ACCEPT_FRIEND_GROUP_INVITE"] = "接受"
+kShinePluginsTranslations["voterandom"]["DECLINE_FRIEND_GROUP_INVITE"] = "拒绝"
+
 -- PreGam
 kShinePluginsTranslations["pregame"]={}
 kShinePluginsTranslations["pregame"]["NOTIFY_PREFIX"]= "[游戏开局]"
@@ -307,6 +358,7 @@ kShinePluginsTranslations["pregame"]["ROUND_START_ABORTED_MAX_PLAYERS"] = "开�
 -- Map Vote
 kShinePluginsTranslations["mapvote"]={}
 kShinePluginsTranslations["mapvote"]["NOTIFY_PREFIX"]="[换图]"
+kShinePluginsTranslations["mapvote"]["CLIENT_CONFIG_TAB"]="换图投票"
 kShinePluginsTranslations["mapvote"]["TIME_LEFT_NOTIFY"]="{Duration:Duration} 后将会切换到下一张地图."
 kShinePluginsTranslations["mapvote"]["VOTE"]="投票进行中"
 kShinePluginsTranslations["mapvote"]["MAP_VOTE_MENU_TITLE"]="正在进行换图投票"
