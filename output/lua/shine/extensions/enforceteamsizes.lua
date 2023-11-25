@@ -77,6 +77,7 @@ function Plugin:Initialise()
 	self.Enabled = true
 
 	self.Constrains = {
+		Mode = self.Config.Constrains.Mode,
 		MinSkill = self.Config.Constrains.Constant.MinSkill,
 		MaxSkill = self.Config.Constrains.Constant.MaxSkill,
 		--MinHour = -1,
@@ -122,6 +123,11 @@ function Plugin:GetPlayerLimit(Gamerules,Team)
 	return playerLimit
 end
 
+function Plugin:RedirectClient(client)
+	local message = {ip = self.Config.RestrictedOperation.RedirectIP}
+	Server.SendNetworkMessage(client,"Redirect",message, true)
+end
+
 function Plugin:OnPlayerRestricted(_player,_newTeam)
 	local client = _player:GetClient()
 
@@ -157,8 +163,7 @@ function Plugin:OnPlayerRestricted(_player,_newTeam)
 		client.DisconnectReason = reason
 		Server.DisconnectClient(client, reason )
 	elseif operation == Plugin.RestrictedOperation.REDIRECT then
-		local message = {ip = operationData.RedirectIP}
-		Server.SendNetworkMessage(client,"Redirect",message, true)
+		self:RedirectClient(client)
 	end
 
 	if operationData.BanMinute >= 0 then
@@ -181,16 +186,13 @@ end
 --	return finalSkill
 --end
 
-function Plugin:StopTimer()
-	if not self.Timer then return end
-
-	self.Timer:Destroy()
-	self.Timer = nil
-end
 
 function Plugin:UpdateConstrains()
+	if self.Timer then
+		self.Timer:Destroy()
+		self.Timer = nil
+	end
 
-	self:StopTimer()
 	local config = self.Config.Constrains
 	local type = config.Mode
 	if type == Plugin.SkillLimitMode.NONE then
@@ -232,7 +234,7 @@ function Plugin:UpdateConstrains()
 		self.Constrains.MaxSkill = max
 	end
 		
-	self.Timer = self:SimpleTimer( 60, function()
+	self.Timer = self:SimpleTimer( 5, function()
 		self:UpdateConstrains()
 	end )
 end
@@ -364,8 +366,8 @@ local function RestrictionDisplay(self,_client)
 	local skillLimitMax = self.Constrains.MaxSkill < 0 and "∞" or tostring(self.Constrains.MaxSkill)
 	--local hourLimitMin = self.Constrains.MinHour
 	--local hourLimitMax = self.Constrains.MaxHour < 0  and "∞" or tostring(self.Constrains.MaxHour)
-	local addition = self.Config.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" 
-				or (self.Config.Constrains.Mode == Plugin.SkillLimitMode.PRO and "动态高分" or "动态新兵") 
+	local addition = self.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" 
+				or (self.Constrains.Mode == Plugin.SkillLimitMode.PRO and "动态高分" or "动态新兵") 
 	self:Notify(_client,string.format("当前人数限制:陆战队:%s,卡拉异形:%s\n分数限制:[%s - %s]%s.", 
 			self.Config.Team[1], self.Config.Team[2],
 			skillLimitMin,skillLimitMax,
@@ -420,7 +422,7 @@ function Plugin:CreateCommands()
 	--:Help( "示例: !restriction_skill 10 -1 true.将服务器的入场小时数设置为,[1000-∞],并且保存,-1代表无限制" )
 	
 	local function SetSkillLimit(_client, _min,_max)
-		self.Config.Constrains.Mode = Plugin.SkillLimitMode.NONE
+		self.Constrains.Mode = Plugin.SkillLimitMode.NONE
 		self.Constrains.MinSkill = _min
 		self.Constrains.MaxSkill = _max
 
@@ -430,10 +432,22 @@ function Plugin:CreateCommands()
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
 	:Help( "示例: !restriction_skill 1000 -1 true.将服务器的入场分数设置为,[10-∞],并且保存,-1代表无限制" )
+	
+	local function AdminRedirectClient(_client,_id)
+		local target = Shine.AdminGetClientByNS2ID(_client,_id)
+		if not target then return end
+		
+		self:RedirectClient(_client)
+	end
+	self:BindCommand( "sh_redirect", "redirect", AdminRedirectClient)
+	:AddParam{ Type = "steamid" }
+	:Help("这名玩家赖在场上不走,使用这个指令给他送到预设的服务器.\n例：!redirect 55022511")
+	
 end
 
 function Plugin:ClientConfirmConnect( Client )
 	if Client:GetIsVirtual() then return end
+	
 	if not self:GetPlayerRestricted(Client:GetControllingPlayer()) then
 		RestrictionDisplay(self,Client)
 	end

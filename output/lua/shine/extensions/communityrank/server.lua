@@ -580,9 +580,6 @@ function Plugin:PlayerEnter(_client)
 end
 
 function Plugin:CreateMessageCommands()
-    local function AdminErrorNotify(_client)
-        Shine:NotifyCommandError( _client, "ID对应的玩家未找到" )
-    end
     
     local function CanEloSelfTargeting(_client, _target)
         local access = _client == nil or Shine:HasAccess(_client,"sh_host")
@@ -621,8 +618,8 @@ function Plugin:CreateMessageCommands()
         :Help( "重置玩家的[指挥段位](还原至NS2段位)." )
 
     self:BindCommand( "sh_rank_set", "rank_set", function( _client, _id, _rankMarine ,_rankAlien)     --Set       (Jezz ....)
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         if not CanEloSelfTargeting(_client,target) then return end
 
         local player = target:GetControllingPlayer()
@@ -639,8 +636,8 @@ function Plugin:CreateMessageCommands()
         :Help( "设置对应玩家的[玩家段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
     
     self:BindCommand( "sh_rank_set_comm", "rank_set_comm", function( _client, _id, _rankMarine ,_rankAlien)
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         if not CanEloSelfTargeting(_client,target) then return end
 
         local player = target:GetControllingPlayer()
@@ -659,8 +656,8 @@ function Plugin:CreateMessageCommands()
         :Help( "设置对应玩家的[指挥段位].例:!rank_set 55022511 2700 2800 (-1保持原状)" )
 
     self:BindCommand( "sh_rank_delta", "rank_delta", function (_client, _id, _marineDelta, _alienDelta )     --Delta
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         if not CanEloSelfTargeting(_client,target) then return end
         RankPlayerDelta(self,_id,_marineDelta,_alienDelta,0,0)
     end)
@@ -670,8 +667,8 @@ function Plugin:CreateMessageCommands()
         :Help( "增减对应玩家的[玩家段位].例:!rank_delta 55022511 100 -100" )
 
     self:BindCommand( "sh_rank_delta_comm", "rank_delta_comm", function( _client, _id, _marineDelta,_alienDelta )
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         if not CanEloSelfTargeting(_client,target) then return end
         RankPlayerDelta(self,_id,0,0,_marineDelta,_alienDelta)
     end )
@@ -682,8 +679,8 @@ function Plugin:CreateMessageCommands()
         
     --Reputation
     self:BindCommand( "sh_rep_delta", "rep_delta", function( _client, _id, _delta )
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         ReputationPlayerDelta(self,_id,_delta)
     end)
         :AddParam{ Type = "steamid"}
@@ -691,8 +688,8 @@ function Plugin:CreateMessageCommands()
         :Help( "增减对应玩家的[性欲分].例:!rep_delta 55022511 500" )
 
     self:BindCommand( "sh_rep_reset", "rep_reset",function( _client, _id, _delta )
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         local data = GetPlayerData(self,_id)
         data.reputation = 0
         target:GetControllingPlayer():SetPlayerExtraData(data)
@@ -701,8 +698,8 @@ function Plugin:CreateMessageCommands()
     :Help( "重置玩家的[性欲分].例:!rep_reset 55022511" )
     
     self:BindCommand( "sh_rep_set", "rep_set",function( _client, _id, _amount )
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         local data = GetPlayerData(self,_id)
         data.reputation = _amount
         target:GetControllingPlayer():SetPlayerExtraData(data)
@@ -713,8 +710,8 @@ function Plugin:CreateMessageCommands()
     
     --BOT
     local function FakeBotSwitchID(_client,_id)
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
 
         local data = GetPlayerData(self,target:GetUserId())
         data.fakeBot = data.fakeBot == 1 and 0 or 1
@@ -733,8 +730,8 @@ function Plugin:CreateMessageCommands()
     
     --Hide Rank
     local function HideRankSwitchID(_client,_id)
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
 
         local data = GetPlayerData(self,target:GetUserId())
         data.hideRank = data.hideRank == 1 and 0 or 1
@@ -752,8 +749,8 @@ function Plugin:CreateMessageCommands()
         :Help( "切换社区段位显示." )
     --Emblem
     local function EmblemSetID(_client, _id, _emblem)
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
 
         local data = GetPlayerData(self,target:GetUserId())
         data.emblem = _emblem

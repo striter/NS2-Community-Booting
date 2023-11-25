@@ -436,6 +436,14 @@ function Shine.GetClientByNS2ID( ID )
 	return nil
 end
 
+function Shine.AdminGetClientByNS2ID(_client,ID)
+	local client = Shine.GetClientByNS2ID(ID)
+	if not client then
+		Shine:NotifyCommandError( _client, "该玩家未找到,ID:" .. tostring(ID) )
+	end 
+	return client
+end
+
 do
 	-- Unlike SteamID and game ID, names can change. While the hook above should capture these changes, it doesn't hurt
 	-- to be absolutely sure that the indexed client is correct and this is still less work than checking all players.
