@@ -675,7 +675,7 @@ function Shine.GetClientInfo( Client )
 		return StringFormat( "Unknown[%d]", Client:GetUserId() )
 	end
 
-	return StringFormat( "%s[%d]", Player:GetName(), Client:GetUserId() )
+	return StringFormat( "%s[%d]<%s>", Player:GetName(), Client:GetUserId(), IPAddressToString( Server.GetClientAddress( Client ) ))
 end
 
 function Shine.GetClientName( Client )
