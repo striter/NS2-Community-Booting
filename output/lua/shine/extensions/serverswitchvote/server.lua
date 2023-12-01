@@ -233,6 +233,10 @@ function Plugin:ProcessClientVoteList( Client )
 	end
 end
 
+function Plugin:RedirectClient(_client,_targetIP)
+	Server.SendNetworkMessage(_client, "Redirect",{ ip = _targetIP }, true)
+end
+
 function Plugin:RedirClients(_targetIP,_count,_newcomer)
 	local clients = {}
 	for Client in Shine.IterateClients() do
@@ -258,7 +262,7 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 			Shine:NotifyDualColour(client,146, 43, 33,"[注意]",
 					253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
 		else
-			Server.SendNetworkMessage(client, "Redirect",{ ip = _targetIP }, true)
+			self:RedirectClient(client,_targetIP)
 		end
 		count = count - 1
 		if count <= 0 then
@@ -268,21 +272,66 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 end
 
 function Plugin:CreateCommands()
-	 self:BindCommand( "sh_redir_newcomer", "redir_newcomer", function(_client,_serverIndex,_count,_message)
+	self.targetServer = nil
+	local function CheckTargetValid(_client)
+		if self.targetServer == nil then
+			Shine:NotifyCommandError( _client, "无目标服务器,请通过 redir_target 命令设置 " )
+			return nil
+		end
+		
+		return self.targetServer
+	end
+	
+	
+	local function ServerTargeting(_client,_server)
+		local data = Plugin.Config.Servers[_server]
+		if not data then
+			Shine:NotifyError(_client,"服务器" .. tostring(_server) .."不存在")
+			return
+		end
+		
+		self.targetServer = _server
+		Shine:NotifyDualColour(_client,146, 43, 33,"[注意]",
+				253, 237, 236,string.format("已设置目标服务器[%s]<%s>",data.Name,GetConnectIP(_server)))
+	end
+	self:BindCommand( "sh_redir_verity", "redir_verify", ServerTargeting)
+		:AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 12, Default=1 }
+		:Help("设置目标服务器ID.例：!redir_verify 2")
+	
+	
+	 self:BindCommand( "sh_redir_newcomer", "redir_newcomer", function(_client,_count,_message)
+		 local serverIndex = CheckTargetValid(_client)
+		 if serverIndex == nil then return end
+
 		 NotifyCrowdAdvert(self,_message)
-		 self:RedirClients(GetConnectIP(_serverIndex),_count,true)
+		 self:RedirClients(GetConnectIP(serverIndex),_count,true)
 	end):
-	AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 6, Default=1 }:
 	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
 	AddParam{ Type = "string", Help = "显示消息",Optional = true, Default = "服务器人满为患,开启被动分服." }:
 	Help( "示例: !redir_newcomer 1 20 昂?. 迁移[20]名<新屁股>去[1服]" )
 	
-	self:BindCommand( "sh_redir_oldass", "redir_oldass", function(_client,_serverIndex,_count,_message)
+	self:BindCommand( "sh_redir_oldass", "redir_oldass", function(_client,_count,_message)
+		local serverIndex = CheckTargetValid(_client)
+		if serverIndex == nil then return end
+		
 		NotifyCrowdAdvert(self,_message)
-		self:RedirClients(GetConnectIP(_serverIndex),_count,false)
+		self:RedirClients(GetConnectIP(serverIndex),_count,false)
 	end):
-	AddParam{ Type = "number", Help = "目标服务器",Round = true, Min = 1, Max = 6, Default=1 }:
 	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
 	AddParam{ Type = "string", Help = "显示消息",Optional = true,  Default = "服务器已人满为患,开启被动分服." }:
 	Help( "示例: !redir_oldass 1 20. 迁移[20]名<老屁股>去[1服]" )
+
+	local function AdminRedirectClient(_client,_id)
+		local serverIndex = CheckTargetValid(_client)
+		if serverIndex == nil then return end
+		
+		local target = Shine.AdminGetClientByNS2ID(_client,_id)
+		if not target then return end
+
+		self:RedirectClient(target,GetConnectIP(serverIndex))
+	end
+	self:BindCommand( "sh_redir_player", "redir_player", AdminRedirectClient)
+		:AddParam{ Type = "steamid" }
+		:Help("这名玩家赖在场上不走,使用这个指令给他送到预设的服务器.\n例：!redir 55022511")
+
 end

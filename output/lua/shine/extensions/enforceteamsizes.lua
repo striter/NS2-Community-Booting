@@ -16,7 +16,7 @@ Plugin.RestrictedOperation = table.AsEnum{
 }
 
 Plugin.SkillLimitMode = table.AsEnum{
-	"NONE", "NOOB", "PRO",
+	"NONE", "NOOB",
 }
 
 Plugin.DefaultConfig = {
@@ -89,11 +89,10 @@ function Plugin:Initialise()
 end
 
 function Plugin:OnFirstThink()
-	self.Timer = self:SimpleTimer( 60, function()
+	self.Timer = self:SimpleTimer( 45, function()
 		self:UpdateConstrains()
 	end )
 end
-
 
 function Plugin:Notify(Player, Message,colors, data)
 		Shine:NotifyDualColour( Player,
@@ -194,7 +193,7 @@ function Plugin:UpdateConstrains()
 	end
 
 	local config = self.Config.Constrains
-	local type = config.Mode
+	local type = self.Constrains.Mode
 	if type == Plugin.SkillLimitMode.NONE then
 		return 
 	end
@@ -204,14 +203,14 @@ function Plugin:UpdateConstrains()
 	for client in Shine.IterateClients() do
 		--activeClientCount = activeClientCount + 1
 		if not client:GetIsVirtual() then
-			table.insert(clientSkillTable, { skill = client:GetControllingPlayer():GetPlayerSkill() })
+			local skill = client:GetControllingPlayer():GetPlayerSkill()
+			if skill > self.Constrains.MinSkill then
+				table.insert(clientSkillTable, { skill = skill })
+			end
 		end
 	end
 	
 	local function RankCompare(a,b)
-		if type == Plugin.SkillLimitMode.PRO then
-			return a.skill > b.skill
-		end
 		return a.skill < b.skill
 	end
 	
@@ -220,18 +219,9 @@ function Plugin:UpdateConstrains()
 		
 		--local connectingClientCount = Server.GetNumClientsTotal() - activeClientCount
 		local validateClientCount = config.MinPlayerCount -- - connectingClientCount
-		local min = -1
-		local max = -1
 		local finalValue = clientSkillTable[math.min(#clientSkillTable, validateClientCount)].skill
 	
-		if type == Plugin.SkillLimitMode.PRO then
-			min = self.Config.Constrains.Constant.MinSkill
-		else
-			max = math.max(self.Config.Constrains.Constant.MaxSkill,finalValue + 1)
-		end
-		
-		self.Constrains.MinSkill = min
-		self.Constrains.MaxSkill = max
+		self.Constrains.MaxSkill = math.max(self.Config.Constrains.Constant.MaxSkill,finalValue + 1)
 	end
 		
 	self.Timer = self:SimpleTimer( 5, function()
@@ -366,8 +356,7 @@ local function RestrictionDisplay(self,_client)
 	local skillLimitMax = self.Constrains.MaxSkill < 0 and "∞" or tostring(self.Constrains.MaxSkill)
 	--local hourLimitMin = self.Constrains.MinHour
 	--local hourLimitMax = self.Constrains.MaxHour < 0  and "∞" or tostring(self.Constrains.MaxHour)
-	local addition = self.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" 
-				or (self.Constrains.Mode == Plugin.SkillLimitMode.PRO and "动态高分" or "动态新兵") 
+	local addition = self.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" or "动态新兵"
 	self:Notify(_client,string.format("当前人数限制:陆战队:%s,卡拉异形:%s\n分数限制:[%s - %s]%s.", 
 			self.Config.Team[1], self.Config.Team[2],
 			skillLimitMin,skillLimitMax,
@@ -432,17 +421,6 @@ function Plugin:CreateCommands()
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
 	:Help( "示例: !restriction_skill 1000 -1 true.将服务器的入场分数设置为,[10-∞],并且保存,-1代表无限制" )
-	
-	local function AdminRedirectClient(_client,_id)
-		local target = Shine.AdminGetClientByNS2ID(_client,_id)
-		if not target then return end
-		
-		self:RedirectClient(_client)
-	end
-	self:BindCommand( "sh_redirect", "redirect", AdminRedirectClient)
-	:AddParam{ Type = "steamid" }
-	:Help("这名玩家赖在场上不走,使用这个指令给他送到预设的服务器.\n例：!redirect 55022511")
-	
 end
 
 function Plugin:ClientConfirmConnect( Client )

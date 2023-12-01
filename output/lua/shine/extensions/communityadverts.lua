@@ -91,6 +91,8 @@ function Plugin:PlayerEnter( Client )
 	local prefix = userData.prefixColor or groupData.prefixColor
 	local enterColor = userData.enterColor or groupData.enterColor
 	local enterMessage = userData.enter or groupData.enter
+	
+	Shine:AdminPrint( nil, "%s<%s> joined", true, Shine.GetClientInfo( Client ) , IPAddressToString( Server.GetClientAddress( Client ) )  )
 
 	if #enterMessage > 0 then
 		Shine:NotifyDualColour( Shine.GetAllClients(), prefix[1], prefix[2], prefix[3],"[战区通知]",
@@ -108,7 +110,7 @@ function Plugin:ClientDisconnect( Client )
 	local prefix = userData.prefixColor or groupData.prefixColor
 	local leaveColor = userData.leaveColor or groupData.leaveColor
 	local leaveMessage = userData.leave or groupData.leave
-
+	
 	if #leaveMessage > 0 then
 		Shine:NotifyDualColour( Shine.GetAllClients(), prefix[1], prefix[2], prefix[3],"[战区通知]",
 				leaveColor[1], leaveColor[2], leaveColor[3], string.format(leaveMessage,player:GetName()))

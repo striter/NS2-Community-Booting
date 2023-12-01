@@ -184,25 +184,27 @@ end
 
 
 function Plugin:OnClientDBReceived(client, clientID, rawData)
-    local resolvedData = {
-        fakeBot = GetBoolean(rawData.fakeBot),
-        hideRank = GetBoolean(rawData.hideRank),
-        rank = GetNumber(rawData.rank),
-        rankOffset = GetNumber(rawData.rankOffset),
-        rankComm = GetNumber(rawData.rankComm),
-        rankCommOffset = GetNumber(rawData.rankCommOffset),
-        reputation = GetNumber(rawData.reputation),
-    }
-    self.MemberInfos[clientID] = resolvedData
-    client:GetControllingPlayer():SetPlayerExtraData(resolvedData)
+    local data = GetPlayerData(self,clientID)
+    --Resolve Data 
+    data.fakeData = nil
+    data.fakeBot = GetBoolean(rawData.fakeBot)
+    data.hideRank = GetBoolean(rawData.hideRank)
+    data.rank = GetNumber(rawData.rank)
+    data.rankOffset = GetNumber(rawData.rankOffset)
+    data.rankComm = GetNumber(rawData.rankComm)
+    data.rankCommOffset = GetNumber(rawData.rankCommOffset)
+    data.reputation = GetNumber(rawData.reputation)
+    data.lastSeenName = rawData.lastSeenName
+    data.lastSeenDay = GetNumber(rawData.lastSeenDay)
+    client:GetControllingPlayer():SetPlayerExtraData(data)
 end
 
 function Plugin:OnCommunityDBReceived()
     for client in Shine.IterateClients() do
         local clientID = client:GetUserId()
         if clientID > 0 then
-            local data = Shine.PlayerInfoHub:GetCommunityData(clientID)
-            self:OnClientDBReceived(client,clientID,data)
+            local rawData = Shine.PlayerInfoHub:GetCommunityData(clientID)
+            self:OnClientDBReceived(client,clientID, rawData)
         end
     end
 end
@@ -222,9 +224,9 @@ function Plugin:ClientConnect( _client )
         return 
     end
     
-    local data = Shine.PlayerInfoHub:GetCommunityData(clientID)
-    if not data then return end
-    self:OnClientDBReceived(_client,clientID,data)
+    local rawData = Shine.PlayerInfoHub:GetCommunityData(clientID)
+    if not rawData then return end
+    self:OnClientDBReceived(_client,clientID, rawData)
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
 
@@ -565,11 +567,14 @@ function Plugin:PlayerEnter(_client)
     
     local player = _client:GetControllingPlayer()
     local playerData = GetPlayerData(self,clientID)
+    playerData.lastSeenIP = IPAddressToString(Server.GetClientAddress(_client))
+    
+    if not playerData.fakeData then return end     -- Better solutions?
+    
     playerData.lastSeenDay = playerData.lastSeenDay or -2
     playerData.lastSeenName = playerData.lastSeenName or nil
     
     local playerName = player:GetName()
-    
     if playerData.lastSeenName ~= playerName then
         if math.abs(playerData.lastSeenDay - kCurrentDay) > 1 then
             playerData.lastSeenDay = kCurrentDay
