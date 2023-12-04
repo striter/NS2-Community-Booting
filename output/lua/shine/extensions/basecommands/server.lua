@@ -1498,6 +1498,7 @@ function Plugin:CreateMessageCommands()
 		local TargetName = TargetPlayer and TargetPlayer:GetName() or "<unknown>"
 		local DurationString = string.TimeToString( Duration )
 
+		self:NotifyGagStatus(Target)
 		Shine:AdminPrint( nil, "%s gagged %s%s", true,
 			Shine.GetClientInfo( Client ),
 			Shine.GetClientInfo( Target ),
@@ -1527,6 +1528,11 @@ function Plugin:CreateMessageCommands()
 			self:SendTranslatedMessage( Client, "PLAYER_GAGGED_PERMANENTLY", {
 				TargetName = Shine.GetClientName( Target )
 			} )
+		end
+		
+		local TargetClient = Shine.GetClientByNS2ID( ID )
+		if TargetClient then
+			self:NotifyGagStatus(TargetClient)
 		end
 	end
 	self:BindCommand( "sh_gagid", "gagid", GagID )
@@ -1846,8 +1852,22 @@ end
 --[[
 	Facilitates the gag command.
 ]]
+function Plugin:NotifyGagStatus(_client)
+	local clientID = _client:GetUserId()
+	if clientID <= 0 then return end
+	local GagData = self.Gagged[ clientID ]
+	if not GagData then return false end
+	local gagPermanent = self.Config.GaggedPlayers[tostring(clientID)]
+	if gagPermanent then return Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED_PERMANENT" ) end
+	if GagData then return Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED" ) end
+end
+function Plugin:ClientConnect( _client )
+	self:NotifyGagStatus(_client)
+end
+
 function Plugin:PlayerSay( Client, Message )
 	if self:IsClientGagged( Client ) then
+		self:NotifyGagStatus(Client)
 		return ""
 	end
 end

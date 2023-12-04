@@ -11,6 +11,11 @@ Plugin.DefaultConfig = {
             Time = 300,
             Player = 16,
         },
+        HourValidate = {
+            Enable = false,
+            ScorePerHour = 2,
+            Maximum = 1200,
+        },
         ["Constants"] = {
             Default = 20,
             Tier =
@@ -78,6 +83,7 @@ do
     Validator:AddFieldRule( "Reputation.RageQuit.MinPlayer",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.MinPlayer ))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
+    Validator:AddFieldRule( "Elo.HourValidate",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.HourValidate ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
     Validator:AddFieldRule( "Elo.Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Player ))
     Validator:AddFieldRule( "Elo.Constants.Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.Constants.Tier))
@@ -158,6 +164,7 @@ end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
     self:RageQuitValidate(Player,NewTeam)
+    self:EloValidate(Player,NewTeam)
 end
 
 function Plugin:ClientDisconnect( _client )
@@ -218,9 +225,10 @@ function Plugin:ClientConnect( _client )
     player:SetGroup(groupName)
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
 
-    local localData = GetPlayerData(self,clientID)
-    if not localData.fakeData then      --Already resolved
-        player:SetPlayerExtraData(localData)
+    local playerData = GetPlayerData(self,clientID)
+    playerData.lastSeenIP = IPAddressToString(Server.GetClientAddress(_client))
+    if not playerData.fakeData then      --Already resolved
+        player:SetPlayerExtraData(playerData)
         return 
     end
     
@@ -231,10 +239,14 @@ function Plugin:ClientConnect( _client )
 end
 
 ----Elo
-local function GetMarineSkill(player) return player.skill + player.skillOffset end
-local function GetAlienSkill(player) return player.skill - player.skillOffset end
-local function GetMarineCommanderSkill(player) return player.commSkill + player.commSkillOffset end
-local function GetAlienCommanderSkill(player) return player.commSkill - player.commSkillOffset end
+local function GetMarineBaseSkill(player) return player.skill + player.skillOffset end
+local function GetAlienBaseSkill(player) return player.skill - player.skillOffset end
+local function GetMarineCommanderBaseSkill(player) return player.commSkill + player.commSkillOffset end
+local function GetAlienCommanderBaseSkill(player) return player.commSkill - player.commSkillOffset end
+
+local function GetMarineFinalSkill(player) return player:GetPlayerSkill() + player:GetPlayerSkillOffset() end
+local function GetAlienFinalSkill(player) return player:GetPlayerSkill() - player:GetPlayerSkillOffset() end
+
 local abs = math.abs
 local min = math.min
 local max = math.max
@@ -258,9 +270,31 @@ local function EloDataSanityCheck(data,player)
         player:SetPlayerExtraData(data)
     end
 end
+
+local function RankPlayer(self, player, _id,
+                          _rankMarine, _rankAlien,
+                          _rankMarineComm,_rankAlienComm)
+    local data = GetPlayerData(self,_id)
+    if _rankMarine and _rankAlien then
+        _rankMarine = _rankMarine >= 0 and _rankMarine or GetMarineBaseSkill(player)
+        _rankAlien = _rankAlien >= 0 and _rankAlien or GetAlienBaseSkill(player)
+        data.rank = (_rankMarine + _rankAlien) / 2 - player.skill
+        data.rankOffset = (_rankMarine - _rankAlien) / 2 - player.skillOffset
+    end
+        
+    if _rankMarineComm and _rankAlienComm then
+        _rankMarineComm = _rankMarineComm >= 0 and _rankMarineComm or GetMarineCommanderBaseSkill(player)
+        _rankAlienComm = _rankAlienComm >= 0 and _rankAlienComm or GetAlienCommanderBaseSkill(player)
+        data.rankComm = (_rankMarineComm + _rankAlienComm) / 2 - player.commSkill
+        data.rankCommOffset = (_rankMarineComm - _rankAlienComm) / 2 - player.commSkillOffset
+    end
+    EloDataSanityCheck(data,player)
+end
+
 local function RankPlayerDelta(self, _steamId, _marineDelta, _alienDelta, _marineCommDelta, _alienCommDelta)
     local data = GetPlayerData(self,_steamId)
     local client = Shine.GetClientByNS2ID(_steamId)
+    
     data.rank = (data.rank or 0) + (_marineDelta + _alienDelta) / 2
     data.rankOffset = (data.rankOffset or 0) + (_marineDelta - _alienDelta) / 2
     data.rankComm = (data.rankComm or 0) + (_marineCommDelta + _alienCommDelta) / 2
@@ -381,6 +415,25 @@ function Plugin:EndGameElo(lastRoundData)
         end
     end
 
+end
+
+--Players chose to throw the game for lower elo
+function Plugin:EloValidate(_player,_newTeam)
+    if not self.Config.Elo.Check
+        or not self.Config.Elo.HourValidate.Enable
+        or _player:GetIsVirtual() 
+        or (not _newTeam == kTeam1Index and not _newTeam == kTeam2Index)
+    then return end
+    
+    local id =_player:GetClient():GetUserId();
+    local hour = Shine.PlayerInfoHub:GetSteamData(id).PlayTime
+    if hour <= 0 then return end
+
+    local marineSkill = GetMarineFinalSkill(_player)
+    local alienSkill = GetAlienFinalSkill(_player)
+    local leastRank = math.min(hour * self.Config.Elo.HourValidate.ScorePerHour,self.Config.Elo.HourValidate.Maximum)
+    if marineSkill >= leastRank and alienSkill >= leastRank then return end
+    RankPlayer(self,_player,id,math.max(marineSkill,leastRank),math.max(alienSkill,leastRank),nil,nil)
 end
 
 --Reputation
@@ -567,7 +620,6 @@ function Plugin:PlayerEnter(_client)
     
     local player = _client:GetControllingPlayer()
     local playerData = GetPlayerData(self,clientID)
-    playerData.lastSeenIP = IPAddressToString(Server.GetClientAddress(_client))
     
     if not playerData.fakeData then return end     -- Better solutions?
     
@@ -627,13 +679,7 @@ function Plugin:CreateMessageCommands()
         if not target then return end
         if not CanEloSelfTargeting(_client,target) then return end
 
-        local player = target:GetControllingPlayer()
-        local data = GetPlayerData(self,_id)
-        _rankMarine = _rankMarine >= 0 and _rankMarine or GetMarineSkill(player)
-        _rankAlien = _rankAlien >= 0 and _rankAlien or GetAlienSkill(player)
-        data.rank = (_rankMarine + _rankAlien) / 2 - player.skill
-        data.rankOffset = (_rankMarine - _rankAlien) / 2 - player.skillOffset
-        EloDataSanityCheck(data,player)
+        RankPlayer( self, target:GetControllingPlayer(),_id,_rankMarine,_rankAlien,nil,nil)
     end )
         :AddParam{ Type = "steamid" }
         :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }
@@ -645,15 +691,7 @@ function Plugin:CreateMessageCommands()
         if not target then return end
         if not CanEloSelfTargeting(_client,target) then return end
 
-        local player = target:GetControllingPlayer()
-        local data = GetPlayerData(self,_id)
-        _rankMarine = _rankMarine >= 0 and _rankMarine or GetMarineCommanderSkill(player)
-        _rankAlien = _rankAlien >= 0 and _rankAlien or GetAlienCommanderSkill(player)
-        data.rankComm = (_rankMarine + _rankAlien) / 2 - player.commSkill
-        data.rankCommOffset = (_rankMarine - _rankAlien) / 2 - player.commSkillOffset
-        Shared.Message(tostring(data.rankComm) .. " " .. tostring(data.rankCommOffset))
-        EloDataSanityCheck(data,player)
-        Shared.Message(tostring(data.rankComm) .. " " .. tostring(data.rankCommOffset))
+        RankPlayer( self, target:GetControllingPlayer(),_id,nil,nil,_rankMarine,_rankAlien)
     end )
         :AddParam{ Type = "steamid" }
         :AddParam{ Type = "number", Round = true, Min = -1, Max = 9999999, Optional = true, Default = -1 }

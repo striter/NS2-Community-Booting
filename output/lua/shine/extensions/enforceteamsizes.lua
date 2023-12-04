@@ -1,5 +1,4 @@
 local Plugin = Shine.Plugin( ... )
-Script.Load( "lua/shine/core/server/playerinfohub.lua" )
 
 Plugin.HasConfig = true
 Plugin.ConfigName = "EnforceTeamSizes.json"
