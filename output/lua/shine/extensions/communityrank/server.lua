@@ -164,9 +164,16 @@ end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
     self:RageQuitValidate(Player,NewTeam)
-    self:EloValidate(Player,NewTeam)
 end
 
+
+function Plugin:ClientConfirmConnect( _client )
+    local clientID = _client:GetUserId()
+    if clientID <= 0 then return end
+
+    local player = _client:GetControllingPlayer()
+    self:EloValidate(player)
+end
 function Plugin:ClientDisconnect( _client )
     self:RageQuitValidate(_client:GetControllingPlayer(),kTeamReadyRoom)
 end
@@ -418,11 +425,10 @@ function Plugin:EndGameElo(lastRoundData)
 end
 
 --Players chose to throw the game for lower elo
-function Plugin:EloValidate(_player,_newTeam)
+function Plugin:EloValidate(_player)
     if not self.Config.Elo.Check
         or not self.Config.Elo.HourValidate.Enable
         or _player:GetIsVirtual() 
-        or (not _newTeam == kTeam1Index and not _newTeam == kTeam2Index)
     then return end
     
     local id =_player:GetClient():GetUserId();
