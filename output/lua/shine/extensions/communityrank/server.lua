@@ -604,7 +604,6 @@ function Plugin:EndGameReputation(lastRoundData)
 end
 
 function Plugin:RecordResolveData(data,rawData)
-    Shared.Message(rawData.timePlayed)
     data.timePlayed = GetNumber(rawData.timePlayed)
     data.roundPlayed = GetNumber(rawData.roundPlayed)
     data.roundFinished = GetNumber(rawData.roundFinished)
