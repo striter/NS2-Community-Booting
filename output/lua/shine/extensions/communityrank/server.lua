@@ -153,6 +153,7 @@ function Plugin:OnEndGame(_winningTeam)
     if not table.contains(kRankAvailableGameModes,gameMode) then return end
     self:EndGameElo(lastRoundData)
     self:EndGameReputation(lastRoundData)
+    self:EndGameRecord(lastRoundData)
     SavePersistent(self)
 end
 
@@ -172,7 +173,7 @@ function Plugin:ClientConfirmConnect( _client )
     if clientID <= 0 then return end
 
     local player = _client:GetControllingPlayer()
-    self:EloValidate(player)
+    self:RecordEloValidate(player)
 end
 function Plugin:ClientDisconnect( _client )
     self:RageQuitValidate(_client:GetControllingPlayer(),kTeamReadyRoom)
@@ -210,6 +211,8 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.reputation = GetNumber(rawData.reputation)
     data.lastSeenName = rawData.lastSeenName
     data.lastSeenDay = GetNumber(rawData.lastSeenDay)
+    
+    self:RecordResolveData(data,rawData)
     client:GetControllingPlayer():SetPlayerExtraData(data)
 end
 
@@ -424,24 +427,6 @@ function Plugin:EndGameElo(lastRoundData)
 
 end
 
---Players chose to throw the game for lower elo
-function Plugin:EloValidate(_player)
-    if not self.Config.Elo.Check
-        or not self.Config.Elo.HourValidate.Enable
-        or _player:GetIsVirtual() 
-    then return end
-    
-    local id =_player:GetClient():GetUserId();
-    local hour = Shine.PlayerInfoHub:GetSteamData(id).PlayTime
-    if hour <= 0 then return end
-
-    local marineSkill = GetMarineFinalSkill(_player)
-    local alienSkill = GetAlienFinalSkill(_player)
-    local leastRank = math.min(hour * self.Config.Elo.HourValidate.ScorePerHour,self.Config.Elo.HourValidate.Maximum)
-    if marineSkill >= leastRank and alienSkill >= leastRank then return end
-    RankPlayer(self,_player,id,math.max(marineSkill,leastRank),math.max(alienSkill,leastRank),nil,nil)
-end
-
 --Reputation
 local function ReputationPlayerDelta(self, _steamId, _delta)
     local data = GetPlayerData(self,_steamId)
@@ -561,7 +546,6 @@ function Plugin:RageQuitValidate(Player,NewTeam)
     end
 end
 
-
 function Plugin:EndGameReputation(lastRoundData)
     if not ReputationEnabled(self) then return end
     local winningTeamType = lastRoundData.RoundInfo.winningTeam
@@ -619,6 +603,67 @@ function Plugin:EndGameReputation(lastRoundData)
     table.clear(kRageQuitTracker)
 end
 
+function Plugin:RecordResolveData(data,rawData)
+    Shared.Message(rawData.timePlayed)
+    data.timePlayed = GetNumber(rawData.timePlayed)
+    data.roundPlayed = GetNumber(rawData.roundPlayed)
+    data.roundFinished = GetNumber(rawData.roundFinished)
+    data.roundWin = GetNumber(rawData.roundWin)
+end
+
+function Plugin:EndGameRecord(lastRoundData)
+
+    local gameLength = lastRoundData.RoundInfo.roundLength
+    
+    local function RecordPlayer(playerData,data,wins)
+        playerData.timePlayed = (playerData.timePlayed or 0) + math.floor(data.timePlayed/60)
+        if data.timePlayed / gameLength > 0.9 then
+            playerData.roundFinished = (playerData.roundFinished or 0) + 1
+            playerData.roundWin =  (playerData.roundWin or 0) + (wins and 1 or 0)
+        end
+    end
+
+    local winningTeam = lastRoundData.RoundInfo.winningTeam
+    local team1Wins = winningTeam == kTeam1Index
+    local team2Wins = winningTeam == kTeam2Index
+    for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
+        local playerData = GetPlayerData(self,steamId)
+        playerData.roundPlayed = (playerData.roundPlayed or 0) + 1
+        RecordPlayer(playerData,playerStat[kTeam1Index],team1Wins)
+        RecordPlayer(playerData,playerStat[kTeam2Index],team2Wins)
+    end
+end
+
+--Players chose to throw the game for lower elo
+function Plugin:RecordEloValidate(_player)
+    if not self.Config.Elo.Check
+            or not self.Config.Elo.HourValidate.Enable
+            or _player:GetIsVirtual()
+    then return end
+
+    local steamId =_player:GetClient():GetUserId();
+    local playerData = GetPlayerData(self,steamId)
+    local hour = math.floor((playerData.timePlayed or 0) / 60)
+    if hour <= 0 then return end
+
+    local marineSkill = GetMarineFinalSkill(_player)
+    local alienSkill = GetAlienFinalSkill(_player)
+    local leastRank = math.min(hour * self.Config.Elo.HourValidate.ScorePerHour,self.Config.Elo.HourValidate.Maximum)
+    if marineSkill >= leastRank and alienSkill >= leastRank then return end
+    RankPlayer(self,_player, steamId,math.max(marineSkill,leastRank),math.max(alienSkill,leastRank),nil,nil)
+end
+
+function Plugin:ValidatePlayerRecord(_client,_id)
+    local player = _client:GetControllingPlayer()
+    local data = GetPlayerData(self,_client:GetUserId())
+    Shine:NotifyDualColour( _client:GetControllingPlayer(),  236, 112, 99 ,"[历史记录]",
+            255,255,255,
+            string.format("%s的社区历史记录:游玩时长:%d小时,对局数(完整/胜局/全部):%d/%d/%d",
+                    player:GetName(), math.floor((data.timePlayed or 0)/60), data.roundFinished or 0, data.roundWin or 0, data.roundPlayed or 0
+            )
+    )
+end
+
 -- Last Seen Name Check
 function Plugin:PlayerEnter(_client)
     local clientID = _client:GetUserId()
@@ -655,8 +700,8 @@ function Plugin:CreateMessageCommands()
     end
     --Elo
     self:BindCommand( "sh_rank_reset", "rank_reset", function(_client, _id )     ----Reset
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+    local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         if not CanEloSelfTargeting(_client,target) then return end
 
         local data = GetPlayerData(self,_id)
@@ -668,8 +713,8 @@ function Plugin:CreateMessageCommands()
         :Help( "重置玩家的[玩家段位](还原至NS2段位)." )
 
     self:BindCommand( "sh_rank_reset_comm", "rank_reset_comm",function(_client, _id )
-        local target = Shine.GetClientByNS2ID(_id)
-        if not target then AdminErrorNotify(_client) return end
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
         if not CanEloSelfTargeting(_client,target) then return end
 
         local data = GetPlayerData(self,_id)
@@ -825,4 +870,23 @@ function Plugin:CreateMessageCommands()
     local dynamicEmblemCommand = self:BindCommand( "sh_emblem_dynamic", "emblem_dynamic", DynamicEmblemSet)
     dynamicEmblemCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 20, Optional = true, Default = 0 }
     dynamicEmblemCommand:Help( "切换自己的动态计分板底图(0为使用默认)." )
+
+
+    local function CheckPlayerHistory(_client, _id)
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
+        
+        self:ValidatePlayerRecord(_client,_id)
+    end
+
+    local function CheckHistory(_client, _emblem)
+        CheckPlayerHistory(_client,_client:GetUserId())
+    end
+
+    self:BindCommand( "history_check", "history_check", CheckPlayerHistory)
+        :AddParam{ Type = "steamid" }
+        :Help( "查询玩家的社区历史记录." )
+    
+    self:BindCommand( "history", "history", CheckHistory,true )
+        :Help( "查询我的社区历史记录." )
 end

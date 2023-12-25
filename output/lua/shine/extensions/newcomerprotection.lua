@@ -71,8 +71,6 @@ function Plugin:OnFirstThink()
 
 	Shine.Hook.SetupClassHook("TeamSpectator", "Replace", "OnMarineReplace", "ActivePre")
 	Shine.Hook.SetupClassHook("MarineTeam", "RespawnPlayer", "OnMarineRespawn", "PassivePost")
-	Shine.Hook.SetupClassHook("Egg", "SpawnPlayer", "OnAlienRespawn", "Replace")
-	
 end
 
 local function GetClientAndTier(player)
@@ -199,69 +197,16 @@ function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, 
 			end
 		end
 	end
+
+	if mapName == Skulk.kMapName then
+		if CheckPlayerForcePurchase(self,player,kTechId.Onos) then
+			mapName = Onos.kMapName
+		end
+	end
+	
 	return Player.Replace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
 end
 	 
-function Plugin:OnAlienRespawn(egg, player)
-	PROFILE("Egg:SpawnPlayer")
-
-	local queuedPlayer = player
-
-	if not queuedPlayer or egg.queuedPlayerId ~= nil then
-		queuedPlayer = Shared.GetEntity(egg.queuedPlayerId)
-	end
-
-	if queuedPlayer ~= nil then
-
-		local queuedPlayer = player
-		if not queuedPlayer then
-			queuedPlayer = Shared.GetEntity(egg.queuedPlayerId)
-		end
-
-		-- Spawn player on top of egg
-		local spawnOrigin = Vector(egg:GetOrigin())
-		-- Move down to the ground.
-		local _, normal = GetSurfaceAndNormalUnderEntity(egg)
-		if normal.y < 1 then
-			spawnOrigin.y = spawnOrigin.y - (egg:GetExtents().y / 2) + 1
-		else
-			spawnOrigin.y = spawnOrigin.y - (egg:GetExtents().y / 2)
-		end
-
-		local gestationClass = egg:GetClassToGestate()
-
-		-- We must clear out queuedPlayerId BEFORE calling ReplaceRespawnPlayer
-		-- as this will trigger OnEntityChange() which would requeue this player.
-		egg.queuedPlayerId = nil
-
-		local team = queuedPlayer:GetTeam()
-		local success, player = team:ReplaceRespawnPlayer(queuedPlayer, spawnOrigin, queuedPlayer:GetAngles(), gestationClass)
-		player:SetCameraDistance(0)
-		player:SetHatched()
-		-- It is important that the player was spawned at the spot we specified.
-		assert(player:GetOrigin() == spawnOrigin)
-
-		if success then
-			SetPlayerStartingLocation(player)
--------------
-			if CheckPlayerForcePurchase(self,player,kTechId.Onos) then		--It should be simple as hell,get the return val and check it
-				player:Replace(Onos.kMapName)
-			else
-				egg:PickUpgrades(player)
-			end
---------------
-			egg:TriggerEffects("egg_death")
-			DestroyEntity(egg)
-
-			return true, player
-
-		end
-
-	end
-
-	return false, nil
-	
-end
 
 function Plugin:ClientConfirmConnect( Client )
 	if Client:GetIsVirtual() then return end

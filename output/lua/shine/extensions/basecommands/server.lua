@@ -367,8 +367,10 @@ do
 		return self.Config.AllTalkPreGame and Gamerules:GetGameState() < kGameState.PreGame
 	end
 
-	function Plugin:IsSpectatorAllTalk( Listener )
-		return self.Config.AllTalkSpectator and Listener:GetTeamNumber() == ( kSpectatorIndex or 3 )
+	function Plugin:IsSpectatorAllTalk( Listener )		local teamNumber = Listener:GetTeamNumber()
+		local allTalkTeam = teamNumber == ( kSpectatorIndex or 3 )
+		allTalkTeam = allTalkTeam or teamNumber == (kTeamReadyRoom or 4)
+		return self.Config.AllTalkSpectator and allTalkTeam
 	end
 
 	-- Will need updating if it changes in NS2Gamerules...
