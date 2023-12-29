@@ -608,6 +608,7 @@ function Plugin:RecordResolveData(data,rawData)
     data.roundPlayed = GetNumber(rawData.roundPlayed)
     data.roundFinished = GetNumber(rawData.roundFinished)
     data.roundWin = GetNumber(rawData.roundWin)
+    --Shared.Message(rawData.timePlayed)
 end
 
 function Plugin:EndGameRecord(lastRoundData)
@@ -652,10 +653,10 @@ function Plugin:RecordEloValidate(_player)
     RankPlayer(self,_player, steamId,math.max(marineSkill,leastRank),math.max(alienSkill,leastRank),nil,nil)
 end
 
-function Plugin:ValidatePlayerRecord(_client,_id)
-    local player = _client:GetControllingPlayer()
-    local data = GetPlayerData(self,_client:GetUserId())
-    Shine:NotifyDualColour( _client:GetControllingPlayer(),  236, 112, 99 ,"[历史记录]",
+function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
+    local player = _targetClient:GetControllingPlayer()
+    local data = GetPlayerData(self,_targetClient:GetUserId())
+    Shine:NotifyDualColour( _notifyClient:GetControllingPlayer(),  236, 112, 99 ,"[历史记录]",
             255,255,255,
             string.format("%s的社区历史记录:游玩时长:%d小时,对局数(完整/胜局/全部):%d/%d/%d",
                     player:GetName(), math.floor((data.timePlayed or 0)/60), data.roundFinished or 0, data.roundWin or 0, data.roundPlayed or 0
@@ -875,11 +876,11 @@ function Plugin:CreateMessageCommands()
         local target = Shine.AdminGetClientByNS2ID(_client,_id)
         if not target then return end
         
-        self:ValidatePlayerRecord(_client,_id)
+        self:ValidatePlayerRecord(_client,target)
     end
 
-    local function CheckHistory(_client, _emblem)
-        CheckPlayerHistory(_client,_client:GetUserId())
+    local function CheckHistory(_client)
+        CheckPlayerHistory(_client,_client)
     end
 
     self:BindCommand( "history_check", "history_check", CheckPlayerHistory)

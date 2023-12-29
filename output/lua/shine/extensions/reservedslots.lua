@@ -31,7 +31,13 @@ Plugin.DefaultConfig = {
 	-- Should a player with reserved access use up a slot straight away?
 	TakeSlotInstantly = true,
 	-- Which type(s) of slot should be reserved?
-	SlotType = Plugin.SlotType.PLAYABLE
+	SlotType = Plugin.SlotType.PLAYABLE,
+	
+	DynamicSlot = {
+		Count = 0,
+		MinPlayerCount = 24,
+		SlotDelta = 2,
+	}
 }
 
 Plugin.CheckConfig = true
@@ -39,8 +45,8 @@ Plugin.CheckConfigTypes = true
 
 do
 	local Validator = Shine.Validator()
-	Validator:AddFieldRule( "SlotType",
-		Validator.InEnum( Plugin.SlotType, Plugin.SlotType.PLAYABLE ) )
+	Validator:AddFieldRule( "SlotType", Validator.InEnum( Plugin.SlotType, Plugin.SlotType.PLAYABLE ) )
+	Validator:AddFieldRule( "DynamicSlot",  Validator.IsType( "table", Plugin.DefaultConfig.DynamicSlot  ))
 	Plugin.ConfigValidator = Validator
 end
 
@@ -59,17 +65,18 @@ function Plugin:OnFirstThink()
 end
 
 function Plugin:CreateCommands()
-	local function SetSlotCount( Client, Slots )
-		self.Config.Slots = Slots
+	local function SetSlotCount(Client, _slotCount, _dynamicSlotCount)
+		self.Config.Slots = _slotCount
+		self.Config.DynamicSlot.Count = _dynamicSlotCount
 		self:SetReservedSlotCount( self:GetFreeReservedSlots() )
 		self:SaveConfig()
 		Shine:AdminPrint( Client, "%s set reserved slot count to %i", true,
-			Shine.GetClientInfo( Client ), Slots )
+			Shine.GetClientInfo( Client ), _slotCount)
 	end
-	local SetSlotCommand = self:BindCommand( "sh_setresslots", "resslots", SetSlotCount )
-	SetSlotCommand:AddParam{ Type = "number", Min = 0, Round = true,
-		Error = "Please specify the number of slots to set.", Help = "slots" }
-	SetSlotCommand:Help( "Sets the number of reserved slots." )
+	self:BindCommand( "sh_setresslots", "resslots", SetSlotCount )
+	:AddParam{ Type = "number", Min = 0, Round = true, Error = "Please specify the number of slots to set.", Help = "静态预留位" }
+	:AddParam{ Type = "number", Min = 0, Round = true,Default = 0 ,Help = "动态预留位"}
+	:Help( "设置服务器的预留位 ,普通位为可玩总数-预留位 - 动态预留位,动态预留位随着服务器内人数自动调整直至归零) 例!resslots 10 16" )
 end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam )
@@ -104,13 +111,24 @@ function Plugin:GetFreeReservedSlots()
 	local Offset = self.Config.SlotType == self.SlotType.ALL
 		and self:GetMaxSpectatorSlots() or 0
 
-	local Slots = self.Config.Slots
+	local slotCount = self.Config.Slots
+
+	local dynamicSlotCount = self.Config.DynamicSlot.Count
+	if dynamicSlotCount > 0 then
+		
+		local clientsTotal = Server.GetNumClientsTotal()
+		local delta = clientsTotal - self.Config.DynamicSlot.MinPlayerCount
+		local slotReduction = math.Clamp(delta + self.Config.DynamicSlot.SlotDelta,0,dynamicSlotCount)
+		dynamicSlotCount = dynamicSlotCount - slotReduction
+		slotCount = slotCount + dynamicSlotCount
+	end
+	
 	if not self.Config.TakeSlotInstantly then
-		return Max( Slots - Offset, 0 )
+		return Max( slotCount - Offset, 0 )
 	end
 
 	local Count = self:GetNumOccupiedReservedSlots()
-	return Max( Slots - Count - Offset, 0 )
+	return Max( slotCount - Count - Offset, 0 )
 end
 
 --[[
