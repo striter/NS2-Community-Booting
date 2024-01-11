@@ -6,6 +6,9 @@
     { name = "咖喱", isMale = true },
     { name = "youngthink", isMale = true },
 
+    { name = "严以律己", isMale = true },
+    { name = "宽以待人", isMale = true },
+    { name = "文明礼貌", isMale = true },
     -- previous one
     { name = "The Salty Sea Captain", isMale = true },
     { name = "Ashton M", isMale = true },

@@ -105,20 +105,21 @@ function Plugin:GetNumPlayers(Team)
 end
 
 function Plugin:GetPlayerLimit(Gamerules,Team)
-	local playerLimit = self.Config.Team[Team]
+	local basePlayerLimit = self.Config.Team[Team]
+	if Team == kSpectatorIndex and self.Config.BlockSpectators then
+		local leastPlayersInGame = self.Config.Team[kTeam1Index] + self.Config.Team[kTeam2Index]
+		local inServerPlayers = Shine.GetHumanPlayerCount()
+		if inServerPlayers < leastPlayersInGame then return 99 end 	--They are seeding
+		return inServerPlayers - leastPlayersInGame,basePlayerLimit	--Join the game little f**k
+	end
+
+	local playerLimit = basePlayerLimit
 	if Shared.GetTime() > self.Config.SlotCoveringBegin * 60 then
 		local maxPlayers = math.max(self:GetNumPlayers(Gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(Gamerules:GetTeam(kTeam2Index)))
 		playerLimit = math.max(playerLimit,maxPlayers)
 	end
 
-	if Team == kSpectatorIndex and self.Config.BlockSpectators then
-		local leastPlayersInGame = self.Config.Team[kTeam1Index] + self.Config.Team[kTeam2Index]
-		local inServerPlayers = Shine.GetHumanPlayerCount()
-		if inServerPlayers < leastPlayersInGame then return 99 end 	--They are seeding
-		return inServerPlayers - leastPlayersInGame	--Join the game little f**k
-	end
-	
-	return playerLimit
+	return playerLimit,basePlayerLimit
 end
 
 function Plugin:RedirectClient(client)
@@ -278,33 +279,29 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 
 	local available = not self:GetPlayerRestricted(_player)
 	local playerNum = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
-	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
-	local playerLimited = playerNum >= playerLimit
+	local playerLimit,basePlayerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
 	local forcePrivilegeTitle
 	local forceCredit
 	local couldBeIgnored = true
 	local teamName = TeamNames[_newTeam]
-	if _newTeam == kSpectatorIndex then
-		if playerLimited then
-			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请尽快进入游戏!", teamName ,playerLimit),errorColorTable)
+	if playerNum >= playerLimit then
+		if _newTeam == kSpectatorIndex then
+			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请尽快进入游戏!", teamName , playerLimit),errorColorTable)
 			available =  false
 			forceCredit = 0
 			forcePrivilegeTitle = "预热观战位"
-		end
-	else
-		if playerLimited then
-			local forceJoinLimit = playerLimit + self.Config.TeamForceJoin
+		else
+			local forceJoinLimit = basePlayerLimit + self.Config.TeamForceJoin
 			if playerNum >= forceJoinLimit then
 				self:Notify(_player,string.format( "[%s]已爆满(>=%s),无法再增加任何玩家,请继续观战,等待空位/分服或加入有空位的服务器.", teamName ,forceJoinLimit),errorColorTable)
 				couldBeIgnored = false
 			else
-				self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位/分服或加入有空位的服务器.", teamName ,playerLimit),errorColorTable)
-			end 
+				self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位/分服或加入有空位的服务器.", teamName ,basePlayerLimit),errorColorTable)
+			end
 			available = false
 			forceCredit = 1
 			forcePrivilegeTitle = "预热入场通道"
 		end
-		
 	end
 
 	if available then return end

@@ -35,7 +35,6 @@ Plugin.DefaultConfig = {
 	
 	DynamicSlot = {
 		Count = 0,
-		MinPlayerCount = 24,
 		SlotDelta = 2,
 	}
 }
@@ -117,7 +116,8 @@ function Plugin:GetFreeReservedSlots()
 	if dynamicSlotCount > 0 then
 		
 		local clientsTotal = Server.GetNumClientsTotal()
-		local delta = clientsTotal - self.Config.DynamicSlot.MinPlayerCount
+		local minPlayerCount = GetMaxPlayers() + GetMaxSpectators() - slotCount - dynamicSlotCount
+		local delta = clientsTotal - minPlayerCount
 		local slotReduction = math.Clamp(delta + self.Config.DynamicSlot.SlotDelta,0,dynamicSlotCount)
 		dynamicSlotCount = dynamicSlotCount - slotReduction
 		slotCount = slotCount + dynamicSlotCount

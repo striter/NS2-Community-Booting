@@ -38,7 +38,9 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
             if not scoreboard.hoverMenu.background:GetIsVisible() and not MainMenu_GetIsOpened() then
                 
                 local pr = teamScores[currentPlayerIndex]
-                if pr == nil then return end
+                if pr == nil
+                    or pr.FakeBot == nil
+                then return end
                 
                 local skillIcon = player.SkillIcon
                 if pr.FakeBot then  --Fake BOT

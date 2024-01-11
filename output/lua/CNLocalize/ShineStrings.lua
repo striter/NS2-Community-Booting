@@ -240,7 +240,7 @@ kShinePluginsTranslations["workshopupdater"]["MAP_CYCLE"]= "地图将 {TimeLeft:
 kShinePluginsTranslations["votesurrender"]={}
 kShinePluginsTranslations["votesurrender"]["ERROR_WRONG_TEAM"]="无法在当前队伍发起投降."
 kShinePluginsTranslations["votesurrender"]["ERROR_RESOURCE_AVAILABLE"]="还有大量的个人资源未被使用,你应该再试一试."
-kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_TIME"]="当前为时过早,无法发起投降."
+kShinePluginsTranslations["votesurrender"]["ERROR_ROUND_TIME"]="当前条件无法投降."
 kShinePluginsTranslations["votesurrender"]["ERROR_ALREADY_VOTED"]="你已经进行投降过了."
 kShinePluginsTranslations["votesurrender"]["ERROR_CANNOT_VOTE_ON_CURRENT_TEAM"]="无法在当前队伍发起投票."
 
@@ -427,4 +427,5 @@ kShinePluginsTranslations["readyroomqueue"]["QUEUE_WAITTIME"]= "当前服务器�
 --AFK Kick
 kShinePluginsTranslations["afkkick"]={}
 kShinePluginsTranslations["afkkick"]["NOTIFY_PREFIX"]="[挂机提醒]"
+kShinePluginsTranslations["afkkick"]["WARN_NOTIFY"]= "你已经挂机了{AFKTime:Duration}. 如果挂机时长超过{KickTime:Duration}并且玩家数到达{MinPlayers},你将被踢出！"
 kShinePluginsTranslations["afkkick"]["WARN_WILL_BE_KICKED"]= "你已经挂机了{AFKTime:Duration}. 如果挂机时长超过{KickTime:Duration},你将被踢出!."

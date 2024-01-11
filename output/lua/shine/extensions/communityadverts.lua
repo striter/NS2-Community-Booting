@@ -17,12 +17,13 @@ Plugin.PrintName = "communityadverts"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityAdverts.json"
 Plugin.DefaultConfig = { 
-	
+	ShowLeave = false,
 }
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 do
-	--local Validator = Shine.Validator()
+	local Validator = Shine.Validator()
+	Validator:AddFieldRule( "ShowLeave",  Validator.IsType( "boolean", Plugin.DefaultConfig.ShowLeave ))
 end
 
 Plugin.KDefaultGroup = "DefaultGroup"
@@ -104,8 +105,9 @@ end
 function Plugin:ClientDisconnect( Client )
 	if not Client then return end
 	if Client:GetIsVirtual() then return end
+	if not self.Config.ShowLeave then return end
+	
 	local player = Client:GetControllingPlayer()
-
 	local groupData,userData = self:GetAdvertData(Client)
 	local prefix = userData.prefixColor or groupData.prefixColor
 	local leaveColor = userData.leaveColor or groupData.leaveColor
