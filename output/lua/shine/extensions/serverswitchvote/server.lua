@@ -164,17 +164,18 @@ local function NotifyCrowdFailed(self, _crowdingPlayers, _ignoreTeams)
 	end
 end
 
-function Plugin:OnEndGame(_winningTeam)
+function Plugin:OnMapVoteFinished()
+	
 	if self.Config.CrowdAdvert.ToServer <= 0 then return end
 	local redirData = self.Config.Servers[self.Config.CrowdAdvert.ToServer]
 	if not redirData then return end
-	
+
 	local gameEndPlayerCount = Shine.GetHumanPlayerCount()
 	if gameEndPlayerCount < self.Config.CrowdAdvert.PlayerCount then
 		NotifyCrowdFailed(self,gameEndPlayerCount,false)		--Tells spectators/readyrooms
 		return
 	end
-	
+
 	local amount = gameEndPlayerCount - self.Config.CrowdAdvert.RedirUntil
 	amount = amount > 0 and amount or gameEndPlayerCount / 2
 	local delay = self.Config.CrowdAdvert.ToServerDelay
@@ -186,7 +187,7 @@ function Plugin:OnEndGame(_winningTeam)
 			NotifyCrowdFailed(self,currentPlayerCount,true)		--Tells everyone
 			return
 		end
-		
+
 		if self.Config.CrowdAdvert.ResSlots > 0 then
 			Shared.ConsoleCommand(string.format("sh_setresslots %i", self.Config.CrowdAdvert.ResSlots))
 		end
@@ -195,6 +196,7 @@ function Plugin:OnEndGame(_winningTeam)
 		self:RedirClients(address,amount,false)
 	end )
 end
+
 
 -- Send Client Vote List
 function Plugin:ClientConnect( Client )
