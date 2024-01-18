@@ -168,11 +168,7 @@ end
 	disconnects, and we take slots instantly.
 ]]
 function Plugin:ClientDisconnect( Client )
-	if not self.Config.TakeSlotInstantly then return end
-
-	if self:HasReservedSlotAccess( Client ) then
-		self:SetReservedSlotCount( self:GetFreeReservedSlots() )
-	end
+	self:SetReservedSlotCount( self:GetFreeReservedSlots() )
 end
 
 Plugin.ConnectionHandlers = {

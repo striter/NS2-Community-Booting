@@ -47,7 +47,7 @@ if Client then
                     local MVEnabled, MVPlugin = Shine:IsExtensionEnabled( "mapvote" ) 
                     if MVEnabled then
                         Shared.ConsoleCommand(string.format("sh_nominate %s", serverMapIndices[data.map_index]))
-                        --Shared.ConsoleCommand("sh_votemap")
+                        Shared.ConsoleCommand("sh_votemap")
                         return
                     end
                 end

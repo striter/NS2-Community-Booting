@@ -167,14 +167,6 @@ function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
     self:RageQuitValidate(Player,NewTeam)
 end
 
-
-function Plugin:ClientConfirmConnect( _client )
-    local clientID = _client:GetUserId()
-    if clientID <= 0 then return end
-
-    local player = _client:GetControllingPlayer()
-    self:RecordEloValidate(player)
-end
 function Plugin:ClientDisconnect( _client )
     self:RageQuitValidate(_client:GetControllingPlayer(),kTeamReadyRoom)
 end
@@ -213,7 +205,10 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.lastSeenDay = GetNumber(rawData.lastSeenDay)
     
     self:RecordResolveData(data,rawData)
-    client:GetControllingPlayer():SetPlayerExtraData(data)
+    
+    local player = client:GetControllingPlayer()
+    player:SetPlayerExtraData(data)
+    self:RecordEloValidate(player,data)
 end
 
 function Plugin:OnCommunityDBReceived()
@@ -635,15 +630,14 @@ function Plugin:EndGameRecord(lastRoundData)
 end
 
 --Players chose to throw the game for lower elo
-function Plugin:RecordEloValidate(_player)
+function Plugin:RecordEloValidate(_player, _playerData)
     if not self.Config.Elo.Check
             or not self.Config.Elo.HourValidate.Enable
             or _player:GetIsVirtual()
     then return end
 
     local steamId =_player:GetClient():GetUserId();
-    local playerData = GetPlayerData(self,steamId)
-    local hour = math.floor((playerData.timePlayed or 0) / 60)
+    local hour = math.floor((_playerData.timePlayed or 0) / 60)
     if hour <= 0 then return end
 
     local marineSkill = GetMarineFinalSkill(_player)
@@ -832,7 +826,7 @@ function Plugin:CreateMessageCommands()
         target:GetControllingPlayer():SetPlayerExtraData(data)
     end
 
-    self:BindCommand( "sh_hiderank_set", "hiderank_set", HideRankSwitchID,true )
+    self:BindCommand( "sh_hiderank_set", "hiderank_set", HideRankSwitchID )
         :AddParam{ Type = "steamid" }
         :Help( "目标玩家的社区段位显示." )
 
@@ -880,7 +874,7 @@ function Plugin:CreateMessageCommands()
     end
 
     local function CheckHistory(_client)
-        CheckPlayerHistory(_client,_client)
+        self:ValidatePlayerRecord(_client,_client)
     end
 
     self:BindCommand( "history_check", "history_check", CheckPlayerHistory)

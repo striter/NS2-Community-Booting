@@ -373,7 +373,7 @@ kShinePluginsTranslations["mapvote"]["MAP_VOTE_MENU_CURRENT_MAP"]= "当前地图
 kShinePluginsTranslations["mapvote"]["MAP_VOTE_MENU_EXTEND_MAP"]= "延续 - {MapName}"
 kShinePluginsTranslations["mapvote"]["NEXT_MAP_STARTED"]= "换图投票开始了."
 kShinePluginsTranslations["mapvote"]["WINNER_CYCLING"]= "{MapName}赢得了投票,开始换图."
-
+kShinePluginsTranslations["mapvote"]["NOMINATED_MAP_CONDITIONALLY"]= "注意: {MapName} 在某些情况下不会加入地图列表."
 kShinePluginsTranslations["mapvote"]["NOMINATE_FAIL"]= "你不能提名当前地图."
 kShinePluginsTranslations["mapvote"]["NOMINATE_DENIED_ACCESS"]= "你需要获取资格以使用当前服务器的地图提名,例如[社区段位]或[预热激励]."
 kShinePluginsTranslations["mapvote"]["NOMINATE_DENIED"]= "已达到了允许提名次数的上限."
@@ -400,7 +400,7 @@ kShinePluginsTranslations["mapvote"]["CANT_FORCE"]= "无法发起新的投票，
 kShinePluginsTranslations["mapvote"]["VOTE_FAIL_MAP_CHANGE"]= "正在换图,无法发起投票."
 kShinePluginsTranslations["mapvote"]["VOTE_FAIL_INSUFFICIENT_PLAYERS"]= "所需玩家人数不足,无法发起投票."
 kShinePluginsTranslations["mapvote"]["VOTE_FAIL_TIME"]= "眼下你无法发起换图投票."
-kShinePluginsTranslations["mapvote"]["VOTE_FAIL_IN_PROGRESS"]= "一项投票已经正在进行中了."
+kShinePluginsTranslations["mapvote"]["VOTE_FAIL_IN_PROGRESS"]= "投票已经正在进行中."
 kShinePluginsTranslations["mapvote"]["VOTE_FAIL_ALREADY_VOTED"]= "你已经投过发起换图投票了."
 kShinePluginsTranslations["mapvote"]["VOTE_FAIL_INVALID_MAP"]= "{MapName}并不是一个有效的地图名."
 kShinePluginsTranslations["mapvote"]["VOTE_FAIL_VOTED_MAP"]= "你已经投过{MapName}的票了."
