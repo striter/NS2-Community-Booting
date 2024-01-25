@@ -649,8 +649,6 @@ function Plugin:ApplyRTVWinner( Time, Choice )
 	self.Vote.CanVeto = true --Allow admins to cancel the change.
 	self.CyclingMap = true
 
-	Shine.Hook.Broadcast("OnMapVoteFinished")
-
 	--Queue the change.
 	self:SimpleTimer( self.Config.ChangeDelayInSeconds, function()
 		if not self.Vote.Veto then --No one cancelled it, change map.
@@ -720,6 +718,7 @@ end
 local TableRandom = table.ChooseRandom
 
 function Plugin:ProcessResults( NextMap )
+	Shine.Hook.Broadcast("OnMapVoteFinished")
 	self:EndVote()
 	self.Vote.NotifiedClients = nil
 

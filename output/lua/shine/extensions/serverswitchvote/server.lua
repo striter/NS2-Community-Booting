@@ -14,6 +14,7 @@ Plugin.DefaultConfig = {
 		{ Name = "My awesome server", IP = "127.0.0.1", Port = "27015", Password = "" }
 	},
 	CrowdAdvert = {
+		NotifyTimer = 150,
 		PlayerCount = 0,
 		RedirUntil = 28,
 		ResSlots = 32,
@@ -122,6 +123,7 @@ end
 
 	Validator:AddFieldRule( "ClientVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.ClientVote ))
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
+	Validator:AddFieldRule( "CrowdAdvert.NotifyTimer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.NotifyTimer ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
 	Validator:AddFieldRule( "CrowdAdvert.RedirUntil",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.RedirUntil ))
 	Validator:AddFieldRule( "CrowdAdvert.ResSlots",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ResSlots ))
@@ -139,16 +141,23 @@ local function GetConnectIP(_index)
 	return string.format("%s:%s",data.IP,data.Port)
 end
 
+local function NotifyCrowdAdvert(self, _message)
+	Shine:NotifyDualColour(Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
+			253, 237, 236, _message)
+end
+
 function Plugin:Initialise()
 	self.Enabled = true
 	self:CreateCommands()
 	return true
 end
 
-local function NotifyCrowdAdvert(self, _message)
-	Shine:NotifyDualColour(Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
-			253, 237, 236, _message)
+function Plugin:OnFirstThink()
+	self:SimpleTimer( self.Config.CrowdAdvert.NotifyTimer, function()
+		self:NotifyCrowdRedirect()
+	end )
 end
+
 
 local function NotifyCrowdFailed(self, _crowdingPlayers, _ignoreTeams)
 	if _crowdingPlayers >= self.Config.CrowdAdvert.FailInformCount then
@@ -163,6 +172,16 @@ local function NotifyCrowdFailed(self, _crowdingPlayers, _ignoreTeams)
 		end
 	end
 end
+
+function Plugin:NotifyCrowdRedirect()
+	local gameEndPlayerCount = Shine.GetHumanPlayerCount()
+	if gameEndPlayerCount < self.Config.CrowdAdvert.PlayerCount then
+		NotifyCrowdFailed(self,gameEndPlayerCount,false)		--Tells spectators/readyrooms
+	end
+
+	self:SimpleTimer(self.Config.CrowdAdvert.NotifyTimer, function() self:NotifyCrowdRedirect() end )
+end
+
 
 function Plugin:OnMapVoteFinished()
 	

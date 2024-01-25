@@ -124,6 +124,10 @@ local function GetPlayerData(self,steamId)
     return self.MemberInfos[steamId]
 end
 
+function Plugin:GetCommunityData(steamId)
+    return GetPlayerData(self,steamId)
+end
+
 function Plugin:ResetState()
     table.Empty(self.MemberInfos)
     ReadPersistent(self)

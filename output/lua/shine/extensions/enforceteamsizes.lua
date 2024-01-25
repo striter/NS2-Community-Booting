@@ -43,7 +43,7 @@ Plugin.DefaultConfig = {
 	NewComerBypass = {
 		Enable = true,
 		Skill = 500,
-		--Hour = 10,
+		Hour = 10,
 	},
 	MessageNameColor = {0, 255, 0 },
 }
@@ -321,8 +321,13 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	local newComerConfig = self.Config.NewComerBypass
 	if newComerConfig.Enable then
 		local isNewcomer = newComerConfig.Skill <= 0 or _player:GetPlayerSkill() < newComerConfig.Skill
-		--local steamData = Shine.PlayerInfoHub:GetSteamData(userId)
-		--isNewcomer = isNewcomer and  (newComerConfig.Hour <= 0 or steamData.PlayTime < newComerConfig.Hour)
+		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+		if isNewcomer and newComerConfig.Hour > 0 and crEnabled then
+			local communityData = cr:GetCommunityData(userId)
+			if communityData.timePlayed then
+				isNewcomer = isNewcomer and (communityData.timePlayed / 60) < newComerConfig.Hour
+			end
+		end
 		if isNewcomer then
 			self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
 			return
