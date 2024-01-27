@@ -12,6 +12,8 @@ Script.Load("lua/SpecialSkillTierRecipients.lua")
 
 class 'GUIScoreboard' (GUIScript)
 
+GUIScoreboard.kShowDeathStatus = false
+
 -- Horizontal size for the game time background is irrelevant as it will be expanded to SB width
 GUIScoreboard.kGameTimeBackgroundSize = Vector(640, GUIScale(32), 0)
 GUIScoreboard.kClickForMouseBackgroundSize = Vector(GUIScale(200), GUIScale(32), 0)
@@ -895,6 +897,13 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local currentPosition = Vector(player["Background"]:GetPosition())
         local playerStatus = isVisibleTeam and playerRecord.Status or "-"
         local isDead = isVisibleTeam and playerRecord.Status == deadString
+        if kShowDeathStatus then
+            isDead = playerRecord.Status == deadString
+            if isDead then
+                playerStatus = playerRecord.Status
+            end
+        end
+        
         local ping = playerRecord.Ping
         local isSteamFriend = playerRecord.IsSteamFriend 
         local playerSkill = playerRecord.IsCommander and playerRecord.CommSkill or playerRecord.Skill
@@ -1055,10 +1064,8 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local white = GUIScoreboard.kWhiteColor
         local baseColor, nameColor, statusColor = white, white, white
 
-        if isDead and isVisibleTeam then
-
+        if isDead then
             nameColor, statusColor = kDeadColor, kDeadColor
-
         end
 
         player["Score"]:SetColor(baseColor)
