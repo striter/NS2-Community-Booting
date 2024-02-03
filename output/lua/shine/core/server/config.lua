@@ -22,7 +22,6 @@ local DefaultConfig = {
 	LogDir = "config://shine/logs/", -- Logging directory.
 	DateFormat = "dd-mm-yyyy", -- Format for logging dates.
 	LogLevel = "INFO", -- Log level for core Shine logger.
-
 	ExtensionDir = "config://shine/plugins/", -- Plugin configs directory.
 
 	GetUsersFromWeb = false, -- Sets whether user data should be retrieved from the web.
@@ -90,7 +89,8 @@ local DefaultConfig = {
 
 	AddTag = true, -- Add 'shine' as a server tag.
 
-	ReportErrors = true -- Should errors be reported at the end of a round?
+	ReportErrors = true, -- Should errors be reported at the end of a round?
+	PlayerInfoURL = "http://127.0.0.1:3000/users",
 }
 
 local DefaultGamemode = Shine.BaseGamemode
@@ -193,6 +193,8 @@ do
 	Validator:AddFieldRule( "LogLevel", Validator.InEnum(
 		Shine.Objects.Logger.LogLevel, Shine.Objects.Logger.LogLevel.INFO
 	) )
+
+	Validator:AddFieldRule("PlayerInfoURL", Validator.IsType("string",DefaultConfig.PlayerInfoURL))
 
 	local ConfigMigrationSteps = {
 		{

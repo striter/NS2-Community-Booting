@@ -13,8 +13,8 @@ Plugin.DefaultConfig = {
         Player = 12,
     },
     ["Tier"] = {
-        [1] = { Count = 2, Credit = 15,Rank = -200,Inform = true, },
-        [2] = { Count = 3, Credit = 10,Rank = -100,Inform = true },
+        [1] = { Count = 2, Credit = 15,Inform = true, },
+        [2] = { Count = 3, Credit = 10,Inform = true },
         [3] = { Count = 10, Credit = 5 },
         [4] = { Count = 99, Credit = 1 },
     },
@@ -148,7 +148,7 @@ local function TrackAllClients(self)
     end
 end
 
-local function ValidateClient(self, _clientID, _data, _tier, _credit,_rank)
+local function ValidateClient(self, _clientID, _data, _tier, _credit)
     _data = _data or GetPlayerData(self,_clientID)
     _data.tier = _tier
     _data.credit = _data.credit + _credit
@@ -157,22 +157,11 @@ local function ValidateClient(self, _clientID, _data, _tier, _credit,_rank)
     if not client then return end
 
     local player = client:GetControllingPlayer()
-    
-    if _rank then
-        local EFEnabled, EFPlugin = Shine:IsExtensionEnabled( "enforceteamsizes" )
-        local CREnabled, CRPlugin = Shine:IsExtensionEnabled( "communityrank" )
-        if EFEnabled and CREnabled then
-            if EFPlugin:GetPlayerSkillLimited(player) then
-                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix, 255, 255, 255,"您为非服务器目标分段玩家,但鉴于你的积极贡献行为,已为您调整分数.若作出不符分段的行为将受到惩罚(分数还原或封禁).")
-                Shared.ConsoleCommand(string.format("sh_rank_delta %s %s %s", _clientID,_rank,_rank))
-            end
-        end
-    end
-
-
     player:SetPrewarmData(_data)
-    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-            string.format("激励已派发,以获得[预热徽章%s]及[%s预热点],感谢您的付出!",_tier,_credit) )
+    if _data.tier > 0 then
+        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                string.format("激励已派发,以获得[预热徽章%s]及[%s预热点],感谢您的付出!",_tier,_credit) )
+    end
 end
 
 local function Reset(self)
@@ -389,12 +378,16 @@ function Plugin:CreateMessageCommands()
     local setCommand = self:BindCommand( "sh_prewarm", "prewarm", function(_client) NotifyClient(self,_client,nil) end,true )
     setCommand:Help( "显示你的预热状态.")
     
-    local validateCommand = self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end,true )
-    validateCommand:AddParam{ Type = "steamid" }
-    validateCommand:AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 4 }
-    validateCommand:AddParam{ Type = "number", Round = true, Min = 0, Max = 15, Default = 3 }
-    validateCommand:Help( "设置玩家的预热状态以及预热点数,例如!prewarm_validate 5 3.(设置玩家段位4并给予3点预热点)")
-
+    self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end,true )
+    :AddParam{ Type = "steamid" }
+    :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 4 }
+    :AddParam{ Type = "number", Round = true, Min = 0, Max = 15, Default = 3 }
+    :Help( "设置玩家的预热状态以及预热点数,例如!prewarm_validate 5 3.(设置玩家段位4并给予3点预热点)")
+    
+    self:BindCommand( "sh_prewarm_cancel", "prewarm_cancel", function(_client,_targetID) ValidateClient(self,_targetID,nil,0,0) end,true )
+        :AddParam{ Type = "steamid" }
+        :Help( "取消玩家的预热点数(例如使用了连点器/作弊).")
+    
     local resetCommand = self:BindCommand( "sh_prewarm_reset", "prewarm_reset", function(_client)
         Reset(self)
         SavePersistent(self)        

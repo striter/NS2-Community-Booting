@@ -100,8 +100,7 @@ function PlayerInfoHub:QueryDBIfNeeded()
 
 	Shared.Message("[CNPIH] TryQuery")
 	--Query from DB
-	local queryURL = "http://127.0.0.1:3000/users"
-	AddToHTTPQueue( queryURL, function( response,errorCode )
+	AddToHTTPQueue( Shine.Config.PlayerInfoURL, function( response,errorCode )
 		if not response or #response == 0 then return end
 
 		PlayerInfoHub.CommunityData = { }
@@ -125,7 +124,7 @@ function PlayerInfoHub:GetCommunityData(_steamId)
 	local localData = PlayerInfoHub.CommunityData[_steamId]
 	if not localData then
 		localData = { id = _steamId }
-		Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users", _steamId),"POST",localData)
+		Shared.SendHTTPRequest(Shine.Config.PlayerInfoURL,"POST",localData)
 		PlayerInfoHub.CommunityData[_steamId] = localData
 	end
 	return localData
@@ -144,7 +143,7 @@ function PlayerInfoHub:SetCommunityData(steamId,data)
 	output.mtd = "PUT"
 	output.id = steamId
 
-	Shared.SendHTTPRequest(string.format("http://127.0.0.1:3000/users/%s",steamId),"POST",output
+	Shared.SendHTTPRequest(string.format("%s/%s",Shine.Config.PlayerInfoURL,steamId),"POST",output
 	--,function(response)
 	--	Print("response: " .. response )
 	--end
