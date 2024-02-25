@@ -36,7 +36,8 @@ Plugin.DefaultConfig = {
 	DynamicSlot = {
 		Count = 0,
 		SlotDelta = 2,
-	}
+	},
+	SkillByPassRange = {-1,-1},
 }
 
 Plugin.CheckConfig = true
@@ -46,8 +47,11 @@ do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "SlotType", Validator.InEnum( Plugin.SlotType, Plugin.SlotType.PLAYABLE ) )
 	Validator:AddFieldRule( "DynamicSlot",  Validator.IsType( "table", Plugin.DefaultConfig.DynamicSlot  ))
+	Validator:AddFieldRule( "SkillByPassRange",  Validator.IsType( "table", Plugin.DefaultConfig.SkillByPassRange  ))
 	Plugin.ConfigValidator = Validator
 end
+
+local HistoryRankFile = "config://shine/temp/history_rank.json"
 
 function Plugin:Initialise()
 	self.Config.Slots = Max( Floor( tonumber( self.Config.Slots ) or 0 ), 0 )
@@ -56,7 +60,24 @@ function Plugin:Initialise()
 	self:CreateCommands()
 	self.Enabled = true
 
+	local File, Err = Shine.LoadJSONFile( HistoryRankFile )
+	self.HistoryRank = File or {}
+	
 	return true
+end
+
+function Plugin:OnEndGame(_winningTeam)
+	for Client, ID in Shine.IterateClients() do
+		local player = Client:GetControllingPlayer()
+		if player then
+			self.HistoryRank[tostring(Client:GetUserId())] = player:GetPlayerSkill()
+		end
+	end
+	
+	local Success, Err = Shine.SaveJSONFile( self.HistoryRank, HistoryRankFile )
+	if not Success then
+		Shared.Message( "Error saving history rank file: "..Err )
+	end
 end
 
 function Plugin:OnFirstThink()
@@ -155,7 +176,25 @@ function Plugin:GetMaxSpectatorSlots()
 	return GetMaxSpectators()
 end
 
+local function InRange(range,value)
+	return range[1] <= value and value <= range[2] 
+end
+
 function Plugin:HasReservedSlotAccess( Client )
+	Shared.Message("//")
+	Shared.Message("//")
+	Shared.Message("//")
+	Shared.Message("//")
+	Shared.Message("//")
+	Shared.Message("//")
+	if InRange(self.Config.SkillByPassRange, self.HistoryRank[tostring(Client)] or 0) then
+		Shared.Message("??")
+		Shared.Message("??")
+		Shared.Message("??")
+		Shared.Message("??")
+		return true
+	end
+	
 	return Shine:HasAccess( Client, "sh_reservedslot" )
 end
 
@@ -249,5 +288,6 @@ Plugin.ConnectionHandlers = {
 function Plugin:CheckConnectionAllowed( ID )
 	return self.ConnectionHandlers[ self.Config.SlotType ]( self, tonumber( ID ) )
 end
+
 
 return Plugin

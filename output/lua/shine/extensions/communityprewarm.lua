@@ -113,6 +113,21 @@ local function NotifyClient(self, _client, _data)
     end
 end
 
+local function GetPrewarmScalar(self,player)
+
+    local team = player:GetTeamNumber()
+    local scoreScalar = 1
+    
+    if player:GetScore() > 50 
+        and (team == kTeam1Index or team == kTeam2Index) 
+        and kCurrentHour >= self.Config.Restriction.Hour
+    then
+        scoreScalar = 3
+    end
+    
+    return scoreScalar
+end
+
 -- Track Clients Prewarm Time
 local function TrackClient(self, client, _clientID)
     local now = Shared.GetTime()
@@ -123,17 +138,12 @@ local function TrackClient(self, client, _clientID)
     
     local data = GetPlayerData(self,_clientID)
     local player = client:GetControllingPlayer()
-    local team = player:GetTeamNumber()
     
     local trackedTime = math.floor(now - self.PrewarmTracker[_clientID])
     data.time = data.time + trackedTime
 
     if not self.Config.Validated then
-        local scoreScalar = 1
-        if team == kTeam1Index or team == kTeam2Index then
-            scoreScalar = 3
-        end
-        data.score = data.score + trackedTime * scoreScalar
+        data.score = data.score + trackedTime * GetPrewarmScalar(self,player)
     end
     
     self.PrewarmTracker[_clientID] = now
@@ -148,10 +158,11 @@ local function TrackAllClients(self)
     end
 end
 
-local function ValidateClient(self, _clientID, _data, _tier, _credit)
+local function ValidateClient(self, _clientID, _data, _tier, _credit,_scoreOverride)
     _data = _data or GetPlayerData(self,_clientID)
     _data.tier = _tier
     _data.credit = _data.credit + _credit
+    _data.score = _scoreOverride and _scoreOverride or _data.score
     
     local client = Shine.GetClientByNS2ID(_clientID)
     if not client then return end
@@ -384,7 +395,7 @@ function Plugin:CreateMessageCommands()
     :AddParam{ Type = "number", Round = true, Min = 0, Max = 15, Default = 3 }
     :Help( "设置玩家的预热状态以及预热点数,例如!prewarm_validate 5 3.(设置玩家段位4并给予3点预热点)")
     
-    self:BindCommand( "sh_prewarm_cancel", "prewarm_cancel", function(_client,_targetID) ValidateClient(self,_targetID,nil,0,0) end,true )
+    self:BindCommand( "sh_prewarm_cancel", "prewarm_cancel", function(_client,_targetID) ValidateClient(self,_targetID,nil,0,0,0) end,true )
         :AddParam{ Type = "steamid" }
         :Help( "取消玩家的预热点数(例如使用了连点器/作弊).")
     

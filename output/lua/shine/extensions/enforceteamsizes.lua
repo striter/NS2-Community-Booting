@@ -19,17 +19,25 @@ Plugin.SkillLimitMode = table.AsEnum{
 }
 
 Plugin.DefaultConfig = {
-	Team = { 12 , 12 , 5},
-	TeamForceJoin = 3,
 	SlotCoveringBegin = 15,
-	BlockSpectators = true,
-	Constrains = {
-		Mode = Plugin.SkillLimitMode.NONE,
-		MinPlayerCount = 16,
-		Constant = {
-			MinSkill = -1,
-			MaxSkill = -1,
-		}
+	Setting = {
+		Mode = Plugin.SkillLimitMode.NOOB,
+		MinPlayerCount = 28,
+		Team = { 12 , 12 },
+		TeamForceJoin = 3,
+		SkillRange = {-1,-1},
+		BlockSpectators = true,
+	},
+	SettingOverride = {
+		HourRange = {-1,-1},
+		Setting = {
+			Mode = Plugin.SkillLimitMode.NONE,
+			MinPlayerCount = 16,
+			Team = { 12 , 12 },
+			TeamForceJoin = 0,
+			SkillRange = {-1,-1},
+			BlockSpectators = false,
+		},
 	},
 	
 	RestrictedOperation = 
@@ -52,14 +60,11 @@ Plugin.CheckConfigTypes = true
 
 do
 	local Validator = Shine.Validator()
-	Validator:AddFieldRule( "Team",  Validator.IsType( "table", Plugin.DefaultConfig.Team ))
-	Validator:AddFieldRule( "TeamForceJoin",  Validator.IsType( "number", Plugin.DefaultConfig.TeamForceJoin ))
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
-	Validator:AddFieldRule( "BlockSpectators",  Validator.IsType( "boolean", Plugin.DefaultConfig.BlockSpectators ))
 	Validator:AddFieldRule( "RestrictedOperation", Validator.IsType( "table", Plugin.DefaultConfig.RestrictedOperation ) )
-	Validator:AddFieldRule( "Constrains", Validator.IsType( "table", Plugin.DefaultConfig.Constrains ) )
-	Validator:AddFieldRule( "Constrains.Constant", Validator.IsType( "table", Plugin.DefaultConfig.Constrains.Constant ) )
-
+	Validator:AddFieldRule( "Setting", Validator.IsType( "table", Plugin.DefaultConfig.Setting ) )
+	Validator:AddFieldRule( "SettingOverride.HourRange", Validator.IsType( "table", Plugin.DefaultConfig.SettingOverride.HourRange ) )
+	Validator:AddFieldRule( "SettingOverride", Validator.IsType( "table", Plugin.DefaultConfig.SettingOverride ) )
 	Validator:AddFieldRule( "NewComerBypass",  Validator.IsType( "table", Plugin.DefaultConfig.NewComerBypass ))
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
 
@@ -72,16 +77,26 @@ local errorColorTable = { 236, 112, 99 }
 local kTeamJoinTracker = { }
 local kRestrictionJoinTracker = {}
 
+local function GetConstrains(self)
+	local hour = kCurrentHour
+	local override = self.Config.SettingOverride
+	
+	local hourMin = override.HourRange[1]
+	local hourMax = override.HourRange[2]
+	local isOverride = hour >= hourMin and hour <= hourMax  --0-24
+	if not isOverride then
+		hour = hour + 24
+		isOverride = hour >= hourMin and hour <= hourMax		--12 - 36 range 
+	end
+	
+	local constrains = isOverride and override.Setting or self.Config.Setting
+	constrains.IsOverride = isOverride
+	return constrains
+end
+
 function Plugin:Initialise()
 	self.Enabled = true
-
-	self.Constrains = {
-		Mode = self.Config.Constrains.Mode,
-		MinSkill = self.Config.Constrains.Constant.MinSkill,
-		MaxSkill = self.Config.Constrains.Constant.MaxSkill,
-		--MinHour = -1,
-		--MaxHour = -1,
-	}
+	self.Constrains = GetConstrains(self)
 	self:CreateCommands()
 	Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
 	return true
@@ -105,9 +120,9 @@ function Plugin:GetNumPlayers(Team)
 end
 
 function Plugin:GetPlayerLimit(Gamerules,Team)
-	local basePlayerLimit = self.Config.Team[Team]
-	if Team == kSpectatorIndex and self.Config.BlockSpectators then
-		local leastPlayersInGame = self.Config.Team[kTeam1Index] + self.Config.Team[kTeam2Index]
+	local basePlayerLimit = self.Constrains.Team[Team]
+	if Team == kSpectatorIndex and self.Constrains.BlockSpectators then
+		local leastPlayersInGame = self.Constrains.Team[kTeam1Index] + self.Constrains.Team[kTeam2Index]
 		local inServerPlayers = Shine.GetHumanPlayerCount()
 		if inServerPlayers < leastPlayersInGame then return 99 end 	--They are seeding
 		return inServerPlayers - leastPlayersInGame,basePlayerLimit	--Join the game little f**k
@@ -191,8 +206,8 @@ function Plugin:UpdateConstrains()
 		self.Timer:Destroy()
 		self.Timer = nil
 	end
-
-	local config = self.Config.Constrains
+	
+	local constrains = GetConstrains(self)
 	local type = self.Constrains.Mode
 	if type == Plugin.SkillLimitMode.NONE then
 		return 
@@ -204,7 +219,7 @@ function Plugin:UpdateConstrains()
 		--activeClientCount = activeClientCount + 1
 		if not client:GetIsVirtual() then
 			local skill = client:GetControllingPlayer():GetPlayerSkill()
-			if skill > self.Constrains.MinSkill then
+			if skill > self.Constrains.SkillRange[1] then
 				table.insert(clientSkillTable, { skill = skill })
 			end
 		end
@@ -218,10 +233,10 @@ function Plugin:UpdateConstrains()
 		table.sort(clientSkillTable,RankCompare)
 		
 		--local connectingClientCount = Server.GetNumClientsTotal() - activeClientCount
-		local validateClientCount = config.MinPlayerCount -- - connectingClientCount
+		local validateClientCount = constrains.MinPlayerCount -- - connectingClientCount
 		local finalValue = clientSkillTable[math.min(#clientSkillTable, validateClientCount)].skill
 	
-		self.Constrains.MaxSkill = math.max(self.Config.Constrains.Constant.MaxSkill,finalValue + 1)
+		self.Constrains.SkillRange[2] = math.max(constrains.SkillRange[2],finalValue + 1)
 	end
 		
 	self.Timer = self:SimpleTimer( 5, function()
@@ -232,9 +247,9 @@ end
 function Plugin:GetPlayerSkillLimited(_player,_team)
 	
 	local skill = math.max(_player:GetPlayerSkill(),0)
-	local skillLimited = skill < self.Constrains.MinSkill
-	if self.Constrains.MaxSkill > 0 then
-		skillLimited = skillLimited or skill > self.Constrains.MaxSkill
+	local skillLimited = skill < self.Constrains.SkillRange[1]
+	if self.Constrains.SkillRange[2] > 0 then
+		skillLimited = skillLimited or skill > self.Constrains.SkillRange[2]
 	end
 	
 	return skillLimited,skill
@@ -244,7 +259,7 @@ function Plugin:GetPlayerRestricted(_player,_team)
 	local skillLimited, finalSkill =  self:GetPlayerSkillLimited(_player,_team)
 	if skillLimited then
 		self:Notify(_player, string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).",
-				finalSkill,self.Constrains.MinSkill,self.Constrains.MaxSkill < 0 and "∞" or self.Constrains.MaxSkill),
+				finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2]),
 				errorColorTable,nil)
 		return self:OnPlayerRestricted(_player,_team)
 	end
@@ -291,7 +306,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			forceCredit = 0
 			forcePrivilegeTitle = "预热观战位"
 		else
-			local forceJoinLimit = basePlayerLimit + self.Config.TeamForceJoin
+			local forceJoinLimit = basePlayerLimit + self.Constrains.TeamForceJoin
 			if playerNum >= forceJoinLimit then
 				self:Notify(_player,string.format( "[%s]已爆满(>=%s),无法再增加任何玩家,请继续观战,等待空位/分服或加入有空位的服务器.", teamName ,forceJoinLimit),errorColorTable)
 				couldBeIgnored = false
@@ -353,15 +368,14 @@ function Plugin:OnEndGame(_winningTeam)
 end
 
 local function RestrictionDisplay(self,_client)
-	local skillLimitMin = self.Constrains.MinSkill
-	local skillLimitMax = self.Constrains.MaxSkill < 0 and "∞" or tostring(self.Constrains.MaxSkill)
+	local skillLimitMin = self.Constrains.SkillRange[1]
+	local skillLimitMax = self.Constrains.SkillRange[2] < 0 and "∞" or tostring(self.Constrains.SkillRange[2])
 	--local hourLimitMin = self.Constrains.MinHour
 	--local hourLimitMax = self.Constrains.MaxHour < 0  and "∞" or tostring(self.Constrains.MaxHour)
-	local addition = self.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" or "动态新兵"
-	self:Notify(_client,string.format("当前人数限制:陆战队:%s,卡拉异形:%s\n分数限制:[%s - %s]%s.", 
-			self.Config.Team[1], self.Config.Team[2],
+	self:Notify(_client,string.format("队伍容量:陆战队:%s,卡拉异形:%s\n分数限制:[%s - %s]%s.",
+			self.Constrains.Team[1], self.Constrains.Team[2],
 			skillLimitMin,skillLimitMax,
-			addition
+			self.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" or "动态新兵"
 	),self.Config.MessageNameColor,nil)
 end
 
@@ -377,12 +391,28 @@ function Plugin:CreateCommands()
 		end
 	end
 	
-	local showRestriction = self:BindCommand( "sh_restriction", "restriction", NotifyClient , true) 
-	showRestriction:Help( "示例: !restriction 传回当前的队伍限制" )
+	self:BindCommand( "sh_restriction", "restriction", NotifyClient , true) 
+	:Help( "示例: !restriction 传回当前的队伍限制" )
+
+	local function NotifyClientDebug(_client)
+		local skillLimitMin = self.Constrains.SkillRange[1]
+		local skillLimitMax = self.Constrains.SkillRange[2] < 0 and "∞" or tostring(self.Constrains.SkillRange[2])
+		self:Notify(_client,string.format("当前设置:陆战队:%s,卡拉异形:%s\n分数限制:[%s - %s]%s.\n覆盖模式:%s,额外人数:%s,观战限制:%s",
+				self.Constrains.Team[1], self.Constrains.Team[2],
+				skillLimitMin,skillLimitMax,
+				self.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" or "动态新兵",
+				self.Constrains.IsOverride,
+				self.Constrains.TeamForceJoin,
+				self.Constrains.BlockSpectators
+		),self.Config.MessageNameColor)
+	end
+
+	self:BindCommand( "sh_restriction_debug", "restriction_debug", NotifyClientDebug)
+		:Help( "示例: !restriction_debug 传回服务器的额外设置" )
 	
-	local function SetTeamSize(_client, _team1, _team2,_save)
-		self.Config.Team[kTeam1Index] = _team1
-		self.Config.Team[kTeam2Index] = _team2
+	local function SetTeamSize(_client, _team1, _team2)
+		self.Constrains.Team[kTeam1Index] = _team1
+		self.Constrains.Team[kTeam2Index] = _team2
 
 		local RRQPlugin = Shine.Plugins["readyroomqueue"]
 		if RRQPlugin and RRQPlugin.Enabled then
@@ -390,13 +420,11 @@ function Plugin:CreateCommands()
 		end
 
 		NofityAll()
-		if _save then self:SaveConfig() end
 	end
 	
 	self:BindCommand( "sh_restriction_size", "restriction_size", SetTeamSize)								 
 	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 0 }
 	:AddParam{ Type = "number", Round = true, Min = 0, Max = 28, Default = 0 }
-	:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
 	:Help( "示例: !restriction_size 14 12 true. 将服务器的队伍人数上限设置为,队伍一(陆战队):14人,队伍二(卡拉):12人 并保存" )
 
 	--local function SetHourLimit(_client, _min,_max,_save)
@@ -413,8 +441,7 @@ function Plugin:CreateCommands()
 	
 	local function SetSkillLimit(_client, _min,_max)
 		self.Constrains.Mode = Plugin.SkillLimitMode.NONE
-		self.Constrains.MinSkill = _min
-		self.Constrains.MaxSkill = _max
+		self.Constrains.SkillRange = {_min,_max}
 
 		NofityAll()
 	end
@@ -440,7 +467,7 @@ function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
 	local maxPlayer = math.max( team1Max, team2Max )
 
 	for i = 1, 2 do
-		local teamRestriction = self.Config.Team[i]
+		local teamRestriction = self.Constrains.Team[i]
 		local teamMaxPlayer = math.max( teamRestriction, maxPlayer )
 		for j = #TeamMembers[i], teamMaxPlayer + 1, -1 do
 			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )				--Move player into the ready room
