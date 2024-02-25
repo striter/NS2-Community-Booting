@@ -235,8 +235,7 @@ function Plugin:UpdateConstrains()
 		--local connectingClientCount = Server.GetNumClientsTotal() - activeClientCount
 		local validateClientCount = constrains.MinPlayerCount -- - connectingClientCount
 		local finalValue = clientSkillTable[math.min(#clientSkillTable, validateClientCount)].skill
-	
-		self.Constrains.SkillRange[2] = math.max(constrains.SkillRange[2],finalValue + 1)
+		self.Constrains.SkillRange[2] = finalValue + 1
 	end
 		
 	self.Timer = self:SimpleTimer( 5, function()
