@@ -181,17 +181,7 @@ local function InRange(range,value)
 end
 
 function Plugin:HasReservedSlotAccess( Client )
-	Shared.Message("//")
-	Shared.Message("//")
-	Shared.Message("//")
-	Shared.Message("//")
-	Shared.Message("//")
-	Shared.Message("//")
 	if InRange(self.Config.SkillByPassRange, self.HistoryRank[tostring(Client)] or 0) then
-		Shared.Message("??")
-		Shared.Message("??")
-		Shared.Message("??")
-		Shared.Message("??")
 		return true
 	end
 	
