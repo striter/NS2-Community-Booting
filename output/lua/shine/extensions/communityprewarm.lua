@@ -116,16 +116,18 @@ end
 local function GetPrewarmScalar(self,player)
 
     local team = player:GetTeamNumber()
-    local scoreScalar = 1
-    
-    if player:GetScore() > 50 
-        and (team == kTeam1Index or team == kTeam2Index) 
+
+    if team ~= kSpectatorIndex 
         and kCurrentHour >= self.Config.Restriction.Hour
     then
-        scoreScalar = 3
+        local score = player:GetScore()
+        local commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()
+
+        local activePlayed = score > 50 or commTime > 300
+        return activePlayed and 3 or 1
     end
     
-    return scoreScalar
+    return 1
 end
 
 -- Track Clients Prewarm Time

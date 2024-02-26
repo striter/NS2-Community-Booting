@@ -120,7 +120,7 @@ function Plugin:GetNumPlayers(Team)
 end
 
 function Plugin:GetPlayerLimit(Gamerules,Team)
-	local basePlayerLimit = self.Constrains.Team[Team]
+	local basePlayerLimit = self.Constrains.Team[Team] or 99
 	if Team == kSpectatorIndex and self.Constrains.BlockSpectators then
 		local leastPlayersInGame = self.Constrains.Team[kTeam1Index] + self.Constrains.Team[kTeam2Index]
 		local inServerPlayers = Shine.GetHumanPlayerCount()
