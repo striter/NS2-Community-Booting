@@ -176,12 +176,44 @@ function Plugin:GetMaxSpectatorSlots()
 	return GetMaxSpectators()
 end
 
+local function RangeValid(range)
+	return range[1] >= 0 or range[2] >= 0
+end
+
 local function InRange(range,value)
-	return range[1] <= value and value <= range[2] 
+	if range[1] > 0 and range[2] > 0 then
+		return range[1] <= value and value <= range[2]
+	end
+
+	if range[1] < 0 and range[2] > 0 then
+		return value <= range[2]
+	end
+
+	if range[1] > 0 and range[2] < 0 then
+		return range[1] <= value
+	end
+	
+	return true
+end
+
+local function RangeString(range)
+	if range[1] > 0 and range[2] > 0 then
+		return string.format("[%s-%s]",range[1],range[2])	
+	end
+	
+	if range[1] < 0 and range[2] > 0 then
+		return string.format("[<=%s]",range[2])
+	end
+
+	if range[1] > 0 and range[2] < 0 then
+		return string.format("[>=%s]",range[1])
+	end
+	
+	return "无限制"
 end
 
 function Plugin:HasReservedSlotAccess( Client )
-	if InRange(self.Config.SkillByPassRange, self.HistoryRank[tostring(Client)] or 0) then
+	if RangeValid(self.Config.SkillByPassRange) and InRange(self.Config.SkillByPassRange, self.HistoryRank[tostring(Client)] or 0) then
 		return true
 	end
 	
@@ -264,7 +296,14 @@ Plugin.ConnectionHandlers = {
 
 		-- Deny entirely if the server is completely full or they have no
 		-- reserved slot access and only reserved slots are left.
-		return false, HasSlots and "Slot is reserved." or "Server is currently full."
+		
+		local denyReason = HasSlots and "请获取预留位.\nSlot is reserved." or "服务器已满.\nServer full."
+		if RangeValid(self.Config.SkillByPassRange) then
+			local rangeString = RangeString(self.Config.SkillByPassRange)
+			denyReason = string.format("%s分段可获本服预留位.\nSlot reserved for specific skill players.",rangeString)
+		end
+		
+		return false, denyReason
 	end
 }
 

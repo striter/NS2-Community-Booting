@@ -19,6 +19,7 @@ Plugin.ConfigName = "NewcomerProtection.json"
 Plugin.DefaultConfig = {
 	MinSkillToCommand = 0,
 	["Tier"] ={100,300,500},
+	TierShiftHour = 30,
 	["MarineGears"] = false,
 	["Refund"] = true,
 	["RefundMultiply"] = { 0.8 , 0.5 , 0.3},
@@ -41,6 +42,7 @@ Plugin.CheckConfigTypes = true
 Plugin.ConfigMigrationSteps = { }
 do
 	local Validator = Shine.Validator()
+	Validator:AddFieldRule( "TierShiftHour",  Validator.IsType( "number", Plugin.DefaultConfig.TierShiftHour ))
 	Validator:AddFieldRule( "BelowSkillNotify",  Validator.IsType( "number", Plugin.DefaultConfig.BelowSkillNotify ))
 	Validator:AddFieldRule( "MinSkillToCommand",  Validator.IsType( "number", Plugin.DefaultConfig.MinSkillToCommand ))
 	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
@@ -90,6 +92,18 @@ local function GetClientAndTier(player)
 		end
 	end
 
+	if tier > 0 then
+		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+		if crEnabled then
+			local communityData = cr:GetCommunityData(client:GetUserId())
+			if communityData.timePlayed then
+				if (communityData.timePlayed / 60 ) > Plugin.Config.TierShiftHour then
+					tier = math.min(tier + 1,#Plugin.Config.Tier)
+				end
+			end
+		end
+	end
+	
 	return client,tier
 end
 
@@ -101,14 +115,14 @@ local function CheckPlayerForcePurchase(self, player, purchaseTech)
 			local cost = LookupTechData(purchaseTech,kTechDataCostKey,0)
 			if cost > 0 then
 				local replaceMapName = LookupTechData(purchaseTech,kTechDataMapName)
-				local additionalCost = math.floor(cost * 0.1) + 1
+				local additionalCost = math.floor(cost * 0.15) + 1
 				cost = cost + additionalCost
 				player:AddResources(-cost)
 				player.lastUpgradeList = {}
 				Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
-						234, 250, 241, string.format("您的个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为科技/演化(该功能到达特定段位后失效).",cost, additionalCost))
+						234, 250, 241, string.format("个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为科技/演化(该功能到达特定段位后失效).",cost, additionalCost))
 				Shine:NotifyDualColour( player, 88, 214, 141, "[提示]",
-						234, 250, 241, "<物竞天择2>核心为科技追逐,过度积攒个人资源将导致您和您的队伍团队处于劣势!同时您所处的段位拥有[阵亡补偿],请利用该期间寻找游戏乐趣与最适合自己的职能定位." )
+						234, 250, 241, "过度积攒个人资源将导致您和您的队伍团队处于劣势!同时您所处的段位拥有[阵亡补偿],请积极寻找自己的职能定位." )
 				return true
 			end
 		end

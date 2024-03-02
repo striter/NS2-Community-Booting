@@ -604,10 +604,12 @@ end
 
 function Plugin:RecordResolveData(data,rawData)
     data.timePlayed = GetNumber(rawData.timePlayed)
+    data.timePlayedCommander = GetNumber(rawData.timePlayedCommander)
     data.roundPlayed = GetNumber(rawData.roundPlayed)
     data.roundFinished = GetNumber(rawData.roundFinished)
+    data.roundFinishedCommander = GetNumber(rawData.roundFinishedCommander)
     data.roundWin = GetNumber(rawData.roundWin)
-    --Shared.Message(rawData.timePlayed)
+    data.roundWinCommander = GetNumber(rawData.roundWinCommander)
 end
 
 function Plugin:EndGameRecord(lastRoundData)
@@ -615,10 +617,20 @@ function Plugin:EndGameRecord(lastRoundData)
     local gameLength = lastRoundData.RoundInfo.roundLength
     
     local function RecordPlayer(playerData,data,wins)
-        playerData.timePlayed = (playerData.timePlayed or 0) + math.floor(data.timePlayed/60)
-        if data.timePlayed / gameLength > 0.9 then
+        local playTime = math.floor(data.timePlayed/60)
+        local commTime = math.floor(data.commanderTime / 60)
+        local validPlay = data.timePlayed / gameLength > 0.9
+        local validCommander = data.commanderTime / gameLength > 0.8
+        
+        playerData.timePlayed = (playerData.timePlayed or 0) + playTime
+        playerData.timePlayedCommander = (playerData.timePlayedCommander or 0) + commTime
+        if validPlay then
             playerData.roundFinished = (playerData.roundFinished or 0) + 1
             playerData.roundWin =  (playerData.roundWin or 0) + (wins and 1 or 0)
+            if validCommander then
+                playerData.roundFinishedCommander = (playerData.roundFinishedCommander or 0) + 1
+                playerData.roundWinCommander = (playerData.roundWinCommander or 0) + (wins and 1 or 0)
+            end
         end
     end
 
@@ -656,8 +668,9 @@ function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
     local data = GetPlayerData(self,_targetClient:GetUserId())
     Shine:NotifyDualColour( _notifyClient:GetControllingPlayer(),  236, 112, 99 ,"[历史记录]",
             255,255,255,
-            string.format("%s的社区历史记录:游玩时长:%d小时,对局数(完整/胜局/全部):%d/%d/%d",
-                    player:GetName(), math.floor((data.timePlayed or 0)/60), data.roundFinished or 0, data.roundWin or 0, data.roundPlayed or 0
+            string.format("<%s>的记录:\n[总时长%dh] [总局数%d] [完整%d] [胜局%d] \n指挥：[时长%dh] [对局%d] [胜局%d]",
+                    player:GetName(), math.floor((data.timePlayed or 0)/60), data.roundPlayed or 0,data.roundFinished or 0, data.roundWin or 0,
+                    math.floor((data.timePlayedCommander or 0)/60),data.roundFinishedCommander or 0, data.roundWinCommander or 0
             )
     )
 end
