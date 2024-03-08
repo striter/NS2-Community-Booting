@@ -329,7 +329,7 @@ function Plugin:CreateCommands()
 	end):
 	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
 	AddParam{ Type = "string", Help = "显示消息",Optional = true, Default = "服务器人满为患,开启被动分服." }:
-	Help( "示例: !redir_newcomer 1 20 昂?. 迁移[20]名<新屁股>去[1服]" )
+	Help( "示例: !redir_newcomer 20. 迁移[20]名<新屁股>去[预设置好的服务器]" )
 	
 	self:BindCommand( "sh_redir_oldass", "redir_oldass", function(_client,_count,_message)
 		local serverIndex = CheckTargetValid(_client)
@@ -340,7 +340,7 @@ function Plugin:CreateCommands()
 	end):
 	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
 	AddParam{ Type = "string", Help = "显示消息",Optional = true,  Default = "服务器已人满为患,开启被动分服." }:
-	Help( "示例: !redir_oldass 1 20. 迁移[20]名<老屁股>去[1服]" )
+	Help( "示例: !redir_oldass 20. 迁移[20]名<老屁股>去[预设置好的服务器]" )
 
 	local function AdminRedirectClient(_client,_id)
 		local serverIndex = CheckTargetValid(_client)

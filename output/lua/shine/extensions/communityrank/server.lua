@@ -158,6 +158,7 @@ function Plugin:OnEndGame(_winningTeam)
     self:EndGameElo(lastRoundData)
     self:EndGameReputation(lastRoundData)
     self:EndGameRecord(lastRoundData)
+    self:EndGameLastSeenName(lastRoundData)
     SavePersistent(self)
 end
 
@@ -206,7 +207,7 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.rankCommOffset = GetNumber(rawData.rankCommOffset)
     data.reputation = GetNumber(rawData.reputation)
     data.lastSeenName = rawData.lastSeenName
-    data.lastSeenDay = GetNumber(rawData.lastSeenDay)
+    data.lastSeenDay = rawData.lastSeenDay
     
     self:RecordResolveData(data,rawData)
     
@@ -645,6 +646,16 @@ function Plugin:EndGameRecord(lastRoundData)
     end
 end
 
+function Plugin:EndGameLastSeenName(lastRoundData)
+
+    local currentDate = string.format("%s-%s-%s",kCurrentYear,kCurrentMonth,kCurrentDay)
+    for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
+        local playerData = GetPlayerData(self,steamId)
+        playerData.lastSeenDay = currentDate
+        playerData.lastSeenName = playerStat.playerName
+    end
+end
+
 --Players chose to throw the game for lower elo
 function Plugin:RecordEloValidate(_player, _playerData)
     if not self.Config.Elo.Check
@@ -673,29 +684,6 @@ function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
                     math.floor((data.timePlayedCommander or 0)/60),data.roundFinishedCommander or 0, data.roundWinCommander or 0
             )
     )
-end
-
--- Last Seen Name Check
-function Plugin:PlayerEnter(_client)
-    local clientID = _client:GetUserId()
-    if clientID <= 0 then return end
-    
-    local player = _client:GetControllingPlayer()
-    local playerData = GetPlayerData(self,clientID)
-    
-    if not playerData.fakeData then return end     -- Better solutions?
-    
-    playerData.lastSeenDay = playerData.lastSeenDay or -2
-    playerData.lastSeenName = playerData.lastSeenName or nil
-    
-    local playerName = player:GetName()
-    if playerData.lastSeenName ~= playerName then
-        if math.abs(playerData.lastSeenDay - kCurrentDay) > 1 then
-            playerData.lastSeenDay = kCurrentDay
-            playerData.lastSeenName = playerName
-            player:SetPlayerExtraData(playerData)
-        end
-    end
 end
 
 function Plugin:CreateMessageCommands()
