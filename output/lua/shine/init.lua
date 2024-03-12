@@ -36,6 +36,7 @@ kCurrentYear = tmpDate.year
 kCurrentMonth = tmpDate.month
 kCurrentDay = tmpDate.day
 kCurrentHour = tmpDate.hour
+kCurrentHourFloat = kCurrentHour + tmpDate.min / 60
 
 Shine.BaseGamemode = "ns2"
 Shine.LoadScripts( Scripts )

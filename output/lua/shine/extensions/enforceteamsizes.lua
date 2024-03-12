@@ -78,7 +78,7 @@ local kTeamJoinTracker = { }
 local kRestrictionJoinTracker = {}
 
 local function GetConstrains(self)
-	local hour = kCurrentHour
+	local hour = kCurrentHourFloat
 	local override = self.Config.SettingOverride
 	
 	local hourMin = override.HourRange[1]
