@@ -11,11 +11,6 @@ Plugin.DefaultConfig = {
             Time = 300,
             Player = 16,
         },
-        HourValidate = {
-            Enable = false,
-            ScorePerHour = 2,
-            Maximum = 1200,
-        },
         ["Constants"] = {
             Default = 20,
             Tier =
@@ -83,7 +78,6 @@ do
     Validator:AddFieldRule( "Reputation.RageQuit.MinPlayer",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.MinPlayer ))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
-    Validator:AddFieldRule( "Elo.HourValidate",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.HourValidate ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
     Validator:AddFieldRule( "Elo.Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Player ))
     Validator:AddFieldRule( "Elo.Constants.Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Elo.Constants.Tier))
@@ -213,7 +207,7 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     
     local player = client:GetControllingPlayer()
     player:SetPlayerExtraData(data)
-    self:RecordEloValidate(player,data)
+    self:RecordEloValidate(client,player,data)
 end
 
 function Plugin:OnCommunityDBReceived()
@@ -230,10 +224,7 @@ function Plugin:ClientConnect( _client )
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
 
-    local groupName,groupData = GetUserGroup(_client)
     local player = _client:GetControllingPlayer()
-    player:SetGroup(groupName)
-    Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{Tier = groupData.Tier or 0},true)
 
     local playerData = GetPlayerData(self,clientID)
     playerData.lastSeenIP = IPAddressToString(Server.GetClientAddress(_client))
@@ -657,21 +648,19 @@ function Plugin:EndGameLastSeenName(lastRoundData)
 end
 
 --Players chose to throw the game for lower elo
-function Plugin:RecordEloValidate(_player, _playerData)
-    if not self.Config.Elo.Check
-            or not self.Config.Elo.HourValidate.Enable
-            or _player:GetIsVirtual()
-    then return end
+function Plugin:RecordEloValidate(_client,_player, data)
+    if  _player:GetIsVirtual()
+     then return end
 
-    local steamId =_player:GetClient():GetUserId();
-    local hour = math.floor((_playerData.timePlayed or 0) / 60)
-    if hour <= 0 then return end
-
-    local marineSkill = GetMarineFinalSkill(_player)
-    local alienSkill = GetAlienFinalSkill(_player)
-    local leastRank = math.min(hour * self.Config.Elo.HourValidate.ScorePerHour,self.Config.Elo.HourValidate.Maximum)
-    if marineSkill >= leastRank and alienSkill >= leastRank then return end
-    RankPlayer(self,_player, steamId,math.max(marineSkill,leastRank),math.max(alienSkill,leastRank),nil,nil)
+    local groupName,groupData = GetUserGroup(_client)
+    _player:SetGroup(groupName)
+    Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{
+        Tier = groupData.Tier or 0,
+        TimePlayed = data.timePlayed or 0, 
+        RoundWin = data.roundWin or 0,
+        TimePlayedCommander = data.timePlayedCommander or 0,
+        RoundWinCommander = data.roundWinCommander or 0
+    },true)
 end
 
 function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)

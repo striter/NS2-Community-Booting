@@ -259,6 +259,11 @@ local kCallingCardUnlockedTooltips =
 local kCallingCardLockedTooltipOverrides =
 {
     [kCallingCards.Rookie]          = "CALLINGCARD_ROOKIE_LOCKED_TOOLTIP",
+    [kCallingCards.Dragon] =        "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
+    [kCallingCards.Chiikawa]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
+    [kCallingCards.Tom]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
+    [kCallingCards.UShouldDie]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
+    [kCallingCards.KittyKitty]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
     [kCallingCards.Genshin]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
 }
 
@@ -268,6 +273,11 @@ end
 
 function GetCallingCardUnlockedTooltipIdentifier(callingCard)
     return kCallingCardUnlockedTooltips[callingCard]
+end
+
+function GetCallingCardItemId(callingCardId)
+    local data = kCallingCardData[callingCardId]
+    return data and data.itemId or nil
 end
 
 function GetCallingCardTextureDetails(callingCard)

@@ -10,13 +10,14 @@ kUShouldDieCardItemId = 13033
 kTomCardItemId = 13034
 kGenshinItemId = 13035
 
-
 gCommunityUnlocks = {
     [0]={
+    },
+    [1]={
         kWoodAxeItemId,
         kWoodPistolItemId,
         kWoodRifleItemId,
-
+        
         kSkulkHugCardItemId,
         kBabyMarineCardItemId,
         kNedRageCardItemId,
@@ -25,8 +26,7 @@ gCommunityUnlocks = {
         kJobWeldDoneCardItemId,
         kBalanceGorgeCardItemId,
         kLorkCardItemId,
-    },
-    [1]={
+        
         kAssaultArmorItemId,
         kAbyssSkulkItemId,
 
@@ -48,15 +48,16 @@ gCommunityUnlocks = {
         kDamascusGreenPistolItemId,
         kDamascusGreenRifleItemId,
 
-        kShadowTunnelItemId,
-        kShadowGorgeItemId,
-        kShadowStructuresItemId,
-
         kTableFlipGorgeCardItemId,
         kAngryOnosCardItemId,
         kOhNoesCardItemId,
     },
     [3]={
+        kShadowTunnelItemId,
+        kShadowGorgeItemId,
+        kShadowStructuresItemId,
+        kTanithSkulkItemId,
+        
         kWidowSkulkItemId,
         kDamascusPurpleAxeItemId,
         kDamascusPurplePistolItemId,

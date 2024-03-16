@@ -10,12 +10,11 @@ end
 
 function Plugin:OnFirstThink()
     Shine.Hook.SetupGlobalHook( "GetOwnsItem", "CheckCommunityGadgets", "Replace" )
-    self.playerCommunityTier = 0
 end
 
 Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
-    Plugin.playerCommunityTier = Message.Tier or 0
-    Shared.Message(string.format("[CNCT] Tier Set %i",Plugin.playerCommunityTier ))
+    Plugin.playerCommunityData = Message
+    Shared.Message(string.format("[CNCT] Tier Set %i|%i|%i|%i|%i",Message.Tier,Message.TimePlayed,Message.RoundWin,Message.TimePlayedCommander,Message.RoundWinCommander ))
     
     GetGlobalEventDispatcher():FireEvent("OnUserStatsAndItemsRefreshed")
     SendPlayerCallingCardUpdate()
@@ -23,8 +22,13 @@ Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     GetCustomizeScene():RefreshOwnedItems()
 end )
 
+function Plugin:GetCommunityData()
+    return self.playerCommunityData
+end
+
+
 function Plugin:CheckCommunityGadgets(_item)
-    return CommunityGetOwnsItem(_item,self.playerCommunityTier)
+    return CommunityGetOwnsItem(_item,self.playerCommunityData)
 end
 
 local kZeroStr = "0"

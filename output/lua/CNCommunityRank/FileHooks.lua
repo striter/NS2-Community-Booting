@@ -16,4 +16,5 @@ ModLoader.SetupFileHook( "lua/menu2/PlayerScreen/CallingCards/GUIMenuCallingCard
 ModLoader.SetupFileHook( "lua/menu2/PlayerScreen/CallingCards/GUIMenuCallingCard.lua", "lua/CNCommunityRank/CallingCards/GUIMenuCallingCard.lua", "post")
 
 
-
+--Rewards
+ModLoader.SetupFileHook( "lua/menu2/MissionScreen/GMTDRewardsScreen.lua", "lua/CNCommunityRank/Rewards/GMTDRewardsScreen.lua", "post")
