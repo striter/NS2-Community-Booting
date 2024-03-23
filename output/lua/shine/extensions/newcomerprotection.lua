@@ -95,11 +95,8 @@ local function GetClientAndTier(player)
 	if tier > 0 then
 		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 		if crEnabled then
-			local communityData = cr:GetCommunityData(client:GetUserId())
-			if communityData.timePlayed then
-				if (communityData.timePlayed / 60 ) > Plugin.Config.TierShiftHour then
-					tier = math.min(tier + 1,#Plugin.Config.Tier)
-				end
+			if cr:GetCommunityPlayHour(client:GetUserId()) > Plugin.Config.TierShiftHour then		-- Shouldn't play for the lowest
+				tier = math.min(tier + 1,#Plugin.Config.Tier)
 			end
 		end
 	end

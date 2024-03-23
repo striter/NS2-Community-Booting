@@ -122,6 +122,13 @@ function Plugin:GetCommunityData(steamId)
     return GetPlayerData(self,steamId)
 end
 
+function Plugin:GetCommunityPlayHour(steamId)
+    local data = self:GetCommunityData(steamId)
+    
+    local minute = data.timePlayed
+    return minute and (minute / 60) or 0
+end
+
 function Plugin:ResetState()
     table.Empty(self.MemberInfos)
     ReadPersistent(self)

@@ -10,13 +10,10 @@ function GMTDRewardsScreen:FullUpdate()
         local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
         if crEnabled then
             local data = cr:GetCommunityData()
-            if data then
-                timePlayed = data.TimePlayed * 60       --Previous in seconds wtf
-                timePlayedComm = data.TimePlayedCommander * 60 
-                victories = data.RoundWin
-                victoriesComm = data.RoundWinCommander
-            end
-            
+            timePlayed = data.TimePlayed * 60       --Previous in seconds wtf
+            timePlayedComm = data.TimePlayedCommander * 60 
+            victories = data.RoundWin
+            victoriesComm = data.RoundWinCommander
         end
     end
     

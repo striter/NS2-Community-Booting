@@ -24,6 +24,7 @@ Plugin.DefaultConfig = {
 		Message = "服务器要炸了",
 		FailInformCount = 40,
 		FailInformMessage = "距离自动换服还差%i人",
+		SuccessfulInformMessage = "当前人数已满足条件(%i),当前对局结束后将尝试自动分服.",
 		FailInformPrefix = "[换服提示]",
 	},
 }
@@ -133,6 +134,7 @@ end
 	Validator:AddFieldRule( "CrowdAdvert.Message",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Message ))
 	Validator:AddFieldRule( "CrowdAdvert.FailInformPrefix",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.FailInformPrefix ))
 	Validator:AddFieldRule( "CrowdAdvert.FailInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.FailInformMessage ))
+	Validator:AddFieldRule( "CrowdAdvert.SuccessfulInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.SuccessfulInformMessage ))
 	Validator:AddFieldRule( "CrowdAdvert.FailInformCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.FailInformCount ))
 end
 
@@ -159,26 +161,26 @@ function Plugin:OnFirstThink()
 end
 
 
-local function NotifyCrowdFailed(self, _crowdingPlayers, _ignoreTeams)
-	if _crowdingPlayers >= self.Config.CrowdAdvert.FailInformCount then
-		local informMessage = string.format( self.Config.CrowdAdvert.FailInformMessage,self.Config.CrowdAdvert.PlayerCount - _crowdingPlayers)
-		for client in Shine.IterateClients() do
-			local team = client:GetControllingPlayer():GetTeamNumber()
-			if _ignoreTeams or team == kSpectatorIndex or team == kTeamReadyRoom then
-				Shine:NotifyDualColour(client,146, 43, 33,
-						self.Config.CrowdAdvert.FailInformPrefix,
-						253, 237, 236, informMessage)
-			end
+local function NotifyRedirectProgression(self, _playerCount, _ignoreTeams)
+
+	if _playerCount <= self.Config.CrowdAdvert.FailInformCount then return end
+
+	local informMessage = _playerCount < self.Config.CrowdAdvert.PlayerCount 
+						and string.format( self.Config.CrowdAdvert.FailInformMessage,self.Config.CrowdAdvert.PlayerCount - _playerCount)
+						or string.format(self.Config.CrowdAdvert.SuccessfulInformMessage,self.Config.CrowdAdvert.PlayerCount)
+	
+	for client in Shine.IterateClients() do
+		local team = client:GetControllingPlayer():GetTeamNumber()
+		if _ignoreTeams or team == kSpectatorIndex or team == kTeamReadyRoom then
+			Shine:NotifyDualColour(client,146, 43, 33,
+					self.Config.CrowdAdvert.FailInformPrefix,
+					253, 237, 236, informMessage)
 		end
 	end
 end
 
 function Plugin:NotifyCrowdRedirect()
-	local gameEndPlayerCount = Shine.GetHumanPlayerCount()
-	if gameEndPlayerCount < self.Config.CrowdAdvert.PlayerCount then
-		NotifyCrowdFailed(self,gameEndPlayerCount,false)		--Tells spectators/readyrooms
-	end
-
+	NotifyRedirectProgression(self,Shine.GetHumanPlayerCount(),false)		--Tells spectators/readyrooms
 	self:SimpleTimer(self.Config.CrowdAdvert.NotifyTimer, function() self:NotifyCrowdRedirect() end )
 end
 
@@ -191,7 +193,7 @@ function Plugin:OnMapVoteFinished()
 
 	local gameEndPlayerCount = Shine.GetHumanPlayerCount()
 	if gameEndPlayerCount < self.Config.CrowdAdvert.PlayerCount then
-		NotifyCrowdFailed(self,gameEndPlayerCount,false)		--Tells spectators/readyrooms
+		NotifyRedirectProgression(self,gameEndPlayerCount,false)		--Tells spectators/readyrooms
 		return
 	end
 
@@ -203,7 +205,7 @@ function Plugin:OnMapVoteFinished()
 	self.Timer = self:SimpleTimer(delay, function()
 		local currentPlayerCount = Shine.GetHumanPlayerCount()
 		if currentPlayerCount < self.Config.CrowdAdvert.PlayerCount then
-			NotifyCrowdFailed(self,currentPlayerCount,true)		--Tells everyone
+			NotifyRedirectProgression(self,currentPlayerCount,true)		--Tells everyone
 			return
 		end
 

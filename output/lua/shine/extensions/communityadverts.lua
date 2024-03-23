@@ -18,12 +18,14 @@ Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityAdverts.json"
 Plugin.DefaultConfig = { 
 	ShowLeave = false,
+	ShowLeaveToAdminOnly = true,
 }
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "ShowLeave",  Validator.IsType( "boolean", Plugin.DefaultConfig.ShowLeave ))
+	Validator:AddFieldRule( "ShowLeaveToAdminOnly",  Validator.IsType( "boolean", Plugin.DefaultConfig.ShowLeaveToAdminOnly ))
 end
 
 Plugin.KDefaultGroup = "DefaultGroup"
@@ -114,8 +116,12 @@ function Plugin:ClientDisconnect( Client )
 	local leaveMessage = userData.leave or groupData.leave
 	
 	if #leaveMessage > 0 then
-		Shine:NotifyDualColour( Shine.GetAllClients(), prefix[1], prefix[2], prefix[3],"[战区通知]",
-				leaveColor[1], leaveColor[2], leaveColor[3], string.format(leaveMessage,player:GetName()))
+		for client in Shine.IterateClients() do
+			if not self.Config.ShowLeaveToAdminOnly or Shine:HasAccess( Client, "sh_adminmenu" ) then
+				Shine:NotifyDualColour(client,prefix[1], prefix[2], prefix[3],"[战区通知]",
+						leaveColor[1], leaveColor[2], leaveColor[3], string.format(leaveMessage,player:GetName()))
+			end
+		end
 	end
 	-- Shared.Message("[CNCA] Member Exit:" .. tostring(Client:GetId()))
 end

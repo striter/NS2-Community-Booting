@@ -9,6 +9,13 @@ end
 
 
 function Plugin:OnFirstThink()
+    self.playerCommunityData = {
+        Tier = 0,
+        TimePlayed = 0,
+        RoundWin = 0,
+        TimePlayedCommander = 0,
+        RoundWinCommander = 0,
+    }
     Shine.Hook.SetupGlobalHook( "GetOwnsItem", "CheckCommunityGadgets", "Replace" )
 end
 
@@ -25,7 +32,6 @@ end )
 function Plugin:GetCommunityData()
     return self.playerCommunityData
 end
-
 
 function Plugin:CheckCommunityGadgets(_item)
     return CommunityGetOwnsItem(_item,self.playerCommunityData)

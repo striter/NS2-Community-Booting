@@ -39,15 +39,13 @@ local function CommunityTDUnlocks(_itemId,data)
 end
 
 function CommunityGetOwnsItem(_itemId, data)
-    if data then
-        if CommunityTDUnlocks(_itemId,data) then
-            return true
-        end
-        if CommunityRankUnlocks(_itemId,data.Tier) then
-            return true
-        end
+    if CommunityTDUnlocks(_itemId,data) then
+        return true
     end
     
+    if CommunityRankUnlocks(_itemId,data.Tier) then
+        return true
+    end
 
     return baseGetOwnsItem(_itemId)
 end

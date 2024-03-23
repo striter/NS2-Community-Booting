@@ -20,6 +20,9 @@ Plugin.SkillLimitMode = table.AsEnum{
 
 Plugin.DefaultConfig = {
 	SlotCoveringBegin = 15,
+	DynamicStartupSeconds = 45,
+	DynamicStartupMinHour = 50,
+	
 	Setting = {
 		Mode = Plugin.SkillLimitMode.NOOB,
 		MinPlayerCount = 28,
@@ -61,6 +64,8 @@ Plugin.CheckConfigTypes = true
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
+	Validator:AddFieldRule( "DynamicStartupSeconds",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupSeconds ))
+	Validator:AddFieldRule( "DynamicStartupMinHour",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupMinHour ))
 	Validator:AddFieldRule( "RestrictedOperation", Validator.IsType( "table", Plugin.DefaultConfig.RestrictedOperation ) )
 	Validator:AddFieldRule( "Setting", Validator.IsType( "table", Plugin.DefaultConfig.Setting ) )
 	Validator:AddFieldRule( "SettingOverride.HourRange", Validator.IsType( "table", Plugin.DefaultConfig.SettingOverride.HourRange ) )
@@ -96,14 +101,15 @@ end
 
 function Plugin:Initialise()
 	self.Enabled = true
-	self.Constrains = GetConstrains(self)
 	self:CreateCommands()
 	Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
 	return true
 end
 
 function Plugin:OnFirstThink()
-	self.Timer = self:SimpleTimer( 45, function()
+	self.Constrains = GetConstrains(self)
+	self.ConstrainsUpdated = self.Constrains.Mode == Plugin.SkillLimitMode.None
+	self.Timer = self:SimpleTimer( self.Config.DynamicStartupSeconds, function()
 		self:UpdateConstrains()
 	end )
 end
@@ -207,6 +213,7 @@ function Plugin:UpdateConstrains()
 		self.Timer = nil
 	end
 	
+	self.ConstrainsUpdated = true
 	local constrains = GetConstrains(self)
 	local type = self.Constrains.Mode
 	if type == Plugin.SkillLimitMode.NONE then
@@ -255,11 +262,24 @@ function Plugin:GetPlayerSkillLimited(_player,_team)
 end
 
 function Plugin:GetPlayerRestricted(_player,_team)
+
 	local skillLimited, finalSkill =  self:GetPlayerSkillLimited(_player,_team)
+	if not self.ConstrainsUpdated then
+		local client = Server.GetOwner(_player)
+		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+		local hourLimited = client and crEnabled and cr:GetCommunityPlayHour(client:GetUserId()) > self.Config.DynamicStartupMinHour 
+		
+		if skillLimited or hourLimited then
+			self:Notify(_player,string.format("动态分数启用,等待玩家加入中,请于%i秒后再次加入.",self.Config.DynamicStartupSeconds - Shared.GetTime()),errorColorTable,nil)
+			return self:OnPlayerRestricted(_player,_team)
+		end
+		
+		return false
+	end
+	
 	if skillLimited then
-		self:Notify(_player, string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).",
-				finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2]),
-				errorColorTable,nil)
+		self:Notify(_player,string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
+				,errorColorTable,nil)
 		return self:OnPlayerRestricted(_player,_team)
 	end
 
