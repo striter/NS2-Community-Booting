@@ -27,7 +27,7 @@ Plugin.DefaultConfig = {
 		Mode = Plugin.SkillLimitMode.NOOB,
 		MinPlayerCount = 28,
 		Team = { 12 , 12 },
-		TeamForceJoin = 3,
+		TeamForceJoin = { 24 , 30, 36 },
 		SkillRange = {-1,-1},
 		BlockSpectators = true,
 	},
@@ -37,7 +37,7 @@ Plugin.DefaultConfig = {
 			Mode = Plugin.SkillLimitMode.NONE,
 			MinPlayerCount = 16,
 			Team = { 12 , 12 },
-			TeamForceJoin = 0,
+			TeamForceJoin = {30,34,38},
 			SkillRange = {-1,-1},
 			BlockSpectators = false,
 		},
@@ -68,8 +68,9 @@ do
 	Validator:AddFieldRule( "DynamicStartupMinHour",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupMinHour ))
 	Validator:AddFieldRule( "RestrictedOperation", Validator.IsType( "table", Plugin.DefaultConfig.RestrictedOperation ) )
 	Validator:AddFieldRule( "Setting", Validator.IsType( "table", Plugin.DefaultConfig.Setting ) )
+	Validator:AddFieldRule( "Setting.TeamForceJoin", Validator.IsType( "table", Plugin.DefaultConfig.Setting.TeamForceJoin ) )
 	Validator:AddFieldRule( "SettingOverride.HourRange", Validator.IsType( "table", Plugin.DefaultConfig.SettingOverride.HourRange ) )
-	Validator:AddFieldRule( "SettingOverride", Validator.IsType( "table", Plugin.DefaultConfig.SettingOverride ) )
+	Validator:AddFieldRule( "SettingOverride.Setting.TeamForceJoin", Validator.IsType( "table", Plugin.DefaultConfig.SettingOverride.Setting.TeamForceJoin ) )
 	Validator:AddFieldRule( "NewComerBypass",  Validator.IsType( "table", Plugin.DefaultConfig.NewComerBypass ))
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
 
@@ -108,7 +109,7 @@ end
 
 function Plugin:OnFirstThink()
 	self.Constrains = GetConstrains(self)
-	self.ConstrainsUpdated = self.Constrains.Mode == Plugin.SkillLimitMode.None
+	self.ConstrainsUpdated = self.Constrains.Mode == Plugin.SkillLimitMode.NONE
 	self.Timer = self:SimpleTimer( self.Config.DynamicStartupSeconds, function()
 		self:UpdateConstrains()
 	end )
@@ -270,7 +271,7 @@ function Plugin:GetPlayerRestricted(_player,_team)
 		local hourLimited = client and crEnabled and cr:GetCommunityPlayHour(client:GetUserId()) > self.Config.DynamicStartupMinHour 
 		
 		if skillLimited or hourLimited then
-			self:Notify(_player,string.format("动态分数启用,等待玩家加入中,请于%i秒后再次加入.",self.Config.DynamicStartupSeconds - Shared.GetTime()),errorColorTable,nil)
+			self:Notify(_player,string.format("动态分数已启用,等待其他玩家加入中,请于%i秒后再次加入.",self.Config.DynamicStartupSeconds - Shared.GetTime()),errorColorTable,nil)
 			return self:OnPlayerRestricted(_player,_team)
 		end
 		
@@ -280,7 +281,15 @@ function Plugin:GetPlayerRestricted(_player,_team)
 	if skillLimited then
 		self:Notify(_player,string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
 				,errorColorTable,nil)
-		return self:OnPlayerRestricted(_player,_team)
+		
+		local restricted = self:OnPlayerRestricted(_player,_team)
+		if restricted then
+
+			self:Notify(_player,string.format("预热玩家将忽略上述限制,可等待分服,同时非高峰期将开放限制.", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
+			,errorColorTable,nil)
+		end
+		
+		return restricted
 	end
 
 	--local hour = Shine.PlayerInfoHub:GetSteamData(_player:GetClient():GetUserId()).PlayTime
@@ -300,6 +309,17 @@ function Plugin:GetPlayerRestricted(_player,_team)
 	--end
 
 	return false
+end
+
+local function GetForceJoinLimit(limitTable)
+	local forceJoinLimit = 0
+	local activeClient = Shine.GetHumanPlayerCount()
+	for k,v in ipairs(limitTable) do
+		if activeClient >= v then
+			forceJoinLimit = k
+		end
+	end
+	return forceJoinLimit
 end
 
 local TeamNames = { "陆战队","卡拉异形","观战" }
@@ -325,13 +345,14 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			forceCredit = 0
 			forcePrivilegeTitle = "预热观战位"
 		else
-			local forceJoinLimit = basePlayerLimit + self.Constrains.TeamForceJoin
-			if playerNum >= forceJoinLimit then
-				self:Notify(_player,string.format( "[%s]已爆满(>=%s),无法再增加任何玩家,请继续观战,等待空位/分服或加入有空位的服务器.", teamName ,forceJoinLimit),errorColorTable)
-				couldBeIgnored = false
-			else
-				self:Notify(_player,string.format( "[%s]人数已满(>=%s),请继续观战,等待空位/分服或加入有空位的服务器.", teamName ,basePlayerLimit),errorColorTable)
-			end
+			local notifyString
+			local forceJoinAmount = GetForceJoinLimit(self.Constrains.TeamForceJoin)
+			couldBeIgnored = playerNum >= (basePlayerLimit + forceJoinAmount)
+			
+			notifyString = string.format( "<%s>已满[>=%s人%s],请等待场内空位.", teamName ,basePlayerLimit,
+					forceJoinAmount > 0 and string.format("|%s预热位",forceJoinAmount) or "")
+			self:Notify(_player,notifyString,errorColorTable)
+			
 			available = false
 			forceCredit = 1
 			forcePrivilegeTitle = "预热入场通道"

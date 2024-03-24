@@ -197,6 +197,7 @@ end
 
 
 function Plugin:OnClientDBReceived(client, clientID, rawData)
+    local player = client:GetControllingPlayer()
     local data = GetPlayerData(self,clientID)
     --Resolve Data 
     data.fakeData = nil
@@ -210,11 +211,9 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.lastSeenName = rawData.lastSeenName
     data.lastSeenDay = rawData.lastSeenDay
     
-    self:RecordResolveData(data,rawData)
+    self:RecordResolveData(player,data,rawData)
     
-    local player = client:GetControllingPlayer()
     player:SetPlayerExtraData(data)
-    self:RecordEloValidate(client,player,data)
 end
 
 function Plugin:OnCommunityDBReceived()
@@ -223,6 +222,7 @@ function Plugin:OnCommunityDBReceived()
         if clientID > 0 then
             local rawData = Shine.PlayerInfoHub:GetCommunityData(clientID)
             self:OnClientDBReceived(client,clientID, rawData)
+            self:UpdateClientData(client,clientID)
         end
     end
 end
@@ -244,6 +244,27 @@ function Plugin:ClientConnect( _client )
     if not rawData then return end
     self:OnClientDBReceived(_client,clientID, rawData)
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
+end
+
+function Plugin:UpdateClientData(_client, _clientId)        --Split cause connecting client sometimes won't receive network message
+    local data = GetPlayerData(self, _clientId)
+    if data.fakeData then return end
+    local groupName,groupData = GetUserGroup(_client)
+    local player = _client:GetControllingPlayer()
+    player:SetGroup(groupName)
+    Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{
+        Tier = groupData.Tier or 0,
+        TimePlayed = data.timePlayed or 0,
+        RoundWin = data.roundWin or 0,
+        TimePlayedCommander = data.timePlayedCommander or 0,
+        RoundWinCommander = data.roundWinCommander or 0
+    },true)
+end
+
+function Plugin:ClientConfirmConnect(_client)
+    local clientID = _client:GetUserId()
+    if clientID <= 0 then return end
+    self:UpdateClientData(_client,clientID)
 end
 
 ----Elo
@@ -601,7 +622,7 @@ function Plugin:EndGameReputation(lastRoundData)
     table.clear(kRageQuitTracker)
 end
 
-function Plugin:RecordResolveData(data,rawData)
+function Plugin:RecordResolveData(player,data,rawData)
     data.timePlayed = GetNumber(rawData.timePlayed)
     data.timePlayedCommander = GetNumber(rawData.timePlayedCommander)
     data.roundPlayed = GetNumber(rawData.roundPlayed)
@@ -609,6 +630,9 @@ function Plugin:RecordResolveData(data,rawData)
     data.roundFinishedCommander = GetNumber(rawData.roundFinishedCommander)
     data.roundWin = GetNumber(rawData.roundWin)
     data.roundWinCommander = GetNumber(rawData.roundWinCommander)
+    if data.timePlayed then
+        player:SetRookie(not data.timePlayed or data.timePlayed < 1800)
+    end
 end
 
 function Plugin:EndGameRecord(lastRoundData)
@@ -652,22 +676,6 @@ function Plugin:EndGameLastSeenName(lastRoundData)
         playerData.lastSeenDay = currentDate
         playerData.lastSeenName = playerStat.playerName
     end
-end
-
---Players chose to throw the game for lower elo
-function Plugin:RecordEloValidate(_client,_player, data)
-    if  _player:GetIsVirtual()
-     then return end
-
-    local groupName,groupData = GetUserGroup(_client)
-    _player:SetGroup(groupName)
-    Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{
-        Tier = groupData.Tier or 0,
-        TimePlayed = data.timePlayed or 0, 
-        RoundWin = data.roundWin or 0,
-        TimePlayedCommander = data.timePlayedCommander or 0,
-        RoundWinCommander = data.roundWinCommander or 0
-    },true)
 end
 
 function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)

@@ -26,3 +26,8 @@ function GMTDRewardsScreen:FullUpdate()
     self:UpdateRewardsCompletion()
 
 end
+
+function GMTDRewardsScreen:OnRequiredMissionCompletedChanged()
+    local shouldLockScreen = false -- not self:GetRequiredMission():GetCompleted()
+    self:SetIsLocked(shouldLockScreen and not DEBUG_ALWAYSSHOWREWARDSSCREEN)
+end

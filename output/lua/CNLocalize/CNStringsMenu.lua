@@ -520,6 +520,7 @@ kTranslateMessage["MODS_STATE_6"] = "解压"
 kTranslateMessage["MODS_SUBSCRIBED"] = "已订阅"
 
 kTranslateMessage["THUNDERDOME_REWARDS_PULLOUT_TITLE"] = "社区战令"
+kTranslateMessage["BUY_THUNDERDOME_UNLOCK"] = "通过社区战令解锁"
 
 --Matched Play
 kTranslateMessage["THUNDERDOME_MISSION_TITLE"] = "物竞天择2中文社区战令"

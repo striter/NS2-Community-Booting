@@ -11,7 +11,7 @@ local IsType = Shine.IsType
 local Notify = Shared.Message
 local TableEmpty = table.Empty
 
-local Plugin = Shine.Plugin( ... )
+local Plugin = ...
 Plugin.Version = "1.0"
 Plugin.PrintName = "communityadverts"
 Plugin.HasConfig = true
@@ -19,6 +19,7 @@ Plugin.ConfigName = "CommunityAdverts.json"
 Plugin.DefaultConfig = { 
 	ShowLeave = false,
 	ShowLeaveToAdminOnly = true,
+	AnnouncementsURL = ""
 }
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
@@ -26,6 +27,7 @@ do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "ShowLeave",  Validator.IsType( "boolean", Plugin.DefaultConfig.ShowLeave ))
 	Validator:AddFieldRule( "ShowLeaveToAdminOnly",  Validator.IsType( "boolean", Plugin.DefaultConfig.ShowLeaveToAdminOnly ))
+	Validator:AddFieldRule( "AnnouncementsURL",  Validator.IsType( "string", Plugin.DefaultConfig.AnnouncementsURL ))
 end
 
 Plugin.KDefaultGroup = "DefaultGroup"
@@ -44,6 +46,16 @@ function Plugin:Initialise()
 end
 
 function Plugin:OnFirstThink()
+	if self.Config.AnnouncementsURL == "" then
+		return
+	end
+	Shine.PlayerInfoHub:Query(self.Config.AnnouncementsURL,function(response)
+		if not response or #response == 0 then return end
+		self.Announcements = json.decode(response)
+		for Client in Shine.IterateClients() do
+			self:ClientConfirmConnect(Client)	
+		end
+	end)
 end
 
 function Plugin:ResetState()
@@ -55,6 +67,14 @@ function Plugin:Cleanup()
 	return self.BaseClass.Cleanup( self )
 end
 
+--Announcements
+function Plugin:ClientConfirmConnect(_client)
+	if _client:GetIsVirtual() then return end
+
+	Shine.SendNetworkMessage(_client,"Shine_Announcement" ,self.Announcements,true)
+end
+
+--Enter/Leave Advert
 function Plugin:BuildGroupAdverts(_groupName)
 	local Group = _groupName and Shine:GetGroupData(_groupName) or Shine:GetDefaultGroup()
 	_groupName = _groupName or Plugin.KDefaultGroup 
@@ -103,6 +123,7 @@ function Plugin:PlayerEnter( Client )
 	end
 	-- Shared.Message("[CNCA] Member Name Set:" .. player:GetName())
 end
+
 
 function Plugin:ClientDisconnect( Client )
 	if not Client then return end

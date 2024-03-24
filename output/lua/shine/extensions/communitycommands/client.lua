@@ -46,24 +46,6 @@ function Plugin:Initialise()
             return
         end
 
-        --local kNoticeVersion = 1
-        --if CNPersistent.noticeVersion ~= kNoticeVersion then
-        --    CNPersistent.noticeVersion = kNoticeVersion
-        --    CNPersistentSave()
-        --    
-        --    local title = CNPersistent.forceLocalize and "提示" or "Tips"
-        --    local message = CNPersistent.forceLocalize 
-        --            and "NS2.0使用了很多额外贴图.\n若近期遇到频繁闪退问题.\n请于[主菜单]->[选项]->[画面]页卡.\n将[GPU显存]调至[Unlimited]." 
-        --            or "NS2.0 added tons of custom stuff.\nIf u encounter a lot crashes.\nPlease Try:\n[Main Menu]->[Option]->[Graphics].\nChange [GPU Memory] to [UNLIMITED]"
-        --    CreateGUIObject("NS2CNLocalizeSelection", GUIMenuPopupSimpleMessage, nil,
-        --        {
-        --            title = title,
-        --            message = message,
-        --            escDisabled = true,
-        --            buttonConfig ={ GUIPopupDialog.OkayButton},
-        --        })
-        --end
-        
     end )
 end
 
@@ -72,7 +54,6 @@ Shine.HookNetworkMessage( "Shine_PopupWarning", function( Message )
             {
                 title = Locale.ResolveString("WARNING"),
                 message = Message.Message,
-                escDisabled = true,
                 buttonConfig =
                 {
                     GUIPopupDialog.OkayButton,

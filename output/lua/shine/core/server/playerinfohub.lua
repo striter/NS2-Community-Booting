@@ -58,39 +58,8 @@ local function AddToHTTPQueue( Address, OnSuccess, OnTimeout)
 	if not working then ProcessQueue() end
 end
 
-function PlayerInfoHub:OnConnect( Client )
-	PROFILE("PlayerInfoHub:OnConnect()")
-	if not Shine:IsValidClient( Client ) then return end
-
-	local SteamId = Client:GetUserId()
-	if not SteamId or SteamId <= 0 then return end
-
-	local SteamId64 = StringFormat( "%s%s", 76561, SteamId + 197960265728 )
-
-	local steamData = PlayerInfoHub:GetSteamData(SteamId)
-
-	--[[
-	-- Status:
-	 - -2 = Fetching
-	 - -1 = Timeout
-	 ]]
-	if steamData.Validated then return end
-	steamData.Validated = true
-
-	AddToHTTPQueue( StringFormat( "http://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=372C1D52A38C8F6685153E2D87EDE66F&SteamId=%s&appids_filter[0]=4920", SteamId64 ), function( Response )
-		local returnVal = JsonDecode( Response )
-		returnVal = returnVal and returnVal.response and returnVal.response.games and returnVal.response.games[1]
-		if not returnVal then
-			steamData.PlayTime = -2
-			return
-		else
-			steamData.PlayTime = returnVal.playtime_forever and returnVal.playtime_forever / 60 or 0
-			local player = GetPlayerFromUserId(SteamId)
-			if player then
-				player:SetSteamData(steamData)
-			end
-		end
-	end,nil )
+function PlayerInfoHub:Query(url,callBack)
+	AddToHTTPQueue(url,callBack)
 end
 
 
@@ -100,7 +69,7 @@ function PlayerInfoHub:QueryDBIfNeeded()
 
 	Shared.Message("[CNPIH] TryQuery")
 	--Query from DB
-	AddToHTTPQueue( Shine.Config.PlayerInfoURL, function( response,errorCode )
+	self:Query( Shine.Config.PlayerInfoURL, function( response,errorCode )
 		if not response or #response == 0 then return end
 
 		PlayerInfoHub.CommunityData = { }
@@ -148,16 +117,4 @@ function PlayerInfoHub:SetCommunityData(steamId,data)
 	--	Print("response: " .. response )
 	--end
 	)
-end
-
-
-Shine.Hook.Add( "ClientConnect", "GetPlayerInfo", function( Client )
-	PlayerInfoHub:OnConnect( Client )
-end )
-
-function PlayerInfoHub:GetSteamData( SteamId )
-	if not self.SteamData[ SteamId ] then
-		self.SteamData[ SteamId ] = {Validated = false, PlayTime = -1}
-	end
-	return self.SteamData[ SteamId ]
 end
