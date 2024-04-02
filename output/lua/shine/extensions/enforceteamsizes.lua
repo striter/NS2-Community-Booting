@@ -21,7 +21,7 @@ Plugin.SkillLimitMode = table.AsEnum{
 Plugin.DefaultConfig = {
 	SlotCoveringBegin = 15,
 	DynamicStartupSeconds = 45,
-	DynamicStartupMinHour = 50,
+	DynamicStartupHourContribution = 0.4,
 	
 	Setting = {
 		Mode = Plugin.SkillLimitMode.NOOB,
@@ -65,7 +65,7 @@ do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
 	Validator:AddFieldRule( "DynamicStartupSeconds",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupSeconds ))
-	Validator:AddFieldRule( "DynamicStartupMinHour",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupMinHour ))
+	Validator:AddFieldRule( "DynamicStartupHourContribution",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupHourContribution ))
 	Validator:AddFieldRule( "RestrictedOperation", Validator.IsType( "table", Plugin.DefaultConfig.RestrictedOperation ) )
 	Validator:AddFieldRule( "Setting", Validator.IsType( "table", Plugin.DefaultConfig.Setting ) )
 	Validator:AddFieldRule( "Setting.TeamForceJoin", Validator.IsType( "table", Plugin.DefaultConfig.Setting.TeamForceJoin ) )
@@ -265,17 +265,20 @@ end
 function Plugin:GetPlayerRestricted(_player,_team)
 
 	local skillLimited, finalSkill =  self:GetPlayerSkillLimited(_player,_team)
-	if not self.ConstrainsUpdated then
+	if not self.ConstrainsUpdated and (_team == kTeam1Index or _team == kTeam2Index or _team == kTeamReadyRoom) then
 		local client = Server.GetOwner(_player)
+		local now =  Shared.GetTime()
+		local minTimeToWait = self.Config.DynamicStartupSeconds
 		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
-		local hourLimited = client and crEnabled and cr:GetCommunityPlayHour(client:GetUserId()) > self.Config.DynamicStartupMinHour 
-		
-		if skillLimited or hourLimited then
-			self:Notify(_player,string.format("动态分数已启用,等待其他玩家加入中,请于%i秒后再次加入.",self.Config.DynamicStartupSeconds - Shared.GetTime()),errorColorTable,nil)
-			return self:OnPlayerRestricted(_player,_team)
+		if not skillLimited and crEnabled then
+			local hourAwaitTime = math.floor(cr:GetCommunityPlayHour(client:GetUserId()) * self.Config.DynamicStartupHourContribution)
+			minTimeToWait = math.min(minTimeToWait, hourAwaitTime)
 		end
-		
-		return false
+
+		if minTimeToWait > now then
+			self:Notify(_player,string.format("等待其他玩家加入中,请于%i秒后再次加入.",minTimeToWait - now),errorColorTable,nil)
+			return true
+		end
 	end
 	
 	if skillLimited then
@@ -291,22 +294,6 @@ function Plugin:GetPlayerRestricted(_player,_team)
 		
 		return restricted
 	end
-
-	--local hour = Shine.PlayerInfoHub:GetSteamData(_player:GetClient():GetUserId()).PlayTime
-	--local hourLimited = false
-	--if self.Config.HourLimitMin > 0 then
-	--	hourLimited = hourLimited or hour <= self.Constrains.MinHour
-	--end
-	--if self.Constrains.MaxHour > 0 then
-	--	hourLimited = hourLimited or hour >= self.Constrains.MaxHour
-	--end
-	--
-	--if hourLimited then
-	--	self:Notify(_player, string.format("您的游戏时长(%i)不在服务器限制内(%s-%s).",
-	--			hour,self.Constrains.MinHour,self.Constrains.MaxHour < 0 and "∞" or self.Constrains.MaxHour),
-	--			errorColorTable,nil)
-	--	return self:OnPlayerRestricted(_player,_team)
-	--end
 
 	return false
 end
@@ -331,7 +318,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		return
 	end
 
-	local available = not self:GetPlayerRestricted(_player)
+	local available = not self:GetPlayerRestricted(_player,_newTeam)
 	local playerNum = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
 	local playerLimit,basePlayerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
 	local forcePrivilegeTitle
@@ -347,7 +334,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		else
 			local notifyString
 			local forceJoinAmount = GetForceJoinLimit(self.Constrains.TeamForceJoin)
-			couldBeIgnored = playerNum >= (basePlayerLimit + forceJoinAmount)
+			couldBeIgnored = playerNum < (basePlayerLimit + forceJoinAmount)
 			
 			notifyString = string.format( "<%s>已满[>=%s人%s],请等待场内空位.", teamName ,basePlayerLimit,
 					forceJoinAmount > 0 and string.format("|%s预热位",forceJoinAmount) or "")

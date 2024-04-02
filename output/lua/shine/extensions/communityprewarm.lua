@@ -6,27 +6,15 @@ Plugin.PrintName = "communityprewarm"
 Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityPrewarm.json"
 Plugin.DefaultConfig = {
-    ValidationDay = 0,
-    Validated = false,
     Restriction = {
         Hour = 4,           --Greater than this hour
         Player = 12,
     },
     ["Tier"] = {
-        [1] = { Count = 2, Credit = 15,Inform = true, },
-        [2] = { Count = 3, Credit = 10,Inform = true },
-        [3] = { Count = 10, Credit = 5 },
-        [4] = { Count = 99, Credit = 1 },
-    },
-    ["TomorrowAward"] = {
-        Tier = 5,
-        Credit = 1,
-        ["UserData"] = {
-            [1] = 55022511,
-        },
-    },
-    ["UserData"] = {
-        ["55022511"] = {tier = 0 ,score = 0, time = 100 , credit = 0 , name = "StriteR."}
+        [1] = { Count = 1, Credit = 15,Inform = true, },
+        [2] = { Count = 2, Credit = 8,Inform = true },
+        [3] = { Count = 5, Credit = 5 },
+        [4] = { Count = 9, Credit = 3 },
     },
 }
 
@@ -35,39 +23,48 @@ Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 do
     local Validator = Shine.Validator()
-    Validator:AddFieldRule( "ValidationDay",  Validator.IsType( "number", Plugin.DefaultConfig.ValidationDay ))
-    Validator:AddFieldRule( "Validated",  Validator.IsType( "boolean", Plugin.DefaultConfig.Validated ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier  ))
-    Validator:AddFieldRule( "UserData",  Validator.IsType( "table", Plugin.DefaultConfig.UserData  ))
-    Validator:AddFieldRule( "TomorrowAward",  Validator.IsType( "table", Plugin.DefaultConfig.TomorrowAward))
-    Validator:AddFieldRule( "TomorrowAward.Tier",  Validator.IsType( "number", Plugin.DefaultConfig.TomorrowAward.Tier))
-    Validator:AddFieldRule( "TomorrowAward.Credit",  Validator.IsType( "number", Plugin.DefaultConfig.TomorrowAward.Credit))
-    Validator:AddFieldRule( "TomorrowAward.UserData",  Validator.IsType( "table", Plugin.DefaultConfig.TomorrowAward.UserData))
     Plugin.ConfigValidator = Validator
 end
 
 local kPrewarmColor = { 235, 152, 78 }
 
+local PrewarmFile = "config://shine/temp/prewarm.json"
+
 function Plugin:Initialise()
     self.PrewarmTracker = {}
     self.MemberInfos = { }
     self:CreateMessageCommands()
+    
+    local File, Err = Shine.LoadJSONFile(PrewarmFile)
+    self.PrewarmData = File or {
+        ValidationDay = 0,
+        Validated = false,
+        UserData = {
+            ["55022511"] = {tier = 0 ,score = 0, time = 100 , credit = 0 , name = "StriteR."}
+        },
+    }
+    
 	return true
 end
 
 local function ReadPersistent(self)
-    for k,v in pairs(self.Config.UserData) do
+    for k,v in pairs(self.PrewarmData.UserData) do
         self.MemberInfos[tonumber(k)] = v
     end
 end
 
 local function SavePersistent(self)
     for k,v in pairs(self.MemberInfos) do
-        self.Config.UserData[tostring(k)] = v
+        self.PrewarmData.UserData[tostring(k)] = v
     end
-    self:SaveConfig()
+    
+    local Success, Err = Shine.SaveJSONFile( self.PrewarmData, PrewarmFile )
+    if not Success then
+        Shared.Message( "Error saving prewarm file: "..Err )
+    end
 end
 
 function Plugin:ResetState()
@@ -144,7 +141,7 @@ local function TrackClient(self, client, _clientID)
     local trackedTime = math.floor(now - self.PrewarmTracker[_clientID])
     data.time = data.time + trackedTime
 
-    if not self.Config.Validated then
+    if not self.PrewarmData.Validated then
         data.score = data.score + trackedTime * GetPrewarmScalar(self,player)
     end
     
@@ -178,10 +175,10 @@ local function ValidateClient(self, _clientID, _data, _tier, _credit,_scoreOverr
 end
 
 local function Reset(self)
-    table.Empty(self.Config.UserData)
+    table.Empty(self.PrewarmData.UserData)
     table.Empty(self.MemberInfos)
-    self.Config.ValidationDay = kCurrentDay
-    self.Config.Validated = false
+    self.PrewarmData.ValidationDay = kCurrentDay
+    self.PrewarmData.Validated = false
 end
 
 local function PrewarmValidateEnable(self)
@@ -189,21 +186,6 @@ local function PrewarmValidateEnable(self)
     return true
 end
 
-function Plugin:DispatchTomorrowPrivilege(_clients,_message)
-    if not self.Config.Validated then return end
-    
-    for _,client in pairs(_clients) do
-        local clientID = tostring(client:GetUserId())
-        if not table.contains(self.Config.TomorrowAward.UserData,clientID) then
-            table.insert(self.Config.TomorrowAward.UserData,clientID)
-        end
-    end
-
-    for client in Shine.IterateClients() do
-        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-                255, 255, 255,string.format("%s成功,参与其中的%i名玩家将于明日获得对应的换服激励.",_message,#_clients))
-    end
-end
 
 local function GetInGamePlayerCount()
     local gameRules = GetGamerules()
@@ -217,16 +199,9 @@ local function Validate(self)
     if not PrewarmValidateEnable(self) then return end
     if GetInGamePlayerCount() < self.Config.Restriction.Player then return end
     
-    if self.Config.Validated then return end
-    self.Config.Validated = true
+    if self.PrewarmData.Validated then return end
+    self.PrewarmData.Validated = true
 
-    --Dispatch lastday award
-    for _,clientIDs in pairs(self.Config.TomorrowAward.UserData) do
-        local clientID = tonumber(clientIDs)
-        ValidateClient(self,clientID,nil,self.Config.TomorrowAward.Tier,self.Config.TomorrowAward.Credit)
-    end
-    table.Empty(self.Config.TomorrowAward.UserData)
-    
     local prewarmClients = {}
     for clientID,prewarmData in pairs(self.MemberInfos) do
         table.insert(prewarmClients, { clientID = clientID, data = prewarmData})
@@ -273,7 +248,7 @@ local function Validate(self)
 end
 
 function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
-    if not self.Config.Validated then return end
+    if not self.PrewarmData.Validated then return end
     
     local data = GetPlayerData(self,_client:GetUserId())
     if not data.tier or data.tier <= 0 then return end
@@ -304,7 +279,7 @@ end
 function Plugin:OnFirstThink()
     ReadPersistent(self)
     Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
-    if self.Config.ValidationDay ~= kCurrentDay then
+    if self.PrewarmData.ValidationDay ~= kCurrentDay then
         Reset(self)
         --SavePersistent(self)
     end
@@ -315,7 +290,7 @@ function Plugin:SetGameState( Gamerules, State, OldState )
         TrackAllClients(self)
         Validate(self)
 
-        if PrewarmValidateEnable(self) and not self.Config.Validated then
+        if PrewarmValidateEnable(self) and not self.PrewarmData.Validated then
             local prewarmClients = {}
             for clientID,prewarmData in pairs(self.MemberInfos) do
                 table.insert(prewarmClients, { clientID = clientID, data = prewarmData})
@@ -362,7 +337,7 @@ function Plugin:ClientConnect(_client)
     TrackClient(self,_client,clientID)
 
     if PrewarmValidateEnable(self) then
-        if self.Config.Validated then
+        if self.PrewarmData.Validated then
             NotifyClient(self,_client,nil)
         else
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
@@ -409,7 +384,7 @@ function Plugin:CreateMessageCommands()
 end
 
 function Plugin:IsPrewarming() 
-    return not self.Config.Validated
+    return not self.PrewarmData.Validated
 end
 
 return Plugin

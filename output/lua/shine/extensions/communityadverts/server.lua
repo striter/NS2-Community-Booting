@@ -69,8 +69,9 @@ end
 
 --Announcements
 function Plugin:ClientConfirmConnect(_client)
+	if not self.Announcements then return end
+	
 	if _client:GetIsVirtual() then return end
-
 	Shine.SendNetworkMessage(_client,"Shine_Announcement" ,self.Announcements,true)
 end
 
