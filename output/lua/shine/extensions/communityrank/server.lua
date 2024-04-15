@@ -485,12 +485,12 @@ function Plugin:OnReputationRoundStart()
             local team = player:GetTeamNumber()
             if data.reputationPenaltyLog then
                 Shine:NotifyDualColour( player, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
-                        255, 255, 255,string.format("由于您[%s]导致信誉值降低,当信誉值过低将受到不可预期的惩罚,请保证参与比赛的完整性.",data.reputationPenaltyLog),true, data )
+                        255, 255, 255,string.format("由于您[%s]导致信誉值降低,若信誉值过低将受到不可预期的惩罚.\n请保证参与比赛的完整性,尊重你的队友与对手.",data.reputationPenaltyLog),true, data )
                 data.reputationPenaltyLog = nil
             else
                 if reputation < self.Config.Reputation.PenaltyStarts and (team == 1 or team == 2) then
                     Shine:NotifyDualColour( player, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
-                            255, 255, 255,"由于您近期的游戏行为导致信誉值过低,将在接下来的对局中受到不可预期的惩罚.请规范自身的游戏行为完整参与比赛以提升信誉值.",true, data )
+                            255, 255, 255,"由于您近期的行为导致信誉值过低,在对局中将受到不可预期的惩罚.\n请规范自身的游戏行为完整参与比赛以提升信誉值.",true, data )
                 end
             end
         end
