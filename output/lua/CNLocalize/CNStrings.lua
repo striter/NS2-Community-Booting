@@ -46,6 +46,15 @@ kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP_SPEC"] = "服务器当前无战场空�
 kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP"] = "当前服务器已满.\n*如果您拥有[预留位]则可以继续加入.\n*或你可以等待新的空位开启.\n*亦或者加入一个新的服务器."
 kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP_SPEC_AND_RS"] = "当前服务器已满.\n*如果您拥有[预留位]则可以继续加入.\n*或者你可以尝试观战."
 
+kTranslateMessage["RESOURCES_ALIEN"] = "进化因子"
+kTranslateMessage["RESOURCES_MARINE"] = "军需补给点"
+kTranslateMessage["RESOURCED_ADDED_MARINE"] = "(+%s 军需补给点)"
+kTranslateMessage["RESOURCED_ADDED_ALIEN"] = "(+%s 进化因子)"
+
+kLocales["RESOURCES_ALIEN"] = "Evolve Matter"
+kLocales["RESOURCES_MARINE"] = "Supply Point"
+kLocales["RESOURCED_ADDED_MARINE"] = "(+%d Supply Points)"
+kLocales["RESOURCED_ADDED_ALIEN"] = "(+%d Evolve Matter)"
 
 kTranslateMessage["AFK_WARNING"]="你已经一动不动了%{timeAFK}d秒钟，达到%{maxAFKTime}d秒时你将会被服务器自动踢出。"
 kTranslateMessage["AIR_PURIFIER"]="空气净化器"

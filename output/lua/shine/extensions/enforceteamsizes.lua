@@ -377,7 +377,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	end
 	
 	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-	if cpEnabled then
+	if forceCredit and cpEnabled then
 		if table.contains(kTeamJoinTracker,userId) and cp:GetPrewarmPrivilege(client,0,"当局入场通道") then return end
 
 		if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then

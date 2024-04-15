@@ -32,7 +32,7 @@ Plugin.DefaultConfig = {
 	TakeSlotInstantly = true,
 	-- Which type(s) of slot should be reserved?
 	SlotType = Plugin.SlotType.PLAYABLE,
-	
+
 	DynamicSlot = {
 		Count = 0,
 		SlotDelta = 2,
@@ -50,8 +50,7 @@ do
 	Validator:AddFieldRule( "SkillByPassRange",  Validator.IsType( "table", Plugin.DefaultConfig.SkillByPassRange  ))
 	Plugin.ConfigValidator = Validator
 end
-
-local HistoryRankFile = "config://shine/temp/history_rank.json"
+local LocalRankPath = "config://shine/temp/history_rank.json"
 
 function Plugin:Initialise()
 	self.Config.Slots = Max( Floor( tonumber( self.Config.Slots ) or 0 ), 0 )
@@ -60,21 +59,21 @@ function Plugin:Initialise()
 	self:CreateCommands()
 	self.Enabled = true
 
-	local File, Err = Shine.LoadJSONFile( HistoryRankFile )
+	local File, Err = Shine.LoadJSONFile(LocalRankPath)
 	self.HistoryRank = File or {}
-	
+
 	return true
 end
 
-function Plugin:OnEndGame(_winningTeam)
-	for Client, ID in Shine.IterateClients() do
-		local player = Client:GetControllingPlayer()
-		if player then
-			self.HistoryRank[tostring(Client:GetUserId())] = player:GetPlayerSkill()
+function Plugin:OnCommunityDBReceived(rawTable)
+	for k,v in pairs(rawTable) do
+		local lastSeenSkill = v.lastSeenSkill
+		if lastSeenSkill then
+			self.HistoryRank[tostring(k)] = tonumber(v.lastSeenSkill)
 		end
 	end
-	
-	local Success, Err = Shine.SaveJSONFile( self.HistoryRank, HistoryRankFile )
+
+	local Success, Err = Shine.SaveJSONFile( self.HistoryRank, LocalRankPath)
 	if not Success then
 		Shared.Message( "Error saving history rank file: "..Err )
 	end
@@ -91,12 +90,12 @@ function Plugin:CreateCommands()
 		self:SetReservedSlotCount( self:GetFreeReservedSlots() )
 		self:SaveConfig()
 		Shine:AdminPrint( Client, "%s set reserved slot count to %i", true,
-			Shine.GetClientInfo( Client ), _slotCount)
+				Shine.GetClientInfo( Client ), _slotCount)
 	end
 	self:BindCommand( "sh_setresslots", "resslots", SetSlotCount )
-	:AddParam{ Type = "number", Min = 0, Round = true, Error = "Please specify the number of slots to set.", Help = "静态预留位" }
-	:AddParam{ Type = "number", Min = 0, Round = true,Default = 0 ,Help = "动态预留位"}
-	:Help( "设置服务器的预留位 ,普通位为可玩总数-预留位 - 动态预留位,动态预留位随着服务器内人数自动调整直至归零) 例!resslots 10 16" )
+		:AddParam{ Type = "number", Min = 0, Round = true, Error = "Please specify the number of slots to set.", Help = "静态预留位" }
+		:AddParam{ Type = "number", Min = 0, Round = true,Default = 0 ,Help = "动态预留位"}
+		:Help( "设置服务器的预留位 ,普通位为可玩总数-预留位 - 动态预留位,动态预留位随着服务器内人数自动调整直至归零) 例!resslots 10 16" )
 end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam )
@@ -118,8 +117,8 @@ do
 		end
 
 		local NumInSpectate = Shine.Stream( Clients )
-			:Filter( IsSpectator )
-			:GetCount()
+								   :Filter( IsSpectator )
+								   :GetCount()
 		-- For reserved player slots, only count those not in spectator slots.
 		return Count - Min( NumInSpectate, self:GetMaxSpectatorSlots() )
 	end
@@ -129,13 +128,13 @@ function Plugin:GetFreeReservedSlots()
 	-- If considering all slots, then the reserved slot count is offset by the
 	-- number of spectator slots to produce the number of reserved playable slots.
 	local Offset = self.Config.SlotType == self.SlotType.ALL
-		and self:GetMaxSpectatorSlots() or 0
+			and self:GetMaxSpectatorSlots() or 0
 
 	local slotCount = self.Config.Slots
 
 	local dynamicSlotCount = self.Config.DynamicSlot.Count
 	if dynamicSlotCount > 0 then
-		
+
 		local clientsTotal = Server.GetNumClientsTotal()
 		local minPlayerCount = GetMaxPlayers() + GetMaxSpectators() - slotCount - dynamicSlotCount
 		local delta = clientsTotal - minPlayerCount
@@ -143,7 +142,7 @@ function Plugin:GetFreeReservedSlots()
 		dynamicSlotCount = dynamicSlotCount - slotReduction
 		slotCount = slotCount + dynamicSlotCount
 	end
-	
+
 	if not self.Config.TakeSlotInstantly then
 		return Max( slotCount - Offset, 0 )
 	end
@@ -192,15 +191,15 @@ local function InRange(range,value)
 	if range[1] > 0 and range[2] < 0 then
 		return range[1] <= value
 	end
-	
+
 	return true
 end
 
 local function RangeString(range)
 	if range[1] > 0 and range[2] > 0 then
-		return string.format("[%s-%s]",range[1],range[2])	
+		return string.format("[%s-%s]",range[1],range[2])
 	end
-	
+
 	if range[1] < 0 and range[2] > 0 then
 		return string.format("[<=%s]",range[2])
 	end
@@ -208,7 +207,7 @@ local function RangeString(range)
 	if range[1] > 0 and range[2] < 0 then
 		return string.format("[>=%s]",range[1])
 	end
-	
+
 	return "无限制"
 end
 
@@ -216,7 +215,7 @@ function Plugin:HasReservedSlotAccess( Client )
 	if RangeValid(self.Config.SkillByPassRange) and InRange(self.Config.SkillByPassRange, self.HistoryRank[tostring(Client)] or 0) then
 		return true
 	end
-	
+
 	return Shine:HasAccess( Client, "sh_reservedslot" )
 end
 
@@ -296,13 +295,13 @@ Plugin.ConnectionHandlers = {
 
 		-- Deny entirely if the server is completely full or they have no
 		-- reserved slot access and only reserved slots are left.
-		
+
 		local denyReason = HasSlots and "请获取预留位.\nSlot is reserved." or "服务器已满.\nServer full."
 		if RangeValid(self.Config.SkillByPassRange) then
 			local rangeString = RangeString(self.Config.SkillByPassRange)
 			denyReason = string.format("%s分段可获本服预留位.\nSlot reserved for specific skill players.",rangeString)
 		end
-		
+
 		return false, denyReason
 	end
 }

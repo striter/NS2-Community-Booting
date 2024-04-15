@@ -91,12 +91,13 @@ if Client then
     ModLoader.SetupFileHook("lua/GUIDeathStats.lua", "lua/CNLocalize/GUIDeathStats.lua", "replace" )
     ModLoader.SetupFileHook("lua/ConfigFileUtility.lua", "lua/CNLocalize/ShineExtensions.lua", "post" )        --Shine localizes
     ModLoader.SetupFileHook("lua/GUIWaypoints.lua", "lua/CNLocalize/GUIWaypoints.lua", "post" )
+    ModLoader.SetupFileHook("lua/GUINotifications.lua", "lua/CNLocalize/GUINotifications.lua", "post")
 
     --Customization
     ModLoader.SetupFileHook("lua/menu2/PlayerScreen/Customize/GUIMenuCustomizeScreen.lua", "lua/CNLocalize/Customize/GUIMenuCustomizeScreen.lua", "replace" )
     ModLoader.SetupFileHook("lua/menu2/PlayerScreen/GUIMenuPlayerScreen.lua", "lua/CNLocalize/Customize/GUIMenuPlayerScreen.lua", "replace" )
 
-    --GUI
+    --Menu GUI
     ModLoader.SetupFileHook("lua/menu2/GUIMainMenu.lua", "lua/CNLocalize/GUI/GUIMainMenu.lua", "post")
     ModLoader.SetupFileHook("lua/menu2/NavBar/GUIMenuNavBar.lua", "lua/CNLocalize/GUI/GUIMenuNavBar.lua", "post")
     ModLoader.SetupFileHook("lua/menu2/NavBar/Screens/News/GUIMenuNewsFeedPullout.lua", "lua/CNLocalize/GUI/GUIMenuNewsFeedPullout.lua", "replace")

@@ -45,19 +45,6 @@ function Plugin:Initialise()
 	return true
 end
 
-function Plugin:OnFirstThink()
-	if self.Config.AnnouncementsURL == "" then
-		return
-	end
-	Shine.PlayerInfoHub:Query(self.Config.AnnouncementsURL,function(response)
-		if not response or #response == 0 then return end
-		self.Announcements = json.decode(response)
-		for Client in Shine.IterateClients() do
-			self:ClientConfirmConnect(Client)	
-		end
-	end)
-end
-
 function Plugin:ResetState()
 	TableEmpty( self.groupData )
 end
@@ -67,11 +54,30 @@ function Plugin:Cleanup()
 	return self.BaseClass.Cleanup( self )
 end
 
+function Plugin:QueryIfNeeded()
+	if self.Config.AnnouncementsURL == "" then
+		return
+	end
+	
+	if self.Queried then return end
+	self.Queried = true
+	
+	Shine.PlayerInfoHub:Query(self.Config.AnnouncementsURL,function(response)
+		if not response or #response == 0 then return end
+		self.Announcements = json.decode(response)
+		for Client in Shine.IterateClients() do
+			self:ClientConfirmConnect(Client)
+		end
+	end)
+end
+
 --Announcements
 function Plugin:ClientConfirmConnect(_client)
+	if _client:GetIsVirtual() then return end
+	
+	self:QueryIfNeeded()
 	if not self.Announcements then return end
 	
-	if _client:GetIsVirtual() then return end
 	Shine.SendNetworkMessage(_client,"Shine_Announcement" ,self.Announcements,true)
 end
 

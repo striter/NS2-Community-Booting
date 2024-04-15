@@ -8,7 +8,6 @@ local JsonDecode = json.decode
 
 Shine.PlayerInfoHub = {}
 local PlayerInfoHub = Shine.PlayerInfoHub
-PlayerInfoHub.SteamData = {}
 
 local Queue = {}
 local current = 0
@@ -62,14 +61,14 @@ function PlayerInfoHub:Query(url,callBack)
 	AddToHTTPQueue(url,callBack)
 end
 
-
-function PlayerInfoHub:QueryDBIfNeeded()
+Shine.Hook.Add( "ClientConnect", "QueryDB", function(Client)
+	if Client:GetIsVirtual() then return end
 	if PlayerInfoHub.queried then return end
 	PlayerInfoHub.queried = true
 
 	Shared.Message("[CNPIH] TryQuery")
 	--Query from DB
-	self:Query( Shine.Config.PlayerInfoURL, function( response,errorCode )
+	PlayerInfoHub:Query( Shine.Config.PlayerInfoURL, function( response,errorCode )
 		if not response or #response == 0 then return end
 
 		PlayerInfoHub.CommunityData = { }
@@ -79,12 +78,11 @@ function PlayerInfoHub:QueryDBIfNeeded()
 			PlayerInfoHub.CommunityData[id] = v
 		end
 		Shared.Message("[CNPIH] Query Finished: Length" .. tostring(#response))
-		Shine.Hook.Broadcast("OnCommunityDBReceived")
+		Shine.Hook.Broadcast("OnCommunityDBReceived",PlayerInfoHub.CommunityData)
 	end )
-end
+end )
 
 function PlayerInfoHub:GetCommunityData(_steamId)
-	PlayerInfoHub:QueryDBIfNeeded()
 
 	if not PlayerInfoHub.CommunityData then
 		return nil
