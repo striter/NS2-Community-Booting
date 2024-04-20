@@ -110,21 +110,28 @@ local function NotifyClient(self, _client, _data)
     end
 end
 
-local function GetPrewarmScalar(self,player)
+local function GetPrewarmScore(self, player, trackedTime)
 
     local team = player:GetTeamNumber()
 
-    if team ~= kSpectatorIndex 
-        and kCurrentHour >= self.Config.Restriction.Hour
+    if trackedTime < 300 
+        or team == kSpectatorIndex
+        or kCurrentHour <= self.Config.Restriction.Hour
     then
-        local score = player:GetScore()
-        local commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()
-
-        local activePlayed = score > 50 or commTime > 300
-        return activePlayed and 3 or 1
+        return trackedTime
     end
     
-    return 1
+    local kills = player:getKills()
+    local assists = player:GetAssistKills()
+    local activePlayScore = kills * 2 + assists
+    local commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()
+
+    local activePlayed = activePlayScore > 30 or commTime > 300
+    if not activePlayed then
+        return 0
+    end
+    
+    return 3 * trackedTime
 end
 
 -- Track Clients Prewarm Time
@@ -142,7 +149,7 @@ local function TrackClient(self, client, _clientID)
     data.time = data.time + trackedTime
 
     if not self.PrewarmData.Validated then
-        data.score = data.score + trackedTime * GetPrewarmScalar(self,player)
+        data.score = data.score + GetPrewarmScore(self,player,trackedTime)
     end
     
     self.PrewarmTracker[_clientID] = now

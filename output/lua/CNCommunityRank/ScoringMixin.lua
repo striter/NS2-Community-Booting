@@ -51,11 +51,26 @@ function ScoringMixin:GetPlayerTeamSkill()
     local skill = self:GetPlayerSkill()
 
     if team ~= kTeam1Index and team ~= kTeam2Index then
-        return self.skill   --just stick with the "average" for RR players
+        return skill   --just stick with the "average" for RR players
     end
 
     local skillOffset = self:GetPlayerSkillOffset()
     
+    return
+    ( team == kTeam1Index ) and
+            skill + skillOffset or
+            skill - skillOffset
+end
+
+function ScoringMixin:GetCommanderTeamSkill()
+    local team = self:GetTeamNumber()
+    local skill = self:GetCommanderSkill()
+
+    if team ~= kTeam1Index and team ~= kTeam2Index then
+        return skill
+    end
+
+    local skillOffset = self:GetCommanderSkillOffset()
     return
     ( team == kTeam1Index ) and
             skill + skillOffset or

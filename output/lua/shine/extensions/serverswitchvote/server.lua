@@ -266,7 +266,10 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 
 		local player = Client:GetControllingPlayer()
 		if player then
-			table.insert(clients,{ client = Client, priority = player:GetPlayerSkill()})
+			table.insert(clients,{ 
+				client = Client, 
+				priority = math.max(player:GetPlayerSkill() , player:GetCommanderSkill()),
+			})
 		end
 	end
 

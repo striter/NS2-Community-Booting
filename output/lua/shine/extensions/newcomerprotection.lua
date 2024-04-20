@@ -18,6 +18,7 @@ Plugin.HasConfig = true
 Plugin.ConfigName = "NewcomerProtection.json"
 Plugin.DefaultConfig = {
 	MinSkillToCommand = 0,
+	MaxSkillAverageDiffToCommand = 2000,
 	["Tier"] ={100,300,500},
 	TierShiftHour = 30,
 	["MarineGears"] = false,
@@ -45,6 +46,7 @@ do
 	Validator:AddFieldRule( "TierShiftHour",  Validator.IsType( "number", Plugin.DefaultConfig.TierShiftHour ))
 	Validator:AddFieldRule( "BelowSkillNotify",  Validator.IsType( "number", Plugin.DefaultConfig.BelowSkillNotify ))
 	Validator:AddFieldRule( "MinSkillToCommand",  Validator.IsType( "number", Plugin.DefaultConfig.MinSkillToCommand ))
+	Validator:AddFieldRule( "MaxSkillAverageDiffToCommand", Validator.IsType( "number", Plugin.DefaultConfig.MaxSkillAverageDiffToCommand))
 	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
 	Validator:AddFieldRule( "ExtraNotifyMessage",  Validator.IsType( "string", "You are at a higher tier skill server,choose rookie server for better experience" ))
 	Validator:AddFieldRule( "Messages",  Validator.IsType( "table", Plugin.DefaultConfig.Messages))
@@ -52,7 +54,6 @@ do
 	Validator:AddFieldRule( "RefundMultiply",  Validator.IsType( "table", Plugin.DefaultConfig.RefundMultiply ))
 	Validator:AddFieldRule( "RefundAdditive",  Validator.IsType( "table", Plugin.DefaultConfig.RefundAdditive ))
 	Validator:AddFieldRule( "RefundForcePurchase",  Validator.IsType( "number", Plugin.DefaultConfig.RefundForcePurchase ))
-
 	Plugin.ConfigValidator = Validator
 end
 
@@ -167,18 +168,30 @@ local function CheckMarineGadgets(self,player)
 	-- Shared.Message("[CNNP] New Comer Protection <Weapon Initalize>")
 end
 
-function Plugin:ValidateCommanderLogin( Gamerules, CommandStation, Player )
-	if self.Config.MinSkillToCommand <= 0 then return end
+function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
+	--if self.Config.MinSkillToCommand <= 0 then return end
 	if Shine.GetHumanPlayerCount() < 20 then return end 	--They are seeding
 
-	local Client = Shine.GetClientForPlayer( Player )
+	local Client = Shine.GetClientForPlayer(_player)
 	if not Client then return end
 	if Client:GetIsVirtual() then return end
 
-	local skill = Player:GetPlayerTeamSkill()
+	local skill = _player:GetPlayerTeamSkill()
 	if skill < self.Config.MinSkillToCommand then
 		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",
 				213, 245, 227, string.format("由于服务器当前强度,你的玩家分数需要到达[%d]分时才能,成为该队的指挥!",self.Config.MinSkillToCommand))
+		return false
+	end
+
+	local gameInfoEnt = GetGameInfoEntity()
+	if not gameInfoEnt then return end
+	
+	local commanderSkill = _player:GetCommanderTeamSkill()
+	local serverAverageSkill =  gameInfoEnt:GetAveragePlayerSkill()
+	local skillDiff = math.abs(commanderSkill - serverAverageSkill)
+	if skillDiff > self.Config.MaxSkillAverageDiffToCommand then
+		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",
+				213, 245, 227, string.format("你的指挥分数与服务器平均分数差距过大[%i>%i],请选择适当的游玩场所!",skillDiff,self.Config.MaxSkillAverageDiffToCommand))
 		return false
 	end
 end
