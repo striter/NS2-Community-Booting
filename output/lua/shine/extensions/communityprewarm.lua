@@ -110,28 +110,33 @@ local function NotifyClient(self, _client, _data)
     end
 end
 
+local kScoreGameMode = { "ns2", "NS2.0", "Siege+++"  }
 local function GetPrewarmScore(self, player, trackedTime)
 
     local team = player:GetTeamNumber()
 
-    if trackedTime < 300 
-        or team == kSpectatorIndex
+    if  team == kSpectatorIndex
         or kCurrentHour <= self.Config.Restriction.Hour
     then
         return trackedTime
     end
-    
-    local kills = player:getKills()
-    local assists = player:GetAssistKills()
-    local activePlayScore = kills * 2 + assists
-    local commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()
 
-    local activePlayed = activePlayScore > 30 or commTime > 300
-    if not activePlayed then
-        return 0
+    local activePlayed = false
+    
+    local gameMode = Shine.GetGamemode()
+    if table.contains(kScoreGameMode,gameMode) then
+        local score = player:GetScore()
+        local commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()
+        activePlayed = score > 50 or commTime > 300
+    elseif gameMode == "Combat" then
+        local kills = player:getKills()
+        local assists = player:GetAssistKills()
+        local activePlayScore = kills * 2 + assists
+        activePlayed = activePlayScore > 30 
     end
     
-    return 3 * trackedTime
+    --Shared.Message(gameMode .. " " .. tostring(activePlayed))
+    return activePlayed and (3 * trackedTime) or trackedTime
 end
 
 -- Track Clients Prewarm Time
