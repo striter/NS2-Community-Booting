@@ -17,8 +17,11 @@ Plugin.PrintName = "newcomerprotection"
 Plugin.HasConfig = true
 Plugin.ConfigName = "NewcomerProtection.json"
 Plugin.DefaultConfig = {
-	MinSkillToCommand = 0,
-	MaxSkillAverageDiffToCommand = 2000,
+	CommandRestrictions = {
+		SeedingPlayers = 99, -- So restrictions ignores it
+		MinHourToCommand = -1,
+		MaxSkillAverageDiffToCommand = -1,
+	},
 	["Tier"] ={100,300,500},
 	TierShiftHour = 30,
 	["MarineGears"] = false,
@@ -45,8 +48,7 @@ do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "TierShiftHour",  Validator.IsType( "number", Plugin.DefaultConfig.TierShiftHour ))
 	Validator:AddFieldRule( "BelowSkillNotify",  Validator.IsType( "number", Plugin.DefaultConfig.BelowSkillNotify ))
-	Validator:AddFieldRule( "MinSkillToCommand",  Validator.IsType( "number", Plugin.DefaultConfig.MinSkillToCommand ))
-	Validator:AddFieldRule( "MaxSkillAverageDiffToCommand", Validator.IsType( "number", Plugin.DefaultConfig.MaxSkillAverageDiffToCommand))
+	Validator:AddFieldRule( "CommandRestrictions",  Validator.IsType( "table", Plugin.DefaultConfig.CommandRestrictions ))
 	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
 	Validator:AddFieldRule( "ExtraNotifyMessage",  Validator.IsType( "string", "You are at a higher tier skill server,choose rookie server for better experience" ))
 	Validator:AddFieldRule( "Messages",  Validator.IsType( "table", Plugin.DefaultConfig.Messages))
@@ -169,18 +171,23 @@ local function CheckMarineGadgets(self,player)
 end
 
 function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
+	local restrictions = self.Config.CommandRestrictions
 	--if self.Config.MinSkillToCommand <= 0 then return end
-	if Shine.GetHumanPlayerCount() < 20 then return end 	--They are seeding
+	if Shine.GetHumanPlayerCount() < restrictions.SeedingPlayers then return end 	--They are seeding
 
-	local Client = Shine.GetClientForPlayer(_player)
-	if not Client then return end
-	if Client:GetIsVirtual() then return end
+	local client = Shine.GetClientForPlayer(_player)
+	if not client then return end
+	if client:GetIsVirtual() then return end
 
-	local skill = _player:GetPlayerTeamSkill()
-	if skill < self.Config.MinSkillToCommand then
-		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",
-				213, 245, 227, string.format("由于服务器当前强度,你的玩家分数需要到达[%d]分时才能,成为该队的指挥!",self.Config.MinSkillToCommand))
-		return false
+	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+	if crEnabled then
+		local playHour = cr:GetCommunityPlayHour(client:GetUserId()) 
+		if restrictions.MinHourToCommand > 0 and playHour < restrictions.MinHourToCommand then
+			Shine:NotifyDualColour(client, 
+				88, 214, 141, "[新兵保护]",
+				213, 245, 227, string.format("由于当前服务器强度,游戏时长需要达到[%d]小时,才能成为该队的指挥,您当前的游戏时长为[%d]!", restrictions.MinHourToCommand,playHour))
+			return false
+		end	
 	end
 
 	local gameInfoEnt = GetGameInfoEntity()
@@ -189,9 +196,10 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 	local commanderSkill = _player:GetCommanderTeamSkill()
 	local serverAverageSkill =  gameInfoEnt:GetAveragePlayerSkill()
 	local skillDiff = math.abs(commanderSkill - serverAverageSkill)
-	if skillDiff > self.Config.MaxSkillAverageDiffToCommand then
-		Shine:NotifyDualColour( Client,  88, 214, 141, "[新兵保护]",
-				213, 245, 227, string.format("你的指挥分数与服务器平均分数差距过大[%i>%i],请选择适当的游玩场所!",skillDiff,self.Config.MaxSkillAverageDiffToCommand))
+	if restrictions.MaxSkillAverageDiffToCommand > 0 and skillDiff > restrictions.MaxSkillAverageDiffToCommand then
+		Shine:NotifyDualColour(client, 
+			88, 214, 141, "[新兵保护]",
+			213, 245, 227, string.format("你的指挥分数与服务器平均分数差距过大[%i>%i],请选择适当的游玩场所!",skillDiff, restrictions.MaxSkillAverageDiffToCommand))
 		return false
 	end
 end
