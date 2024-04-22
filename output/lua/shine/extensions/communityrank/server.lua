@@ -122,11 +122,16 @@ function Plugin:GetCommunityData(steamId)
     return GetPlayerData(self,steamId)
 end
 
-function Plugin:GetCommunityPlayHour(steamId)
-    local data = self:GetCommunityData(steamId)
+function Plugin:GetCommunityPlayHour(_steamId)
+    local data = self:GetCommunityData(_steamId)
     
     local minute = data.timePlayed
     return minute and (minute / 60) or 0
+end
+
+function Plugin:GetCommunityBlackListed(_steamId)
+    local data = self:GetCommunityData(_steamId)
+    return data.reputation and data.reputation < 0
 end
 
 function Plugin:ResetState()
@@ -209,6 +214,7 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.rankCommOffset = GetNumber(rawData.rankCommOffset)
     data.reputation = GetNumber(rawData.reputation)
     data.reputationPenaltyLog = rawData.reputationPenaltyLog
+    
     data.lastSeenName = rawData.lastSeenName
     data.lastSeenDay = rawData.lastSeenDay
     data.lastSeenSkill = rawData.lastSeenSkill

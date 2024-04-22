@@ -264,14 +264,33 @@ end
 
 function Plugin:GetPlayerRestricted(_player,_team)
 
+	local client = Server.GetOwner(_player)
+	local clientId = client:GetUserId()
+	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 	local skillLimited, finalSkill =  self:GetPlayerSkillLimited(_player,_team)
+	local blackListed = crEnabled and cr:GetCommunityBlackListed(clientId)
+	local blackListLimited = blackListed and not self.ConstrainsUpdated
+	
+	if skillLimited or blackListLimited then
+		local errorMessage = blackListLimited and "由于你的信誉值过低,需等待一段时间后再尝试加入游戏!"
+							or string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
+		
+		self:Notify(_player,errorMessage,errorColorTable,nil)
+
+		local restricted = self:OnPlayerRestricted(_player,_team)
+		if restricted then
+			self:Notify(_player,string.format("预热玩家将忽略上述限制,可等待分服,同时非高峰期将开放限制.", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
+			,errorColorTable,nil)
+		end
+
+		return restricted
+	end
+
 	if not self.ConstrainsUpdated and (_team == kTeam1Index or _team == kTeam2Index or _team == kTeamReadyRoom) then
-		local client = Server.GetOwner(_player)
 		local now =  Shared.GetTime()
 		local minTimeToWait = self.Config.DynamicStartupSeconds
-		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
-		if not skillLimited and crEnabled then
-			local hourAwaitTime = math.floor(cr:GetCommunityPlayHour(client:GetUserId()) * self.Config.DynamicStartupHourContribution)
+		if crEnabled then
+			local hourAwaitTime = math.floor(cr:GetCommunityPlayHour(clientId) * self.Config.DynamicStartupHourContribution)
 			minTimeToWait = math.min(minTimeToWait, hourAwaitTime)
 		end
 
@@ -281,20 +300,6 @@ function Plugin:GetPlayerRestricted(_player,_team)
 		end
 	end
 	
-	if skillLimited then
-		self:Notify(_player,string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
-				,errorColorTable,nil)
-		
-		local restricted = self:OnPlayerRestricted(_player,_team)
-		if restricted then
-
-			self:Notify(_player,string.format("预热玩家将忽略上述限制,可等待分服,同时非高峰期将开放限制.", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
-			,errorColorTable,nil)
-		end
-		
-		return restricted
-	end
-
 	return false
 end
 
