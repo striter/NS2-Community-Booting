@@ -1,4 +1,0 @@
-modEntry = {
-	FileHooks = "lua/LocalTalkExtended/FileHooks.lua",
-	Server = "lua/LocalTalkExtended/Server.lua",
-}
