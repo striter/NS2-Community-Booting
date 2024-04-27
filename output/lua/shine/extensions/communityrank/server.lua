@@ -144,7 +144,6 @@ function Plugin:Cleanup()
     return self.BaseClass.Cleanup( self )
 end
 
-local kRankAvailableGameModes = { "ns2", "NS2.0", "Siege+++"  }
 -- Triggers
 function Plugin:OnFirstThink()
     ReadPersistent(self)
@@ -160,7 +159,7 @@ function Plugin:OnEndGame(_winningTeam)
     end
 
     local gameMode = Shine.GetGamemode()
-    if not table.contains(kRankAvailableGameModes,gameMode) then return end
+    if not table.contains(Shine.kRankGameMode,gameMode) then return end
     self:EndGameElo(lastRoundData)
     self:EndGameReputation(lastRoundData)
     self:EndGameRecord(lastRoundData)

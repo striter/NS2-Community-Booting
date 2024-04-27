@@ -176,6 +176,7 @@ function Plugin:CanStartVote( Team )
 		and ( self.NextVote <= SharedTime() or self.Config.FractionOfPlayersNeededInEarlyGame > 0 )
 end
 
+local kTooManyRes = 100 --50
 local surrenderResourceCheck = { "ns2", "NS2.0"}
 function Plugin:AddVote( Client, Team )
 	if not Client then return end
@@ -188,7 +189,7 @@ function Plugin:AddVote( Client, Team )
 	local Player= Client:GetControllingPlayer()
 	local gameMode = Shine.GetGamemode()
 	if table.contains(surrenderResourceCheck,gameMode) then
-		if Player:GetPersonalResources() > 50 then
+		if Player:GetPersonalResources() > kTooManyRes then
 			return false, "too many PRes"
 		end
 	end

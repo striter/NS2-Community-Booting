@@ -110,7 +110,6 @@ local function NotifyClient(self, _client, _data)
     end
 end
 
-local kScoreGameMode = { "ns2", "NS2.0", "Siege+++"  }
 local function GetPrewarmScore(self, player, trackedTime)
 
     local team = player:GetTeamNumber()
@@ -124,7 +123,7 @@ local function GetPrewarmScore(self, player, trackedTime)
     local activePlayed = false
     
     local gameMode = Shine.GetGamemode()
-    if table.contains(kScoreGameMode,gameMode) then
+    if table.contains(Shine.kRankGameMode,gameMode) then
         local score = player:GetScore()
         local commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()
         activePlayed = score > 50 or commTime > 300
