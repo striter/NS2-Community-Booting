@@ -199,13 +199,21 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 	local gameInfoEnt = GetGameInfoEntity()
 	if not gameInfoEnt then return end
 	
+	local gamerules = GetGamerules()
+	if not gamerules then return end
+	
 	local commanderSkill = _player:GetCommanderTeamSkill()
-	local serverAverageSkill =  gameInfoEnt:GetAveragePlayerSkill()
-	local skillDiff = math.abs(commanderSkill - serverAverageSkill)
+	local compareSkill = gameInfoEnt:GetAveragePlayerSkill()
+	local oppositeCommander = gamerules:GetTeam(_player:GetTeamNumber() == kTeam1Index and kTeam2Index or kTeam1Index):GetCommander()
+	if oppositeCommander then
+		compareSkill = oppositeCommander:GetCommanderTeamSkill()
+	end
+	
+	local skillDiff = math.abs(commanderSkill - compareSkill)
 	if restrictions.MaxSkillAverageDiffToCommand > 0 and skillDiff > restrictions.MaxSkillAverageDiffToCommand then
 		Shine:NotifyDualColour(client, 
 			88, 214, 141, "[新兵保护]",
-			213, 245, 227, string.format("你的指挥分数与服务器平均分数差距过大[%i>%i],请选择适当的游玩场所!",skillDiff, restrictions.MaxSkillAverageDiffToCommand))
+			213, 245, 227, string.format("你的指挥分数[%i]与预期分数[%i]差距过大[>%i],请选择适当的游玩场所!",commanderSkill,compareSkill, restrictions.MaxSkillAverageDiffToCommand))
 		return false
 	end
 end
