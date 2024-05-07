@@ -253,19 +253,66 @@ function Plugin:ClientConnect( _client )
     --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
 end
 
+Plugin.kTDBadgesHourRequirement = {
+    {name = "td_tier1",hourRequired = 2},
+    {name = "td_tier2",hourRequired = 5},
+    {name = "td_tier3",hourRequired = 20},
+    {name = "td_tier4",hourRequired = 115},
+    {name = "td_tier5",hourRequired = 200},
+    {name = "td_tier6",hourRequired = 500},
+    {name = "td_tier7",hourRequired = 1000},
+    {name = "td_tier8",hourRequired = 1500},
+}
+Plugin.kBadgeRows = {1,2,3,4,10}
+
 function Plugin:UpdateClientData(_client, _clientId)        --Split cause connecting client sometimes won't receive network message
     local data = GetPlayerData(self, _clientId)
     if data.fakeData then return end
     local groupName,groupData = GetUserGroup(_client)
     local player = _client:GetControllingPlayer()
     player:SetGroup(groupName)
-    Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,{
+    
+    if groupData and groupData.UnlockGadgets then
+        for _,v in pairs(groupData.UnlockGadgets) do
+            Shine.SendNetworkMessage(_client,"Shine_CommunityGadgets" ,{
+                ItemID = tonumber(v)
+            },true)
+        end
+    end
+    local userData = Shine:GetUserData(_clientId)
+    if userData and userData.UnlockGadgets then
+        for _,v in pairs(userData.UnlockGadgets) do
+            Shine.SendNetworkMessage(_client,"Shine_CommunityGadgets" ,{
+                ItemID = tonumber(v)
+            },true)
+        end
+    end 
+    
+    local syncData = {
         Tier = groupData.Tier or 0,
         TimePlayed = data.timePlayed or 0,
         RoundWin = data.roundWin or 0,
         TimePlayedCommander = data.timePlayedCommander or 0,
         RoundWinCommander = data.roundWinCommander or 0
-    },true)
+    }
+
+    local hourPlayed = math.floor(syncData.TimePlayed / 60.0)
+    for _,tdBadges in pairs(Plugin.kTDBadgesHourRequirement) do
+        if hourPlayed >= tdBadges.hourRequired then
+            for _, i in pairs(Plugin.kBadgeRows) do
+                GiveBadge(_clientId, tdBadges.name,i)
+            end
+        end
+    end
+    
+    local commHour = math.floor(syncData.TimePlayedCommander / 60.0)
+    if commHour > 50 then
+        for _, i in pairs(Plugin.kBadgeRows) do
+            GiveBadge(_clientId, "commander",i)
+        end
+    end
+    
+    Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,syncData,true)
 end
 
 function Plugin:ClientConfirmConnect(_client)

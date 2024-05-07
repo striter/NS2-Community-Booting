@@ -16,6 +16,7 @@ function Plugin:OnFirstThink()
         TimePlayedCommander = 0,
         RoundWinCommander = 0,
     }
+    self.playerCommunityGadgets = {}
     Shine.Hook.SetupGlobalHook( "GetOwnsItem", "CheckCommunityGadgets", "Replace" )
 end
 
@@ -27,14 +28,23 @@ Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     SendPlayerCallingCardUpdate()
     SendPlayerVariantUpdate()
     GetCustomizeScene():RefreshOwnedItems()
+    GetBadgeCustomizer():UpdateOwnedBadges()
+end )
+
+Shine.HookNetworkMessage( "Shine_CommunityGadgets", function(Message)
+    Plugin.playerCommunityGadgets[Message.ItemID] = true
 end )
 
 function Plugin:GetCommunityData()
     return self.playerCommunityData
 end
 
-function Plugin:CheckCommunityGadgets(_item)
-    return CommunityGetOwnsItem(_item,self.playerCommunityData)
+function Plugin:CheckCommunityGadgets(_itemId)
+    if self.playerCommunityGadgets[_itemId] then
+        return true
+    end
+    
+    return CommunityGetOwnsItem(_itemId,self.playerCommunityData)
 end
 
 local kZeroStr = "0"

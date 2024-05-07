@@ -7,4 +7,7 @@ Shared.RegisterNetworkMessage( "Shine_CommunityTier", {
     TimePlayed = "integer (0 to 16777216)",
     TimePlayedCommander = "integer (0 to 16777216)",
 } )
+Shared.RegisterNetworkMessage( "Shine_CommunityGadgets", {
+    ItemID = "integer (0 to 16777216)",
+} )
 return Plugin

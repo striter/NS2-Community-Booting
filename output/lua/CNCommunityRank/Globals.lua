@@ -117,11 +117,6 @@ gCommunityUnlocks = {
         kTomCardItemId,
         kKittyKittyCardItemId,
     },
-    [5]={
-        kBlackArmorItemId,
-        kForScienceCardItemId,
-        kGenshinItemId,
-    }
 }
 
 
