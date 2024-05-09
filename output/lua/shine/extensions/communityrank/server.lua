@@ -265,6 +265,11 @@ Plugin.kTDBadgesHourRequirement = {
 }
 Plugin.kBadgeRows = {1,2,3,4,10}
 
+local baseOwnsItem = GetOwnsItem
+function GetOwnsItem(_itemId)
+    return true
+end
+
 function Plugin:UpdateClientData(_client, _clientId)        --Split cause connecting client sometimes won't receive network message
     local data = GetPlayerData(self, _clientId)
     if data.fakeData then return end

@@ -434,7 +434,7 @@ end
 function Badges_FetchBadgesFromItems(badges)
     for _, badgeid in ipairs(gItemBadges) do
         local data = Badges_GetBadgeData(badgeid)
-        if data and GetOwnsItem(data.itemId) then
+        if data and GetOwnsOfficialItem(data.itemId) then
             badges[#badges + 1] = gBadges[badgeid]
         end
     end

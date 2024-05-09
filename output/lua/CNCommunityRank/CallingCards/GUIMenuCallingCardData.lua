@@ -197,6 +197,7 @@ local kCallingCardData =
     [kCallingCards.Genshin] = { texture = "Genshin" , frame = 16 ,rate = 16 ,size = 256 , itemId = kGenshinItemId},
 }
 
+
 local kCallingCardUnlockedTooltips =
 {
     [kCallingCards.None]            = "CALLINGCARD_NONE_TOOLTIP",
@@ -278,6 +279,18 @@ end
 function GetCallingCardItemId(callingCardId)
     local data = kCallingCardData[callingCardId]
     return data and data.itemId or nil
+end
+
+local kItemToCallingCard = {}
+for _,v in pairs(kCallingCardData) do
+    local itemId = v.itemId
+    if itemId > 0 then
+        kItemToCallingCard[v] = true
+    end
+end
+
+function GetIsCallingCardItem(itemId)
+    return kItemToCallingCard[itemId]
 end
 
 function GetCallingCardTextureDetails(callingCard)
