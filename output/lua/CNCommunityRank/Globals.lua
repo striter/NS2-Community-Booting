@@ -1,18 +1,5 @@
 
-kBabblerSurpriseCardItemId               = 13024--
-kChromaOnosCardItemId             = 13025--
-kPudgyCardItemId              = 13026--
-kDragonCardItemId = 13027
-
-kKittyKittyCardItemId = 13031
-kChiikawaCardItemId = 13032
-kUShouldDieCardItemId = 13033
-kTomCardItemId = 13034
-kGenshinItemId = 13035
-
 gCommunityUnlocks = {
-    [0]={
-    },
     [1]={
         kWoodAxeItemId,
         kWoodPistolItemId,
@@ -107,15 +94,6 @@ gCommunityUnlocks = {
         kBattleGorgeShoulderPatchItemId,
         kTurboDrifterCardItemId,
         kBattleGorgeCardItemId,
-
-        kBabblerSurpriseCardItemId,
-        kChromaOnosCardItemId,
-        kPudgyCardItemId,
-        kDragonCardItemId,
-        kChiikawaCardItemId,
-        kUShouldDieCardItemId,
-        kTomCardItemId,
-        kKittyKittyCardItemId,
     },
 }
 

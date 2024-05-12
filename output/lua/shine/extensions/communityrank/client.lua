@@ -32,12 +32,13 @@ Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     Plugin.playerCommunityData = Message
     Shared.Message(string.format("[CNCT] Tier Set %i|%i|%i|%i|%i",Message.Tier,Message.TimePlayed,Message.RoundWin,Message.TimePlayedCommander,Message.RoundWinCommander ))
 
+    Shine.Hook.SetupGlobalHook( "GetOwnsItem", "GetCommunityOwnsItem", "Replace" )
+    
     GetGlobalEventDispatcher():FireEvent("OnUserStatsAndItemsRefreshed")
     SendPlayerCallingCardUpdate()
     SendPlayerVariantUpdate()
     GetCustomizeScene():RefreshOwnedItems()
     GetBadgeCustomizer():UpdateOwnedBadges()
-    Shine.Hook.SetupGlobalHook( "GetOwnsItem", "GetCommunityOwnsItem", "Replace" )
 end )
 
 function Plugin:GetCommunityData()

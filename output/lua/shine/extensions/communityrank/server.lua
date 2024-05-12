@@ -254,75 +254,93 @@ function Plugin:ClientConnect( _client )
 end
 
 Plugin.kTDBadgesHourRequirement = {
-    {name = "td_tier1",hourRequired = 2},
-    {name = "td_tier2",hourRequired = 5},
-    {name = "td_tier3",hourRequired = 20},
-    {name = "td_tier4",hourRequired = 115},
-    {name = "td_tier5",hourRequired = 200},
-    {name = "td_tier6",hourRequired = 500},
-    {name = "td_tier7",hourRequired = 1000},
-    {name = "td_tier8",hourRequired = 1500},
+    {name = "td_tier1",itemID = kTDTier1BadgeItemId,hourRequired = 2},
+    {name = "td_tier2",itemID = kTDTier2BadgeItemId,hourRequired = 5},
+    {name = "td_tier3",itemID = kTDTier3BadgeItemId,hourRequired = 20},
+    {name = "td_tier4",itemID = kTDTier4BadgeItemId,hourRequired = 115},
+    {name = "td_tier5",itemID = kTDTier5BadgeItemId,hourRequired = 200},
+    {name = "td_tier6",itemID = kTDTier6BadgeItemId,hourRequired = 500},
+    {name = "td_tier7",itemID = kTDTier7BadgeItemId,hourRequired = 1000},
+    {name = "td_tier8",itemID = kTDTier8BadgeItemId,hourRequired = 1500},
 }
-Plugin.kBadgeRows = {1,2,3,4,10}
 
 local baseOwnsItem = GetOwnsItem
-function GetOwnsItem(_itemId)
+function GetOwnsItem(_itemID)
     return true
 end
 
+Plugin.kBadgeRows = {1,2,3,4,10}
+local function DispatchBadge(_clientId, _name)
+    for _, i in pairs(Plugin.kBadgeRows) do
+        GiveBadge(_clientId, _name,i)
+    end
+end
+
 function Plugin:UpdateClientData(_client, _clientId)        --Split cause connecting client sometimes won't receive network message
-    local data = GetPlayerData(self, _clientId)
-    if data.fakeData then return end
+    local communityData = GetPlayerData(self, _clientId)
+    if communityData.fakeData then return end
     local groupName,groupData = GetUserGroup(_client)
     local player = _client:GetControllingPlayer()
     player:SetGroup(groupName)
     
+    local unlockGadgets = {}
+    
     if groupData and groupData.UnlockGadgets then
         for _,v in pairs(groupData.UnlockGadgets) do
-            Shine.SendNetworkMessage(_client,"Shine_CommunityGadgets" ,{
-                ItemID = tonumber(v)
-            },true)
+            unlockGadgets[tonumber(v)] = true
         end
     end
+    
     local userData = Shine:GetUserData(_clientId)
     if userData and userData.UnlockGadgets then
         for _,v in pairs(userData.UnlockGadgets) do
-            Shine.SendNetworkMessage(_client,"Shine_CommunityGadgets" ,{
-                ItemID = tonumber(v)
-            },true)
+            unlockGadgets[tonumber(v)] = true
         end
-    end 
+    end
+
+    for k, _ in pairs(unlockGadgets) do
+        unlockGadgets[k] = k
+        Shine.SendNetworkMessage(_client,"Shine_CommunityGadgets" ,{ ItemID = k },true)
+    end
     
     local syncData = {
         Tier = groupData.Tier or 0,
-        TimePlayed = data.timePlayed or 0,
-        RoundWin = data.roundWin or 0,
-        TimePlayedCommander = data.timePlayedCommander or 0,
-        RoundWinCommander = data.roundWinCommander or 0
+        TimePlayed = communityData.timePlayed or 0,
+        RoundWin = communityData.roundWin or 0,
+        TimePlayedCommander = communityData.timePlayedCommander or 0,
+        RoundWinCommander = communityData.roundWinCommander or 0
     }
 
     local hourPlayed = math.floor(syncData.TimePlayed / 60.0)
     for _,tdBadges in pairs(Plugin.kTDBadgesHourRequirement) do
-        if hourPlayed >= tdBadges.hourRequired then
-            for _, i in pairs(Plugin.kBadgeRows) do
-                GiveBadge(_clientId, tdBadges.name,i)
-            end
+        if hourPlayed >= tdBadges.hourRequired or table.contains(unlockGadgets,tdBadges.itemID) then
+            DispatchBadge(_clientId,tdBadges.name)
         end
     end
     
     local commHour = math.floor(syncData.TimePlayedCommander / 60.0)
     if commHour > 50 then
-        for _, i in pairs(Plugin.kBadgeRows) do
-            GiveBadge(_clientId, "commander",i)
-        end
+        DispatchBadge(_clientId, "commander")
     end
     
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,syncData,true)
 end
 
+function Plugin:OnUserReload( TriggerType )
+    if TriggerType ~= Shine.UserDataReloadTriggerType.INITIAL_WEB_LOAD then return end
+    
+    self.UserLoaded = true
+    for Client in Shine.IterateClients() do
+        self:ClientConfirmConnect(Client)
+    end
+end
+
 function Plugin:ClientConfirmConnect(_client)
+    if not self.UserLoaded then return end
+    
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
+    
     self:UpdateClientData(_client,clientID)
 end
 

@@ -110,7 +110,14 @@ local kUnobtainableCallingCards = set
     kCallingCards.Peeper,
     kCallingCards.SummerGorge,
     kCallingCards.HauntedBabbler,
-    kCallingCards.Halloween2016
+    kCallingCards.Halloween2016,
+
+    kCallingCards.UShouldDie,
+    kCallingCards.Dragon,
+    kCallingCards.Genshin,
+    kCallingCards.Tom,
+    kCallingCards.KittyKitty,
+    kCallingCards.Chiikawa,
 }
 
 -- Texture files for calling cards are all atlases
@@ -260,6 +267,9 @@ local kCallingCardUnlockedTooltips =
 local kCallingCardLockedTooltipOverrides =
 {
     [kCallingCards.Rookie]          = "CALLINGCARD_ROOKIE_LOCKED_TOOLTIP",
+    [kCallingCards.BabblerSurprise]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
+    [kCallingCards.ChromaOnos]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
+    [kCallingCards.Pudgy]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
     [kCallingCards.Dragon] =        "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
     [kCallingCards.Chiikawa]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",
     [kCallingCards.Tom]          = "CALLINGCARD_LOCKED_TOOLTIP_EXTRA",

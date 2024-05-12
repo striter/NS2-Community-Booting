@@ -55,12 +55,12 @@ function Plugin:Cleanup()
 end
 
 function Plugin:QueryIfNeeded()
+	if self.Queried then return end
+	self.Queried = true
+
 	if self.Config.AnnouncementsURL == "" then
 		return
 	end
-	
-	if self.Queried then return end
-	self.Queried = true
 	
 	Shine.PlayerInfoHub:Query(self.Config.AnnouncementsURL,function(response)
 		if not response or #response == 0 then return end
@@ -88,11 +88,11 @@ function Plugin:BuildGroupAdverts(_groupName)
 	
 	local targetData = self.groupData[_groupName]
 	if targetData then return targetData end
-
-	local GroupData = Group.Adverts
-	if not GroupData then
+	
+	if not Group or not Group.Adverts then
 		targetData = Plugin.kDefaultData
 	else
+		local GroupData = Group.Adverts
 		targetData = {
 			prefixColor = GroupData.prefixColor or {255,255,255},
 			enter = GroupData.enter or "玩家 <%s> 加入了战局",
