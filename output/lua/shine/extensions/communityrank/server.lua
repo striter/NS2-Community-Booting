@@ -214,6 +214,7 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.reputation = GetNumber(rawData.reputation)
     data.reputationPenaltyLog = rawData.reputationPenaltyLog
     
+    data.lastSeenNameTimes = GetNumber(rawData.lastSeenNameTimes)
     data.lastSeenName = rawData.lastSeenName
     data.lastSeenDay = rawData.lastSeenDay
     data.lastSeenSkill = rawData.lastSeenSkill
@@ -755,12 +756,18 @@ function Plugin:EndGameRecord(lastRoundData)
 end
 
 function Plugin:EndGameLastSeenName(lastRoundData)
-
+    local gameLength = lastRoundData.RoundInfo.roundLength
+    if gameLength < 300 then return end --?
+    
     local currentDate = string.format("%s-%s-%s",kCurrentYear,kCurrentMonth,kCurrentDay)
     for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
         local playerData = GetPlayerData(self,steamId)
         playerData.lastSeenDay = currentDate
-        playerData.lastSeenName = playerStat.playerName
+        playerData.lastSeenNameTimes = (playerData.lastSeenNameTimes or 0) + 1
+        if not playerData.lastSeenName or playerData.lastSeenNameTimes >= 10 then
+            playerData.lastSeenNameTimes = nil
+            playerData.lastSeenName = playerStat.playerName
+        end
         playerData.lastSeenSkill = playerStat.skill
 
         local client = Shine.GetClientByNS2ID(steamId)
