@@ -239,6 +239,15 @@ local function Validate(self)
         if not curTierData then break end
         
         ValidateClient(self, prewarmClient.clientID, prewarmClient.data,curTier, curTierData.Credit,curTierData.Rank)
+        if curTierData.Reputation then
+            Shared.ConsoleCommand(string.format("sh_rep_delta %s %s",prewarmClient.clientID, curTierData.Reputation))
+
+            local client = Shine.GetClientByNS2ID(prewarmClient.clientID)
+            if client then
+                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],
+                        self.kPrefix,255, 255, 255,  string.format("预热排名获得了额外[%s信誉分].",curTierData.Reputation) )
+            end
+        end
         
         if curTierData.Inform then
             nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60)) 

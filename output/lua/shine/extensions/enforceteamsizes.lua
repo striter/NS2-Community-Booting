@@ -4,12 +4,6 @@ Plugin.HasConfig = true
 Plugin.ConfigName = "EnforceTeamSizes.json"
 Plugin.PrintName = "Enforced Team Size"
 
---[[
---TeamNumbers:
- - 1: Marines
- - 2: Aliens
- - 3: Spec
- ]]
 Plugin.RestrictedOperation = table.AsEnum{
 	"SPECTATOR", "KICK", "REDIRECT",
 }
@@ -55,6 +49,11 @@ Plugin.DefaultConfig = {
 		Enable = true,
 		Skill = 500,
 		Hour = 10,
+	},
+	ReputationBypass = {
+		Enable = false,
+		Limit = 50,
+		Cost = 10,
 	},
 	MessageNameColor = {0, 255, 0 },
 }
@@ -366,9 +365,9 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 
 	local userId = client:GetUserId()
 	local newComerConfig = self.Config.NewComerBypass
+	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 	if newComerConfig.Enable then
 		local isNewcomer = newComerConfig.Skill <= 0 or _player:GetPlayerSkill() < newComerConfig.Skill
-		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 		if isNewcomer and newComerConfig.Hour > 0 and crEnabled then
 			local communityData = cr:GetCommunityData(userId)
 			if communityData.timePlayed then
@@ -380,14 +379,23 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			return
 		end
 	end
-	
+
+	if table.contains(kTeamJoinTracker,userId) then
+		self:Notify(_player, "当局入场通道启用,已忽视上述限制!",priorColorTable,nil)
+		return 
+	end
+
 	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
 	if forceCredit and cpEnabled then
-		if table.contains(kTeamJoinTracker,userId) and cp:GetPrewarmPrivilege(client,0,"当局入场通道") then return end
-
-		if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
-			if forceCredit > 0 then table.insert(kTeamJoinTracker,userId) end
+		if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then table.insert(kTeamJoinTracker,userId)
 			return
+		end
+	end
+	
+	local reputationConfig = self.Config.ReputationBypass
+	if reputationConfig.Enable and crEnabled then
+		if cr:UseCommunityReputation(_player,reputationConfig.Limit,0) then
+			self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权.",reputationConfig.Cost),priorColorTable)
 		end
 	end
 	
@@ -481,6 +489,19 @@ function Plugin:CreateCommands()
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
 	:Help( "示例: !restriction_skill 1000 -1 true.将服务器的入场分数设置为,[10-∞],并且保存,-1代表无限制" )
+	
+	local function RepJoin(_client)
+		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+		if not crEnabled then return end
+		
+		local reputationConfig = self.Config.ReputationBypass
+		if cr:UseCommunityReputation(_client:GetControllingPlayer(),reputationConfig.Limit,reputationConfig.Cost) then
+			table.insert(kTeamJoinTracker,_client:GetUserId())
+			self:Notify(_client,string.format("已使用[%s信誉点],获得当局入场特权!",reputationConfig.Cost),priorColorTable)
+		end
+	end
+	self:BindCommand( "sh_rep_join", "rep_join", RepJoin,true)
+		:Help( "使用信誉点获得游戏加入特权" )
 end
 
 function Plugin:ClientConfirmConnect( Client )

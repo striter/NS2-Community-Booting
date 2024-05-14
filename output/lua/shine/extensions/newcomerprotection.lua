@@ -267,6 +267,11 @@ function Plugin:ClientConfirmConnect( Client )
 	end
 end
 
+function Plugin:GetRefundPercent(player)
+	local client,tier = GetClientAndTier(player)
+	if not client or tier == 0 then return 0 end
+	return Plugin.Config.RefundMultiply[tier]
+end
 
 function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	if not Plugin.Config.Refund then return end

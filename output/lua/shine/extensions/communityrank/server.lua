@@ -46,23 +46,18 @@ Plugin.DefaultConfig = {
             CheckTime = 1200,
             MinPlayer = 12,
             ActivePlayTime = 60,
-            DeltaQuit = -5,
-            DeltaCover = 5,
-            DeltaLoseRecover = 2,
-        }
+            DeltaQuit = -10,
+            RecoverPositive = {
+                DeltaWin = 1,
+                DeltaLost = 0,
+            },
+            RecoverNegative = {
+                DeltaWin = 5,
+                DeltaLost = 2,
+            },
+        },
     },
-    --["UserData"] = {
-    --    ["55022511"] = {
-    --        rank = -2000,
-    --        rankOffset = -200,
-    --        rankComm = -500,
-    --        rankCommOffset = -200,
-    --        fakeBot = true,
-    --        emblem = 0,
-    --    }
-    --},
 }
-
 
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
@@ -76,6 +71,8 @@ do
     Validator:AddFieldRule( "Reputation.PenaltyCheckInterval",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.PenaltyCheckInterval ))
     Validator:AddFieldRule( "Reputation.RageQuit",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit ))
     Validator:AddFieldRule( "Reputation.RageQuit.MinPlayer",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.MinPlayer ))
+    Validator:AddFieldRule( "Reputation.RageQuit.RecoverPositive",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit.RecoverPositive))
+    Validator:AddFieldRule( "Reputation.RageQuit.RecoverNegative",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit.RecoverNegative))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
@@ -132,6 +129,25 @@ end
 function Plugin:GetCommunityBlackListed(_steamId)
     local data = self:GetCommunityData(_steamId)
     return data.reputation and data.reputation < 0
+end
+
+function Plugin:UseCommunityReputation(_player, _limit, _cost)
+    
+    local clientId = _player:GetClient():GetUserId()
+    local data = self:GetCommunityData(clientId)
+    if not data.reputation then
+        return false
+    end
+    
+    local value = data.reputation
+    if value < _limit then
+        return false
+    end
+    
+    if _cost == 0 then return true end
+    data.reputation = data.reputation - _cost
+    _player:SetPlayerExtraData(data)
+    return true
 end
 
 function Plugin:ResetState()
@@ -327,18 +343,8 @@ function Plugin:UpdateClientData(_client, _clientId)        --Split cause connec
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,syncData,true)
 end
 
-function Plugin:OnUserReload( TriggerType )
-    if TriggerType ~= Shine.UserDataReloadTriggerType.INITIAL_WEB_LOAD then return end
-    
-    self.UserLoaded = true
-    for Client in Shine.IterateClients() do
-        self:ClientConfirmConnect(Client)
-    end
-end
 
 function Plugin:ClientConfirmConnect(_client)
-    if not self.UserLoaded then return end
-    
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
     
@@ -684,23 +690,19 @@ function Plugin:EndGameReputation(lastRoundData)
                 local steamId = Client:GetUserId()
                 local playTime = player:GetPlayTime()
                 local team =  player:GetTeamNumber()
-                if playTime > self.Config.Reputation.RageQuit.ActivePlayTime
-                        and team == losingTeam
-                        and rageQuitType ~= kRageQuitType.Quit
-                then
-                    local reputationDelta = rageQuitType == kRageQuitType.Cover and self.Config.Reputation.RageQuit.DeltaCover or 0
-
+                
+                if playTime > self.Config.Reputation.RageQuit.ActivePlayTime and rageQuitType ~= kRageQuitType.Quit then
                     local data = GetPlayerData(self,steamId)
                     local reputation = data.reputation or 0
-                    if reputation < 0 then
-                        reputationDelta = reputationDelta + self.Config.Reputation.RageQuit.DeltaLoseRecover
-                    end
-
+                    local wins = team == winningTeamType
+                    local cover = rageQuitType == kRageQuitType.Cover
+                    local deltaTable = reputation < 0 and self.Config.Reputation.RageQuit.RecoverNegative or self.Config.Reputation.RageQuit.RecoverPositive
+                    
+                    local reputationDelta = wins and deltaTable.DeltaWin or deltaTable.DeltaLost
                     if reputationDelta ~=0 then
-                        ReputationPlayerDelta(self,steamId, reputationDelta,"战局补位")
+                        ReputationPlayerDelta(self,steamId, reputationDelta,"完成对局")
                     end
                     ReputationDebugMessage(self,string.format("(ID:%-10s (Time):%-5i (team):%-5i (type:):%-5s (Delta):%-5i",steamId, playTime,team,EnumToString(kRageQuitType,rageQuitType),reputationDelta))
-
                 end
             end
         end
