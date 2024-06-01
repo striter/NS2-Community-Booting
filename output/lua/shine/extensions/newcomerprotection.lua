@@ -179,8 +179,11 @@ end
 function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 	local restrictions = self.Config.CommandRestrictions
 	--if self.Config.MinSkillToCommand <= 0 then return end
+	if GetGamerules():GetGameStarted() then return end
 	if Shine.GetHumanPlayerCount() < restrictions.SeedingPlayers then return end 	--They are seeding
 
+	
+	
 	local client = Shine.GetClientForPlayer(_player)
 	if not client then return end
 	if client:GetIsVirtual() then return end

@@ -21,7 +21,7 @@ function Plugin:Cleanup()
 end
 
 function Plugin:ReceiveAddServerList( Data )
-	self.QueryServers[#self.QueryServers + 1] = {
+	self.QueryServers[Data.ID] = {
 		ID = Data.ID,
 		Address = Data.Address,
 		Name = Data.Name,

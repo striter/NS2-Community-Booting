@@ -14,7 +14,6 @@ Plugin.DefaultConfig = {
 	CrowdAdvert = {
 		NotifyTimer = 150,
 		PlayerCount = 0,
-		RedirUntil = 28,
 		ResSlots = 32,
 		ToServer = 0,
 		ToServerDelay = 10,
@@ -25,73 +24,22 @@ Plugin.DefaultConfig = {
 		SuccessfulInformMessage = "当前人数已满足条件(%i),当前对局结束后将尝试自动分服.",
 		FailInformPrefix = "[换服提示]",
 	},
+	--RecallPenalty = {
+	--	Count = -1,
+	--	Reputation = -20,
+	--}
 }
 
 Plugin.CheckConfigTypes = true
 do
 
 local Validator = Shine.Validator()
-local BitLShift = bit.lshift
-local select = select
-
-local function IPToInt( ... )
-	if not ... then return nil end
-
-	for i = 1, 4 do
-		if tonumber( select( i, ... ), 10 ) > 255 then
-			return -1
-		end
-	end
-
-	local Byte1, Byte2, Byte3, Byte4 = ...
-
-	-- Not using lshift for the first byte to avoid getting a signed int back.
-	return tonumber( Byte1, 10 ) * 16777216 +
-		BitLShift( tonumber( Byte2, 10 ), 16 ) +
-		BitLShift( tonumber( Byte3, 10 ), 8 ) +
-		tonumber( Byte4, 10 )
-end
-
-local function IsValidIPAddress( IP )
-	if IP <= 0 then
-		return false
-	end
-
-	-- 255.255.255.255 or higher.
-	if IP >= 0xFFFFFFFF then
-		return false
-	end
-
-	-- 127.x.x.x
-	if IP >= 0x7F000000 and IP <= 0x7FFFFFFF then
-		return false
-	end
-
-	-- 10.x.x.x
-	if IP >= 0x0A000000 and IP <= 0x0AFFFFFF then
-		return false
-	end
-
-	-- 172.16.0.0 - 172.31.255.255
-	if IP >= 0xAC100000 and IP <= 0xAC1FFFFF then
-		return false
-	end
-
-	-- 192.168.x.x
-	if IP >= 0xC0A80000 and IP <= 0xC0A8FFFF then
-		return false
-	end
-
-	return true
-end
-
 	Plugin.ConfigValidator = Validator
 	Validator:AddFieldRule( "ConfigURL",  Validator.IsType( "string", Plugin.DefaultConfig.ConfigURL ))
 	Validator:AddFieldRule( "ClientVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.ClientVote ))
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
 	Validator:AddFieldRule( "CrowdAdvert.NotifyTimer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.NotifyTimer ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
-	Validator:AddFieldRule( "CrowdAdvert.RedirUntil",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.RedirUntil ))
 	Validator:AddFieldRule( "CrowdAdvert.ResSlots",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ResSlots ))
 	Validator:AddFieldRule( "CrowdAdvert.Prefix",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Prefix ))
 	Validator:AddFieldRule( "CrowdAdvert.ToServer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServer ))
@@ -101,6 +49,7 @@ end
 	Validator:AddFieldRule( "CrowdAdvert.FailInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.FailInformMessage ))
 	Validator:AddFieldRule( "CrowdAdvert.SuccessfulInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.SuccessfulInformMessage ))
 	Validator:AddFieldRule( "CrowdAdvert.FailInformCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.FailInformCount ))
+	--Validator:AddFieldRule( "RecallPenalty",  Validator.IsType( "table", Plugin.DefaultConfig.RecallPenalty ))
 end
 
 local function NotifyCrowdAdvert(self, _message)
@@ -108,18 +57,37 @@ local function NotifyCrowdAdvert(self, _message)
 			253, 237, 236, _message)
 end
 
+local LocalFilePath = "config://shine/temp/history_last_redir.json"
 function Plugin:Initialise()
 	self.Enabled = true
 	self:CreateCommands()
+	local File, Err = Shine.LoadJSONFile(LocalFilePath)
+	self.RedirHistory = File or {}
 	return true
 end
-
 
 function Plugin:RedirectClient(_client, _address)
 	Server.SendNetworkMessage(_client, "Redirect",{ ip = _address }, true)
 end
 
+--function Plugin:ClientConfirmConnect( Client )
+--	if Client:GetIsVirtual() then return end
+--
+--	local recallPenaltyCount = self.RedirHistory.RecallPenaltyCount or 0
+--	if recallPenaltyCount <= 0 then return end
+--	
+--	local id = tostring(Client:GetUserId())
+--	if not table.contains(self.RedirHistory.Clients,id) then return end
+--	
+--	table.remove(self.RedirHistory.Clients,id)
+--	Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",id, self.Config.RecallPenalty.Reputation,string.format("分服后带头回流[排名%s]",self.Config.RecallPenalty.Count - recallPenaltyCount + 1)))
+--	self.RedirHistory.RecallPenaltyCount = recallPenaltyCount - 1
+--end
+
 function Plugin:RedirClients(_targetIP,_count,_newcomer)
+	--self.RedirHistory.RecallPenaltyCount = self.Config.RecallPenalty.Count
+	self.RedirHistory.Clients = {}
+	
 	local clients = {}
 	for Client in Shine.IterateClients() do
 		local player = Client:GetControllingPlayer()
@@ -146,6 +114,7 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 			Shine:NotifyDualColour(client,146, 43, 33,"[注意]",
 					253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
 		else
+			table.insert(self.RedirHistory.Clients,tostring(client:GetUserId()))
 			self:RedirectClient(client,_targetIP)
 			count = count - 1
 		end
@@ -155,6 +124,18 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 		end
 	end
 end
+
+function Plugin:OnEndGame(_winningTeam)
+	table.clear(self.RedirHistory)
+end
+
+function Plugin:MapChange()
+	local Success, Err = Shine.SaveJSONFile(self.RedirHistory, LocalFilePath)
+	if not Success then
+		Shared.Message( "Error saving last redir file: "..Err )
+	end
+end
+
 
 function Plugin:OnFirstThink()
 	self:SimpleTimer( self.Config.CrowdAdvert.NotifyTimer, function()
@@ -198,8 +179,7 @@ function Plugin:OnMapVoteFinished()
 		return
 	end
 
-	local amount = gameEndPlayerCount - self.Config.CrowdAdvert.RedirUntil
-	amount = amount > 0 and amount or gameEndPlayerCount / 2
+	local amount = gameEndPlayerCount / 2
 	local delay = self.Config.CrowdAdvert.ToServerDelay
 	NotifyCrowdAdvert(self,string.format( self.Config.CrowdAdvert.Message,delay,amount, redirData.Name))
 
@@ -303,7 +283,7 @@ function Plugin:CreateCommands()
 	--Redir to target
 	local function RedirAddressCheck(_client)
 		if self.targetServer == nil then
-			Shine:NotifyCommandError( _client, "无目标服务器,请通过 redir_target 命令设置 " )
+			Shine:NotifyCommandError( _client, "无目标服务器,请通过 !redir_verify 命令设置 " )
 			return nil
 		end
 
