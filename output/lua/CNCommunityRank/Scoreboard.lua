@@ -558,3 +558,45 @@ function ScoreboardUI_GetNumberOfAliensByType(alienType)
     return numberOfAliens
 
 end
+
+function GetScoreData(teamNumberArray,ignoreFakeBot)
+
+    local scoreData = {}
+    local players = {}
+
+    local localTeamNumber = Client.GetLocalClientTeamNumber()
+
+    -- convert array into set for faster lookups inside loop
+    local teamNumberSet = unique_set()
+    teamNumberSet:InsertAll(teamNumberArray)
+
+    -- first insert commanders so they are on top of the scoreData
+    for _, playerRecord in ipairs(sortedPlayerData) do
+        local playerTeamNumber = playerRecord.EntityTeamNumber
+        if teamNumberSet:Contains(playerTeamNumber) then
+
+            local isVisibleTeam = localTeamNumber == kSpectatorIndex or playerTeamNumber == localTeamNumber
+            local isCommander = playerRecord.IsCommander and isVisibleTeam
+
+            if not isCommander then
+                table.insert(players, playerRecord)
+            else
+                table.insert(scoreData, playerRecord)
+            end
+
+        end
+    end
+
+    -- then insert all players
+    for _, playerRecord in ipairs(players) do
+        if not ignoreFakeBot or not playerRecord.FakeBot then
+            table.insert(scoreData, playerRecord)
+        end
+    end
+
+    return scoreData
+end
+
+function ScoreboardUI_GetSpectatorScores()
+    return GetScoreData({ kTeamReadyRoom, kSpectatorIndex },true)
+end
