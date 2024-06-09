@@ -31,6 +31,12 @@ Plugin.DefaultConfig = {
 		["Skulk"] = 		{1,		0.5,	0.25},
 		["Marine"]=			{1, 0.5,	0.25},
 	},
+	DamageProtection = {
+		ActiveTier = {true,true,true},
+		kSkillDiffThreshold = 1000,
+		kSkillDiffStep = 500,
+		kSkillDiffDamageScalarEachStep = 0.05
+	},
 	RefundForcePurchase = 80,
 	BelowSkillNotify = 100,
 	ExtraNotify = true,
@@ -56,6 +62,7 @@ do
 	Validator:AddFieldRule( "RefundMultiply",  Validator.IsType( "table", Plugin.DefaultConfig.RefundMultiply ))
 	Validator:AddFieldRule( "RefundAdditive",  Validator.IsType( "table", Plugin.DefaultConfig.RefundAdditive ))
 	Validator:AddFieldRule( "RefundForcePurchase",  Validator.IsType( "number", Plugin.DefaultConfig.RefundForcePurchase ))
+	Validator:AddFieldRule( "DamageProtection",  Validator.IsType( "table", Plugin.DefaultConfig.DamageProtection ))
 	Plugin.ConfigValidator = Validator
 end
 
@@ -181,8 +188,6 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 	--if self.Config.MinSkillToCommand <= 0 then return end
 	if GetGamerules():GetGameStarted() then return end
 	if Shine.GetHumanPlayerCount() < restrictions.SeedingPlayers then return end 	--They are seeding
-
-	
 	
 	local client = Shine.GetClientForPlayer(_player)
 	if not client then return end
@@ -339,7 +344,48 @@ function Plugin:OnDropAllWeapons(player)
 
 end
 
+--When a high elo player joins lower rank 
+function Player:ModifyDamageTaken(damageTable, attacker, doer, damageType, hitPoint)
+	if not Plugin.Config then return end
 
+	if self:GetIsVirtual() or (attacker.GetIsVirtual and attacker:GetIsVirtual()) then return end
+
+	local Config = Plugin.Config.DamageProtection
+	if #Config.ActiveTier == 0 then return end
+	if self.GetPlayerTeamSkill and attacker.GetPlayerTeamSkill then
+		local selfSkill = self:GetPlayerTeamSkill()
+		local targetSkill = attacker:GetPlayerTeamSkill()
+		--if self:GetIsVirtual() then
+		--    selfSkill = 2100
+		--end
+		--if attacker:GetIsVirtual() then
+		--    targetSkill = 2100
+		--end
+
+		local skillOffset = (selfSkill - targetSkill)
+		local value = math.max(math.abs(skillOffset) - Config.kSkillDiffThreshold,0)
+
+		if value > 0 then
+			local _,selfTier = GetClientAndTier(self)
+			local _,targetTier = GetClientAndTier(attacker)
+			
+			local sign = skillOffset >= 0 and 1 or -1
+			local available = true
+			if sign < 0 and not Config.ActiveTier[selfTier] then
+				--Shared.Message(tostring(selfTier))
+				available = false
+			elseif sign > 0 and not Config.ActiveTier[targetTier] then
+				--Shared.Message("Target" .. tostring(targetTier))
+				available = false
+			end
+
+			if available then
+				local damageParam = sign * (value/Config.kSkillDiffStep  + 1) * Config.kSkillDiffDamageScalarEachStep
+				damageTable.damage = damageTable.damage * ( 1 + damageParam)
+			end
+		end
+	end
+end
 
 function Plugin:Cleanup()
 	return self.BaseClass.Cleanup( self )
