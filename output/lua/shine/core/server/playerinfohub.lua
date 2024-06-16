@@ -66,6 +66,10 @@ Shine.Hook.Add( "ClientConnect", "QueryDB", function(Client)
 	if PlayerInfoHub.queried then return end
 	PlayerInfoHub.queried = true
 
+	PlayerInfoHub:QueryDB()
+end )
+
+function PlayerInfoHub:QueryDB()
 	Shared.Message("[CNPIH] TryQuery")
 	--Query from DB
 	PlayerInfoHub:Query( Shine.Config.PlayerInfoURL, function( response,errorCode )
@@ -80,7 +84,7 @@ Shine.Hook.Add( "ClientConnect", "QueryDB", function(Client)
 		Shared.Message("[CNPIH] Query Finished: Length" .. tostring(#response))
 		Shine.Hook.Broadcast("OnCommunityDBReceived",PlayerInfoHub.CommunityData)
 	end )
-end )
+end
 
 function PlayerInfoHub:GetCommunityData(_steamId)
 

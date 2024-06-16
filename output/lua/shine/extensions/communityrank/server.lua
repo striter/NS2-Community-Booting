@@ -995,4 +995,9 @@ function Plugin:CreateMessageCommands()
     
     self:BindCommand( "history", "history", CheckHistory,true )
         :Help( "查询我的社区历史记录." )
+    
+    self:BindCommand( "querydatabase", "querydatabase",  function()
+        Shine.PlayerInfoHub:QueryDB()
+    end )
+        :Help( "数据库挂了,尝试刷新一下." )
 end

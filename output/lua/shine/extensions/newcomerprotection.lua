@@ -322,12 +322,35 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	-- Shared.Message("[CNNP] New Comer Protection <Death Refund>")
 end
 
+local function GetNearbyWeaponPickers(player)
+
+	local team = player:GetTeamNumber()
+	local origin = player:GetOrigin()
+	local range = 20
+	local players = GetEntitiesForTeamWithinRange("Player",team, origin, range)
+	for _,v in pairs(players) do
+		if v:GetIsAlive() then
+			return true
+		end
+	end
+	
+	local structures = GetEntitiesWithMixinForTeamWithinRange("Construct",  team, origin, range)
+	for _,v in pairs(structures) do
+		if v:GetIsAlive() and v:GetIsBuilt() then
+			return true
+		end
+	end
+	
+	return false
+end
+
 function Plugin:OnDropAllWeapons(player)
 	local client,tier = GetClientAndTier(player)
 	if tier == 0 then return end
 	local refundPercentage = self.Config.RefundMultiply[tier]
-	if not refundPercentage then return end
-
+	if not refundPercentage or refundPercentage <= 0 then return end
+	if GetNearbyWeaponPickers(player) then return end
+	
 	local primaryWeapon = player:GetWeaponInHUDSlot(kPrimaryWeaponSlot)
 	if not primaryWeapon then return end
 	local techID = primaryWeapon:GetTechId()
