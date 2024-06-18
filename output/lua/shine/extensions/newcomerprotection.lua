@@ -23,7 +23,7 @@ Plugin.DefaultConfig = {
 		MaxSkillAverageDiffToCommand = -1,
 	},
 	["Tier"] ={100,300,500},
-	TierShiftHour = 30,
+	TierHourMultiplier = 10,
 	["MarineGears"] = false,
 	["Refund"] = true,
 	["RefundMultiply"] = { 0.8 , 0.5 , 0.3},
@@ -52,7 +52,7 @@ Plugin.CheckConfigTypes = true
 Plugin.ConfigMigrationSteps = { }
 do
 	local Validator = Shine.Validator()
-	Validator:AddFieldRule( "TierShiftHour",  Validator.IsType( "number", Plugin.DefaultConfig.TierShiftHour ))
+	Validator:AddFieldRule( "TierHourMultiplier",  Validator.IsType( "number", Plugin.DefaultConfig.TierHourMultiplier ))
 	Validator:AddFieldRule( "BelowSkillNotify",  Validator.IsType( "number", Plugin.DefaultConfig.BelowSkillNotify ))
 	Validator:AddFieldRule( "CommandRestrictions",  Validator.IsType( "table", Plugin.DefaultConfig.CommandRestrictions ))
 	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
@@ -93,27 +93,19 @@ local function GetClientAndTier(player)
 
 	local tier = 0
 	if client then
-		local skill = player:GetPlayerTeamSkill()
+		local verifySkill = player:GetPlayerTeamSkill()
+		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+		if crEnabled then
+			local userId = client:GetUserId()
+			local playHour = cr:GetCommunityPlayHour(userId)
+			verifySkill = math.max(verifySkill,  playHour * Plugin.Config.TierHourMultiplier)
+		end
+		
 		for k,v in ipairs(Plugin.Config.Tier) do
-			if skill < v then
+			if verifySkill < v then
 				tier = k
 				break
 			end
-		end
-	end
-
-	if tier > 0 then
-		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
-		if crEnabled then
-			
-			local userId = client:GetUserId()
-			if cr:GetCommunityPlayHour(userId) > Plugin.Config.TierShiftHour then		-- Shouldn't play for the lowest
-				tier = math.min(tier + 1,#Plugin.Config.Tier)
-			end
-			if cr:GetCommunityBlackListed(userId) then
-				tier = 0
-			end
-			
 		end
 	end
 	
