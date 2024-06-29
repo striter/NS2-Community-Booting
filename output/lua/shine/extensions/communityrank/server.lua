@@ -233,10 +233,10 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.lastSeenNameTimes = GetNumber(rawData.lastSeenNameTimes)
     data.lastSeenName = rawData.lastSeenName
     data.lastSeenDay = rawData.lastSeenDay
-    data.lastSeenSkill = rawData.lastSeenSkill
+    data.lastSeenSkill = GetNumber(rawData.lastSeenSkill)
     
-    self:RecordResolveData(player,data,rawData)
-    
+    self:RecordResolveData(data,rawData)
+
     player:SetPlayerExtraData(data)
 end
 
@@ -299,7 +299,11 @@ function Plugin:UpdateClientData(_client, _clientId)        --Split cause connec
     local groupName,groupData = GetUserGroup(_client)
     local player = _client:GetControllingPlayer()
     player:SetGroup(groupName)
-    
+
+    local isRookie = not communityData.timePlayed or communityData.timePlayed < 1800
+    isRookie = isRookie and (not communityData.lastSeenSkill or communityData.lastSeenSkill < 900)
+    player:SetRookie(isRookie)
+
     local unlockGadgets = {}
     
     if groupData and groupData.UnlockGadgets then
@@ -711,7 +715,7 @@ function Plugin:EndGameReputation(lastRoundData)
     table.clear(kRageQuitTracker)
 end
 
-function Plugin:RecordResolveData(player,data,rawData)
+function Plugin:RecordResolveData(data,rawData)
     data.timePlayed = GetNumber(rawData.timePlayed)
     data.timePlayedCommander = GetNumber(rawData.timePlayedCommander)
     data.roundPlayed = GetNumber(rawData.roundPlayed)
@@ -719,9 +723,6 @@ function Plugin:RecordResolveData(player,data,rawData)
     data.roundFinishedCommander = GetNumber(rawData.roundFinishedCommander)
     data.roundWin = GetNumber(rawData.roundWin)
     data.roundWinCommander = GetNumber(rawData.roundWinCommander)
-    if data.timePlayed then
-        player:SetRookie(not data.timePlayed or data.timePlayed < 1800)
-    end
 end
 
 function Plugin:EndGameRecord(lastRoundData)

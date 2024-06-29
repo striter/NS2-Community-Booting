@@ -271,7 +271,7 @@ function Plugin:GetPlayerRestricted(_player,_team)
 	local blackListLimited = blackListed and not self.ConstrainsUpdated
 	
 	if skillLimited or blackListLimited then
-		local errorMessage = blackListLimited and "由于你的信誉值过低,需等待一段时间后再尝试加入游戏!"
+		local errorMessage = blackListLimited and "由于你的信誉值过低,需等待一段时间后再尝试加入游戏,你可以通过预热/正常进行游戏等方式获得信誉分!"
 							or string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
 		
 		self:Notify(_player,errorMessage,errorColorTable,nil)

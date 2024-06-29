@@ -1092,7 +1092,7 @@ do
 		-- Server sends -1 for ClientID if there is no client attached to the message.
 		local Entry = Data.ClientID ~= -1 and Shine.GetScoreboardEntryByClientID( Data.ClientID )
 		local IsCommander = Entry and Entry.IsCommander and IsVisibleToLocalPlayer( Player, Entry.EntityTeamNumber )
-		local IsRookie = Entry and Entry.IsRookie
+		local IsRookie = Entry and Entry.IsRookie and Entry.Skill < 900
 
 		local Contents = {}
 
