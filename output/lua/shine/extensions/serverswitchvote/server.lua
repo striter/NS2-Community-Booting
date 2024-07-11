@@ -24,10 +24,10 @@ Plugin.DefaultConfig = {
 		SuccessfulInformMessage = "当前人数已满足条件(%i),当前对局结束后将尝试自动分服.",
 		FailInformPrefix = "[换服提示]",
 	},
-	--RecallPenalty = {
-	--	Count = -1,
-	--	Reputation = -20,
-	--}
+	RecallPenalty = {
+		Count = -1,
+		Reputation = -20,
+	}
 }
 
 Plugin.CheckConfigTypes = true
@@ -49,7 +49,7 @@ local Validator = Shine.Validator()
 	Validator:AddFieldRule( "CrowdAdvert.FailInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.FailInformMessage ))
 	Validator:AddFieldRule( "CrowdAdvert.SuccessfulInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.SuccessfulInformMessage ))
 	Validator:AddFieldRule( "CrowdAdvert.FailInformCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.FailInformCount ))
-	--Validator:AddFieldRule( "RecallPenalty",  Validator.IsType( "table", Plugin.DefaultConfig.RecallPenalty ))
+	Validator:AddFieldRule( "RecallPenalty",  Validator.IsType( "table", Plugin.DefaultConfig.RecallPenalty ))
 end
 
 local function NotifyCrowdAdvert(self, _message)
@@ -70,22 +70,21 @@ function Plugin:RedirectClient(_client, _address)
 	Server.SendNetworkMessage(_client, "Redirect",{ ip = _address }, true)
 end
 
---function Plugin:ClientConfirmConnect( Client )
---	if Client:GetIsVirtual() then return end
---
---	local recallPenaltyCount = self.RedirHistory.RecallPenaltyCount or 0
---	if recallPenaltyCount <= 0 then return end
---	
---	local id = tostring(Client:GetUserId())
---	if not table.contains(self.RedirHistory.Clients,id) then return end
---	
---	table.remove(self.RedirHistory.Clients,id)
---	Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",id, self.Config.RecallPenalty.Reputation,string.format("分服后带头回流[排名%s]",self.Config.RecallPenalty.Count - recallPenaltyCount + 1)))
---	self.RedirHistory.RecallPenaltyCount = recallPenaltyCount - 1
---end
+function Plugin:ProcessRecallPenalty( Client )
+
+	local recallPenaltyCount = self.RedirHistory.RecallPenaltyCount or 0
+	if recallPenaltyCount <= 0 then return end
+
+	local id = Client:GetUserId()
+	if not table.contains(self.RedirHistory.Clients,id) then return end
+	table.removevalue(self.RedirHistory.Clients,id)
+	
+	Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",id, self.Config.RecallPenalty.Reputation,string.format("分服回流|第%s名",self.Config.RecallPenalty.Count - recallPenaltyCount)))
+	self.RedirHistory.RecallPenaltyCount = recallPenaltyCount - 1
+end
 
 function Plugin:RedirClients(_targetIP,_count,_newcomer)
-	--self.RedirHistory.RecallPenaltyCount = self.Config.RecallPenalty.Count
+	self.RedirHistory.RecallPenaltyCount = self.Config.RecallPenalty.Count
 	self.RedirHistory.Clients = {}
 	
 	local clients = {}
@@ -113,8 +112,9 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 		if Shine:HasAccess(client, "sh_host" ) then
 			Shine:NotifyDualColour(client,146, 43, 33,"[注意]",
 					253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
+			table.insert(self.RedirHistory.Clients,client:GetUserId())
 		else
-			table.insert(self.RedirHistory.Clients,tostring(client:GetUserId()))
+			table.insert(self.RedirHistory.Clients,client:GetUserId())
 			self:RedirectClient(client,_targetIP)
 			count = count - 1
 		end
@@ -126,7 +126,7 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 end
 
 function Plugin:OnEndGame(_winningTeam)
-	table.clear(self.RedirHistory)
+	self.RedirHistory.RecallPenaltyCount = 0
 end
 
 function Plugin:MapChange()
@@ -198,10 +198,11 @@ function Plugin:OnMapVoteFinished()
 	end )
 end
 
-function Plugin:ClientConfirmConnect(Client)
-	if Client:GetIsVirtual() then return end
+function Plugin:ClientConfirmConnect(_client)
+	if _client:GetIsVirtual() then return end
 	self:QueryIfNeeded()
-	self:ProcessClientVoteList( Client )
+	self:ProcessClientVoteList(_client)
+	self:ProcessRecallPenalty(_client)
 end
 
 function Plugin:QueryIfNeeded()

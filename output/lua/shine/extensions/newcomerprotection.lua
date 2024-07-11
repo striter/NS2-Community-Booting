@@ -24,6 +24,7 @@ Plugin.DefaultConfig = {
 	},
 	["Tier"] ={100,300,500},
 	TierHourMultiplier = 10,
+	TierHourMaxSkill = 900,
 	["MarineGears"] = false,
 	["Refund"] = true,
 	["RefundMultiply"] = { 0.8 , 0.5 , 0.3},
@@ -53,6 +54,7 @@ Plugin.ConfigMigrationSteps = { }
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "TierHourMultiplier",  Validator.IsType( "number", Plugin.DefaultConfig.TierHourMultiplier ))
+	Validator:AddFieldRule( "TierHourMaxSkill",  Validator.IsType( "number", Plugin.DefaultConfig.TierHourMaxSkill ))
 	Validator:AddFieldRule( "BelowSkillNotify",  Validator.IsType( "number", Plugin.DefaultConfig.BelowSkillNotify ))
 	Validator:AddFieldRule( "CommandRestrictions",  Validator.IsType( "table", Plugin.DefaultConfig.CommandRestrictions ))
 	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
@@ -98,7 +100,7 @@ local function GetClientAndTier(player)
 		if crEnabled then
 			local userId = client:GetUserId()
 			local playHour = cr:GetCommunityPlayHour(userId)
-			verifySkill = math.max(verifySkill,  playHour * Plugin.Config.TierHourMultiplier)
+			verifySkill = math.max(verifySkill, math.min(Plugin.Config.TierHourMaxSkill,  playHour * Plugin.Config.TierHourMultiplier))
 		end
 		
 		for k,v in ipairs(Plugin.Config.Tier) do
@@ -119,15 +121,15 @@ local function CheckPlayerForcePurchase(self, player, purchaseTech)
 		if pRes > self.Config.RefundForcePurchase then
 			local cost = LookupTechData(purchaseTech,kTechDataCostKey,0)
 			if cost > 0 then
-				local replaceMapName = LookupTechData(purchaseTech,kTechDataMapName)
-				local additionalCost = math.floor(cost * 0.15) + 1
+				--local replaceMapName = LookupTechData(purchaseTech,kTechDataMapName)
+				local additionalCost = math.floor(cost * 0.2) + 1
 				cost = cost + additionalCost
 				player:AddResources(-cost)
 				player.lastUpgradeList = {}
 				Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
-						234, 250, 241, string.format("个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为科技/演化(该功能到达特定段位后失效).",cost, additionalCost))
+						234, 250, 241, string.format("个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为科技/演化.",cost, additionalCost))
 				Shine:NotifyDualColour( player, 88, 214, 141, "[提示]",
-						234, 250, 241, "过度积攒个人资源将导致您和您的队伍团队处于劣势!同时您所处的段位拥有[阵亡补偿],请积极寻找自己的职能定位." )
+						234, 250, 241, "过度积攒个人资源将导致您和您的队伍团队处于劣势!请积极寻找自己的职能定位." )
 				return true
 			end
 		end
@@ -245,8 +247,8 @@ function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, 
 	end
 
 	if mapName == Skulk.kMapName then
-		if CheckPlayerForcePurchase(self,player,kTechId.Onos) then
-			mapName = Onos.kMapName
+		if CheckPlayerForcePurchase(self,player,kTechId.Fade) then
+			mapName = Fade.kMapName
 		end
 	end
 	
@@ -270,7 +272,7 @@ end
 function Plugin:GetRefundPercent(player)
 	local client,tier = GetClientAndTier(player)
 	if not client or tier == 0 then return 0 end
-	return Plugin.Config.RefundMultiply[tier]
+	return Plugin.Config.RefundMultiply[tier] or 0
 end
 
 function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
@@ -282,7 +284,7 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	local refund = 0
 	local refundAdditiveTable = Plugin.Config.RefundAdditive[player:GetClassName()]
 	if refundAdditiveTable then
-		refund = refund + refundAdditiveTable[tier]
+		refund = refund + (refundAdditiveTable[tier] or 0)
 	end
 
 	local techID = player:GetTechId()

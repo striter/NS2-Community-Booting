@@ -329,20 +329,18 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	local forceCredit
 	local couldBeIgnored = true
 	local teamName = TeamNames[_newTeam]
+	local errorString
 	if playerNum >= playerLimit then
 		if _newTeam == kSpectatorIndex then
-			self:Notify(_player,string.format( "[%s]人数已满(>=%s),请尽快进入游戏!", teamName , playerLimit),errorColorTable)
+			errorString = string.format( "[%s]人数已满(>=%s),请尽快进入游戏!", teamName , playerLimit)
 			available =  false
 			forceCredit = 0
 			forcePrivilegeTitle = "预热观战位"
 		else
-			local notifyString
 			local forceJoinAmount = GetForceJoinLimit(self.Constrains.TeamForceJoin)
 			couldBeIgnored = playerNum < (basePlayerLimit + forceJoinAmount)
-			
-			notifyString = string.format( "<%s>已满[>=%s人%s],请等待场内空位.", teamName ,basePlayerLimit,
+			errorString = string.format( "<%s>已满[>=%s人%s],请等待场内空位.", teamName ,basePlayerLimit,
 					forceJoinAmount > 0 and string.format("|%s预热位",forceJoinAmount) or "")
-			self:Notify(_player,notifyString,errorColorTable)
 			
 			available = false
 			forceCredit = 1
@@ -354,16 +352,8 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	
 	local client = Server.GetOwner(_player)
 	if not client or client:GetIsVirtual()  then return end
-
-	if not couldBeIgnored then return false end
-
-	--Accesses
-	if Shine:HasAccess( client, "sh_priorslot" ) then
-		self:Notify(_player, "您为[高级预留玩家],已忽视上述限制!",priorColorTable,nil)
-		return
-	end
-
 	local userId = client:GetUserId()
+
 	local newComerConfig = self.Config.NewComerBypass
 	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 	if newComerConfig.Enable then
@@ -375,13 +365,21 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			end
 		end
 		if isNewcomer then
-			self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
+			--self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
 			return
 		end
 	end
 
+	if not couldBeIgnored then return false end
+
+	--Accesses
+	if Shine:HasAccess( client, "sh_priorslot" ) then
+		self:Notify(_player, "[高级预留玩家]特权启用.",priorColorTable,nil)
+		return
+	end
+
 	if table.contains(kTeamJoinTracker,userId) then
-		self:Notify(_player, "当局入场通道启用,已忽视上述限制!",priorColorTable,nil)
+		self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
 		return 
 	end
 
@@ -391,7 +389,8 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			return
 		end
 	end
-	
+
+	self:Notify(_player, errorString,errorColorTable)
 	local reputationConfig = self.Config.ReputationBypass
 	if reputationConfig.Enable and crEnabled then
 		if cr:UseCommunityReputation(_player,reputationConfig.Limit,0) then
