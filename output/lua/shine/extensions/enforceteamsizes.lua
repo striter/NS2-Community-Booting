@@ -333,7 +333,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	if playerNum >= playerLimit then
 		if _newTeam == kSpectatorIndex then
 			errorString = string.format( "[%s]人数已满(>=%s),请尽快进入游戏!", teamName , playerLimit)
-			available =  false
+			available = false
 			forceCredit = 0
 			forcePrivilegeTitle = "预热观战位"
 		else
@@ -370,34 +370,36 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		end
 	end
 
-	if not couldBeIgnored then return false end
+	if couldBeIgnored then  	--Accesses
+		if table.contains(kTeamJoinTracker,userId) then
+			self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
+			return
+		end
 
-	--Accesses
+		local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
+		if forceCredit and cpEnabled then
+			if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then table.insert(kTeamJoinTracker,userId)
+				return
+			end
+		end
+
+		local reputationConfig = self.Config.ReputationBypass
+		if reputationConfig.Enable and crEnabled then
+			if cr:UseCommunityReputation(_player,reputationConfig.Limit,0) then
+				self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权.",reputationConfig.Cost),priorColorTable)
+			end
+		end
+	end
+
 	if Shine:HasAccess( client, "sh_priorslot" ) then
 		self:Notify(_player, "[高级预留玩家]特权启用.",priorColorTable,nil)
 		return
 	end
-
-	if table.contains(kTeamJoinTracker,userId) then
-		self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
-		return 
-	end
-
-	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-	if forceCredit and cpEnabled then
-		if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then table.insert(kTeamJoinTracker,userId)
-			return
-		end
-	end
-
-	self:Notify(_player, errorString,errorColorTable)
-	local reputationConfig = self.Config.ReputationBypass
-	if reputationConfig.Enable and crEnabled then
-		if cr:UseCommunityReputation(_player,reputationConfig.Limit,0) then
-			self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权.",reputationConfig.Cost),priorColorTable)
-		end
-	end
 	
+	if errorString then
+		self:Notify(_player, errorString,errorColorTable)
+	end
+
 	return false
 end
 

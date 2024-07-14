@@ -1,8 +1,12 @@
-name        = "[CN] Community Startup"
+name        = "[CN] Community Booting"
 source_dir  = "source"
 output_dir  = "output"
-description = [=[请勿直接订阅!.]=]
+description = [=[Extensions for NS2CN servers.
+Feel free to strip some codes it you find it useful.
+
+Badges modpanel emblem(static/dynamic) etc
+git  https://github.com/striter/NS2-Badges-Fix]=]
 image       = "preview.jpg"
 tag_modtype = ""
-tag_support = ""
-publish_id = 2989054613
+tag_support = "Must be run on Server"
+publish_id = 2707698282

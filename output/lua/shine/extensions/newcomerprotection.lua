@@ -83,11 +83,22 @@ function Plugin:OnFirstThink()
 	Shine.Hook.SetupClassHook("Player", "OnKill", "OnPlayerKill", "PassivePost")
 	Shine.Hook.SetupClassHook("Marine", "DropAllWeapons", "OnDropAllWeapons", "PassivePre")
 
+	Shine.Hook.SetupClassHook("Marine", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	Shine.Hook.SetupClassHook("JetpackMarine", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	Shine.Hook.SetupClassHook("Exo", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	Shine.Hook.SetupClassHook("Prowler", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	Shine.Hook.SetupClassHook("Lerk", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	Shine.Hook.SetupClassHook("Skulk", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	Shine.Hook.SetupClassHook("Gorge", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	Shine.Hook.SetupClassHook("Fade", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	Shine.Hook.SetupClassHook("Onos", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
+	
 	Shine.Hook.SetupClassHook("TeamSpectator", "Replace", "OnMarineReplace", "ActivePre")
 	Shine.Hook.SetupClassHook("MarineTeam", "RespawnPlayer", "OnMarineRespawn", "PassivePost")
 end
 
 local function GetClientAndTier(player)
+	--return nil,1
 	local client = player:GetClient()
 	if client and client:GetIsVirtual() then
 		client = nil
@@ -102,7 +113,7 @@ local function GetClientAndTier(player)
 			local playHour = cr:GetCommunityPlayHour(userId)
 			verifySkill = math.max(verifySkill, math.min(Plugin.Config.TierHourMaxSkill,  playHour * Plugin.Config.TierHourMultiplier))
 		end
-		
+
 		for k,v in ipairs(Plugin.Config.Tier) do
 			if verifySkill < v then
 				tier = k
@@ -110,7 +121,7 @@ local function GetClientAndTier(player)
 			end
 		end
 	end
-	
+
 	return client,tier
 end
 
@@ -361,32 +372,45 @@ function Plugin:OnDropAllWeapons(player)
 
 end
 
---When a high elo player joins lower rank 
-function Player:ModifyDamageTaken(damageTable, attacker, doer, damageType, hitPoint)
+Plugin.kDamageBonusReduction = {
+	["Skulk"] = 1,
+	["Lerk"] = 0.7, ["Prowler"] = 0.7,
+	["Fade"] = 0.5, ["Vokex"] = 0.5, 
+	["Gorge"] = 0.33, ["Onos"] = 0.2,
+	
+	["Marine"] = 1,
+	["JetpackMarine"] = 0.5, 
+	["Exo"] = 0.2,
+}
+
+function Player:ModifyDamageTaken() end
+function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType, hitPoint)
 	if not Plugin.Config then return end
 
-	if self:GetIsVirtual() or (attacker.GetIsVirtual and attacker:GetIsVirtual()) then return end
+	--if self:GetIsVirtual() or (attacker.GetIsVirtual and attacker:GetIsVirtual()) then return end
 
 	local Config = Plugin.Config.DamageProtection
 	if #Config.ActiveTier == 0 then return end
 	if self.GetPlayerTeamSkill and attacker.GetPlayerTeamSkill then
 		local selfSkill = self:GetPlayerTeamSkill()
 		local targetSkill = attacker:GetPlayerTeamSkill()
-		--if self:GetIsVirtual() then
-		--    selfSkill = 2100
-		--end
-		--if attacker:GetIsVirtual() then
-		--    targetSkill = 2100
-		--end
+		if self:GetIsVirtual() then
+		    selfSkill = 2100
+		end
+		if attacker:GetIsVirtual() then
+		    targetSkill = 2100
+		end
 
 		local skillOffset = (selfSkill - targetSkill)
 		local value = math.max(math.abs(skillOffset) - Config.kSkillDiffThreshold,0)
 
-		if value > 0 then
+		local sign = skillOffset >= 0 and 1 or -1
+		if value > 0 
+			--and sign == -1
+		then
 			local _,selfTier = GetClientAndTier(self)
 			local _,targetTier = GetClientAndTier(attacker)
-			
-			local sign = skillOffset >= 0 and 1 or -1
+
 			local available = true
 			if sign < 0 and not Config.ActiveTier[selfTier] then
 				--Shared.Message(tostring(selfTier))
@@ -398,6 +422,12 @@ function Player:ModifyDamageTaken(damageTable, attacker, doer, damageType, hitPo
 
 			if available then
 				local damageParam = sign * (value/Config.kSkillDiffStep  + 1) * Config.kSkillDiffDamageScalarEachStep
+
+				if damageParam < 0 then
+					local classBonusReduction = Plugin.kDamageBonusReduction[self:GetClassName()] or 1
+					damageParam = damageParam * classBonusReduction
+				end
+				
 				damageTable.damage = damageTable.damage * ( 1 + damageParam)
 			end
 		end
