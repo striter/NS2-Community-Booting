@@ -235,7 +235,7 @@ if Server then
                 local clientId = client:GetUserId()
                 if not table.contains(activeVoteResults.voters,clientId) then
                     table.insert(activeVoteResults.voters, clientId)
-                end
+                end 
 
                 activeVoteResults.votes[clientId] = message.choice
                 lastVoteSent = Shared.GetTime()
@@ -247,7 +247,7 @@ if Server then
     Server.HookNetworkMessage("SendVote", OnSendVote)
 
     local function GetNumVotingPlayers()
-        return Server.GetNumPlayers() - #gServerBots
+        return Server.GetNumPlayers() - #gServerBots - Server.GetNumSpectators()
     end
 
     local function GetVotePassed(yesVotes, noVotes, required)

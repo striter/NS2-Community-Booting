@@ -2,10 +2,7 @@ name        = "[CN] Community Booting"
 source_dir  = "source"
 output_dir  = "output"
 description = [=[Extensions for NS2CN servers.
-Feel free to strip some codes it you find it useful.
-
-Badges modpanel emblem(static/dynamic) etc
-git  https://github.com/striter/NS2-Badges-Fix]=]
+Feel free to strip some codes it you find it useful.]=]
 image       = "preview.jpg"
 tag_modtype = ""
 tag_support = "Must be run on Server"

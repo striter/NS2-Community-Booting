@@ -14,15 +14,8 @@ Plugin.DefaultConfig = {
 	CrowdAdvert = {
 		NotifyTimer = 150,
 		PlayerCount = 0,
-		ResSlots = 32,
 		ToServer = 0,
-		ToServerDelay = 10,
-		Prefix = "[病危通知书]",
-		Message = "服务器要炸了",
 		FailInformCount = 40,
-		FailInformMessage = "距离自动换服还差%i人",
-		SuccessfulInformMessage = "当前人数已满足条件(%i),当前对局结束后将尝试自动分服.",
-		FailInformPrefix = "[换服提示]",
 	},
 	RecallPenalty = {
 		Count = -1,
@@ -40,20 +33,15 @@ local Validator = Shine.Validator()
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
 	Validator:AddFieldRule( "CrowdAdvert.NotifyTimer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.NotifyTimer ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
-	Validator:AddFieldRule( "CrowdAdvert.ResSlots",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ResSlots ))
-	Validator:AddFieldRule( "CrowdAdvert.Prefix",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Prefix ))
 	Validator:AddFieldRule( "CrowdAdvert.ToServer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServer ))
-	Validator:AddFieldRule( "CrowdAdvert.ToServerDelay",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServerDelay ))
-	Validator:AddFieldRule( "CrowdAdvert.Message",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.Message ))
-	Validator:AddFieldRule( "CrowdAdvert.FailInformPrefix",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.FailInformPrefix ))
-	Validator:AddFieldRule( "CrowdAdvert.FailInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.FailInformMessage ))
-	Validator:AddFieldRule( "CrowdAdvert.SuccessfulInformMessage",  Validator.IsType( "string", Plugin.DefaultConfig.CrowdAdvert.SuccessfulInformMessage ))
 	Validator:AddFieldRule( "CrowdAdvert.FailInformCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.FailInformCount ))
 	Validator:AddFieldRule( "RecallPenalty",  Validator.IsType( "table", Plugin.DefaultConfig.RecallPenalty ))
 end
 
+local kPrefix = "[被动分服]"
+
 local function NotifyCrowdAdvert(self, _message)
-	Shine:NotifyDualColour(Shine.GetAllClients(),146, 43, 33,self.Config.CrowdAdvert.Prefix,
+	Shine:NotifyDualColour(Shine.GetAllClients(),146, 43, 33,kPrefix,
 			253, 237, 236, _message)
 end
 
@@ -109,10 +97,11 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 	local count = _count
 	for _,data in pairs(clients) do
 		local client =  data.client
+		local player = client:GetControllingPlayer()
 		if Shine:HasAccess(client, "sh_host" ) then
-			Shine:NotifyDualColour(client,146, 43, 33,"[注意]",
-					253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
-			table.insert(self.RedirHistory.Clients,client:GetUserId())
+			Shine:NotifyDualColour(client,146, 43, 33,kPrefix, 253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
+		elseif player:isa("Commander") then
+			Shine:NotifyDualColour(client,146, 43, 33,kPrefix, 253, 237, 236, "检测到您为指挥官,已跳过强制分服.")
 		else
 			table.insert(self.RedirHistory.Clients,client:GetUserId())
 			self:RedirectClient(client,_targetIP)
@@ -148,14 +137,13 @@ local function NotifyRedirectProgression(self, _playerCount, _ignoreTeams)
 	if _playerCount <= self.Config.CrowdAdvert.FailInformCount then return end
 
 	local informMessage = _playerCount < self.Config.CrowdAdvert.PlayerCount 
-						and string.format( self.Config.CrowdAdvert.FailInformMessage,self.Config.CrowdAdvert.PlayerCount - _playerCount)
-						or string.format(self.Config.CrowdAdvert.SuccessfulInformMessage,self.Config.CrowdAdvert.PlayerCount)
+						and string.format( "距离自动换服还差%i名活跃玩家.",self.Config.CrowdAdvert.PlayerCount - _playerCount)
+						or string.format("当前玩家数已满足分服条件(%i),当下一场对局倒计时开始时若存在足够的活跃(非观战)玩家,将尝试自动分服.",self.Config.CrowdAdvert.PlayerCount)
 	
 	for client in Shine.IterateClients() do
 		local team = client:GetControllingPlayer():GetTeamNumber()
 		if _ignoreTeams or team == kSpectatorIndex or team == kTeamReadyRoom then
-			Shine:NotifyDualColour(client,146, 43, 33,
-					self.Config.CrowdAdvert.FailInformPrefix,
+			Shine:NotifyDualColour(client,146, 43, 33, kPrefix,
 					253, 237, 236, informMessage)
 		end
 	end
@@ -166,36 +154,32 @@ function Plugin:NotifyCrowdRedirect()
 	self:SimpleTimer(self.Config.CrowdAdvert.NotifyTimer, function() self:NotifyCrowdRedirect() end )
 end
 
+function Plugin:SetGameState(Gamerules, _state, OldState )
 
-function Plugin:OnMapVoteFinished()
+	if _state ~= kGameState.PreGame then return end
 	if self.Config.CrowdAdvert.ToServer <= 0 then return end
 	if not self.PresetServers then return end
 	local redirData = self.PresetServers[self.Config.CrowdAdvert.ToServer]
 	if not redirData then return end
 
-	local gameEndPlayerCount = Shine.GetHumanPlayerCount()
-	if gameEndPlayerCount < self.Config.CrowdAdvert.PlayerCount then
-		NotifyRedirectProgression(self,gameEndPlayerCount,false)		--Tells spectators/readyrooms
+	local checkCount = Shine.GetHumanPlayerCount() - Server.GetNumSpectators()
+	if checkCount < self.Config.CrowdAdvert.PlayerCount then
+		NotifyRedirectProgression(self,checkCount,true)		--Tells spectators/readyrooms
 		return
 	end
 
-	local amount = gameEndPlayerCount / 2
-	local delay = self.Config.CrowdAdvert.ToServerDelay
-	NotifyCrowdAdvert(self,string.format( self.Config.CrowdAdvert.Message,delay,amount, redirData.Name))
+	local currentPlayerCount = Shine.GetHumanPlayerCount()
+	if currentPlayerCount < self.Config.CrowdAdvert.PlayerCount then
+		NotifyRedirectProgression(self,currentPlayerCount,true)		--Tells everyone
+		return
+	end
 
+	local amount = math.floor(currentPlayerCount / 2)
+	local delay = 3
+	NotifyCrowdAdvert(self,string.format( "活跃玩家数已达到服务器性能峰值,%i秒后%i名玩家将前往<%s>开启新战局.",delay,amount, redirData.Name))
 	self.Timer = self:SimpleTimer(delay, function()
-		local currentPlayerCount = Shine.GetHumanPlayerCount()
-		if currentPlayerCount < self.Config.CrowdAdvert.PlayerCount then
-			NotifyRedirectProgression(self,currentPlayerCount,true)		--Tells everyone
-			return
-		end
-
-		if self.Config.CrowdAdvert.ResSlots > 0 then
-			Shared.ConsoleCommand(string.format("sh_setresslots %i", self.Config.CrowdAdvert.ResSlots))
-		end
-
 		self:RedirClients(redirData.Address,amount,false)
-	end )
+	end)
 end
 
 function Plugin:ClientConfirmConnect(_client)
