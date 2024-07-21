@@ -162,15 +162,10 @@ function Plugin:SetGameState(Gamerules, _state, OldState )
 	local redirData = self.PresetServers[self.Config.CrowdAdvert.ToServer]
 	if not redirData then return end
 
-	local checkCount = Shine.GetHumanPlayerCount() - Server.GetNumSpectators()
+	local currentPlayerCount = Shine.GetHumanPlayerCount()
+	local checkCount = currentPlayerCount - Server.GetNumSpectators()
 	if checkCount < self.Config.CrowdAdvert.PlayerCount then
 		NotifyRedirectProgression(self,checkCount,true)		--Tells spectators/readyrooms
-		return
-	end
-
-	local currentPlayerCount = Shine.GetHumanPlayerCount()
-	if currentPlayerCount < self.Config.CrowdAdvert.PlayerCount then
-		NotifyRedirectProgression(self,currentPlayerCount,true)		--Tells everyone
 		return
 	end
 

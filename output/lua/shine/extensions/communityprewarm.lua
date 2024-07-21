@@ -298,8 +298,8 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
         return true
     end
     
-    Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-            255, 255, 255,string.format("您当前的[预热点]%s 不足以获取特权 %s , 需求%s.",credit, _privilege,_cost) )
+    --Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
+    --        255, 255, 255,string.format("您当前的[预热点]%s 不足以获取特权 %s , 需求%s.",credit, _privilege,_cost) )
     return false
 end
 
@@ -445,7 +445,7 @@ function Plugin:CreateMessageCommands()
         Shine:NotifyDualColour( _target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("<%s>给予了你%s[预热点],当前剩余%s,记得对ta好一点.",_client:GetControllingPlayer():GetName(),_value, targetData.credit) )
     end,true):AddParam{ Type = "client", NotSelf = true }
-            :AddParam{ Type = "number", Round = true, Min = 2, Max = 5, Default = 1 }
+            :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 1 }
             :Help("将你的预热点分予其他玩家,例如:给予玩家<哈基米> 3个预热点 - !prewarm_give 哈基米 3")
     
     self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end )
