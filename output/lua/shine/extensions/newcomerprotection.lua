@@ -374,9 +374,9 @@ end
 
 Plugin.kDamageBonusReduction = {
 	["Skulk"] = 1,
-	["Lerk"] = 0.7, ["Prowler"] = 0.7,
-	["Fade"] = 0.5, ["Vokex"] = 0.5, 
-	["Gorge"] = 0.33, ["Onos"] = 0.2,
+	["Lerk"] = 0.5, ["Prowler"] = 0.5,
+	["Fade"] = 0.33, ["Vokex"] = 0.33, 
+	["Gorge"] = 0.2, ["Onos"] = 0.2,
 	
 	["Marine"] = 1,
 	["JetpackMarine"] = 0.5, 
@@ -406,7 +406,7 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 
 		local sign = skillOffset >= 0 and 1 or -1
 		if value > 0 
-			--and sign == -1
+			and sign == -1
 		then
 			local _,selfTier = GetClientAndTier(self)
 			local _,targetTier = GetClientAndTier(attacker)

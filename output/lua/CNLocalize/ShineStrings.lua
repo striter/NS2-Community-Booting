@@ -50,6 +50,11 @@ kShinePluginsTranslations["Core"]["OPEN_IN_STEAM"]= "用Steam页面打开"
 kShinePluginsTranslations["Core"]["LOADING"]= "加载中,请稍后."
 kShinePluginsTranslations["Core"]["NS2CN_WELCOME"]= "欢迎来到<物竞天择2中国社区>"
 kShinePluginsTranslations["Core"]["PLUGIN_VERSION"]= "版本 {Version}"
+kShinePluginsTranslations["Core"]["ERROR_CANT_TARGET_SELF"]= "无法将命令作用于自己."
+kShinePluginsTranslations["Core"]["ERROR_NO_MATCHING_PLAYER"]= "找不到名字或NS2ID为'{PlayerName}'的玩家."
+kShinePluginsTranslations["Core"]["ERROR_NO_MATCHING_PLAYERS"]= "找不到名字或NS2ID'{PlayerName}'的玩家们."
+kShinePluginsTranslations["Core"]["ERROR_CANT_TARGET"]= "无法把命令作用于{PlayerName},权限不足."
+kShinePluginsTranslations["Core"]["ERROR_CANT_TARGET_MULTIPLE"]= "无法把命令作用于你选择的任何人,权限不足."
 
 kShinePluginsTranslations["chatbox"]={}
 kShinePluginsTranslations["chatbox"]["SAY_ALL"]="对所有人发言"

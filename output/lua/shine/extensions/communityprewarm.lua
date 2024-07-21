@@ -10,6 +10,9 @@ Plugin.DefaultConfig = {
         Hour = 4,           --Greater than this hour
         Player = 12,
     },
+    EndGameSpec = {
+        Credit = 0.4,
+    },
     ["Tier"] = {
         [1] = { Count = 1, Credit = 15,Inform = true, },
         [2] = { Count = 2, Credit = 8,Inform = true },
@@ -23,6 +26,7 @@ Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 do
     local Validator = Shine.Validator()
+    Validator:AddFieldRule( "EndGameSpec",  Validator.IsType( "table", Plugin.DefaultConfig.EndGameSpec ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier  ))
@@ -106,8 +110,14 @@ local function NotifyClient(self, _client, _data)
     local data = _data or GetPlayerData(self,_client:GetUserId())
     if data.credit > 0 then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-                255, 255, 255,string.format("当日剩余%s[预热点],可作用于[投票-换图提名]或者[自由下场]等特权,每日清空记得用完哦!", data.credit) )
+                255, 255, 255,string.format(
+                        "当日剩余%s[预热点],可作用于[投票-换图提名]或者[自由下场]等特权,每日清空记得用完.%s", 
+                        data.credit,
+                        data.tier > 0 and "同时你可以可以使用!prewarm_give指令将预热点给予他人." or "") )
+        return true
     end
+    
+    return false
 end
 
 local function GetPrewarmScore(self, player, trackedTime)
@@ -171,7 +181,7 @@ end
 local function ValidateClient(self, _clientID, _data, _tier, _credit,_scoreOverride)
     _data = _data or GetPlayerData(self,_clientID)
     _data.tier = _tier
-    _data.credit = _data.credit + _credit
+    _data.credit = _credit
     _data.score = _scoreOverride and _scoreOverride or _data.score
     
     local client = Shine.GetClientByNS2ID(_clientID)
@@ -181,7 +191,7 @@ local function ValidateClient(self, _clientID, _data, _tier, _credit,_scoreOverr
     player:SetPrewarmData(_data)
     if _data.tier > 0 then
         Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("激励已派发,以获得[预热徽章%s]及[%s预热点],感谢您的付出!",_tier,_credit) )
+                string.format("预热激励已派发,已获得[预热徽章%s]及[%s预热点]!",_tier,_credit) )
     end
 end
 
@@ -271,28 +281,26 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
     if not self.PrewarmData.Validated then return end
     
     local data = GetPlayerData(self,_client:GetUserId())
-    if not data.tier or data.tier <= 0 then return end
-    
+    local tier = data.tier or 0
     if _cost == 0 then
+        if tier == 0 then return end
+        
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
                 255, 255, 255,string.format("当前拥有特权:[%s].", _privilege) )
         return true
     end
     
-    if _cost > 0 then
-        local credit = data.credit or 0
-        if credit >= _cost then
-            data.credit = credit - _cost
-            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-                    255, 255, 255,string.format("使用 %s [预热点],当前剩余 %s [预热点].\n已获得特权:<%s>.", _cost,data.credit,_privilege) )
-            return true
-        end
-        return false
-    else
+    local credit = data.credit or 0
+    if credit >= _cost then
+        data.credit = credit - _cost
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-                255, 255, 255,string.format("您的可用[预热点]不足.", _privilege) )
+                255, 255, 255,string.format("使用 %s [预热点],当前剩余 %s [预热点].\n已获得特权:<%s>.", _cost,data.credit,_privilege) )
         return true
     end
+    
+    Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
+            255, 255, 255,string.format("您当前的[预热点]%s 不足以获取特权 %s , 需求%s.",credit, _privilege,_cost) )
+    return false
 end
 
 -- Triggers
@@ -355,6 +363,22 @@ function Plugin:ClientConnect(_client)
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
     TrackClient(self,_client,clientID)
+end
+
+function Plugin:ClientDisconnect( _client )
+    local clientID = _client:GetUserId()
+    if clientID <= 0 then return end
+
+    TrackClient(self,_client,clientID)
+end
+
+function Plugin:ClientConfirmConnect( _client )
+    local clientID = _client:GetUserId()
+    if clientID <= 0 then return end
+
+    local data = GetPlayerData(self,clientID)
+    local player = _client:GetControllingPlayer()
+    data.name = player:GetName()
 
     if PrewarmValidateEnable(self) then
         if self.PrewarmData.Validated then
@@ -366,41 +390,79 @@ function Plugin:ClientConnect(_client)
     end
 end
 
-function Plugin:ClientConfirmConnect( _client )
-    local clientID = _client:GetUserId()
-    if clientID <= 0 then return end
-
-    local data = GetPlayerData(self,clientID)
-    local player = _client:GetControllingPlayer()
-    data.name = player:GetName()
-end
-
-function Plugin:ClientDisconnect( _client )
-    local clientID = _client:GetUserId()
-    if clientID <= 0 then return end
-
-    TrackClient(self,_client,clientID)
+function Plugin:OnEndGame(_)
+    if not self.PrewarmData.Validated then return end
+    
+    local reward = self.Config.EndGameSpec.Credit
+    
+    for Client, _ in Shine.IterateClients() do
+        local Player = Client.GetControllingPlayer and Client:GetControllingPlayer()
+        local team = Player:GetTeamNumber()
+        local clientID = Client:GetUserId()
+        if team == kTeamReadyRoom or team == kSpectatorIndex then
+            local data = GetPlayerData(self,clientID)
+            data.credit = (data.credit or 0) + reward
+            Shine:NotifyDualColour( Client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                    string.format("对局已结束,非对局内玩家已获得%s[预热点]用于获取当日特权,您当前拥有%s[预热点].",reward,data.credit) )
+        end
+    end
 end
 
 function Plugin:CreateMessageCommands()
-    local setCommand = self:BindCommand( "sh_prewarm", "prewarm", function(_client) NotifyClient(self,_client,nil) end,true )
-    setCommand:Help( "显示你的预热状态.")
+    self:BindCommand( "sh_prewarm_status", "prewarm_status", function(_client)
+        if not NotifyClient(self,_client,nil) then
+            Shine:NotifyError(_client,"你暂未获得预热点.")
+        end 
+    end,true )
+    :Help( "显示你的预热状态.")
+
+    self:BindCommand("sh_prewarm_give","prewarm_give", function(_client, _target, _value)
+        if not self.PrewarmData.Validated then
+            Shine:NotifyError(_client,"预热状态无法使用该指令")
+            return
+        end
+        
+        local clientData = GetPlayerData(self,_client:GetUserId())
+        local selfCredit = clientData.credit or 0
+        local tier = clientData.tier or 0
+        if tier <= 0 then
+            Shine:NotifyError(_client,"仅预热贡献者可使用该指令.")
+            return
+        end
+
+        if selfCredit < _value then
+            Shine:NotifyError(_client,"你的预热点不足.")
+            return
+        end
+
+        local targetData = GetPlayerData(self, _target:GetUserId())
+        targetData.credit = (targetData.credit or 0) + _value
+        clientData.credit = clientData.credit - _value
+
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                string.format("你已给予<%s>%s[预热点],当前剩余%s,让ta对你好一点",_target:GetControllingPlayer():GetName(),_value, clientData.credit) )
+
+        Shine:NotifyDualColour( _target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                string.format("<%s>给予了你%s[预热点],当前剩余%s,记得对ta好一点.",_client:GetControllingPlayer():GetName(),_value, targetData.credit) )
+    end,true):AddParam{ Type = "client", NotSelf = true }
+            :AddParam{ Type = "number", Round = true, Min = 2, Max = 5, Default = 1 }
+            :Help("将你的预热点分予其他玩家,例如:给予玩家<哈基米> 3个预热点 - !prewarm_give 哈基米 3")
     
-    self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end,true )
+    self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end )
     :AddParam{ Type = "steamid" }
     :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 4 }
     :AddParam{ Type = "number", Round = true, Min = 0, Max = 15, Default = 3 }
-    :Help( "设置玩家的预热状态以及预热点数,例如!prewarm_validate 5 3.(设置玩家段位4并给予3点预热点)")
+    :Help( "设置玩家的预热状态以及预热点数,例如设置55022511段位4,3点预热点 !prewarm_validate 55022511 4 3")
     
-    self:BindCommand( "sh_prewarm_cancel", "prewarm_cancel", function(_client,_targetID) ValidateClient(self,_targetID,nil,0,0,0) end,true )
+    self:BindCommand( "sh_prewarm_cancel", "prewarm_cancel", function(_client,_targetID) ValidateClient(self,_targetID,nil,0,0,0) end )
         :AddParam{ Type = "steamid" }
         :Help( "取消玩家的预热点数(例如使用了连点器/作弊).")
     
-    local resetCommand = self:BindCommand( "sh_prewarm_reset", "prewarm_reset", function(_client)
+    self:BindCommand( "sh_prewarm_reset", "prewarm_reset", function(_client)
         Reset(self)
         SavePersistent(self)        
-    end,true )
-    resetCommand:Help( "重置服务器的预热状态与数据.")
+    end ):Help( "重置服务器的预热状态与数据.")
+
 end
 
 function Plugin:IsPrewarming() 

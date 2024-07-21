@@ -153,14 +153,9 @@ function Plugin:OnPlayerRestricted(_player,_newTeam)
 
 	local clientId = client:GetUserId()
 	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-	if cpEnabled then
-		if cp:GetPrewarmPrivilege(client,0,"预热越限通道") then
-			self:Notify(_player,"您为今日预热玩家,可以越过限制下场,请勿利用该特权做出不符合规范的行为!.",errorColorTable)
-			table.insert(kTeamJoinTracker,clientId)
-			return false
-		end
-		
-		if table.contains(kTeamJoinTracker,clientId) and cp:GetPrewarmPrivilege(client,0,"预热越限通道") then return false end
+	if cpEnabled and cp:GetPrewarmPrivilege(client,0,"预热越限通道") then
+		self:Notify(_player,"您为今日预热玩家,可以越过限制下场,请勿利用该特权做出不符合规范的行为!.",errorColorTable)
+		return false
 	end
 
 	if Shine:HasAccess(client, "sh_adminmenu" ) then
