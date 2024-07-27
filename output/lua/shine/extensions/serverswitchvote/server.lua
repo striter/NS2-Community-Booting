@@ -15,7 +15,9 @@ Plugin.DefaultConfig = {
 		NotifyTimer = 150,
 		PlayerCount = 0,
 		ToServer = 0,
+		RedirUntil = 24,
 		FailInformCount = 40,
+		Newcomer = false,
 	},
 	RecallPenalty = {
 		Count = -1,
@@ -33,8 +35,10 @@ local Validator = Shine.Validator()
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
 	Validator:AddFieldRule( "CrowdAdvert.NotifyTimer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.NotifyTimer ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
+	Validator:AddFieldRule( "CrowdAdvert.RedirUntil",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.RedirUntil ))
 	Validator:AddFieldRule( "CrowdAdvert.ToServer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServer ))
 	Validator:AddFieldRule( "CrowdAdvert.FailInformCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.FailInformCount ))
+	Validator:AddFieldRule( "CrowdAdvert.Newcomer",  Validator.IsType( "boolean", Plugin.DefaultConfig.CrowdAdvert.Newcomer ))
 	Validator:AddFieldRule( "RecallPenalty",  Validator.IsType( "table", Plugin.DefaultConfig.RecallPenalty ))
 end
 
@@ -169,11 +173,11 @@ function Plugin:SetGameState(Gamerules, _state, OldState )
 		return
 	end
 
-	local amount = math.floor(currentPlayerCount / 2)
+	local amount = currentPlayerCount - self.Config.CrowdAdvert.RedirUntil
 	local delay = 3
 	NotifyCrowdAdvert(self,string.format( "活跃玩家数已达到服务器性能峰值,%i秒后%i名玩家将前往<%s>开启新战局.",delay,amount, redirData.Name))
 	self.Timer = self:SimpleTimer(delay, function()
-		self:RedirClients(redirData.Address,amount,false)
+		self:RedirClients(redirData.Address,amount,self.Config.CrowdAdvert.Newcomer)
 	end)
 end
 

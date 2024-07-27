@@ -21,7 +21,7 @@ Plugin.DefaultConfig = {
     },
 }
 
-Plugin.kPrefix = "[战局预热]" 
+Plugin.kPrefix = "[战局预热]"
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 do
@@ -41,7 +41,7 @@ function Plugin:Initialise()
     self.PrewarmTracker = {}
     self.MemberInfos = { }
     self:CreateMessageCommands()
-    
+
     local File, Err = Shine.LoadJSONFile(PrewarmFile)
     self.PrewarmData = File or {
         ValidationDay = 0,
@@ -50,8 +50,8 @@ function Plugin:Initialise()
             ["55022511"] = {tier = 0 ,score = 0, time = 100 , credit = 0 , name = "StriteR."}
         },
     }
-    
-	return true
+
+    return true
 end
 
 local function ReadPersistent(self)
@@ -64,7 +64,7 @@ local function SavePersistent(self)
     for k,v in pairs(self.MemberInfos) do
         self.PrewarmData.UserData[tostring(k)] = v
     end
-    
+
     local Success, Err = Shine.SaveJSONFile( self.PrewarmData, PrewarmFile )
     if not Success then
         Shared.Message( "Error saving prewarm file: "..Err )
@@ -87,8 +87,8 @@ local function GetPlayerData(self, _clientID)
     if not self.MemberInfos[_clientID] then
         --Initial
         local initialTier = 0
-        local initialCredit = 0 
-        
+        local initialCredit = 0
+
         local userData = Shine:GetUserData(_clientID)
         local groupName = userData and userData.Group or nil
         local groupData = groupName and Shine:GetGroupData(groupName) or nil
@@ -96,10 +96,10 @@ local function GetPlayerData(self, _clientID)
             initialCredit = groupData.PrewarmCredit
             initialTier = 5
         end
-        
+
         self.MemberInfos[_clientID] = {name = "",score = 0, time = 0, tier = initialTier ,  credit = initialCredit }
     end
-    
+
     return self.MemberInfos[_clientID]
 end
 
@@ -111,12 +111,12 @@ local function NotifyClient(self, _client, _data)
     if data.credit > 0 then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
                 255, 255, 255,string.format(
-                        "当日剩余%s[预热点],可作用于[投票-换图提名]或者[自由下场]等特权,每日清空记得用完.%s", 
+                        "当日剩余%s[预热点],可作用于[投票-换图提名]或者[自由下场]等特权,每日清空记得用完.%s",
                         data.credit,
                         data.tier > 0 and "同时你可以可以使用!prewarm_give指令将预热点给予他人." or "") )
         return true
     end
-    
+
     return false
 end
 
@@ -124,26 +124,26 @@ local function GetPrewarmScore(self, player, trackedTime)
 
     local team = player:GetTeamNumber()
 
-    if  team == kSpectatorIndex
-        or kCurrentHour <= self.Config.Restriction.Hour
+    if team == kSpectatorIndex
+            or kCurrentHour <= self.Config.Restriction.Hour
     then
         return trackedTime
     end
 
     local activePlayed = false
-    
+
     local gameMode = Shine.GetGamemode()
     if table.contains(Shine.kRankGameMode,gameMode) then
         local score = player:GetScore()
         local commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()
         activePlayed = score > 50 or commTime > 300
-    elseif gameMode == "Combat" then
-        local kills = player:getKills()
-        local assists = player:GetAssistKills()
+    elseif table.contains(Shine.kSeedingGameMode,gameMode) then
+        local kills = player:GetKills() or 0
+        local assists = player:GetAssistKills() or 0
         local activePlayScore = kills * 2 + assists
-        activePlayed = activePlayScore > 30 
+        activePlayed = activePlayScore > 30
     end
-    
+
     --Shared.Message(gameMode .. " " .. tostring(activePlayed))
     return activePlayed and (3 * trackedTime) or trackedTime
 end
@@ -155,17 +155,17 @@ local function TrackClient(self, client, _clientID)
     if not self.PrewarmTracker[_clientID] then
         self.PrewarmTracker[_clientID] = now
     end
-    
+
     local data = GetPlayerData(self,_clientID)
     local player = client:GetControllingPlayer()
-    
+
     local trackedTime = math.floor(now - self.PrewarmTracker[_clientID])
     data.time = data.time + trackedTime
 
     if not self.PrewarmData.Validated then
         data.score = data.score + GetPrewarmScore(self,player,trackedTime)
     end
-    
+
     self.PrewarmTracker[_clientID] = now
     player:SetPrewarmData(data)
 end
@@ -183,7 +183,7 @@ local function ValidateClient(self, _clientID, _data, _tier, _credit,_scoreOverr
     _data.tier = _tier
     _data.credit = _credit
     _data.score = _scoreOverride and _scoreOverride or _data.score
-    
+
     local client = Shine.GetClientByNS2ID(_clientID)
     if not client then return end
 
@@ -213,13 +213,13 @@ local function GetInGamePlayerCount()
     if not gameRules then return 0 end
     local team1Players,_,team1Bots = gameRules:GetTeam(kTeam1Index):GetNumPlayers()
     local team2Players,_,team2Bots = gameRules:GetTeam(kTeam2Index):GetNumPlayers()
-    return  team1Players + team2Players - team1Bots - team2Bots 
+    return  team1Players + team2Players - team1Bots - team2Bots
 end
 
 local function Validate(self)
     if not PrewarmValidateEnable(self) then return end
     if GetInGamePlayerCount() < self.Config.Restriction.Player then return end
-    
+
     if self.PrewarmData.Validated then return end
     self.PrewarmData.Validated = true
 
@@ -230,7 +230,7 @@ local function Validate(self)
 
     local function PrewarmCompare(a, b) return a.data.score > b.data.score end
     table.sort(prewarmClients, PrewarmCompare)
-    
+
     local nameList = ""
     local currentIndex = 0
     for _, prewarmClient in pairs(prewarmClients) do
@@ -245,9 +245,9 @@ local function Validate(self)
                 break
             end
         end
-        
+
         if not curTierData then break end
-        
+
         ValidateClient(self, prewarmClient.clientID, prewarmClient.data,curTier, curTierData.Credit,curTierData.Rank)
         if curTierData.Reputation then
             Shared.ConsoleCommand(string.format("sh_rep_delta %s %s",prewarmClient.clientID, curTierData.Reputation))
@@ -258,38 +258,38 @@ local function Validate(self)
                         self.kPrefix,255, 255, 255,  string.format("预热排名获得了额外[%s信誉分].",curTierData.Reputation) )
             end
         end
-        
+
         if curTierData.Inform then
-            nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60)) 
+            nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60))
         end
-        
+
         currentIndex = currentIndex + 1
     end
-    
+
     local informMessage = string.format("已达成,排名靠前的玩家:" .. nameList .. "等,感谢各位做出的积极贡献.",
             self.Config.Restriction.Player)
     for client in Shine.IterateClients() do
         Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-                                        255, 255, 255, informMessage)
+                255, 255, 255, informMessage)
     end
-    
+
     return true
     --SavePersistent(self)
 end
 
 function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
     if not self.PrewarmData.Validated then return end
-    
+
     local data = GetPlayerData(self,_client:GetUserId())
     local tier = data.tier or 0
     if _cost == 0 then
         if tier == 0 then return end
-        
+
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
                 255, 255, 255,string.format("当前拥有特权:[%s].", _privilege) )
         return true
     end
-    
+
     local credit = data.credit or 0
     if credit >= _cost then
         data.credit = credit - _cost
@@ -297,7 +297,7 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
                 255, 255, 255,string.format("使用 %s [预热点],当前剩余 %s [预热点].\n已获得特权:<%s>.", _cost,data.credit,_privilege) )
         return true
     end
-    
+
     --Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
     --        255, 255, 255,string.format("您当前的[预热点]%s 不足以获取特权 %s , 需求%s.",credit, _privilege,_cost) )
     return false
@@ -335,7 +335,7 @@ function Plugin:SetGameState( Gamerules, State, OldState )
                     break
                 end
             end
-            
+
             local message1 = string.format("分数记录中,当正式开局时[人数>%s]后,分数靠前玩家将获得当日[预热徽章]以及对应的[预热点].", self.Config.Restriction.Player)
             local message2 = string.format("当前排名:" .. nameList, self.Config.Restriction.Player)
             for client in Shine.IterateClients() do
@@ -392,9 +392,9 @@ end
 
 function Plugin:OnEndGame(_)
     if not self.PrewarmData.Validated then return end
-    
+
     local reward = self.Config.EndGameSpec.Credit
-    
+
     for Client, _ in Shine.IterateClients() do
         local Player = Client.GetControllingPlayer and Client:GetControllingPlayer()
         local team = Player:GetTeamNumber()
@@ -412,16 +412,16 @@ function Plugin:CreateMessageCommands()
     self:BindCommand( "sh_prewarm_status", "prewarm_status", function(_client)
         if not NotifyClient(self,_client,nil) then
             Shine:NotifyError(_client,"你暂未获得预热点.")
-        end 
+        end
     end,true )
-    :Help( "显示你的预热状态.")
+        :Help( "显示你的预热状态.")
 
     self:BindCommand("sh_prewarm_give","prewarm_give", function(_client, _target, _value)
         if not self.PrewarmData.Validated then
             Shine:NotifyError(_client,"预热状态无法使用该指令")
             return
         end
-        
+
         local clientData = GetPlayerData(self,_client:GetUserId())
         local selfCredit = clientData.credit or 0
         local tier = clientData.tier or 0
@@ -447,25 +447,28 @@ function Plugin:CreateMessageCommands()
     end,true):AddParam{ Type = "client", NotSelf = true }
             :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 1 }
             :Help("将你的预热点分予其他玩家,例如:给予玩家<哈基米> 3个预热点 - !prewarm_give 哈基米 3")
-    
+
     self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end )
-    :AddParam{ Type = "steamid" }
-    :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 4 }
-    :AddParam{ Type = "number", Round = true, Min = 0, Max = 15, Default = 3 }
-    :Help( "设置玩家的预热状态以及预热点数,例如设置55022511段位4,3点预热点 !prewarm_validate 55022511 4 3")
-    
+        :AddParam{ Type = "steamid" }
+        :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 4 }
+        :AddParam{ Type = "number", Round = true, Min = 0, Max = 15, Default = 3 }
+        :Help( "设置玩家的预热状态以及预热点数,例如设置55022511段位4,3点预热点 !prewarm_validate 55022511 4 3")
+
     self:BindCommand( "sh_prewarm_cancel", "prewarm_cancel", function(_client,_targetID) ValidateClient(self,_targetID,nil,0,0,0) end )
         :AddParam{ Type = "steamid" }
         :Help( "取消玩家的预热点数(例如使用了连点器/作弊).")
-    
+
+    self:BindCommand( "sh_prewarm_track", "prewarm_track", function(_client)
+        TrackAllClients(self)
+    end ):Help( "录入数据(debug)")
     self:BindCommand( "sh_prewarm_reset", "prewarm_reset", function(_client)
         Reset(self)
-        SavePersistent(self)        
+        SavePersistent(self)
     end ):Help( "重置服务器的预热状态与数据.")
 
 end
 
-function Plugin:IsPrewarming() 
+function Plugin:IsPrewarming()
     return not self.PrewarmData.Validated
 end
 
