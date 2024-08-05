@@ -51,10 +51,7 @@ function ScoringMixin:GetHiveSkill()
         return playerSkill
     end
     
-    if playerSkill > 1500 then
-        playerSkill = math.max(self.skill , self.rankDelta)
-        playerSkill = math.max(playerSkill,1500)
-    end
+    playerSkill = math.max(self.skill  + self.rankDelta * 0.25, self.rankDelta + self.skill * 0.25)
     return playerSkill
 end
 
