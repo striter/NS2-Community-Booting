@@ -134,13 +134,7 @@ function Plugin:GetPlayerLimit(Gamerules,Team)
 		return inServerPlayers - leastPlayersInGame,basePlayerLimit	--Join the game little f**k
 	end
 
-	local playerLimit = basePlayerLimit
-	if Shared.GetTime() > self.Config.SlotCoveringBegin * 60 then
-		local maxPlayers = math.max(self:GetNumPlayers(Gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(Gamerules:GetTeam(kTeam2Index)))
-		playerLimit = math.max(playerLimit,maxPlayers)
-	end
-
-	return playerLimit,basePlayerLimit
+	return basePlayerLimit
 end
 
 function Plugin:RedirectClient(client)
@@ -318,24 +312,25 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	end
 
 	local available = not self:GetPlayerRestricted(_player,_newTeam)
-	local playerNum = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
-	local playerLimit,basePlayerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
+	local curTeamPlayer = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
+	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
+	local playerLimitExtend =  GetForceJoinLimit(self.Constrains.TeamForceJoin)
+	local maxPlayerLimit = playerLimit + playerLimitExtend
 	local forcePrivilegeTitle
 	local forceCredit
 	local couldBeIgnored = true
 	local teamName = TeamNames[_newTeam]
 	local errorString
-	if playerNum >= playerLimit then
+	if curTeamPlayer >= playerLimit then
 		if _newTeam == kSpectatorIndex then
 			errorString = string.format( "[%s]人数已满(>=%s),请尽快进入游戏!", teamName , playerLimit)
 			available = false
 			forceCredit = 0
 			forcePrivilegeTitle = "预热观战位"
 		else
-			local forceJoinAmount = GetForceJoinLimit(self.Constrains.TeamForceJoin)
-			couldBeIgnored = playerNum < (basePlayerLimit + forceJoinAmount)
-			errorString = string.format( "<%s>已满[>=%s人%s],请等待场内空位.", teamName ,basePlayerLimit,
-					forceJoinAmount > 0 and string.format("|%s预热位",forceJoinAmount) or "")
+			couldBeIgnored = curTeamPlayer < maxPlayerLimit
+			errorString = string.format( "<%s>已满[>=%s人%s],请等待场内空位.", teamName ,playerLimit,
+					playerLimitExtend > 0 and string.format("|%s预热位",playerLimitExtend) or "")
 			
 			available = false
 			forceCredit = 1
@@ -366,11 +361,21 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	end
 
 	if couldBeIgnored then  	--Accesses
+		if Shared.GetTime() > self.Config.SlotCoveringBegin * 60 then
+			local gamerules = GetGamerules()
+			local teamMaxPlayers = math.max(self:GetNumPlayers(gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(gamerules:GetTeam(kTeam2Index)))
+			teamMaxPlayers = math.min(teamMaxPlayers,maxPlayerLimit)
+			if curTeamPlayer < teamMaxPlayers then
+				self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
+				return
+			end
+		end
+
 		if table.contains(kTeamJoinTracker,userId) then
 			self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
 			return
 		end
-
+		
 		local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
 		if forceCredit and cpEnabled then
 			if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then table.insert(kTeamJoinTracker,userId)

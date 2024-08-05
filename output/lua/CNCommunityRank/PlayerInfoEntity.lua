@@ -59,6 +59,8 @@ local networkVars =
     lastSeenName = string.format("string(%d)",kMaxNameLength * 4),
     ns2TimePlayed = "integer",
     reputation = "integer(-512 to 512)",
+    showingSkill = "integer",
+    showingCommSkill = "integer",
 -----------
     adagradSum = "float",
     currentTech = "integer",
@@ -157,6 +159,8 @@ function PlayerInfoEntity:UpdateScore()
                 self.lastSeenName = scorePlayer.lastSeenName
                 self.ns2TimePlayed = scorePlayer.ns2TimePlayed
                 self.reputation = scorePlayer.reputation
+                self.showingSkill = scorePlayer:GetHiveSkill()
+                self.showingCommSkill = scorePlayer:GetHiveCommSkill()
             -------------
                 self.adagradSum = scorePlayer:GetAdagradSum()
                 local scoreClient = scorePlayer:GetClient()

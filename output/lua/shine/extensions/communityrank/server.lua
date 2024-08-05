@@ -300,10 +300,6 @@ function Plugin:UpdateClientData(_client, _clientId)        --Split cause connec
     local player = _client:GetControllingPlayer()
     player:SetGroup(groupName)
 
-    local isRookie = not communityData.timePlayed or communityData.timePlayed < 1800
-    isRookie = isRookie and (not communityData.lastSeenSkill or communityData.lastSeenSkill < 900)
-    player:SetRookie(isRookie)
-
     local unlockGadgets = {}
     
     if groupData and groupData.UnlockGadgets then
@@ -345,6 +341,7 @@ function Plugin:UpdateClientData(_client, _clientId)        --Split cause connec
     end
     
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,syncData,true)
+    Shine.Hook.Broadcast("OnPlayerCommunityDataReceived",_client,communityData)
 end
 
 
@@ -996,9 +993,25 @@ function Plugin:CreateMessageCommands()
     
     self:BindCommand( "history", "history", CheckHistory,true )
         :Help( "查询我的社区历史记录." )
+
+    local function EloCheck(_client,_id)
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
+
+        local player = target:GetControllingPlayer()
+        Shine:NotifyDualColour( _client:GetControllingPlayer(),  236, 112, 99 ,"[查询]", 255,255,255,
+                string.format("<%s>的查询信息:\n玩家:[hive:%d/%d] [ns2cn:%d/%d] [TAB:%d] \n指挥：[hive:%d/%d] [ns2cn:%d/%d] [TAB:%d]",
+                        player:GetName(),
+                        player.skill,player.skillOffset,player:GetPlayerSkill(),player.rankOffsetDelta,player:GetHiveSkill(),
+                        player.commSkill,player.skillOffset,player:GetCommanderSkill(),player.rankCommOffsetDelta,player:GetHiveCommSkill())
+                )
+    end
     
+    self:BindCommand( "elo_check", "elo_check", EloCheck)
+        :AddParam{ Type = "steamid" }
+        :Help( "查询玩家的分数明细." )
+
     self:BindCommand( "querydatabase", "querydatabase",  function()
         Shine.PlayerInfoHub:QueryDB()
-    end )
-        :Help( "数据库挂了,尝试刷新一下." )
+    end ):Help( "数据库挂了,尝试刷新一下." )
 end

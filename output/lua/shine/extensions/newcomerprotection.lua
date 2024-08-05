@@ -40,6 +40,7 @@ Plugin.DefaultConfig = {
 	},
 	RefundForcePurchase = 80,
 	BelowSkillNotify = 100,
+	NewcomerEstimateSkill = 750,
 	ExtraNotify = true,
 	ExtraNotifyMessage = "You are at a higher tier skill server,choose rookie server for better experience",
 	Messages = {
@@ -65,6 +66,7 @@ do
 	Validator:AddFieldRule( "RefundAdditive",  Validator.IsType( "table", Plugin.DefaultConfig.RefundAdditive ))
 	Validator:AddFieldRule( "RefundForcePurchase",  Validator.IsType( "number", Plugin.DefaultConfig.RefundForcePurchase ))
 	Validator:AddFieldRule( "DamageProtection",  Validator.IsType( "table", Plugin.DefaultConfig.DamageProtection ))
+	Validator:AddFieldRule( "NewcomerEstimateSkill",  Validator.IsType( "number", Plugin.DefaultConfig.NewcomerEstimateSkill ))
 	Plugin.ConfigValidator = Validator
 end
 
@@ -105,8 +107,8 @@ local function GetClientAndTier(player)
 	end
 
 	local tier = 0
+	local verifySkill = player:GetPlayerTeamSkill()
 	if client then
-		local verifySkill = player:GetPlayerTeamSkill()
 		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 		if crEnabled then
 			local userId = client:GetUserId()
@@ -122,7 +124,7 @@ local function GetClientAndTier(player)
 		end
 	end
 
-	return client,tier
+	return client,tier,verifySkill
 end
 
 local function CheckPlayerForcePurchase(self, player, purchaseTech)
@@ -246,6 +248,16 @@ function Plugin:OnMarineRespawn(team,player, origin, angles)
 	if weapon then
 		player:SetActiveWeapon(weapon:GetMapName())
 	end
+end
+
+function Plugin:OnPlayerCommunityDataReceived(_client, _communityData)
+	local clientID = _client:GetUserId()
+	if clientID <= 0 then return end
+	
+	local player = _client:GetControllingPlayer()
+
+	local client,tier, estimateSkill = GetClientAndTier(player)
+	player:SetRookie(self.Config.NewcomerEstimateSkill > estimateSkill)
 end
 
 function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)

@@ -908,10 +908,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local isSteamFriend = playerRecord.IsSteamFriend 
         local playerSkill = playerRecord.IsCommander and playerRecord.CommSkill or playerRecord.Skill
         local playerSkillOffset = playerRecord.IsCommander and playerRecord.CommSkillOffset or playerRecord.SkillOffset
-        
         if playerSkillOffset and (teamNumber == kTeam1Index or teamNumber == kTeam2Index) then  --may be nil sometimes
             playerSkill = math.max(0, playerSkill + ((teamNumber == kTeam1Index) and playerSkillOffset or -playerSkillOffset))
         end
+        
         
         local adagradSum = playerRecord.AdagradSum
         local commanderColor = GUIScoreboard.kCommanderFontColor
@@ -1033,7 +1033,8 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             player.SkillIcon:SetTexture(kPlayerSkillIconTexture)
             player.SkillIcon:SetSize(kPlayerSkillIconSize * GUIScoreboard.kScalingFactor)
 
-            local skillTier, tierName, cappedSkill = GetPlayerSkillTier(playerSkill, isRookie, adagradSum, isBot)
+            local showingSkill = playerRecord.IsCommander and playerRecord.showingCommSkill or playerRecord.showingSkill
+            local skillTier, tierName = GetPlayerSkillTier(showingSkill, isRookie, adagradSum, isBot)
             player.SkillIcon.tooltipText = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString(tierName), skillTier)
 
             local iconIndex = skillTier + 2
@@ -1043,10 +1044,8 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             end
             player.SkillIcon:SetTexturePixelCoordinates(0, iconIndex * 32, 100, (iconIndex + 1) * 32 - 1)
 
-            if cappedSkill then
-                sumPlayerSkill = sumPlayerSkill + cappedSkill
-                numPlayerSkill = numPlayerSkill + 1
-            end
+            sumPlayerSkill = sumPlayerSkill + playerSkill
+            numPlayerSkill = numPlayerSkill + 1
         end
 
 

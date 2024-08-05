@@ -129,6 +129,8 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.lastSeenName = pie.hideRank and "" or pie.lastSeenName
         playerRecord.ns2TimePlayed = pie.ns2TimePlayed
         playerRecord.reputation = pie.reputation
+        playerRecord.showingSkill = pie.showingSkill
+        playerRecord.showingCommSkill = pie.showingCommSkill
     ------------
 
         if playerRecord.IsCommander then
