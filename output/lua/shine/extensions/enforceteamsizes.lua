@@ -281,7 +281,7 @@ function Plugin:GetPlayerRestricted(_player,_team)
 		local minTimeToWait = self.Config.DynamicStartupSeconds
 		if crEnabled then
 			local awaitTime = math.floor(cr:GetCommunityPlayHour(clientId) * self.Config.DynamicStartupHourContribution)
-			awaitTime = awaitTime + math.floor(finalSkill * self.Config.DynamicStartupSkillContribution)
+			awaitTime = math.max(awaitTime, math.floor(finalSkill * self.Config.DynamicStartupSkillContribution))
 			minTimeToWait = math.min(minTimeToWait, awaitTime)
 		end
 
