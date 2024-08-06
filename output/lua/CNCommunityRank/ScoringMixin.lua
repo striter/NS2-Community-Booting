@@ -51,7 +51,8 @@ function ScoringMixin:GetHiveSkill()
         return playerSkill
     end
     
-    playerSkill = math.max(self.skill  + self.rankDelta * 0.25, self.rankDelta + self.skill * 0.25)
+    local contribution = 0.5
+    playerSkill = math.max(self.skill  + self.rankDelta * contribution, self.rankDelta + self.skill * contribution)
     return playerSkill
 end
 

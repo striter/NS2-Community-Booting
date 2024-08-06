@@ -15,7 +15,8 @@ Plugin.SkillLimitMode = table.AsEnum{
 Plugin.DefaultConfig = {
 	SlotCoveringBegin = 15,
 	DynamicStartupSeconds = 45,
-	DynamicStartupHourContribution = 0.4,
+	DynamicStartupHourContribution = 0.01,
+	DynamicStartupSkillContribution = 0.001,
 	
 	Setting = {
 		Mode = Plugin.SkillLimitMode.NOOB,
@@ -65,6 +66,7 @@ do
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
 	Validator:AddFieldRule( "DynamicStartupSeconds",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupSeconds ))
 	Validator:AddFieldRule( "DynamicStartupHourContribution",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupHourContribution ))
+	Validator:AddFieldRule( "DynamicStartupSkillContribution",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupSkillContribution ))
 	Validator:AddFieldRule( "RestrictedOperation", Validator.IsType( "table", Plugin.DefaultConfig.RestrictedOperation ) )
 	Validator:AddFieldRule( "Setting", Validator.IsType( "table", Plugin.DefaultConfig.Setting ) )
 	Validator:AddFieldRule( "Setting.TeamForceJoin", Validator.IsType( "table", Plugin.DefaultConfig.Setting.TeamForceJoin ) )
@@ -275,11 +277,12 @@ function Plugin:GetPlayerRestricted(_player,_team)
 	end
 
 	if not self.ConstrainsUpdated and (_team == kTeam1Index or _team == kTeam2Index or _team == kTeamReadyRoom) then
-		local now =  Shared.GetTime()
+		local now = Shared.GetTime()
 		local minTimeToWait = self.Config.DynamicStartupSeconds
 		if crEnabled then
-			local hourAwaitTime = math.floor(cr:GetCommunityPlayHour(clientId) * self.Config.DynamicStartupHourContribution)
-			minTimeToWait = math.min(minTimeToWait, hourAwaitTime)
+			local awaitTime = math.floor(cr:GetCommunityPlayHour(clientId) * self.Config.DynamicStartupHourContribution)
+			awaitTime = awaitTime + math.floor(finalSkill * self.Config.DynamicStartupSkillContribution)
+			minTimeToWait = math.min(minTimeToWait, awaitTime)
 		end
 
 		if minTimeToWait > now then
