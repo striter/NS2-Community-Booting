@@ -1,0 +1,35 @@
+-- Script.Load("lua/CNExoBoomBox/BoomBoxMixin.lua")
+-- Shared.LinkClassToMap("Onos", Onos.kMapName, BoomBoxMixin.networkVars)
+-- local baseOninitialized = Onos.OnInitialized
+-- function Onos:OnInitialized()
+--     baseOninitialized(self)
+--     InitMixin(self,BoomBoxMixin)
+-- end
+-- 
+-- if Server then
+-- 
+--     local baseOnKill = Onos.OnKill
+--     function Onos:OnKill()
+--         baseOnKill(self)
+--         self:DestroyMusic()
+--     end
+-- 
+--     local baseHandleButtons = Onos.HandleButtons
+--     function Onos:HandleButtons(input)
+--         baseHandleButtons(self, input)
+-- 
+--         if not self.pressingMusicButtons and bit.band(input.commands, Move.Weapon4 + Move.Weapon5) ~= 0 then
+--             self.pressingMusicButtons = true
+-- 
+--             if bit.band(input.commands,Move.Weapon4) ~= 0 then
+--                 self:SwitchTrack(EBoomBoxTrack.Onos)
+--             end
+-- 
+--             if bit.band(input.commands,Move.Weapon5) ~= 0 then
+--                 self:SwitchVolume()
+--             end
+--         else
+--             self.pressingMusicButtons = false
+--         end
+--     end
+-- end

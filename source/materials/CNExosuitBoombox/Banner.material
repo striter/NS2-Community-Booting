@@ -1,0 +1,9 @@
+shader = "shaders/Model_emissive_alpha.surface_shader"
+albedoMap = "materials/CNExosuitBoombox/Banner.dds"
+specularMap = "materials/CNExosuitBoombox/Banner.dds"
+opacityMap = "materials/CNExosuitBoombox/Banner_Opacity.dds"
+emissiveMap = "materials/CNExosuitBoombox/Banner.dds"
+normalMap = "materials/dev/dev_normal.dds"
+specularMap = "materials/dev/black.dds"
+
+surface = "thin_metal"

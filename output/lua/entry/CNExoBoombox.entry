@@ -1,0 +1,4 @@
+modEntry = {
+    FileHooks = "lua/CNExoBoombox/FileHooks.lua",
+    Priority = -10
+}
