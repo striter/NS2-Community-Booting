@@ -45,21 +45,6 @@ function ScoringMixin:GetCommanderSkillOffset()
     return self.commSkillOffset + self.rankCommOffsetDelta
 end
 
-function ScoringMixin:GetHiveSkill()
-    local playerSkill = self:GetPlayerSkill()
-    if self.rankDelta < 0 then
-        return playerSkill
-    end
-    
-    local contribution = 0.5
-    playerSkill = math.max(self.skill  + self.rankDelta * contribution, self.rankDelta + self.skill * contribution)
-    return playerSkill
-end
-
-function ScoringMixin:GetHiveCommSkill()
-    return self:GetCommanderSkill()
-end
-
 function ScoringMixin:GetPlayerTeamSkill()
     assert(HasMixin(self, "Team"))
     local team = self:GetTeamNumber()

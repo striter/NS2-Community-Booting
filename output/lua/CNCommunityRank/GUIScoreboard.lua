@@ -1033,8 +1033,7 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             player.SkillIcon:SetTexture(kPlayerSkillIconTexture)
             player.SkillIcon:SetSize(kPlayerSkillIconSize * GUIScoreboard.kScalingFactor)
 
-            local showingSkill = playerRecord.IsCommander and playerRecord.showingCommSkill or playerRecord.showingSkill
-            local skillTier, tierName = GetPlayerSkillTier(showingSkill, isRookie, adagradSum, isBot)
+            local skillTier, tierName = GetPlayerSkillTier(playerSkill, isRookie, adagradSum, isBot)
             player.SkillIcon.tooltipText = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString(tierName), skillTier)
 
             local iconIndex = skillTier + 2
