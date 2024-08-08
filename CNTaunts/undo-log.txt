@@ -1,0 +1,5 @@
+16:53:28 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
+16:53:32 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
+16:53:35 ..\..\src\simpleeventcontroller.cpp:1310 IR: Remove Sounds from Playlist
+16:53:56 ..\..\src\simpleeventcontroller.cpp:1734 IS: Add Sound to Playlist
+16:58:41 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:2202 CH: Delete Events/Event Groups/Event Categories
