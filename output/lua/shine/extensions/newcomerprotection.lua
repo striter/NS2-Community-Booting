@@ -397,21 +397,22 @@ Plugin.kDamageBonusReduction = {
 
 function Player:ModifyDamageTaken() end
 function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType, hitPoint)
+	
 	if not Plugin.Config then return end
 
-	--if self:GetIsVirtual() or (attacker.GetIsVirtual and attacker:GetIsVirtual()) then return end
+	if self:GetIsVirtual() or (attacker.GetIsVirtual and attacker:GetIsVirtual()) then return end
 
 	local Config = Plugin.Config.DamageProtection
 	if #Config.ActiveTier == 0 then return end
 	if self.GetPlayerTeamSkill and attacker.GetPlayerTeamSkill then
 		local selfSkill = self:GetPlayerTeamSkill()
 		local targetSkill = attacker:GetPlayerTeamSkill()
-		if self:GetIsVirtual() then
-		    selfSkill = 2100
-		end
-		if attacker:GetIsVirtual() then
-		    targetSkill = 2100
-		end
+		--if self:GetIsVirtual() then
+		--    selfSkill = 2100
+		--end
+		--if attacker:GetIsVirtual() then
+		--    targetSkill = 2100
+		--end
 
 		local skillOffset = (selfSkill - targetSkill)
 		local value = math.max(math.abs(skillOffset) - Config.kSkillDiffThreshold,0)
@@ -419,6 +420,7 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 		local sign = skillOffset >= 0 and 1 or -1
 		if value > 0 
 			and sign == -1
+			and self:GetKills() < self:GetDeaths()
 		then
 			local _,selfTier = GetClientAndTier(self)
 			local _,targetTier = GetClientAndTier(attacker)

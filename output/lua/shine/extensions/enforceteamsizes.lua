@@ -363,17 +363,19 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		end
 	end
 
-	if couldBeIgnored then  	--Accesses
-		if Shared.GetTime() > self.Config.SlotCoveringBegin * 60 then
-			local gamerules = GetGamerules()
-			local teamMaxPlayers = math.max(self:GetNumPlayers(gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(gamerules:GetTeam(kTeam2Index)))
-			teamMaxPlayers = math.min(teamMaxPlayers,maxPlayerLimit)
-			if curTeamPlayer < teamMaxPlayers then
+	if Shared.GetTime() > self.Config.SlotCoveringBegin * 60 then		-- Slot cover
+		local gamerules = GetGamerules()
+		local teamMaxPlayers = math.max(self:GetNumPlayers(gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(gamerules:GetTeam(kTeam2Index)))
+		if curTeamPlayer < teamMaxPlayers then
+			couldBeIgnored = true
+			if curTeamPlayer < maxPlayerLimit then
 				self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
 				return
 			end
 		end
-
+	end
+	
+	if couldBeIgnored then  	--Accesses
 		if table.contains(kTeamJoinTracker,userId) then
 			self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
 			return

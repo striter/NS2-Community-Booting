@@ -1002,8 +1002,8 @@ function Plugin:CreateMessageCommands()
         Shine:NotifyDualColour( _client:GetControllingPlayer(),  236, 112, 99 ,"[查询]", 255,255,255,
                 string.format("<%s>的查询信息:\n玩家:[hive:%d/%d] [ns2cn:%d/%d] \n指挥：[hive:%d/%d] [ns2cn:%d/%d]",
                         player:GetName(),
-                        player.skill,player.skillOffset,player:GetPlayerSkill(),player.rankOffsetDelta,player:GetHiveSkill(),
-                        player.commSkill,player.skillOffset,player:GetCommanderSkill(),player.rankCommOffsetDelta,player:GetHiveCommSkill())
+                        player.skill,player.skillOffset,player:GetPlayerSkill(),player.rankOffsetDelta),
+                        player.commSkill,player.skillOffset,player:GetCommanderSkill(),player.rankCommOffsetDelta)
                 )
     end
     
