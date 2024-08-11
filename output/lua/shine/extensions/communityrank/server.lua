@@ -1004,7 +1004,6 @@ function Plugin:CreateMessageCommands()
                         player:GetName(),
                         player.skill,player.skillOffset,player:GetPlayerSkill(),player.rankOffsetDelta),
                         player.commSkill,player.skillOffset,player:GetCommanderSkill(),player.rankCommOffsetDelta)
-                )
     end
     
     self:BindCommand( "elo_check", "elo_check", EloCheck)
