@@ -286,7 +286,7 @@ function Plugin:GetPlayerRestricted(_player,_team)
 		end
 
 		if minTimeToWait > now then
-			self:Notify(_player,string.format("等待其他玩家加入中,请于%i秒后再次加入.",minTimeToWait - now),errorColorTable,nil)
+			self:Notify(_player,string.format("战局准备中,请于%i秒后再次加入.",minTimeToWait - now),errorColorTable,nil)
 			return true
 		end
 	end

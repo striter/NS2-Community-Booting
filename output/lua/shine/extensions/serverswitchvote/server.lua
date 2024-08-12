@@ -102,7 +102,7 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 	for _,data in pairs(clients) do
 		local client =  data.client
 		local player = client:GetControllingPlayer()
-		if Shine:HasAccess(client, "sh_host" ) then
+		if Shine:HasAccess(client, "sh_adminmenu" ) then
 			Shine:NotifyDualColour(client,146, 43, 33,kPrefix, 253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
 		elseif player:isa("Commander") then
 			Shine:NotifyDualColour(client,146, 43, 33,kPrefix, 253, 237, 236, "检测到您为指挥官,已跳过强制分服.")

@@ -793,7 +793,7 @@ end
 function Plugin:CreateMessageCommands()
     
     local function CanEloSelfTargeting(_client, _target)
-        local access = _client == nil or Shine:HasAccess(_client,"sh_host")
+        local access = _client == nil or Shine:HasAccess(_client,"sh_adminmenu")
         if access then return true end
         if _target == _client then
             Shine:NotifyCommandError( _client, "你不应该对自己使用这个指令" )
@@ -801,6 +801,7 @@ function Plugin:CreateMessageCommands()
         end
         return true
     end
+    
     --Elo
     self:BindCommand( "sh_rank_reset", "rank_reset", function(_client, _id )     ----Reset
     local target = Shine.AdminGetClientByNS2ID(_client,_id)
