@@ -661,13 +661,6 @@ end
 
 function Plugin:EndGameReputation(lastRoundData)
     if not ReputationEnabled(self) then return end
-    local winningTeamType = lastRoundData.RoundInfo.winningTeam
-    local losingTeam
-    if winningTeamType == kMarineTeamType then
-        losingTeam = kAlienTeamType
-    elseif winningTeamType == kAlienTeamType then
-        losingTeam = kMarineTeamType
-    end
 
     if table.count(kRageQuitTracker) > 0 then
         ReputationDebugMessage(self,string.format("Rage quitters:"))
@@ -680,7 +673,22 @@ function Plugin:EndGameReputation(lastRoundData)
             ReputationDebugMessage(self,string.format("(ID:%-10s  (Delta):%-5i",steamId,reputationDelta))
         end
     end
+    table.clear(kRageQuitTracker)
 
+    local gameLength = lastRoundData.RoundInfo.roundLength
+    if Shine.GetHumanPlayerCount() <= self.Config.Reputation.RageQuit.MinPlayer
+            or gameLength < self.Config.Reputation.RageQuit.CheckTime then
+        return
+    end
+
+    local winningTeamType = lastRoundData.RoundInfo.winningTeam
+    local losingTeam
+    if winningTeamType == kMarineTeamType then
+        losingTeam = kAlienTeamType
+    elseif winningTeamType == kAlienTeamType then
+        losingTeam = kMarineTeamType
+    end
+    
     if losingTeam ~= nil then
         ReputationDebugMessage(self,string.format("Covers:  Win:%s Lose:%s",winningTeamType,losingTeam))
         for Client in Shine.IterateClients() do
@@ -709,7 +717,6 @@ function Plugin:EndGameReputation(lastRoundData)
         end
     end
     
-    table.clear(kRageQuitTracker)
 end
 
 function Plugin:RecordResolveData(data,rawData)
@@ -1001,10 +1008,10 @@ function Plugin:CreateMessageCommands()
 
         local player = target:GetControllingPlayer()
         Shine:NotifyDualColour( _client:GetControllingPlayer(),  236, 112, 99 ,"[查询]", 255,255,255,
-                string.format("<%s>的查询信息:\n玩家:[hive:%d/%d] [ns2cn:%d/%d] \n指挥：[hive:%d/%d] [ns2cn:%d/%d]",
+                string.format("<%s>的查询信息:\n玩家: [hive:%d/%d] [ns2cn:%d/%d] \n指挥：[hive:%d/%d] [ns2cn:%d/%d]",
                         player:GetName(),
-                        player.skill,player.skillOffset,player:GetPlayerSkill(),player.rankOffsetDelta),
-                        player.commSkill,player.skillOffset,player:GetCommanderSkill(),player.rankCommOffsetDelta)
+                        player.skill,player.skillOffset,player:GetPlayerSkill(),player:GetPlayerSkillOffset(),
+                        player.commSkill,player.commSkillOffset,player:GetCommanderSkill(),player:GetCommanderSkillOffset()))
     end
     
     self:BindCommand( "elo_check", "elo_check", EloCheck)

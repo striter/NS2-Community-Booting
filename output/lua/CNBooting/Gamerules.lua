@@ -17,12 +17,12 @@ if Server then
             --end
 
             --check for empty player slots including reserved slots
-            local userId = player:GetSteamId()
-            local hasReservedSlot = GetHasReservedSlotAccess(userId)
-            if numPlayer >= (maxPlayers - numRes) and not hasReservedSlot then
-                Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(3), true)
-                return false
-            end
+            --local userId = player:GetSteamId()
+            --local hasReservedSlot = GetHasReservedSlotAccess(userId)
+            --if numPlayer >= (maxPlayers - numRes) and not hasReservedSlot then
+            --    Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(3), true)
+            --    return false
+            --end
         end
 
         return true

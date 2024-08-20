@@ -146,19 +146,6 @@ end
 
 function Plugin:OnPlayerRestricted(_player,_newTeam)
 	local client = _player:GetClient()
-
-	local clientId = client:GetUserId()
-	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-	if cpEnabled and cp:GetPrewarmPrivilege(client,0,"预热越限通道") then
-		self:Notify(_player,"您为今日预热玩家,可以越过限制下场,请勿利用该特权做出不符合规范的行为!.",errorColorTable)
-		return false
-	end
-
-	if Shine:HasAccess(client, "sh_adminmenu" ) then
-		self:Notify(_player,"检测到您为管理员,请引导玩家前往合适的场所进行游玩(切勿炸鱼)!",errorColorTable)
-		return false
-	end
-	
 	local operationData = self.Config.RestrictedOperation
 	local operation = operationData.Operation
 	if operation == Plugin.RestrictedOperation.SPECTATOR then
@@ -258,12 +245,9 @@ function Plugin:GetPlayerRestricted(_player,_team)
 	local clientId = client:GetUserId()
 	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 	local skillLimited, finalSkill =  self:GetPlayerSkillLimited(_player,_team)
-	local blackListed = crEnabled and cr:GetCommunityBlackListed(clientId)
-	local blackListLimited = blackListed and not self.ConstrainsUpdated
 	
-	if skillLimited or blackListLimited then
-		local errorMessage = blackListLimited and "由于你的信誉值过低,需等待一段时间后再尝试加入游戏,你可以通过预热/正常进行游戏等方式获得信誉分!"
-							or string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
+	if skillLimited then
+		local errorMessage = string.format("您的平均分数(%i)不在服务器限制范围内(%s-%s).", finalSkill,self.Constrains.SkillRange[1],self.Constrains.SkillRange[2] < 0 and "∞" or self.Constrains.SkillRange[2])
 		
 		self:Notify(_player,errorMessage,errorColorTable,nil)
 
@@ -317,11 +301,10 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	local available = not self:GetPlayerRestricted(_player,_newTeam)
 	local curTeamPlayer = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
 	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
-	local playerLimitExtend =  GetForceJoinLimit(self.Constrains.TeamForceJoin)
+	local playerLimitExtend = GetForceJoinLimit(self.Constrains.TeamForceJoin)
 	local maxPlayerLimit = playerLimit + playerLimitExtend
 	local forcePrivilegeTitle
 	local forceCredit
-	local couldBeIgnored = true
 	local teamName = TeamNames[_newTeam]
 	local errorString
 	if curTeamPlayer >= playerLimit then
@@ -331,13 +314,13 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			forceCredit = 0
 			forcePrivilegeTitle = "预热观战位"
 		else
-			couldBeIgnored = curTeamPlayer < maxPlayerLimit
 			errorString = string.format( "<%s>已满[>=%s人%s],请等待场内空位.", teamName ,playerLimit,
 					playerLimitExtend > 0 and string.format("|%s预热位",playerLimitExtend) or "")
 			
 			available = false
-			forceCredit = 1
-			forcePrivilegeTitle = "预热入场通道"
+			local limitReached = curTeamPlayer < maxPlayerLimit
+			forceCredit = limitReached and 1 or 2
+			forcePrivilegeTitle = limitReached and "预热入场通道" or "预热越限通道"
 		end
 	end
 
@@ -363,46 +346,44 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		end
 	end
 
+	if Shine:HasAccess( client, "sh_priorslot" ) then
+		self:Notify(_player, "[高级预留玩家]特权启用.",priorColorTable,nil)
+		return
+	end
+
 	if Shared.GetTime() > self.Config.SlotCoveringBegin * 60 then		-- Slot cover
 		local gamerules = GetGamerules()
 		local teamMaxPlayers = math.max(self:GetNumPlayers(gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(gamerules:GetTeam(kTeam2Index)))
 		if curTeamPlayer < teamMaxPlayers then
-			couldBeIgnored = true
 			if curTeamPlayer < maxPlayerLimit then
 				self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
 				return
 			end
 		end
 	end
-	
-	if couldBeIgnored then  	--Accesses
-		if table.contains(kTeamJoinTracker,userId) then
-			self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
-			return
-		end
-		
-		local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-		if forceCredit and cpEnabled then
-			if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then table.insert(kTeamJoinTracker,userId)
-				return
-			end
-		end
 
-		local reputationConfig = self.Config.ReputationBypass
-		if reputationConfig.Enable and crEnabled then
-			if cr:UseCommunityReputation(_player,reputationConfig.Limit,0) then
-				self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权.",reputationConfig.Cost),priorColorTable)
-			end
-		end
+	if table.contains(kTeamJoinTracker,userId) then
+		self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
+		return
 	end
 
-	if Shine:HasAccess( client, "sh_priorslot" ) then
-		self:Notify(_player, "[高级预留玩家]特权启用.",priorColorTable,nil)
-		return
+	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
+	if forceCredit and cpEnabled then
+		if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
+			table.insert(kTeamJoinTracker,userId)
+			return
+		end
 	end
 	
 	if errorString then
 		self:Notify(_player, errorString,errorColorTable)
+	end
+
+	local reputationConfig = self.Config.ReputationBypass
+	if reputationConfig.Enable and crEnabled then
+		if cr:UseCommunityReputation(_player,reputationConfig.Limit,0) then
+			self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权.",reputationConfig.Cost),priorColorTable)
+		end
 	end
 
 	return false

@@ -22,7 +22,7 @@ Plugin.HasConfig = true
 Plugin.ConfigName = "ReservedSlots.json"
 
 Plugin.SlotType = table.AsEnum{
-	"PLAYABLE", "ALL"
+	"PLAYABLE", "ALL","BYPASS"
 }
 
 Plugin.DefaultConfig = {
@@ -232,6 +232,9 @@ function Plugin:ClientDisconnect( Client )
 end
 
 Plugin.ConnectionHandlers = {
+	[ Plugin.SlotType.BYPASS ] = function( self, ID )
+		return true
+	end,
 	-- Consumes playable slots only. Spectator slots are handled entirely by the default handler.
 	[ Plugin.SlotType.PLAYABLE ] = function( self, ID )
 		local NumPlayers = self:GetRealPlayerCount()
