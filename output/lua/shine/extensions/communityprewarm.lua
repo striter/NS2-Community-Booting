@@ -10,8 +10,10 @@ Plugin.DefaultConfig = {
         Hour = 4,           --Greater than this hour
         Player = 12,
     },
-    EndGameSpec = {
-        Credit = 0.4,
+    SpecReward = {
+        EndGameCredit = 0.4,
+        RoundInterval = 180,
+        RoundIntervalCredit = 0.1
     },
     ["Tier"] = {
         [1] = { Count = 1, Credit = 15,Inform = true, },
@@ -26,7 +28,7 @@ Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 do
     local Validator = Shine.Validator()
-    Validator:AddFieldRule( "EndGameSpec",  Validator.IsType( "table", Plugin.DefaultConfig.EndGameSpec ))
+    Validator:AddFieldRule( "SpecReward",  Validator.IsType( "table", Plugin.DefaultConfig.SpecReward ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier  ))
@@ -53,6 +55,7 @@ function Plugin:Initialise()
 
     return true
 end
+
 
 local function ReadPersistent(self)
     for k,v in pairs(self.PrewarmData.UserData) do
@@ -311,6 +314,10 @@ function Plugin:OnFirstThink()
         Reset(self)
         --SavePersistent(self)
     end
+
+    self:SimpleTimer( self.Config.SpecReward.RoundInterval, function()
+        self:DispatchSpecRoundCredit()
+    end )
 end
 
 function Plugin:SetGameState( Gamerules, State, OldState )
@@ -352,6 +359,44 @@ end
 function Plugin:OnEndGame(_winningTeam)
     TrackAllClients(self)
     --Validate(self)
+    self:DispatchEndGameCredit()
+end
+
+function Plugin:DispatchEndGameCredit()
+
+    if not self.PrewarmData.Validated then return end
+
+    local reward = self.Config.SpecReward.EndGameCredit
+    for Client, _ in Shine.IterateClients() do
+        local Player = Client.GetControllingPlayer and Client:GetControllingPlayer()
+        local team = Player:GetTeamNumber()
+        local clientID = Client:GetUserId()
+        if team == kTeamReadyRoom or team == kSpectatorIndex then
+            local data = GetPlayerData(self,clientID)
+            data.credit = (data.credit or 0) + reward
+            Shine:NotifyDualColour( Client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                    string.format("对局结束,非局内玩家已获得%s[预热点]用于获取当日特权,您当前拥有%s[预热点].",reward,data.credit) )
+        end
+    end
+end
+
+function Plugin:DispatchSpecRoundCredit()
+    if not self.PrewarmData.Validated then return end
+    
+    local reward = self.Config.SpecReward.RoundIntervalCredit
+    for Client, _ in Shine.IterateClients() do
+        local Player = Client.GetControllingPlayer and Client:GetControllingPlayer()
+        local team = Player:GetTeamNumber()
+        local clientID = Client:GetUserId()
+        if team == kTeamReadyRoom or team == kSpectatorIndex then
+            local data = GetPlayerData(self,clientID)
+            data.credit = (data.credit or 0) + reward
+            Shine:NotifyDualColour( Client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                    string.format("对局进行中,非局内玩家已获得%s[预热点]作为观战激励,您当前拥有%s[预热点].",reward,data.credit) )
+        end
+    end
+    
+    self:SimpleTimer(self.Config.SpecReward.RoundInterval, function() self:DispatchSpecRoundCredit() end )
 end
 
 function Plugin:MapChange()
@@ -386,24 +431,6 @@ function Plugin:ClientConfirmConnect( _client )
         else
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                     string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
-        end
-    end
-end
-
-function Plugin:OnEndGame(_)
-    if not self.PrewarmData.Validated then return end
-
-    local reward = self.Config.EndGameSpec.Credit
-
-    for Client, _ in Shine.IterateClients() do
-        local Player = Client.GetControllingPlayer and Client:GetControllingPlayer()
-        local team = Player:GetTeamNumber()
-        local clientID = Client:GetUserId()
-        if team == kTeamReadyRoom or team == kSpectatorIndex then
-            local data = GetPlayerData(self,clientID)
-            data.credit = (data.credit or 0) + reward
-            Shine:NotifyDualColour( Client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                    string.format("对局已结束,非对局内玩家已获得%s[预热点]用于获取当日特权,您当前拥有%s[预热点].",reward,data.credit) )
         end
     end
 end
