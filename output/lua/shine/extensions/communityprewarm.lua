@@ -10,6 +10,11 @@ Plugin.DefaultConfig = {
         Hour = 4,           --Greater than this hour
         Player = 12,
     },
+    ScoreMultiplier = {
+        Restricted = 0.5,
+        Idle = 1,
+        Active = 2,
+    },
     SpecReward = {
         EndGameCredit = 0.4,
         RoundInterval = 180,
@@ -29,6 +34,7 @@ Plugin.CheckConfigTypes = true
 do
     local Validator = Shine.Validator()
     Validator:AddFieldRule( "SpecReward",  Validator.IsType( "table", Plugin.DefaultConfig.SpecReward ))
+    Validator:AddFieldRule( "ScoreMultiplier",  Validator.IsType( "table", Plugin.DefaultConfig.ScoreMultiplier ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier  ))
@@ -124,17 +130,12 @@ local function NotifyClient(self, _client, _data)
 end
 
 local function GetPrewarmScore(self, player, trackedTime)
-
-    local team = player:GetTeamNumber()
-
-    if team == kSpectatorIndex
-            or kCurrentHour <= self.Config.Restriction.Hour
-    then
-        return trackedTime
+    local idleMultiplier = self.Config.ScoreMultiplier.Idle
+    if kCurrentHour <= self.Config.Restriction.Hour then
+        idleMultiplier = self.Config.ScoreMultiplier.Restricted
     end
-
+    
     local activePlayed = false
-
     local gameMode = Shine.GetGamemode()
     if table.contains(Shine.kRankGameMode,gameMode) then
         local score = player:GetScore()
@@ -148,7 +149,7 @@ local function GetPrewarmScore(self, player, trackedTime)
     end
 
     --Shared.Message(gameMode .. " " .. tostring(activePlayed))
-    return activePlayed and (3 * trackedTime) or trackedTime
+    return activePlayed and (self.Config.ScoreMultiplier.Active * trackedTime) or (trackedTime * idleMultiplier)
 end
 
 -- Track Clients Prewarm Time
@@ -219,7 +220,7 @@ local function GetInGamePlayerCount()
     return  team1Players + team2Players - team1Bots - team2Bots
 end
 
-local function Validate(self)
+local function PrewarmValidate(self)
     if not PrewarmValidateEnable(self) then return end
     if GetInGamePlayerCount() < self.Config.Restriction.Player then return end
 
@@ -323,7 +324,7 @@ end
 function Plugin:SetGameState( Gamerules, State, OldState )
     if State == kGameState.Countdown then
         TrackAllClients(self)
-        Validate(self)
+        PrewarmValidate(self)
 
         if PrewarmValidateEnable(self) and not self.PrewarmData.Validated then
             local prewarmClients = {}
@@ -354,6 +355,12 @@ function Plugin:SetGameState( Gamerules, State, OldState )
             end
         end
     end
+end
+
+function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam )
+    if self.PrewarmData.Validated then return end
+    if not Shine.IsPlayingTeam( NewTeam ) then return end
+    PrewarmValidate(self)
 end
 
 function Plugin:OnEndGame(_winningTeam)

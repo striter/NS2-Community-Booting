@@ -932,7 +932,6 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         end
 
         if hideRank then
-            ping = ping + 140
             isSteamFriend = false
         end
 
