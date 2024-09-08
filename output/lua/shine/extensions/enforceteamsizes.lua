@@ -381,8 +381,9 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 
 	local reputationConfig = self.Config.ReputationBypass
 	if reputationConfig.Enable and crEnabled then
-		if cr:UseCommunityReputation(_player,reputationConfig.Limit,0) then
-			self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权.",reputationConfig.Cost),priorColorTable)
+		local canUse,current = cr:UseCommunityReputation(_player,reputationConfig.Limit,0)
+		if canUse then
+			self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权(当前有%d点).",reputationConfig.Cost,current),priorColorTable)
 		end
 	end
 

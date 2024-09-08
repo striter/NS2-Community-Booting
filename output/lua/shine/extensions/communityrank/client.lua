@@ -143,7 +143,7 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
 
                             description = description .. "\n\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(pr.Group))
                             if pr.reputation ~= 0 then
-                                description = description .. "\n" .. (pr.reputation > 0 and string.format(Locale.ResolveString("COMMUNITY_REPUTATION_POSITIVE"),pr.reputation ) 
+                                description = description .. "\n" .. (pr.reputation > 0 and string.format(Locale.ResolveString("COMMUNITY_REPUTATION_POSITIVE"),pr.reputation > 256 and ">=256" or pr.reputation ) 
                                         or string.format(Locale.ResolveString("COMMUNITY_REPUTATION_NEGATIVE"),-pr.reputation ))
                             end
                             if pr.prewarmTime > 0 then

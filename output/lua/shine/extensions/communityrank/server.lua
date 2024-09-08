@@ -136,18 +136,18 @@ function Plugin:UseCommunityReputation(_player, _limit, _cost)
     local clientId = _player:GetClient():GetUserId()
     local data = self:GetCommunityData(clientId)
     if not data.reputation then
-        return false
+        return false,0
     end
     
     local value = data.reputation
     if value < _limit then
-        return false
+        return false,data.reputation
     end
     
-    if _cost == 0 then return true end
+    if _cost == 0 then return true,data.reputation end
     data.reputation = data.reputation - _cost
     _player:SetPlayerExtraData(data)
-    return true
+    return true, data.reputation
 end
 
 function Plugin:ResetState()
@@ -790,9 +790,10 @@ function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
     local data = GetPlayerData(self,_targetClient:GetUserId())
     Shine:NotifyDualColour( _notifyClient:GetControllingPlayer(),  236, 112, 99 ,"[历史记录]",
             255,255,255,
-            string.format("<%s>的记录:\n[总时长%dh] [总局数%d] [完整%d] [胜局%d] \n指挥：[时长%dh] [对局%d] [胜局%d]",
+            string.format("<%s>的记录:\n[总时长%dh] [总局数%d] [完整%d] [胜局%d] \n指挥：[时长%dh] [对局%d] [胜局%d]\n信誉值: %d点",
                     player:GetName(), math.floor((data.timePlayed or 0)/60), data.roundPlayed or 0,data.roundFinished or 0, data.roundWin or 0,
-                    math.floor((data.timePlayedCommander or 0)/60),data.roundFinishedCommander or 0, data.roundWinCommander or 0
+                    math.floor((data.timePlayedCommander or 0)/60),data.roundFinishedCommander or 0, data.roundWinCommander or 0,
+                    data.reputation or 0
             )
     )
 end

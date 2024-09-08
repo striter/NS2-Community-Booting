@@ -33,10 +33,10 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/GTAV"), name = "No Happy Endings" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/VortalCombat"), name = "Vortal Combat" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/EXO"), name = "Exosuit" },
-        
     },
     [EBoomBoxTrack.TWO] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/WanderingAround"), name = "アルクアラウンド" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/Elephant"), name = "象" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/Flamingo"), name = "Flamingo" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/StepIt"), name = "Step It" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/Hear"), name = "聴きたかったダンスミュージック、リキッドルームに" },
@@ -50,6 +50,8 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.SONG] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/Slumlord"), name = "Slumlord" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/Metamodernity"), name = "Metamodernity" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/RunAway"), name = "RunAway" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/NoGood"), name = "No Good" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/WhenYouGonnaLearn"), name = "When You Gonna Learn?" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/ShipMyBodyBackToTexas"), name = "Ship My Body Back To Texas" },
