@@ -250,14 +250,13 @@ function Plugin:OnMarineRespawn(team,player, origin, angles)
 	end
 end
 
-function Plugin:OnPlayerCommunityDataReceived(_client, _communityData)
-	local clientID = _client:GetUserId()
-	if clientID <= 0 then return end
-	
-	local player = _client:GetControllingPlayer()
 
-	local client,tier, estimateSkill = GetClientAndTier(player)
-	player:SetRookie(self.Config.NewcomerEstimateSkill > estimateSkill)
+function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
+	local client,tier, estimateSkill = GetClientAndTier(Player)
+	if not client or client:GetIsVirtual() then
+		return
+	end
+	Player:SetRookie(self.Config.NewcomerEstimateSkill > estimateSkill)
 end
 
 function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)

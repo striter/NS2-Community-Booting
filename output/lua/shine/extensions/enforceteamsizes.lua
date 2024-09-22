@@ -56,6 +56,7 @@ Plugin.DefaultConfig = {
 		Limit = 50,
 		Cost = 10,
 	},
+	PlayTimeBypass = 300,
 	MessageNameColor = {0, 255, 0 },
 }
 Plugin.CheckConfig = true
@@ -64,6 +65,7 @@ Plugin.CheckConfigTypes = true
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
+	Validator:AddFieldRule( "PlayTimeBypass",  Validator.IsType( "number", Plugin.DefaultConfig.PlayTimeBypass ))
 	Validator:AddFieldRule( "DynamicStartupSeconds",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupSeconds ))
 	Validator:AddFieldRule( "DynamicStartupHourContribution",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupHourContribution ))
 	Validator:AddFieldRule( "DynamicStartupSkillContribution",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupSkillContribution ))
@@ -82,7 +84,7 @@ local priorColorTable = { 235, 152, 78 }
 local errorColorTable = { 236, 112, 99 }
 
 local kTeamJoinTracker = { }
-local kRestrictionJoinTracker = {}
+local kTeamRejoinTracker = {}
 
 local function GetConstrains(self)
 	local hour = kCurrentHourFloat
@@ -132,7 +134,7 @@ function Plugin:GetPlayerLimit(Gamerules,Team)
 	if Team == kSpectatorIndex and self.Constrains.BlockSpectators then
 		local leastPlayersInGame = self.Constrains.Team[kTeam1Index] + self.Constrains.Team[kTeam2Index]
 		local inServerPlayers = Shine.GetHumanPlayerCount()
-		if inServerPlayers < leastPlayersInGame then return 99 end 	--They are seeding
+		--if inServerPlayers < leastPlayersInGame then return 99 end 	--They are seeding
 		return inServerPlayers - leastPlayersInGame,basePlayerLimit	--Join the game little f**k
 	end
 
@@ -289,7 +291,7 @@ local function GetForceJoinLimit(limitTable)
 	return forceJoinLimit
 end
 
-local TeamNames = { "陆战队","卡拉异形","观战" }
+local kTeamNames = { "陆战队", "卡拉异形", "观战" }
 function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	if _shineForce then return end
 	if _player:GetIsVirtual() then return end
@@ -305,7 +307,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	local maxPlayerLimit = playerLimit + playerLimitExtend
 	local forcePrivilegeTitle
 	local forceCredit
-	local teamName = TeamNames[_newTeam]
+	local teamName = kTeamNames[_newTeam]
 	local errorString
 	if curTeamPlayer >= playerLimit then
 		if _newTeam == kSpectatorIndex then
@@ -351,14 +353,16 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		return
 	end
 
-	if Shared.GetTime() > self.Config.SlotCoveringBegin * 60 then		-- Slot cover
-		local gamerules = GetGamerules()
-		local teamMaxPlayers = math.max(self:GetNumPlayers(gamerules:GetTeam(kTeam1Index)),self:GetNumPlayers(gamerules:GetTeam(kTeam2Index)))
-		if curTeamPlayer < teamMaxPlayers then
-			if curTeamPlayer < maxPlayerLimit then
-				self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
-				return
-			end
+	local gamerules = GetGamerules()
+	local team1Players = self:GetNumPlayers(gamerules:GetTeam(kTeam1Index))
+	local team2Players = self:GetNumPlayers(gamerules:GetTeam(kTeam2Index))
+	local teamMaxPlayers = math.max(team1Players,team2Players)
+	if curTeamPlayer < teamMaxPlayers  then
+		if math.abs(team1Players - team2Players) > 1
+			or (curTeamPlayer < maxPlayerLimit and Shared.GetTime() > self.Config.SlotCoveringBegin * 60)
+		then
+			self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
+			return
 		end
 	end
 
@@ -367,6 +371,11 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		return
 	end
 
+	if table.contains(kTeamRejoinTracker,userId) then
+		self:Notify(_player, "[异常离开补位通道]已启用.",priorColorTable,nil)
+		return
+	end
+	
 	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
 	if forceCredit and cpEnabled then
 		if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
@@ -390,9 +399,26 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	return false
 end
 
+local function PlaytimeBypassValidate(self,_player)
+	if not _player or _player:GetIsVirtual() then return end
+	if _player:GetPlayTime() < self.Config.PlayTimeBypass then return end
+
+	local userId = _player:GetClient():GetUserId()
+	if table.contains(kTeamRejoinTracker,userId) then return end
+	table.insert(kTeamRejoinTracker,userId)
+end
+
+--function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
+--	PlaytimeBypassValidate(self,Player)
+--end
+
+function Plugin:ClientDisconnect( _client )
+	PlaytimeBypassValidate(self,_client:GetControllingPlayer())
+end
+
 function Plugin:OnEndGame(_winningTeam)
 	table.Empty(kTeamJoinTracker)
-	table.Empty(kRestrictionJoinTracker)
+	table.Empty(kTeamRejoinTracker)
 end
 
 local function RestrictionDisplay(self,_client)
@@ -405,6 +431,20 @@ local function RestrictionDisplay(self,_client)
 			skillLimitMin,skillLimitMax,
 			self.Constrains.Mode == Plugin.SkillLimitMode.NONE and "" or "动态新兵"
 	),self.Config.MessageNameColor,nil)
+end
+
+function Plugin:ClientConfirmConnect( Client )
+	if Client:GetIsVirtual() then return end
+
+	local player = Client:GetControllingPlayer()
+	if not self:GetPlayerRestricted(player) then
+		RestrictionDisplay(self,Client)
+	end
+
+	local userId = Client:GetUserId()
+	if table.contains(kTeamRejoinTracker,userId) then
+		self:Notify(player, "检测到异常离开,已启用[异常离开补位通道],可加入当前战局.",priorColorTable,nil)
+	end
 end
 
 function Plugin:CreateCommands()
@@ -492,13 +532,6 @@ function Plugin:CreateCommands()
 		:Help( "使用信誉点获得游戏加入特权" )
 end
 
-function Plugin:ClientConfirmConnect( Client )
-	if Client:GetIsVirtual() then return end
-	
-	if not self:GetPlayerRestricted(Client:GetControllingPlayer()) then
-		RestrictionDisplay(self,Client)
-	end
-end
 
 --Restrict teams also at voterandom
 function Plugin:PreShuffleOptimiseTeams ( TeamMembers )

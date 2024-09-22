@@ -46,15 +46,10 @@ Plugin.DefaultConfig = {
             CheckTime = 1200,
             MinPlayer = 12,
             ActivePlayTime = 60,
-            DeltaQuit = -10,
-            RecoverPositive = {
-                DeltaWin = 1,
-                DeltaLost = 0,
-            },
-            RecoverNegative = {
-                DeltaWin = 5,
-                DeltaLost = 2,
-            },
+            DeltaQuit = -5,
+            DeltaQuitReputationStepMultiplier = 100,
+            DeltaWin = 1,
+            DeltaLost = 1,
         },
     },
 }
@@ -71,8 +66,9 @@ do
     Validator:AddFieldRule( "Reputation.PenaltyCheckInterval",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.PenaltyCheckInterval ))
     Validator:AddFieldRule( "Reputation.RageQuit",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit ))
     Validator:AddFieldRule( "Reputation.RageQuit.MinPlayer",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.MinPlayer ))
-    Validator:AddFieldRule( "Reputation.RageQuit.RecoverPositive",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit.RecoverPositive))
-    Validator:AddFieldRule( "Reputation.RageQuit.RecoverNegative",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit.RecoverNegative))
+    Validator:AddFieldRule( "Reputation.RageQuit.DeltaWin",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaWin ))
+    Validator:AddFieldRule( "Reputation.RageQuit.DeltaLost",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaLost ))
+    Validator:AddFieldRule( "Reputation.RageQuit.DeltaQuitReputationStepMultiplier",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaQuitReputationStepMultiplier ))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
@@ -533,16 +529,35 @@ end
 
 --Reputation
 local kDefaultReputation = 50
+local kReputationGainColorTable = { 235, 152, 78 }
+local kRageQuitColorTable = { 236, 112, 99 }
 local function ReputationPlayerDelta(self, _steamId, _delta, _reputationTitle)
     local data = GetPlayerData(self,_steamId)
     data.reputation = (data.reputation or kDefaultReputation) + _delta
-    if _delta < 0 then
-        data.reputationPenaltyLog = string.format("%s|%s",os.date("%Y-%m-%d %H:%M:%S"), _reputationTitle)
-    end
     
     local client = Shine.GetClientByNS2ID(_steamId)
-    if not client then return end
-    client:GetControllingPlayer():SetPlayerExtraData(data)
+    if not client then
+        if _reputationTitle and _delta < 0 then
+            data.reputationPenaltyLog = string.format("%s|%s",os.date("%Y-%m-%d %H:%M:%S"), _reputationTitle)
+        end
+        return 
+    end
+    local player = client:GetControllingPlayer()
+    player:SetPlayerExtraData(data)
+
+    if _reputationTitle then
+
+        if _delta > 0 then
+            Shine:NotifyDualColour( player,
+                    kReputationGainColorTable[1], kReputationGainColorTable[2], kReputationGainColorTable[3],"[信誉分]",
+                    255, 255, 255,string.format("%s,现有[%s]信誉分",_reputationTitle,data.reputation),true, data )
+        else
+
+            Shine:NotifyDualColour( player,
+                    kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[信誉分]",
+                    255, 255, 255,string.format("%s,现有[%s]信誉分",_reputationTitle,data.reputation),true, data )
+        end
+    end
 end
 
 local function ReputationDebugMessage(self,_string)
@@ -555,7 +570,6 @@ local function ReputationEnabled(self)
     return true
 end
 
-local kRageQuitColorTable = { 236, 112, 99 }
 local kRageQuitType = enum({ 'None','Quit','Cover' })
 local kRageQuitTracker = { }
 function Plugin:OnReputationRoundStart()
@@ -568,7 +582,7 @@ function Plugin:OnReputationRoundStart()
             local team = player:GetTeamNumber()
             if data.reputationPenaltyLog then
                 Shine:NotifyDualColour( player, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
-                        255, 255, 255,string.format("由于您[%s]导致信誉值降低,若信誉值过低将受到不可预期的惩罚.\n请保证参与比赛的完整性,尊重你的队友与对手.",data.reputationPenaltyLog),true, data )
+                        255, 255, 255,string.format("由于您[%s],导致信誉值降低,若信誉值过低将受到不可预期的惩罚.\n请保证参与比赛的完整性,尊重你的队友与对手.",data.reputationPenaltyLog),true, data )
                 data.reputationPenaltyLog = nil
             else
                 if reputation < self.Config.Reputation.PenaltyStarts and (team == 1 or team == 2) then
@@ -667,8 +681,11 @@ function Plugin:EndGameReputation(lastRoundData)
         for steamId,rageQuitType in pairs(kRageQuitTracker) do
             local reputationDelta = 0
             if rageQuitType == kRageQuitType.Quit then
-                reputationDelta = self.Config.Reputation.RageQuit.DeltaQuit
-                ReputationPlayerDelta(self,steamId, reputationDelta,"中途离场")
+                local data = GetPlayerData(self,steamId)
+                local reputation = data.reputation or 0
+                
+                reputationDelta = self.Config.Reputation.RageQuit.DeltaQuit * (1 + math.floor(reputation / self.Config.Reputation.RageQuit.DeltaQuitReputationStepMultiplier))
+                ReputationPlayerDelta(self,steamId, reputationDelta,string.format("中途离场 (%s)",reputationDelta))
             end
             ReputationDebugMessage(self,string.format("(ID:%-10s  (Delta):%-5i",steamId,reputationDelta))
         end
@@ -701,15 +718,10 @@ function Plugin:EndGameReputation(lastRoundData)
                 local team =  player:GetTeamNumber()
                 
                 if playTime > self.Config.Reputation.RageQuit.ActivePlayTime and rageQuitType ~= kRageQuitType.Quit then
-                    local data = GetPlayerData(self,steamId)
-                    local reputation = data.reputation or 0
                     local wins = team == winningTeamType
-                    local cover = rageQuitType == kRageQuitType.Cover
-                    local deltaTable = reputation < 0 and self.Config.Reputation.RageQuit.RecoverNegative or self.Config.Reputation.RageQuit.RecoverPositive
-                    
-                    local reputationDelta = wins and deltaTable.DeltaWin or deltaTable.DeltaLost
+                    local reputationDelta = wins and self.Config.Reputation.RageQuit.DeltaWin or self.Config.Reputation.RageQuit.DeltaLost
                     if reputationDelta ~=0 then
-                        ReputationPlayerDelta(self,steamId, reputationDelta,"完成对局")
+                        ReputationPlayerDelta(self,steamId, reputationDelta,string.format("完成对局 (+%s)",reputationDelta))
                     end
                     ReputationDebugMessage(self,string.format("(ID:%-10s (Time):%-5i (team):%-5i (type:):%-5s (Delta):%-5i",steamId, playTime,team,EnumToString(kRageQuitType,rageQuitType),reputationDelta))
                 end
@@ -769,13 +781,14 @@ function Plugin:EndGameLastSeenName(lastRoundData)
     local currentDate = string.format("%s-%s-%s",kCurrentYear,kCurrentMonth,kCurrentDay)
     for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
         local playerData = GetPlayerData(self,steamId)
+        local currentName = playerStat.playerName
         playerData.lastSeenDay = currentDate
-        playerData.lastSeenNameTimes = (playerData.lastSeenNameTimes or 0) + 1
-        if not playerData.lastSeenName or playerData.lastSeenNameTimes >= 10 then
-            playerData.lastSeenNameTimes = nil
-            playerData.lastSeenName = playerStat.playerName
-        end
         playerData.lastSeenSkill = playerStat.skill
+        playerData.lastSeenNameTimes = (playerData.lastSeenNameTimes or 0) + 1
+        if not playerData.lastSeenName or playerData.lastSeenNameTimes >= 30 then
+            playerData.lastSeenNameTimes = nil
+            playerData.lastSeenName = currentName
+        end
 
         local client = Shine.GetClientByNS2ID(steamId)
         if client then
@@ -891,8 +904,8 @@ function Plugin:CreateMessageCommands()
     end)
         :AddParam{ Type = "steamid"}
         :AddParam{ Type = "number", Round = true, Min = -500, Max = 500, Optional = true, Default = 0 }
-        :AddParam{ Type = "string", Optional = true, Default = 0 , Default = "消极行为"}
-        :Help( "增减对应玩家的[性欲分].例:!rep_delta 55022511 500 消极行为" )
+        :AddParam{ Type = "string", Optional = true}
+        :Help( "增减对应玩家的[性欲分].例:!rep_delta 55022511 500" )
 
     self:BindCommand( "sh_rep_reset", "rep_reset",function( _client, _id, _delta )
         local target = Shine.AdminGetClientByNS2ID(_client,_id)

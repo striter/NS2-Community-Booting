@@ -26,6 +26,11 @@ Plugin.DefaultConfig = {
         [3] = { Count = 5, Credit = 5 },
         [4] = { Count = 9, Credit = 3 },
     },
+    TierlessReward = {
+        BaseCredit = 0.4,
+        MinCredit = 0.1,
+        CreditPerScore = 0.0005 -- 1.8 per 3600 score
+    },
 }
 
 Plugin.kPrefix = "[战局预热]"
@@ -34,6 +39,8 @@ Plugin.CheckConfigTypes = true
 do
     local Validator = Shine.Validator()
     Validator:AddFieldRule( "SpecReward",  Validator.IsType( "table", Plugin.DefaultConfig.SpecReward ))
+    Validator:AddFieldRule( "TierlessReward",  Validator.IsType( "table", Plugin.DefaultConfig.TierlessReward ))
+    Validator:AddFieldRule( "TierlessReward.BaseCredit",  Validator.IsType( "number", Plugin.DefaultConfig.TierlessReward.BaseCredit ))
     Validator:AddFieldRule( "ScoreMultiplier",  Validator.IsType( "table", Plugin.DefaultConfig.ScoreMultiplier ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
@@ -236,7 +243,9 @@ local function PrewarmValidate(self)
     table.sort(prewarmClients, PrewarmCompare)
 
     local nameList = ""
+    local lastSeenScore = 0
     local currentIndex = 0
+    local tierlessReward = self.Config.TierlessReward
     for _, prewarmClient in pairs(prewarmClients) do
         local curTier = 0
         local curTierData = nil
@@ -250,24 +259,39 @@ local function PrewarmValidate(self)
             end
         end
 
-        if not curTierData then break end
+        local curScore = prewarmClient.data.score
+        local clientID = prewarmClient.clientID
+        local client = Shine.GetClientByNS2ID(prewarmClient.clientID)
+        if curTierData then
+            ValidateClient(self, clientID, prewarmClient.data,curTier, curTierData.Credit,curTierData.Rank)
+            if curTierData.Reputation then
+                Shared.ConsoleCommand(string.format("sh_rep_delta %s %s",prewarmClient.clientID, curTierData.Reputation,string.format("预热结算 (+%s)",curTierData.Reputation)))
+            end
 
-        ValidateClient(self, prewarmClient.clientID, prewarmClient.data,curTier, curTierData.Credit,curTierData.Rank)
-        if curTierData.Reputation then
-            Shared.ConsoleCommand(string.format("sh_rep_delta %s %s",prewarmClient.clientID, curTierData.Reputation))
+            if curTierData.Inform then
+                nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60))
+            end
 
-            local client = Shine.GetClientByNS2ID(prewarmClient.clientID)
+            currentIndex = currentIndex + 1
+            lastSeenScore = curScore
+        else
+            local credit = tierlessReward.BaseCredit + curScore * tierlessReward.CreditPerScore
+            credit = math.floor(credit * 10) * 0.1
+            if credit >= tierlessReward.MinCredit then
+                local data = GetPlayerData(self,clientID)
+                data.credit = (data.credit or 0) + credit
+                if client then
+                    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                            string.format("预热结束,你的预热分被结算为[%s]预热点.",credit) )
+                end
+            end
+
             if client then
-                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],
-                        self.kPrefix,255, 255, 255,  string.format("预热排名获得了额外[%s信誉分].",curTierData.Reputation) )
+                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                        string.format("今日预热已结算,预热分距最近的排名[%s],还差[%s]预热分,活跃参与预热对局即可获得更多的预热分数!.",lastSeenScore,lastSeenScore - curScore) )
             end
         end
 
-        if curTierData.Inform then
-            nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60))
-        end
-
-        currentIndex = currentIndex + 1
     end
 
     local informMessage = string.format("已达成,排名靠前的玩家:" .. nameList .. "等,感谢各位做出的积极贡献.",
@@ -302,8 +326,10 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
         return true
     end
 
-    --Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-    --        255, 255, 255,string.format("您当前的[预热点]%s 不足以获取特权 %s , 需求%s.",credit, _privilege,_cost) )
+    if credit > 0 then
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
+                255, 255, 255,string.format("您当前的[预热点]%s 不足以获取特权 %s , 需求%s.",credit, _privilege,_cost) )
+    end
     return false
 end
 
@@ -388,7 +414,10 @@ function Plugin:DispatchEndGameCredit()
 end
 
 function Plugin:DispatchSpecRoundCredit()
+    self:SimpleTimer(self.Config.SpecReward.RoundInterval, function() self:DispatchSpecRoundCredit() end )
+    
     if not self.PrewarmData.Validated then return end
+    if not GetGamerules():GetGameStarted() then return end
     
     local reward = self.Config.SpecReward.RoundIntervalCredit
     for Client, _ in Shine.IterateClients() do
@@ -403,7 +432,6 @@ function Plugin:DispatchSpecRoundCredit()
         end
     end
     
-    self:SimpleTimer(self.Config.SpecReward.RoundInterval, function() self:DispatchSpecRoundCredit() end )
 end
 
 function Plugin:MapChange()
