@@ -230,10 +230,12 @@ end
 local function PrewarmValidate(self)
     if not PrewarmValidateEnable(self) then return end
     if GetInGamePlayerCount() < self.Config.Restriction.Player then return end
-
+    
     if self.PrewarmData.Validated then return end
     self.PrewarmData.Validated = true
 
+    TrackAllClients(self)
+    
     local prewarmClients = {}
     for clientID,prewarmData in pairs(self.MemberInfos) do
         table.insert(prewarmClients, { clientID = clientID, data = prewarmData})

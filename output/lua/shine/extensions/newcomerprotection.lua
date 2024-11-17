@@ -250,13 +250,23 @@ function Plugin:OnMarineRespawn(team,player, origin, angles)
 	end
 end
 
+local function UpdateRookie(self,_player)
+	local client,tier, estimateSkill = GetClientAndTier(_player)
+	if not client or client:GetIsVirtual() then return end
+
+
+	local team = _player:GetTeamNumber()
+	local playingTeam = (team == kTeam1Index or team == kTeam2Index)
+	
+	local isRookie = self.Config.NewcomerEstimateSkill > estimateSkill
+	if playingTeam then
+		isRookie = isRookie and _player:GetKills() < _player:GetDeaths()
+	end
+	_player:SetRookie(isRookie)
+end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
-	local client,tier, estimateSkill = GetClientAndTier(Player)
-	if not client or client:GetIsVirtual() then
-		return
-	end
-	Player:SetRookie(self.Config.NewcomerEstimateSkill > estimateSkill)
+	UpdateRookie(self,Player)
 end
 
 function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
@@ -283,6 +293,8 @@ function Plugin:ClientConfirmConnect( Client )
 
 	local player = Client:GetControllingPlayer()
 	if not player then return end
+	
+	UpdateRookie(self,player)
 	if player:GetPlayerTeamSkill() > self.Config.BelowSkillNotify then return end
 
 	if self.Config.ExtraNotify then
@@ -303,6 +315,7 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	local client,tier = GetClientAndTier(player)
 	if not client or tier == 0 then return end
 
+	UpdateRookie(self,player)
 	local refund = 0
 	local refundAdditiveTable = Plugin.Config.RefundAdditive[player:GetClassName()]
 	if refundAdditiveTable then

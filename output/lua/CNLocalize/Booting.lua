@@ -32,18 +32,18 @@ if Client then
             CNPersistentSave()
         end
     end
-    
+
     Client.HookNetworkMessage("SwitchLocalize", function(message)
         SetLocalize(not gForceLocalize)
     end )
-    
+
 
     --Core
     if not kTranslateMessage then
         kTranslateMessage = {}
         kLocales = {}
     end
-    
+
     Script.Load("lua/CNLocalize/CNStrings.lua")
     Script.Load("lua/CNLocalize/CNStringsMenu.lua")
     local baseResolveString = Locale.ResolveString
@@ -55,16 +55,22 @@ if Client then
         return resolvedString or baseResolveString(input)
     end
     Locale.ResolveString = CNLocalizeResolve
-    
+
     local baseGetCurrentLanguage = Locale.GetCurrentLanguage
     function CNGetCurrentLanguage()
         return gForceLocalize and "zhCN" or baseGetCurrentLanguage(self)
     end
     Locale.GetCurrentLanguage = CNGetCurrentLanguage
-    
+
+
     -- Fonts Fix
-    ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "replace")
-    ModLoader.SetupFileHook("lua/GUI/FontGlobals.lua", "lua/CNLocalize/FontGlobals.lua", "replace")
+    local hasFontAssetsPatched = GetFileExists("CNFontAssets.readme")
+    if not hasFontAssetsPatched then
+        Shared.Message("[CNLocalize] Font Assets Override Patched")
+        ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "replace")
+        ModLoader.SetupFileHook("lua/GUI/FontGlobals.lua", "lua/CNLocalize/FontGlobals.lua", "replace")
+    end
+
 
     --Locations
     Script.Load("lua/CNLocalize/CNLocations.lua")
@@ -72,7 +78,7 @@ if Client then
         if not gForceLocalize then return input end
         return kTranslateLocations[input] or input
     end
-    
+
     ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "post")
     ModLoader.SetupFileHook("lua/GUIUnitStatus.lua", "lua/CNLocalize/GUIUnitStatus.lua", "replace")
     ModLoader.SetupFileHook("lua/Player_Client.lua", "lua/CNLocalize/Player_Client.lua", "post")
@@ -82,7 +88,7 @@ if Client then
     ModLoader.SetupFileHook("lua/GUIHiveStatus.lua", "lua/CNLocalize/GUIHiveStatus.lua", "post")
     ModLoader.SetupFileHook("lua/Hud/Commander/MarineGhostModel.lua", "lua/CNLocalize/MarineGhostModel.lua", "post")
     ModLoader.SetupFileHook("lua/TeamMessenger.lua", "lua/CNLocalize/TeamMessenger.lua", "replace")
-    
+
     -- Name Fix
     ModLoader.SetupFileHook("lua/menu2/MenuUtilities.lua", "lua/CNLocalize/MenuUtilities.lua", "post")
 
@@ -101,13 +107,19 @@ if Client then
     ModLoader.SetupFileHook("lua/menu2/GUIMainMenu.lua", "lua/CNLocalize/GUI/GUIMainMenu.lua", "post")
     ModLoader.SetupFileHook("lua/menu2/NavBar/GUIMenuNavBar.lua", "lua/CNLocalize/GUI/GUIMenuNavBar.lua", "post")
     ModLoader.SetupFileHook("lua/menu2/NavBar/Screens/News/GUIMenuNewsFeedPullout.lua", "lua/CNLocalize/GUI/GUIMenuNewsFeedPullout.lua", "replace")
-    
+
     --Chat Filter
     Script.Load("lua/CNLocalize/ChatFilters.lua")
     function CNChatFilter(input)
         return string.gsub(input, "%w+",kChatFilters)
     end
     Locale.ChatFilter = CNChatFilter
+
+
+    --Spectator
+    ModLoader.SetupFileHook("lua/GUIInsight_Location.lua", "lua/CNLocalize/Spectator/GUIInsight_Location.lua", "post")
+    ModLoader.SetupFileHook("lua/GUIInsight_TechPoints.lua", "lua/CNLocalize/Spectator/GUIInsight_TechPoints.lua", "replace")
+    ModLoader.SetupFileHook("lua/GUIInsight_PlayerFrames.lua", "lua/CNLocalize/Spectator/GUIInsight_PlayerFrames.lua", "replace")
 
 
     --local function OnConsoleHttp(url)
@@ -118,4 +130,6 @@ if Client then
     --end
     --
     --Event.Hook("Console_http", OnConsoleHttp)
+
+
 end

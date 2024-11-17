@@ -1,0 +1,16 @@
+name        = "[CN] Font Assets 2024"
+source_dir  = "source"
+output_dir  = "output"
+description = [=[物竞天择2中文社区最新汉化字体包,采用全新科技.
+
+1.用于在非服务器时启用汉化机制,你可于非中文社区启用该汉化包,并自由与其他一样启用汉化包的玩家打字沟通.
+2.解决由于暴力覆盖字体导致的运行时崩溃问题(若您进场于国服崩溃请启尝试用该项).
+
+怎么使用?
+订阅,并于游戏内启用此项,点击重启,后各地加载时左上角显示该MOD即订阅成功.
+
+To Prevent Crashes Causing by "Overriding Already Precached Font Assets"]=]
+image       = "preview.jpg"
+tag_modtype = "Localization"
+tag_support = ""
+publish_id = 3359658648

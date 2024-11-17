@@ -1,4 +1,5 @@
 kTranslateLocations = {}
+kTranslateLocations["Unknown"]="未知地点"
 -- Contributed by @ladjic
 kTranslateLocations["Computer Control"]="计算机控制"
 kTranslateLocations["Warehouse"]="仓库"
