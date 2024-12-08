@@ -130,7 +130,7 @@ function GUIExoEject:Initialize()
 
     self.button = GUICreateButtonIcon("Drop")
     self.button:SetAnchor(GUIItem.Left, GUIItem.Bottom)
-    self.button:SetPosition( GUIScale(Vector(430, -120, 0)))
+    self.button:SetPosition( Vector(430, -120, 0))
 
     self.text = GetGUIManager():CreateTextItem()
     self.text:SetAnchor(GUIItem.Middle, GUIItem.Bottom)

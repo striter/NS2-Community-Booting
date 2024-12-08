@@ -12,6 +12,7 @@ BoomBoxMixin.networkVars =
 local kTrackAssets = {
     [EBoomBoxTrack.CUSTOM]  =  {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ygkldnh"), name = "阳光开朗大男孩" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjmidnightcity"), name = "哈基Midnight City" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjm"), name = "哈基基米慌慌" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/GetOverTheWorld"), name = "Get Over The World" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WonderFunnyHarmony"), name = "Wonder Funny Harmony" },
@@ -50,6 +51,8 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.SONG] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/Slumlord"), name = "Slumlord" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/LastCall"), name = "Last Call" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/AllThisTime"), name = "All This Time" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/Metamodernity"), name = "Metamodernity" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/RunAway"), name = "RunAway" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/NoGood"), name = "No Good" },
@@ -62,7 +65,6 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/GreenRiver"), name = "Green River" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/AfterTheDisco"), name = "After the Disco" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/SureEnough"), name = "Sure Enough" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/HideAway"), name = "Hide Away" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/PolishGirl"), name = "Polish Girl" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/Valkyrie"), name = "Valkyrie" },
     },

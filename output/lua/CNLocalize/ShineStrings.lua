@@ -20,8 +20,11 @@ kShinePluginsTranslations={}
 kShinePluginsTranslations["Core"]={}
 kShinePluginsTranslations["Core"]["Map Vote"]="换图投票"
 kShinePluginsTranslations["Core"]["Shuffle"]="洗牌分队"
-kShinePluginsTranslations["Core"]["CLIENT_SETTINGS"]="客户端设置"
+kShinePluginsTranslations["Core"]["CLIENT_SETTINGS"]="本地设置"
 kShinePluginsTranslations["Core"]["GENERAL_CLIENT_SETTINGS"]="通用"
+kShinePluginsTranslations["Core"]["SETTINGS_TAB"]="设置"
+kShinePluginsTranslations["Core"]["PLUGINS_TAB"]="插件"
+kShinePluginsTranslations["Core"]["CLIENT_PLUGINS"]="本地插件"
 
 kShinePluginsTranslations["Core"]["Surrender"]="投降 /remake"
 kShinePluginsTranslations["Core"]["Unstuck"]="尝试脱困"
@@ -125,8 +128,8 @@ kShinePluginsTranslations["votedraw"]["ERROR_CANNOT_VOTE_ON_CURRENT_TEAM"]= "你
 kShinePluginsTranslations["votedraw"]["ERROR_ROUND_NOT_STARTED"]= "必须开局才能开始投票平局."
 
 kShinePluginsTranslations["ban"]={}
-kShinePluginsTranslations["ban"]["CATEGORY"]="封禁目录"
-kShinePluginsTranslations["ban"]["BAN"]="封禁"
+kShinePluginsTranslations["ban"]["CATEGORY"]="封禁"
+kShinePluginsTranslations["ban"]["BAN"]="禁止其加入服务器"
 kShinePluginsTranslations["ban"]["BAN_TIP"]="封禁这名玩家,踢出且时限内无法加入服务器"
 kShinePluginsTranslations["ban"]["Bans"]="封禁名单"
 kShinePluginsTranslations["ban"]["NAME"]="名字"
@@ -216,6 +219,8 @@ kShinePluginsTranslations["commbans"]["CATEGORY"]="指挥封禁"
 kShinePluginsTranslations["commbans"]["PLAYER_BANNED"]="从指挥员名单里 {TargetName}{Duration:NonZero:临时}{Duration:Duration:永久} 拉黑了"
 kShinePluginsTranslations["commbans"]["BANNED_WARNING"]="你已被指挥员名单 {Duration:NonZero:临时拉黑}{Duration:Duration:永久拉黑} ,无法指挥.\""
 kShinePluginsTranslations["commbans"]["NOTIFY_PREFIX"]="[指挥员黑名单]"
+kShinePluginsTranslations["commbans"]["Comm Bans"]="指挥封禁"
+kShinePluginsTranslations["commbans"]["BAN"]="禁止其指挥"
 
 kShineTranslations["ENABLE_ALLTALK"]="开启全局语音"
 kShineTranslations["DISABLE_ALLTALK"]="关闭全局语音"

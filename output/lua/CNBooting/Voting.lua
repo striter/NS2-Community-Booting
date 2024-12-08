@@ -657,11 +657,6 @@ if Server then
                     table.insert(acceptClients,client)
                 end
             end
-
-            if Shine then
-                local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-                if cpEnabled then cp:DispatchTomorrowPrivilege(acceptClients,"新战局开启") end
-            end
             
             for _,client in acceptClients do
                 Server.SendNetworkMessage(client,"Redirect",message, true)
@@ -674,13 +669,13 @@ if Server then
     SetVoteSuccessfulCallback("VoteMutePlayer", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)
         if not client then return end
-        Shared.ConsoleCommand(string.format("sh_gagid %s 600", client:GetUserId()))
+        Shared.ConsoleCommand(string.format("sh_gag %s", client:GetUserId()))
     end)
     
     SetVoteSuccessfulCallback("VoteFuckPolitican", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)
         if not client then return end
-        Shared.ConsoleCommand(string.format("sh_gagid0 %s", client:GetUserId()))
+        Shared.ConsoleCommand(string.format("sh_gagid %s", client:GetUserId()))
         Shared.ConsoleCommand(string.format("sh_renameid %s %s", client:GetUserId(), "Transgender"))
     end)
 
