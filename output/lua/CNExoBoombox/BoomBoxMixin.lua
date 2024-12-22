@@ -12,6 +12,7 @@ BoomBoxMixin.networkVars =
 local kTrackAssets = {
     [EBoomBoxTrack.CUSTOM]  =  {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ygkldnh"), name = "阳光开朗大男孩" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/seeuagain"), name = "See you again (两倍速)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjmidnightcity"), name = "哈基Midnight City" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjm"), name = "哈基基米慌慌" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/GetOverTheWorld"), name = "Get Over The World" },
@@ -25,6 +26,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ClearMorning"), name = "Clear Morning" },
     },
     [EBoomBoxTrack.OST]  = {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/TheFinals"), name = "The Finals (Season 1)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/2077"), name = "The Rebel Path" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/PTSD"), name = "PTSD" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/RisingTide"), name = "Rising Tide" },
@@ -37,6 +39,7 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.TWO] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/WanderingAround"), name = "アルクアラウンド" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/dnmmm"), name = "电脑眠眠猫" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/Elephant"), name = "象" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/Flamingo"), name = "Flamingo" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/StepIt"), name = "Step It" },
@@ -64,7 +67,6 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/WestCoast"), name = "West Coast" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/GreenRiver"), name = "Green River" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/AfterTheDisco"), name = "After the Disco" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/SureEnough"), name = "Sure Enough" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/PolishGirl"), name = "Polish Girl" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/Valkyrie"), name = "Valkyrie" },
     },
