@@ -12,6 +12,7 @@ Plugin.DefaultConfig = {
     },
     ScoreMultiplier = {
         Restricted = 0.5,
+        RestrictedActive = 1,
         Idle = 1,
         Active = 2,
     },
@@ -42,6 +43,7 @@ do
     Validator:AddFieldRule( "TierlessReward",  Validator.IsType( "table", Plugin.DefaultConfig.TierlessReward ))
     Validator:AddFieldRule( "TierlessReward.BaseCredit",  Validator.IsType( "number", Plugin.DefaultConfig.TierlessReward.BaseCredit ))
     Validator:AddFieldRule( "ScoreMultiplier",  Validator.IsType( "table", Plugin.DefaultConfig.ScoreMultiplier ))
+    Validator:AddFieldRule( "ScoreMultiplier.RestrictedActive",  Validator.IsType( "number", Plugin.DefaultConfig.ScoreMultiplier.RestrictedActive ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier  ))
@@ -137,10 +139,8 @@ local function NotifyClient(self, _client, _data)
 end
 
 local function GetPrewarmScore(self, player, trackedTime)
-    local idleMultiplier = self.Config.ScoreMultiplier.Idle
-    if kCurrentHour <= self.Config.Restriction.Hour then
-        idleMultiplier = self.Config.ScoreMultiplier.Restricted
-    end
+    
+    local activePrewarm = kCurrentHour >= self.Config.Restriction.Hour
     
     local activePlayed = false
     local gameMode = Shine.GetGamemode()
@@ -155,8 +155,12 @@ local function GetPrewarmScore(self, player, trackedTime)
         activePlayed = activePlayScore > 30
     end
 
+    local idleMultiplier = activePrewarm and self.Config.ScoreMultiplier.Idle or self.Config.ScoreMultiplier.Restricted
+    local activeMultiplier = activePrewarm and self.Config.ScoreMultiplier.Active or self.Config.ScoreMultiplier.RestrictedActive
+
+    local trackTimeMultiplier = activePlayed and activeMultiplier or idleMultiplier
     --Shared.Message(gameMode .. " " .. tostring(activePlayed))
-    return activePlayed and (self.Config.ScoreMultiplier.Active * trackedTime) or (trackedTime * idleMultiplier)
+    return trackTimeMultiplier * trackedTime
 end
 
 -- Track Clients Prewarm Time
