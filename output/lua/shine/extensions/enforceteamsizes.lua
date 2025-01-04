@@ -237,6 +237,7 @@ function Plugin:GetPlayerSkillLimited(_player,_team)
 		skillLimited = skillLimited or skill > self.Constrains.SkillRange[2]
 	end
 	
+	skill = math.max(_player:GetCommanderSkill(),skill)
 	return skillLimited,skill
 end
 

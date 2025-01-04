@@ -32,6 +32,12 @@ Plugin.DefaultConfig = {
         MinCredit = 0.1,
         CreditPerScore = 0.0005 -- 1.8 per 3600 score
     },
+    ReturnReward = {
+        Enabled = false,
+        CreditFirstJoin = 4,
+        DayOffset = 10,
+        CreditReturn = 10,
+    }
 }
 
 Plugin.kPrefix = "[战局预热]"
@@ -46,7 +52,8 @@ do
     Validator:AddFieldRule( "ScoreMultiplier.RestrictedActive",  Validator.IsType( "number", Plugin.DefaultConfig.ScoreMultiplier.RestrictedActive ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
-    Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier  ))
+    Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier))
+    Validator:AddFieldRule( "ReturnReward", Validator.IsType("table",Plugin.DefaultConfig.ReturnReward))
     Plugin.ConfigValidator = Validator
 end
 
@@ -473,6 +480,36 @@ function Plugin:ClientConfirmConnect( _client )
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                     string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
         end
+        return
+    end
+end
+
+function Plugin:OnPlayerCommunityDataReceived(_client,data)
+    if not self.Config.ReturnReward.Enabled then return end
+    
+    local clientID = _client:GetUserId()
+    if clientID <= 0 then return end
+    
+    local credit = 0
+    local title = nil
+    if not data.lastSeenTimeStamp then
+        credit = self.Config.ReturnReward.CreditFirstJoin
+        title = "首次加入社区"
+    else
+        local secOffset = kCurrentTimeStamp - data.lastSeenTimeStamp
+        local dayOffset = math.floor(secOffset / 86400)
+        if dayOffset >= self.Config.ReturnReward.DayOffset then
+            credit = self.Config.ReturnReward.CreditReturn
+            title = "回归玩家激励"
+        end
+    end
+
+    if credit > 0 then
+        local targetData = GetPlayerData(self, _client:GetUserId())
+        targetData.credit = (targetData.credit or 0) + credit
+        
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                string.format("%s,已被给予%s[预热点]用于加入战局,欢迎加入NS2CN!",title,credit) )
     end
 end
 

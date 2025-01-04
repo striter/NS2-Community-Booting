@@ -210,19 +210,14 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 			return false
 		end	
 	end
-
-	local gameInfoEnt = GetGameInfoEntity()
-	if not gameInfoEnt then return end
 	
 	local gamerules = GetGamerules()
 	if not gamerules then return end
 	
-	local commanderSkill = _player:GetCommanderTeamSkill()
-	local compareSkill = gameInfoEnt:GetAveragePlayerSkill()
 	local oppositeCommander = gamerules:GetTeam(_player:GetTeamNumber() == kTeam1Index and kTeam2Index or kTeam1Index):GetCommander()
-	if oppositeCommander then
-		compareSkill = oppositeCommander:GetCommanderTeamSkill()
-	end
+	if not oppositeCommander then return end
+	local commanderSkill = _player:GetCommanderTeamSkill()
+	local compareSkill = oppositeCommander:GetCommanderTeamSkill()
 	
 	local skillDiff = math.abs(commanderSkill - compareSkill)
 	if restrictions.MaxSkillAverageDiffToCommand > 0 and skillDiff > restrictions.MaxSkillAverageDiffToCommand then

@@ -21,10 +21,10 @@ function Plugin:Cleanup()
 end
 
 function Plugin:ReceiveAddServerList( Data )
-	self.QueryServers[Data.ID] = {
+	table.insert(self.QueryServers,{
 		ID = Data.ID,
 		Address = Data.Address,
 		Name = Data.Name,
 		Amount = Data.Amount,
-	}
+	})
 end

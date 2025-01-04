@@ -12,6 +12,7 @@ BoomBoxMixin.networkVars =
 local kTrackAssets = {
     [EBoomBoxTrack.CUSTOM]  =  {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ygkldnh"), name = "阳光开朗大男孩" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WeAllLiftTogether"), name = "We All Lift Together" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/seeuagain"), name = "See you again (两倍速)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjmidnightcity"), name = "哈基Midnight City" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjm"), name = "哈基基米慌慌" },

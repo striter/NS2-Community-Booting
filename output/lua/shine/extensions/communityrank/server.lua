@@ -228,8 +228,9 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     
     data.lastSeenNameTimes = GetNumber(rawData.lastSeenNameTimes)
     data.lastSeenName = rawData.lastSeenName
-    data.lastSeenDay = rawData.lastSeenDay
+    data.lastSeenTimeStamp = GetNumber(rawData.lastSeenTimeStamp)
     data.lastSeenSkill = GetNumber(rawData.lastSeenSkill)
+    data.lastSeenDay = rawData.lastSeenDay
     
     self:RecordResolveData(data,rawData)
 
@@ -778,12 +779,14 @@ function Plugin:EndGameLastSeenName(lastRoundData)
     local gameLength = lastRoundData.RoundInfo.roundLength
     if gameLength < 300 then return end --?
     
+    local currentTimeStamp = os.time()
     local currentDate = string.format("%s-%s-%s",kCurrentYear,kCurrentMonth,kCurrentDay)
     for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
         local playerData = GetPlayerData(self,steamId)
         local currentName = playerStat.playerName
-        playerData.lastSeenDay = currentDate
+        playerData.lastSeenTimeStamp = currentTimeStamp
         playerData.lastSeenSkill = playerStat.skill
+        playerData.lastSeenDay = currentDate
         playerData.lastSeenNameTimes = (playerData.lastSeenNameTimes or 0) + 1
         if not playerData.lastSeenName or playerData.lastSeenNameTimes >= 30 then
             playerData.lastSeenNameTimes = nil

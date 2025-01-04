@@ -32,6 +32,7 @@ local Scripts = {
 Server.AddRestrictedFileHashes( "lua/shine/lib/gui/*.lua" )
 
 local tmpDate = os.date("*t", Shared.GetSystemTime())
+kCurrentTimeStamp = os.time()
 kCurrentYear = tmpDate.year
 kCurrentMonth = tmpDate.month
 kCurrentDay = tmpDate.day
