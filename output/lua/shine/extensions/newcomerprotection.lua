@@ -21,6 +21,13 @@ Plugin.DefaultConfig = {
 		SeedingPlayers = 99, -- So restrictions ignores it
 		MinHourToCommand = -1,
 		MaxSkillAverageDiffToCommand = -1,
+		RoundValidate = {
+			Enable = false,
+			Record = 5,
+			MaxPlaytime = 3,
+			MaxWinTime = 2,
+			ForbidLastRoundWinner = true,
+		},
 	},
 	["Tier"] ={100,300,500},
 	TierHourMultiplier = 10,
@@ -58,6 +65,7 @@ do
 	Validator:AddFieldRule( "TierHourMaxSkill",  Validator.IsType( "number", Plugin.DefaultConfig.TierHourMaxSkill ))
 	Validator:AddFieldRule( "BelowSkillNotify",  Validator.IsType( "number", Plugin.DefaultConfig.BelowSkillNotify ))
 	Validator:AddFieldRule( "CommandRestrictions",  Validator.IsType( "table", Plugin.DefaultConfig.CommandRestrictions ))
+	Validator:AddFieldRule( "CommandRestrictions.RoundValidate",  Validator.IsType( "table", Plugin.DefaultConfig.CommandRestrictions.RoundValidate ))
 	Validator:AddFieldRule( "ExtraNotify",  Validator.IsType( "boolean", true ))
 	Validator:AddFieldRule( "ExtraNotifyMessage",  Validator.IsType( "string", "You are at a higher tier skill server,choose rookie server for better experience" ))
 	Validator:AddFieldRule( "Messages",  Validator.IsType( "table", Plugin.DefaultConfig.Messages))
@@ -77,11 +85,15 @@ Plugin.EnabledGamemodes = {
 	["Siege+++"] = true,
 }
 
+local kCommanderHistoryFile = "config://shine/temp/CommanderHistory.json"
 function Plugin:Initialise()
 	return true
 end
 
 function Plugin:OnFirstThink()
+	local File, Err = Shine.LoadJSONFile(kCommanderHistoryFile)
+	self.kCommanderHistory = File or {}
+
 	Shine.Hook.SetupClassHook("Player", "OnKill", "OnPlayerKill", "PassivePost")
 	Shine.Hook.SetupClassHook("Marine", "DropAllWeapons", "OnDropAllWeapons", "PassivePre")
 
@@ -94,9 +106,10 @@ function Plugin:OnFirstThink()
 	Shine.Hook.SetupClassHook("Gorge", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
 	Shine.Hook.SetupClassHook("Fade", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
 	Shine.Hook.SetupClassHook("Onos", "ModifyDamageTaken", "OnModifyDamageTaken", "PassivePost")
-	
+
 	Shine.Hook.SetupClassHook("TeamSpectator", "Replace", "OnMarineReplace", "ActivePre")
 	Shine.Hook.SetupClassHook("MarineTeam", "RespawnPlayer", "OnMarineRespawn", "PassivePost")
+	Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
 end
 
 local function GetClientAndTier(player)
@@ -195,35 +208,49 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 	--if self.Config.MinSkillToCommand <= 0 then return end
 	if GetGamerules():GetGameStarted() then return end
 	if Shine.GetHumanPlayerCount() < restrictions.SeedingPlayers then return end 	--They are seeding
-	
+
 	local client = Shine.GetClientForPlayer(_player)
 	if not client then return end
 	if client:GetIsVirtual() then return end
 
+	local clientId = client:GetUserId()
+	
 	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 	if crEnabled then
-		local playHour = cr:GetCommunityPlayHour(client:GetUserId()) 
+		local playHour = cr:GetCommunityPlayHour(clientId)
 		if restrictions.MinHourToCommand > 0 and playHour < restrictions.MinHourToCommand then
-			Shine:NotifyDualColour(client, 
-				88, 214, 141, "[新兵保护]",
-				213, 245, 227, string.format("由于当前服务器强度,游戏时长需要达到[%d]小时,才能成为该队的指挥,您当前的游戏时长为[%d]!", restrictions.MinHourToCommand,playHour))
+			Shine:NotifyDualColour(client,
+					88, 214, 141, "[新兵保护]",
+					213, 245, 227, string.format("由于当前服务器强度,游戏时长需要达到[%d]小时,才能成为该队的指挥,您当前的游戏时长为[%d]!", restrictions.MinHourToCommand,playHour))
+
+			Shared.ConsoleCommand(string.format("sh_setteam %s %s true", clientId,_player:GetTeamNumber()))
 			return false
-		end	
+		end
+	end
+
+	if self:CommanderRoundRestricted(clientId) then
+		Shine:NotifyDualColour(client,
+				88, 214, 141, "[新兵保护]",
+				213, 245, 227, "您近期已多次登录指挥站,请小沁一会.给他人些机会.")
+		Shared.ConsoleCommand(string.format("sh_setteam %s %s true", clientId,_player:GetTeamNumber()))
+		return false
 	end
 	
 	local gamerules = GetGamerules()
 	if not gamerules then return end
-	
+
 	local oppositeCommander = gamerules:GetTeam(_player:GetTeamNumber() == kTeam1Index and kTeam2Index or kTeam1Index):GetCommander()
 	if not oppositeCommander then return end
 	local commanderSkill = _player:GetCommanderTeamSkill()
 	local compareSkill = oppositeCommander:GetCommanderTeamSkill()
-	
+
 	local skillDiff = math.abs(commanderSkill - compareSkill)
 	if restrictions.MaxSkillAverageDiffToCommand > 0 and skillDiff > restrictions.MaxSkillAverageDiffToCommand then
-		Shine:NotifyDualColour(client, 
-			88, 214, 141, "[新兵保护]",
-			213, 245, 227, string.format("你的指挥分数[%i]与预期分数[%i]差距过大[>%i],请选择适当的游玩场所!",commanderSkill,compareSkill, restrictions.MaxSkillAverageDiffToCommand))
+		Shine:NotifyDualColour(client,
+				88, 214, 141, "[新兵保护]",
+				213, 245, 227, string.format("你的指挥分数[%i]与预期分数[%i]差距过大[>%i],请选择适当的游玩场所!",commanderSkill,compareSkill, restrictions.MaxSkillAverageDiffToCommand))
+
+		Shared.ConsoleCommand(string.format("sh_setteam %s %s true", clientId,_player:GetTeamNumber()))
 		return false
 	end
 end
@@ -235,7 +262,7 @@ function Plugin:OnMarineRespawn(team,player, origin, angles)
 		if CheckPlayerForcePurchase(self,player,kTechId.HeavyMachineGun) then
 			player:GiveItem(HeavyMachineGun.kMapName)
 			valid = true
-		end 
+		end
 	end
 
 	if not valid then return end
@@ -252,7 +279,7 @@ local function UpdateRookie(self,_player)
 
 	local team = _player:GetTeamNumber()
 	local playingTeam = (team == kTeam1Index or team == kTeam2Index)
-	
+
 	local isRookie = self.Config.NewcomerEstimateSkill > estimateSkill
 	if playingTeam then
 		isRookie = isRookie and _player:GetKills() < _player:GetDeaths()
@@ -278,17 +305,17 @@ function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, 
 			mapName = Fade.kMapName
 		end
 	end
-	
+
 	return Player.Replace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
 end
-	 
+
 
 function Plugin:ClientConfirmConnect( Client )
 	if Client:GetIsVirtual() then return end
 
 	local player = Client:GetControllingPlayer()
 	if not player then return end
-	
+
 	UpdateRookie(self,player)
 	if player:GetPlayerTeamSkill() > self.Config.BelowSkillNotify then return end
 
@@ -357,14 +384,14 @@ local function GetNearbyWeaponPickers(player)
 			return true
 		end
 	end
-	
+
 	local structures = GetEntitiesWithMixinForTeamWithinRange("Construct",  team, origin, range)
 	for _,v in pairs(structures) do
 		if v:GetIsAlive() and v:GetIsBuilt() then
 			return true
 		end
 	end
-	
+
 	return false
 end
 
@@ -374,7 +401,7 @@ function Plugin:OnDropAllWeapons(player)
 	local refundPercentage = self.Config.RefundMultiply[tier]
 	if not refundPercentage or refundPercentage <= 0 then return end
 	if GetNearbyWeaponPickers(player) then return end
-	
+
 	local primaryWeapon = player:GetWeaponInHUDSlot(kPrimaryWeaponSlot)
 	if not primaryWeapon then return end
 	local techID = primaryWeapon:GetTechId()
@@ -394,17 +421,17 @@ end
 Plugin.kDamageBonusReduction = {
 	["Skulk"] = 1,
 	["Lerk"] = 0.5, ["Prowler"] = 0.5,
-	["Fade"] = 0.33, ["Vokex"] = 0.33, 
+	["Fade"] = 0.33, ["Vokex"] = 0.33,
 	["Gorge"] = 0.2, ["Onos"] = 0.2,
-	
+
 	["Marine"] = 1,
-	["JetpackMarine"] = 0.5, 
+	["JetpackMarine"] = 0.5,
 	["Exo"] = 0.2,
 }
 
 function Player:ModifyDamageTaken() end
 function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType, hitPoint)
-	
+
 	if not Plugin.Config then return end
 
 	if self:GetIsVirtual() or (attacker.GetIsVirtual and attacker:GetIsVirtual()) then return end
@@ -425,9 +452,9 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 		local value = math.max(math.abs(skillOffset) - Config.kSkillDiffThreshold,0)
 
 		local sign = skillOffset >= 0 and 1 or -1
-		if value > 0 
-			and sign == -1
-			and self:GetKills() < self:GetDeaths()
+		if value > 0
+				and sign == -1
+				and self:GetKills() < self:GetDeaths()
 		then
 			local _,selfTier = GetClientAndTier(self)
 			local _,targetTier = GetClientAndTier(attacker)
@@ -448,11 +475,100 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 					local classBonusReduction = Plugin.kDamageBonusReduction[self:GetClassName()] or 1
 					damageParam = damageParam * classBonusReduction
 				end
-				
+
 				damageTable.damage = damageTable.damage * ( 1 + damageParam)
 			end
 		end
 	end
+end
+
+function Plugin:OnEndGame()
+
+	local data = self.Config.CommandRestrictions.RoundValidate
+	--if not data.Enable then return end
+
+	local lastRoundData = CHUDGetLastRoundStats();
+
+	if not lastRoundData then
+		Shared.Message("[CNNP] ERROR Option 'savestats' not enabled ")
+		return
+	end
+
+	local roundLength = lastRoundData.RoundInfo.roundLength
+	local playerCount = table.Count(lastRoundData.PlayerStats)
+	--if roundLength < 300 or playerCount < 12 then return end
+
+	local team1CommData = {timePlayed = 0}
+	local team2CommData = {timePlayed = 0}
+	local function ValidatePlayer(steamId,name,playerData, teamData)
+		local commTime = math.floor(playerData.commanderTime)
+		if teamData.timePlayed < commTime then
+			teamData.timePlayed = commTime
+			teamData.playerId = steamId
+			teamData.playerName = name
+		end
+
+	end
+
+	for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
+		ValidatePlayer(steamId,playerStat.playerName,playerStat[kTeam1Index],team1CommData)
+		ValidatePlayer(steamId,playerStat.playerName,playerStat[kTeam2Index],team2CommData)
+	end
+
+	table.insert(self.kCommanderHistory, 1, {
+		time = os.time() ,
+		winningTeam = lastRoundData.RoundInfo.winningTeam,
+		team1CommData = team1CommData,
+		team2CommData = team2CommData,
+		map = lastRoundData.RoundInfo.mapName,
+		length = roundLength,
+		playerCount = playerCount,
+	})
+
+	local count = #self.kCommanderHistory
+	for i = data.Record + 1,count do
+		self.kCommanderHistory[i] = nil
+	end
+
+	local Success, Err = Shine.SaveJSONFile( self.kCommanderHistory, kCommanderHistoryFile)
+	if not Success then
+		Shared.Message( "Error saving prewarm file: "..Err )
+	end
+end
+
+function Plugin:CommanderRoundRestricted(clientId)
+
+	local data = self.Config.CommandRestrictions.RoundValidate
+
+	if not data.Enable then return false end
+
+	if data.ForbidLastRoundWinner then
+		local lastRound = self.kCommanderHistory[1]
+		if lastRound.winningTeam ~= 0 then
+			local lastWinnerId = lastRound.winningTeam == 1 and lastRound.team1CommData.playerId or lastRound.team2CommData.playerId
+			Shared.Message(lastWinnerId)
+			if lastWinnerId == clientId then
+				return true
+			end
+		end
+	end
+	
+	local timeRecentPlayed = 0
+	local timeRecentWins = 0
+	for k, recentRound in ipairs(self.kCommanderHistory) do
+		if recentRound.team1CommData.playerId == clientId or recentRound.team2CommData.playerId == clientId then
+			timeRecentPlayed = timeRecentPlayed + 1
+		end
+
+		if recentRound.winningTeam ~= 0 then
+			local recentWinnerId = recentRound.winningTeam == 1 and recentRound.team1CommData.playerId or recentRound.team2CommData.playerId
+			if recentWinnerId == clientId then
+				timeRecentWins = timeRecentWins + 1
+			end
+		end
+	end
+	
+	return timeRecentWins >= data.MaxWinTime or timeRecentPlayed >= data.MaxPlaytime
 end
 
 function Plugin:Cleanup()
