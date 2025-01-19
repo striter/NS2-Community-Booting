@@ -8,6 +8,10 @@ Plugin.Version = "1.0"
 Plugin.HasConfig = true
 Plugin.ConfigName = "ServerSwitchVote.json"
 
+Plugin.RedirMode = table.AsEnum{
+	"RANDOM", "NOOB", "OLDASS"
+}
+
 Plugin.DefaultConfig = {
 	ClientVote = true,
 	ConfigURL = "",
@@ -17,7 +21,7 @@ Plugin.DefaultConfig = {
 		ToServer = 0,
 		RedirUntil = 24,
 		FailInformCount = 40,
-		Newcomer = false,
+		Mode = Plugin.RedirMode.RANDOM,
 	},
 	RecallPenalty = {
 		Count = -1,
@@ -38,7 +42,7 @@ local Validator = Shine.Validator()
 	Validator:AddFieldRule( "CrowdAdvert.RedirUntil",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.RedirUntil ))
 	Validator:AddFieldRule( "CrowdAdvert.ToServer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.ToServer ))
 	Validator:AddFieldRule( "CrowdAdvert.FailInformCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.FailInformCount ))
-	Validator:AddFieldRule( "CrowdAdvert.Newcomer",  Validator.IsType( "boolean", Plugin.DefaultConfig.CrowdAdvert.Newcomer ))
+	Validator:AddFieldRule( "CrowdAdvert.Mode", Validator.InEnum( Plugin.RedirMode, Plugin.DefaultConfig.CrowdAdvert.Mode ) )
 	Validator:AddFieldRule( "RecallPenalty",  Validator.IsType( "table", Plugin.DefaultConfig.RecallPenalty ))
 end
 
@@ -75,7 +79,7 @@ function Plugin:ProcessRecallPenalty( Client )
 	self.RedirHistory.RecallPenaltyCount = recallPenaltyCount - 1
 end
 
-function Plugin:RedirClients(_targetIP,_count,_newcomer)
+function Plugin:RedirClients(_targetIP,_count,_newcomerMode)
 	self.RedirHistory.RecallPenaltyCount = self.Config.RecallPenalty.Count
 	self.RedirHistory.Clients = {}
 	
@@ -90,13 +94,16 @@ function Plugin:RedirClients(_targetIP,_count,_newcomer)
 		end
 	end
 
-	table.sort(clients,function (a, b)
-		if _newcomer then
-			return a.priority < b.priority
-		else
-			return a.priority > b.priority
-		end
-	end)
+	if _newcomerMode ~= Plugin.RedirMode.RANDOM then
+		local newComer = _newcomerMode == Plugin.RedirMode.NOOB
+		table.sort(clients,function (a, b)
+			if newcomer then
+				return a.priority < b.priority
+			else
+				return a.priority > b.priority
+			end
+		end)
+	end
 
 	local count = _count
 	for _,data in pairs(clients) do
@@ -158,9 +165,7 @@ function Plugin:NotifyCrowdRedirect()
 	self:SimpleTimer(self.Config.CrowdAdvert.NotifyTimer, function() self:NotifyCrowdRedirect() end )
 end
 
-function Plugin:SetGameState(Gamerules, _state, OldState )
-
-	if _state ~= kGameState.PreGame then return end
+function Plugin:OnMapVoteFinished()
 	if self.Config.CrowdAdvert.ToServer <= 0 then return end
 	if not self.PresetServers then return end
 	local redirData = self.PresetServers[self.Config.CrowdAdvert.ToServer]
@@ -274,28 +279,36 @@ function Plugin:CreateCommands()
 		return self.targetServer
 	end
 	
-	 self:BindCommand( "sh_redir_player_newcomer", "redir_player_newcomer", function(_client,_count,_message)
-		 local serverAddress = RedirAddressCheck(_client)
-		 if serverAddress == nil then return end
-
-		 NotifyCrowdAdvert(self,_message)
-		 self:RedirClients(serverAddress,_count,true)
-	end):
-	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
-	AddParam{ Type = "string", Help = "显示消息",Optional = true, Default = "服务器人满为患,开启被动分服." }:
-	Help( "示例: !redir_newcomer 20. 迁移[20]名<新屁股>去[预设置好的服务器]" )
-	
-	self:BindCommand( "sh_redir_player_oldass", "redir_player_oldass", function(_client,_count,_message)
+	--Redir Players
+	local function RedirPlayers(_client,_count,mode,_message)
 		local serverAddress = RedirAddressCheck(_client)
 		if serverAddress == nil then return end
-		
+
 		NotifyCrowdAdvert(self,_message)
-		self:RedirClients(serverAddress,_count,false)
+		self:RedirClients(serverAddress,_count,_mode)
+	end
+	
+	self:BindCommand( "sh_redir_player_oldass", "redir_player_oldass", function(_client,_count,_message)
+		RedirPlayers(_client,_count,Plugin.RedirMode.OLDASS,_message)
 	end):
 	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
 	AddParam{ Type = "string", Help = "显示消息",Optional = true,  Default = "服务器已人满为患,开启被动分服." }:
 	Help( "示例: !redir_oldass 20. 迁移[20]名<老屁股>去[预设置好的服务器]" )
 
+	self:BindCommand( "sh_redir_player_newcomer", "redir_player_newcomer", function(_client,_count,_message)
+		RedirPlayers(_client,_count,Plugin.RedirMode.NOOB,_message)
+	end):
+	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
+	AddParam{ Type = "string", Help = "显示消息",Optional = true, Default = "服务器人满为患,开启被动分服." }:
+	Help( "示例: !redir_newcomer 20. 迁移[20]名<新屁股>去[预设置好的服务器]" )
+
+	self:BindCommand( "sh_redir_player_random", "redir_player_random", function(_client,_count,_message)
+		RedirPlayers(_client,_count,Plugin.RedirMode.OLDASS,_message)
+	end):
+	AddParam{ Type = "number", Help = "迁移人数",Round = true, Min = 0, Max = 28, Default = 16 }:
+	AddParam{ Type = "string", Help = "显示消息",Optional = true,  Default = "服务器已人满为患,开启被动分服." }:
+	Help( "示例: !redir_player_random 20. 迁移[20]名<随机玩家>去[预设置好的服务器]" )
+	
 	local function AdminRedirectClient(_client,_id)
 		local serverAddress = RedirAddressCheck(_client)
 		if serverAddress == nil then return end

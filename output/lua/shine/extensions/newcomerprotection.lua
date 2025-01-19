@@ -496,7 +496,7 @@ function Plugin:OnEndGame()
 
 	local roundLength = lastRoundData.RoundInfo.roundLength
 	local playerCount = table.Count(lastRoundData.PlayerStats)
-	--if roundLength < 300 or playerCount < 12 then return end
+	if roundLength < 300 or playerCount < 12 then return end
 
 	local team1CommData = {timePlayed = 0}
 	local team2CommData = {timePlayed = 0}
@@ -546,8 +546,7 @@ function Plugin:CommanderRoundRestricted(clientId)
 		local lastRound = self.kCommanderHistory[1]
 		if lastRound.winningTeam ~= 0 then
 			local lastWinnerId = lastRound.winningTeam == 1 and lastRound.team1CommData.playerId or lastRound.team2CommData.playerId
-			Shared.Message(lastWinnerId)
-			if lastWinnerId == clientId then
+			if lastWinnerId and lastWinnerId == clientId then
 				return true
 			end
 		end

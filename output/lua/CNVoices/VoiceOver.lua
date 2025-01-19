@@ -30,6 +30,8 @@ debug.appendtoenum(kVoiceId, 'AatroxLaugh')
 debug.appendtoenum(kVoiceId, 'Hajmi')
 debug.appendtoenum(kVoiceId, 'wsdy')
 debug.appendtoenum(kVoiceId, 'Kobe')
+debug.appendtoenum(kVoiceId, 'Meow')
+debug.appendtoenum(kVoiceId, 'Hiss')
 
 kAdditionalSoundData = {
     [kVoiceId.Disease] = { Sound = "sound/CNTaunts.fev/ma/Laugh", Description = "REQUEST_DISEASE", Interval = 2, AlertTechId = kTechId.None },
@@ -64,6 +66,8 @@ kAdditionalSoundData = {
     [kVoiceId.Hajmi] = { Sound = "sound/CNTaunts.fev/CUSTOM/Hajmi", Description = "哈吉米", Interval = 16, AlertTechId = kTechId.None },
     [kVoiceId.Kobe] = { Sound = "sound/CNTaunts.fev/CUSTOM/kobe", Description = "mann", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.wsdy] = { Sound = "sound/CNTaunts.fev/CUSTOM/wsdy", Description = "我是毒液", Interval = 16, AlertTechId = kTechId.None },
+    [kVoiceId.Meow] = { Sound = "sound/CNTaunts.fev/CUSTOM/meow", Description = "喵", Interval = 1, AlertTechId = kTechId.None },
+    [kVoiceId.Hiss] = { Sound = "sound/CNTaunts.fev/CUSTOM/hiss", Description = "哈气", Interval = 1, AlertTechId = kTechId.None },
 }
 
 for _, data in pairs(kAdditionalSoundData) do
