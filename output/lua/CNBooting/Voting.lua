@@ -658,7 +658,7 @@ if Server then
                 end
             end
             
-            for _,client in acceptClients do
+            for _,client in pairs(acceptClients) do
                 Server.SendNetworkMessage(client,"Redirect",message, true)
             end
         else

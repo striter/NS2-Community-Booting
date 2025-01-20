@@ -23,6 +23,12 @@ Plugin.DefaultConfig = {
 		FailInformCount = 40,
 		Mode = Plugin.RedirMode.RANDOM,
 	},
+	PassiveVote = {
+		Delay = 45,
+		ToServer = 0,
+		PlayerCount = 48,
+		RedirCount = 20,
+	},
 	RecallPenalty = {
 		Count = -1,
 		Reputation = -20,
@@ -36,6 +42,7 @@ local Validator = Shine.Validator()
 	Plugin.ConfigValidator = Validator
 	Validator:AddFieldRule( "ConfigURL",  Validator.IsType( "string", Plugin.DefaultConfig.ConfigURL ))
 	Validator:AddFieldRule( "ClientVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.ClientVote ))
+	Validator:AddFieldRule( "PassiveVote",  Validator.IsType( "table", Plugin.DefaultConfig.PassiveVote ))
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
 	Validator:AddFieldRule( "CrowdAdvert.NotifyTimer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.NotifyTimer ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
@@ -138,13 +145,28 @@ end
 
 
 function Plugin:OnFirstThink()
-	self:SimpleTimer( self.Config.CrowdAdvert.NotifyTimer, function()
-		self:NotifyCrowdRedirect()
-	end )
+	self:SimpleTimer( self.Config.CrowdAdvert.NotifyTimer, function() self:NotifyCrowdRedirect() end )
+	self:SimpleTimer( self.Config.PassiveVote.Delay, function() self:PassiveVote() end )
+end
+
+function Plugin:PassiveVote()
+	if not self.PresetServers then return end
+	local config = self.Config.PassiveVote
+	if config.ToServer <= 0 then return end
+	local currentPlayerCount = Shine.GetHumanPlayerCount()
+	if currentPlayerCount < config.PlayerCount then return end
+
+	if GetStartVoteAllowed("VoteSwitchServer") ~= kVoteCannotStartReason.VoteAllowedToStart then
+		return
+	end
+
+	local presetServer = self.PresetServers[config.ToServer]
+	StartVote("VoteSwitchServer", nil, { ip = presetServer.Address , name = presetServer.Name  or "No Name", onlyAccepted = true, voteRequired = presetServer.RedirCount })
 end
 
 local function NotifyRedirectProgression(self, _playerCount, _ignoreTeams)
 
+	if self.Config.CrowdAdvert.ToServer <= 0 then return end
 	if _playerCount <= self.Config.CrowdAdvert.FailInformCount then return end
 
 	local informMessage = _playerCount < self.Config.CrowdAdvert.PlayerCount 

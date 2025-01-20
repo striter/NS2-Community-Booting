@@ -25,6 +25,8 @@ kShinePluginsTranslations["Core"]["GENERAL_CLIENT_SETTINGS"]="通用"
 kShinePluginsTranslations["Core"]["SETTINGS_TAB"]="设置"
 kShinePluginsTranslations["Core"]["PLUGINS_TAB"]="插件"
 kShinePluginsTranslations["Core"]["CLIENT_PLUGINS"]="本地插件"
+kShinePluginsTranslations["Core"]["ENABLED"]="已启用"
+kShinePluginsTranslations["Core"]["PLUGIN_SAVED_AS_ENABLED"]="插件为启用状态"
 
 kShinePluginsTranslations["Core"]["Surrender"]="投降 /remake"
 kShinePluginsTranslations["Core"]["Unstuck"]="尝试脱困"
