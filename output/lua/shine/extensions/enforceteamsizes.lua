@@ -300,6 +300,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		return
 	end
 
+	local gameStarted = GetGameInfoEntity():GetGameStarted()
 	local available = not self:GetPlayerRestricted(_player,_newTeam)
 	local curTeamPlayer = self:GetNumPlayers(_gamerules:GetTeam(_newTeam))
 	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
@@ -323,6 +324,10 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			local limitReached = curTeamPlayer < maxPlayerLimit
 			forceCredit = limitReached and 1 or 2
 			forcePrivilegeTitle = limitReached and "预热入场通道" or "预热越限通道"
+			if gameStarted then
+				forceCredit = limitReached and 1.5 or 2.5
+				forcePrivilegeTitle = limitReached and "预热入场通道(进行时)" or "预热越限通道(进行时)"
+			end
 		end
 	end
 

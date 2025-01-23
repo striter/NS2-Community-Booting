@@ -39,6 +39,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/EXO"), name = "Exosuit" },
     },
     [EBoomBoxTrack.TWO] = {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/P5"), name = "星と僕らと" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/WanderingAround"), name = "アルクアラウンド" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/dnmmm"), name = "电脑眠眠猫" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/Elephant"), name = "象" },

@@ -5,8 +5,8 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER_QUERY_ALL"] = "将所有人送去 <%s>?"
     kTranslateMessage["VOTE_SWITCH_SERVER_INVALID"] = "主动投票换服已被禁用,请联系管理发起换服."
     
-    kTranslateMessage["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] 算我一个! "
-    kTranslateMessage["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] 想在这多待会."
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] 上车! "
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] 原地打坐."
 
     kTranslateMessage["VOTE_MUTE_PLAYER"] = "玩家处理 - [禁言]"
     kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言一局?"

@@ -68,7 +68,8 @@ if Server then
     local lastVoteStartAtTime
     local lastTimeVoteResultsSent = 0
     local voteSuccessfulCallbacks = { }
-
+    local voteFailedCallbacks = { }
+    
     local startVoteHistory = { }
 
     function GetStartVoteAllowed(voteName, client)
@@ -205,6 +206,10 @@ if Server then
         voteSuccessfulCallbacks[voteName] = voteSuccessfulCallback
 
     end
+    
+    function SetVoteFailedCallback(voteName,callback)
+        voteFailedCallbacks[voteName] = callback
+    end
 
     local function CountVotes(voteResults)
 
@@ -307,6 +312,13 @@ if Server then
 
                 if voteSuccessfulCallback and voteSuccessful then
                     voteSuccessfulCallback.callback(activeVoteData)
+                end
+
+                if not voteSuccessful then
+                    local voteFailedCallback = voteFailedCallbacks[activeVoteName]
+                    if voteFailedCallback then
+                        voteFailedCallback(activeVoteData)
+                    end
                 end
 
                 if Shared.GetThunderdomeEnabled() then
@@ -665,6 +677,18 @@ if Server then
             Server.SendNetworkMessage("Redirect",{ ip = msg.ip }, true)
         end
     end )
+    
+    SetVoteFailedCallback("VoteSwitchServer",function(msg)
+        if msg.onlyAccepted and msg.failReward then
+            for i = 1, #activeVoteResults.voters do
+                local voterId = activeVoteResults.voters[i]
+                local client = Shine.GetClientByNS2ID(voterId)
+                if activeVoteResults.votes[voterId] and client then
+                    Shared.ConsoleCommand(string.format("sh_prewarm_reward %s %s %s", client:GetUserId(),msg.failReward,"积极分服"))
+                end
+            end
+        end
+    end)
     
     SetVoteSuccessfulCallback("VoteMutePlayer", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)

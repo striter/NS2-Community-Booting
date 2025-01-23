@@ -26,7 +26,7 @@ kShinePluginsTranslations["Core"]["SETTINGS_TAB"]="设置"
 kShinePluginsTranslations["Core"]["PLUGINS_TAB"]="插件"
 kShinePluginsTranslations["Core"]["CLIENT_PLUGINS"]="本地插件"
 kShinePluginsTranslations["Core"]["ENABLED"]="已启用"
-kShinePluginsTranslations["Core"]["PLUGIN_SAVED_AS_ENABLED"]="插件为启用状态"
+kShinePluginsTranslations["Core"]["ENABLED"]="已金庸"
 
 kShinePluginsTranslations["Core"]["Surrender"]="投降 /remake"
 kShinePluginsTranslations["Core"]["Unstuck"]="尝试脱困"
@@ -197,6 +197,8 @@ kShinePluginsTranslations["basecommands"]["ERROR_BE_GAGGED_PERMANENT"]="您已�
 kShinePluginsTranslations["basecommands"]["BE_UNGAGGED"]="您已被解除[禁言],请保持友善度切勿二进宫!"
 kShinePluginsTranslations["basecommands"]["PLAYER_GAGGED"]="将<{TargetName}>禁言{Duration:Duration:REST_OF_MAP}."
 kShinePluginsTranslations["basecommands"]["PLAYER_UNGAGGED"]="解除<{TargetName}>的禁言."
+kShinePluginsTranslations["basecommands"]["PLUGIN_SAVED_AS_ENABLED"]="插件为启用状态"
+kShinePluginsTranslations["basecommands"]["PLUGIN_SAVED_AS_DISABLED"]="插件为禁用状态"
 
 -- Fun commands
 kShinePluginsTranslations["funcommands"]={}

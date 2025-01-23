@@ -161,7 +161,7 @@ function Plugin:PassiveVote()
 	end
 
 	local presetServer = self.PresetServers[config.ToServer]
-	StartVote("VoteSwitchServer", nil, { ip = presetServer.Address , name = presetServer.Name  or "No Name", onlyAccepted = true, voteRequired = presetServer.RedirCount })
+	StartVote("VoteSwitchServer", nil, { ip = presetServer.Address , name = presetServer.Name  or "No Name", onlyAccepted = true, failReward = 0.5,voteRequired = config.RedirCount })
 end
 
 local function NotifyRedirectProgression(self, _playerCount, _ignoreTeams)
