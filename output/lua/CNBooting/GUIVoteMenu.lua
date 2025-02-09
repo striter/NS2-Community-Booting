@@ -44,16 +44,24 @@ function GUIVoteMenu:Update(deltaTime)
     baseUpdate(self,deltaTime)
 
     if self.visible and GetCurrentVoteQuery() ~= nil then
-        local onlyAccepted = GetOnlyAcceptedResults()
-        if onlyAccepted then
-            if self.yesText then
-                self.yesText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_YES"), { key = GetPrettyInputName("VoteYes") }))
+        local data = GetActiveVoteData()
+        if data.onlyAccepted then
+            if self.yesText and self.noText then
+
+                if data.failReward ~= nil and data.failReward > 0 then
+                    local yes, no, required = GetVoteResults()
+                    self.yesText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_YES"), { key = GetPrettyInputName("VoteYes") }))
+                    self.noText:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"), data.failReward))
+                    if not self.votedYes then
+                        self.yesCount:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_REQUIREMENT"), required))
+                    end
+                else
+                    self.yesText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_YES"), { key = GetPrettyInputName("VoteYes") }))
+                    self.noText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_NO"), { key = GetPrettyInputName("VoteNo") }))
+                end
             end
-    
-            if self.noText then
-                self.noText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_NO"), { key = GetPrettyInputName("VoteNo") }))
-            end
+            
         end
-        self.noCount:SetIsVisible(not onlyAccepted)
+        self.noCount:SetIsVisible(not data.onlyAccepted)
     end
 end

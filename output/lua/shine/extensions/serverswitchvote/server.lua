@@ -28,6 +28,7 @@ Plugin.DefaultConfig = {
 		ToServer = 0,
 		PlayerCount = 48,
 		RedirCount = 20,
+		RewardCredit = 1,
 	},
 	RecallPenalty = {
 		Count = -1,
@@ -43,6 +44,7 @@ local Validator = Shine.Validator()
 	Validator:AddFieldRule( "ConfigURL",  Validator.IsType( "string", Plugin.DefaultConfig.ConfigURL ))
 	Validator:AddFieldRule( "ClientVote",  Validator.IsType( "boolean", Plugin.DefaultConfig.ClientVote ))
 	Validator:AddFieldRule( "PassiveVote",  Validator.IsType( "table", Plugin.DefaultConfig.PassiveVote ))
+	Validator:AddFieldRule( "PassiveVote.RewardCredit",  Validator.IsType( "number", Plugin.DefaultConfig.PassiveVote.RewardCredit ))
 	Validator:AddFieldRule( "CrowdAdvert",  Validator.IsType( "table", Plugin.DefaultConfig.CrowdAdvert ))
 	Validator:AddFieldRule( "CrowdAdvert.NotifyTimer",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.NotifyTimer ))
 	Validator:AddFieldRule( "CrowdAdvert.PlayerCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.PlayerCount ))
@@ -161,7 +163,7 @@ function Plugin:PassiveVote()
 	end
 
 	local presetServer = self.PresetServers[config.ToServer]
-	StartVote("VoteSwitchServer", nil, { ip = presetServer.Address , name = presetServer.Name  or "No Name", onlyAccepted = true, failReward = 0.5,voteRequired = config.RedirCount })
+	StartVote("VoteSwitchServer", nil, { ip = presetServer.Address , name = presetServer.Name  or "No Name", onlyAccepted = true, failReward = config.RewardCredit,voteRequired = config.RedirCount })
 end
 
 local function NotifyRedirectProgression(self, _playerCount, _ignoreTeams)

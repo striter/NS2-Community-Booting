@@ -15,6 +15,10 @@ function GetPlayerSkillTier(skill, isRookie, adagradSum, isBot)
     return 7, "SKILLTIER_SANJISURVIVOR"
 end
 
+function FormatDateTimeString(dateTime)
+    local tmpDate = os.date("*t", dateTime)
+    return string.format("%d年%02d月%02d日 | %d:%02d", tmpDate.year,tmpDate.month,tmpDate.day, tmpDate.hour, tmpDate.min)
+end
 
 function SendPlayerCallingCardUpdate()
 

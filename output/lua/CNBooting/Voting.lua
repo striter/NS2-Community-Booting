@@ -9,7 +9,7 @@ local kVoteExpireTime = 30
 local kDefaultVoteExecuteTime = 30
 local kNextVoteAllowedAfterTime = 50
 -- How many seconds must pass before a client can start another vote of a certain type after a failed vote.
-local kStartVoteAfterFailureLimit = 60 * 1
+local kStartVoteAfterFailureLimit = 60 * 3
 
 Shared.RegisterNetworkMessage("SendVote", { voteId = "integer", choice = "boolean" })
 kVoteState = enum( { 'InProgress', 'Passed', 'Failed' } )
@@ -352,7 +352,7 @@ if Client then
     local noVotes = 0
     local requiredVotes = 0
     local lastVoteResults
-    local onlyAccepted
+    local activeClientVoteData
 
     function RegisterVoteType(voteName, voteData)
 
@@ -426,7 +426,7 @@ if Client then
             requiredVotes = 0
             currentVoteQuery = queryTextGenerator(data)
             lastVoteResults = nil
-            onlyAccepted = data.onlyAccepted
+            activeClientVoteData = data
             local message = StringReformat(Locale.ResolveString("VOTE_PLAYER_STARTED_VOTE"), { name = Scoreboard_GetPlayerName(data.client_index) })
             ChatUI_AddSystemMessage(message)
 
@@ -461,8 +461,8 @@ if Client then
         return yesVotes, noVotes, requiredVotes
     end
 
-    function GetOnlyAcceptedResults()
-        return onlyAccepted
+    function GetActiveVoteData()
+        return activeClientVoteData
     end
     
     local function OnVoteComplete(message)
@@ -475,7 +475,7 @@ if Client then
             yesVotes = 0
             noVotes = 0
             requiredVotes = 0
-            onlyAccepted = false
+            activeClientVoteData = nil
             lastVoteResults = nil
 
         end
@@ -573,7 +573,7 @@ RegisterVoteType("VoteKillAll", { })
 RegisterVoteType("VoteBotsCount", {count = "integer"})
 RegisterVoteType("VoteBotsDoom", {team = "integer"})
 RegisterVoteType("VoteRandomScale", {})
-RegisterVoteType("VoteSwitchServer", { ip = "string (25)" , name = "string (32)" , onlyAccepted = "boolean" , voteRequired = "integer"} )
+RegisterVoteType("VoteSwitchServer", { ip = "string (25)" , name = "string (32)" , onlyAccepted = "boolean" , voteRequired = "integer",failReward = "float (0 to 10 by 0.1)"} )
 
 if Client then
     local function GetPlayerList()

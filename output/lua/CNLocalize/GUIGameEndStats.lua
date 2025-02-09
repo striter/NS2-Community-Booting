@@ -2122,8 +2122,8 @@ function GUIGameEndStats:ProcessStats()
 	self:SetTeamName(self.team2UI, miscDataTable.team2Name or "卡拉异形")
 	local team1Result, team2Result = "不分胜负", "不分胜负"
 	if miscDataTable.winningTeam > 0 then
-		team1Result = miscDataTable.winningTeam == kMarineTeamType and "已占领该区域" or "被清除(暂时的)"
-		team2Result = miscDataTable.winningTeam == kAlienTeamType and "已占领该区域" or "被清除(暂时的)"
+		team1Result = miscDataTable.winningTeam == kMarineTeamType and "已压制污染指标" or "指挥所失去联系"
+		team2Result = miscDataTable.winningTeam == kAlienTeamType and "已侵占该区域" or "母巢体征消失"
 	end
 	self:SetGameResult(self.team1UI, team1Result)
 	self:SetGameResult(self.team2UI, team2Result)
