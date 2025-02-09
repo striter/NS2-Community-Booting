@@ -573,7 +573,7 @@ RegisterVoteType("VoteKillAll", { })
 RegisterVoteType("VoteBotsCount", {count = "integer"})
 RegisterVoteType("VoteBotsDoom", {team = "integer"})
 RegisterVoteType("VoteRandomScale", {})
-RegisterVoteType("VoteSwitchServer", { ip = "string (25)" , name = "string (32)" , onlyAccepted = "boolean" , voteRequired = "integer",failReward = "float (0 to 10 by 0.1)"} )
+RegisterVoteType("VoteSwitchServer", { ip = "string (25)" , name = "string (32)" , onlyAccepted = "boolean" , voteRequired = "integer",failReward = "float (0 to 2 by 0.1)"} )
 
 if Client then
     local function GetPlayerList()

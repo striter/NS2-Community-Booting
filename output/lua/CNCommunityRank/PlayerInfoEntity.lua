@@ -58,7 +58,7 @@ local networkVars =
     reservedQueueIndex = "integer (0 to 64)",
     lastSeenName = string.format("string(%d)",kMaxNameLength * 4),
     ns2TimePlayed = "integer",
-    reputation = "integer(-512 to 512)",
+    reputation = "integer(-512 to 3584)",
 -----------
     adagradSum = "float",
     currentTech = "integer",

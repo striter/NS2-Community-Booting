@@ -50,8 +50,9 @@ function GUIVoteMenu:Update(deltaTime)
 
                 if data.failReward ~= nil and data.failReward > 0 then
                     local yes, no, required = GetVoteResults()
+                    local failReward = math.ceil(data.failReward * 10) / 10
                     self.yesText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_YES"), { key = GetPrettyInputName("VoteYes") }))
-                    self.noText:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"), data.failReward))
+                    self.noText:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"), failReward))
                     if not self.votedYes then
                         self.yesCount:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_REQUIREMENT"), required))
                     end
