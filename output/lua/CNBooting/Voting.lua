@@ -684,7 +684,7 @@ if Server then
                 local voterId = activeVoteResults.voters[i]
                 local client = Shine.GetClientByNS2ID(voterId)
                 if activeVoteResults.votes[voterId] and client then
-                    Shared.ConsoleCommand(string.format("sh_prewarm_reward %s %s %s", client:GetUserId(),msg.failReward,"积极分服"))
+                    Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s", client:GetUserId(),msg.failReward,"积极分服"))
                 end
             end
         end

@@ -40,7 +40,7 @@ kCurrentHour = tmpDate.hour
 kCurrentHourFloat = kCurrentHour + tmpDate.min / 60
 
 Shine.BaseGamemode = "ns2"
-Shine.kRankGameMode = { "ns2", "NS2.0", "Siege+++"  }
+Shine.kRankGameMode = { "ns2", "NS2.0", "Siege2.0"  }
 Shine.kSeedingGameMode = {"Defense2.0","Combat"}
 
 Shine.LoadScripts( Scripts )

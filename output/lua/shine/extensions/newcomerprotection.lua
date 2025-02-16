@@ -82,7 +82,7 @@ Plugin.EnabledGamemodes = {
 	["ns2"] = true,
 	["NS2.0"] = true,
 	["NS2.0beta"] = true,
-	["Siege+++"] = true,
+	["Siege2.0"] = true,
 }
 
 local kCommanderHistoryFile = "config://shine/temp/CommanderHistory.json"

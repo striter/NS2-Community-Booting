@@ -522,7 +522,7 @@ function Plugin:CreateMessageCommands()
     end )       
         :AddParam{ Type = "steamid" }
 
-    self:BindCommand("sh_prewarm_reward","prewarm_reward",function(_client, _id, _credit, _reason)
+    self:BindCommand("sh_prewarm_delta","prewarm_delta",function(_client, _id, _credit, _reason)
         local target = Shine.AdminGetClientByNS2ID(_client,_id)
         if not target then return end
         
@@ -530,15 +530,15 @@ function Plugin:CreateMessageCommands()
         local targetData = GetPlayerData(self,targetId)
         targetData.credit = targetData.credit + _credit
         Shine:NotifyDualColour(target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("由于<%s>,您以获得[%s]预热点,现有[%s]预热点.",_reason,_credit,targetData.credit) )
+                string.format("因<%s>获得[%s]预热点,现有[%s]预热点.",_reason,_credit,targetData.credit) )
         if _client then
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                     string.format("<%s>获得[%s]预热点,现有[%s]预热点.", target:GetControllingPlayer():GetName(),_credit,targetData.credit) )
         end
     end)
         :AddParam{ Type = "steamid"}
-        :AddParam{ Type = "number", Round = false, Min = 0.5, Max = 5, Default = 1 }
-        :AddParam{ Type = "string",Optional = true, TakeRestOfLine = true, Default = "积极参与游戏!" }
+        :AddParam{ Type = "number", Round = false, Min = -5, Max = 5, Default = 1 }
+        :AddParam{ Type = "string",Optional = true, TakeRestOfLine = true, Default = "未知原因" }
         :Help( "激励玩家预热点.")
     
     self:BindCommand("sh_prewarm_give","prewarm_give", function(_client, _target, _value)

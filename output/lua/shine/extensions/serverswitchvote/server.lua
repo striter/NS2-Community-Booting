@@ -33,6 +33,7 @@ Plugin.DefaultConfig = {
 	RecallPenalty = {
 		Count = -1,
 		Reputation = -20,
+		Credit = -5,
 	}
 }
 
@@ -53,6 +54,7 @@ local Validator = Shine.Validator()
 	Validator:AddFieldRule( "CrowdAdvert.FailInformCount",  Validator.IsType( "number", Plugin.DefaultConfig.CrowdAdvert.FailInformCount ))
 	Validator:AddFieldRule( "CrowdAdvert.Mode", Validator.InEnum( Plugin.RedirMode, Plugin.DefaultConfig.CrowdAdvert.Mode ) )
 	Validator:AddFieldRule( "RecallPenalty",  Validator.IsType( "table", Plugin.DefaultConfig.RecallPenalty ))
+	Validator:AddFieldRule( "RecallPenalty.Credit",  Validator.IsType( "number", Plugin.DefaultConfig.RecallPenalty.Credit ))
 end
 
 local kPrefix = "[被动分服]"
@@ -84,7 +86,9 @@ function Plugin:ProcessRecallPenalty( Client )
 	if not table.contains(self.RedirHistory.Clients,id) then return end
 	table.removevalue(self.RedirHistory.Clients,id)
 	
-	Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",id, self.Config.RecallPenalty.Reputation,string.format("分服回流|第%s名",self.Config.RecallPenalty.Count - recallPenaltyCount)))
+	local index = self.Config.RecallPenalty.Count - recallPenaltyCount
+	Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",id, self.Config.RecallPenalty.Reputation,string.format("分服回流(%d)",self.Config.RecallPenalty.Reputation)))
+	Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, self.Config.RecallPenalty.Credit,"分服回流"))
 	self.RedirHistory.RecallPenaltyCount = recallPenaltyCount - 1
 end
 
