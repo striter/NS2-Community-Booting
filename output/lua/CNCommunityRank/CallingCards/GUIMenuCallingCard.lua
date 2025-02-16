@@ -24,7 +24,7 @@ function GUIMenuCallingCard:OnCardIDChanged(newCardID)
     local isUnlocked = GetIsCallingCardUnlocked(newCardID)
 
     local cardData = GetCallingCardTextureDetails(newCardID)
-    if cardData then
+    if cardData and cardData.texture then
         self.button:SetTexture(cardData.texture)
         self.button:SetTexturePixelCoordinates(cardData.texCoords)
         self.button:SetColor(1,1,1)
