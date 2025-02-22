@@ -12,6 +12,8 @@ BoomBoxMixin.networkVars =
 local kTrackAssets = {
     [EBoomBoxTrack.CUSTOM]  =  {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ygkldnh"), name = "阳光开朗大男孩" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED1"), name = "未来への咆哮" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED2"), name = "ライオン" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WeAllLiftTogether"), name = "We All Lift Together" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/seeuagain"), name = "See you again (两倍速)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjmidnightcity"), name = "哈基Midnight City" },
@@ -39,6 +41,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/EXO"), name = "Exosuit" },
     },
     [EBoomBoxTrack.TWO] = {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/BluSwing"), name = "満ちていく体温" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/P5"), name = "星と僕らと" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/WanderingAround"), name = "アルクアラウンド" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/dnmmm"), name = "电脑眠眠猫" },

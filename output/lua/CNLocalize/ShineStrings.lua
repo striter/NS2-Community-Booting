@@ -116,6 +116,8 @@ kShinePluginsTranslations["unstuck"]={}
 kShinePluginsTranslations["unstuck"]["NOTIFY_PREFIX"]="[卡墙自救]"
 kShinePluginsTranslations["unstuck"]["SUCCESS"]="成功!"
 kShinePluginsTranslations["unstuck"]["ERROR_NOT_ALIVE"]="你无法在你死了的时候卡墙自救."
+kShinePluginsTranslations["unstuck"]["ERROR_MOVED"]="无法移动时的使用."
+kShinePluginsTranslations["unstuck"]["ERROR_IN_COMBAT"]="无法于战斗中使用."
 kShinePluginsTranslations["unstuck"]["ERROR_WAIT"]= "必须等待{TimeLeft:Duration}后才能再次使用脱困"
 kShinePluginsTranslations["unstuck"]["ERROR_FAIL"]= "脱困失败,请于{TimeLeft:Duration}后再次尝试."
 

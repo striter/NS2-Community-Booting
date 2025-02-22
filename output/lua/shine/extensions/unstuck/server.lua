@@ -190,6 +190,10 @@ function Plugin:CreateCommands()
 				return
 			end
 
+			if Player.GetIsInCombat and Player:GetIsInCombat() then
+				self:NotifyTranslatedError( Client, "ERROR_IN_COMBAT" )
+				return
+			end
 			-- Use an origin that's not at the player's feet to avoid the search for a spawnpoint thinking small objects
 			-- on the ground are walls between the player and a valid location.
 			local SpawnPointOrigin = CurrentOrigin + Player:GetCoords().yAxis * Player:GetViewOffset().y
