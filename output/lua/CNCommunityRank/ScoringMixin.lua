@@ -17,6 +17,7 @@ function ScoringMixin:__initmixin()
     self.hideRank = false 
     self.emblem = 0
     self.lastSeenName = ""
+    self.signature = ""
     
     self.prewarmTier = 0  
     self.prewarmTime = 0
@@ -92,6 +93,7 @@ if Server then
         self.hideRank = player.hideRank
         self.emblem = player.emblem
         self.lastSeenName = player.lastSeenName
+        self.signature = player.signature
         
         self.prewarmTier = player.prewarmTier
         self.prewarmTime = player.prewarmTime
@@ -114,6 +116,7 @@ if Server then
         self.emblem = dataTable.emblem or 0
         self.lastSeenName = dataTable.lastSeenName or ""
         self.reputation = dataTable.reputation or 0
+        self.signature = dataTable.signature or ""
     end
     
     function ScoringMixin:SetGroup(_group)

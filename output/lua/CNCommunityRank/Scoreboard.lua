@@ -127,6 +127,7 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.prewarmScore = pie.prewarmScore
         playerRecord.Group = pie.hideRank and "RANK_DEFAULT" or pie.group    --Hide this shit
         playerRecord.lastSeenName = pie.hideRank and "" or pie.lastSeenName
+        playerRecord.signature = pie.signature
         playerRecord.ns2TimePlayed = pie.ns2TimePlayed
         playerRecord.reputation = pie.reputation
     ------------

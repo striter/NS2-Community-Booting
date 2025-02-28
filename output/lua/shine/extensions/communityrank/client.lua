@@ -137,10 +137,14 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                                 description = description .. "\n" .. string.format(Locale.ResolveString("NS2_TIME_PLAYED"),pr.ns2TimePlayed )
                             end
                             
+                            if pr.signature ~= "" then
+                                description = description .. "\n" .. pr.signature
+                            end
+
                             if pr.lastSeenName ~= "" and pr.lastSeenName ~= pr.Name then
                                 description = description .. "\n" .. string.format( Locale.ResolveString("LAST_SEEN_NAME")) .. pr.lastSeenName
                             end
-
+                            
                             description = description .. "\n\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(pr.Group))
                             if pr.reputation ~= 0 then
                                 description = description .. "\n" .. (pr.reputation > 0 and string.format(Locale.ResolveString("COMMUNITY_REPUTATION_POSITIVE"),pr.reputation > 256 and ">=256" or pr.reputation ) 

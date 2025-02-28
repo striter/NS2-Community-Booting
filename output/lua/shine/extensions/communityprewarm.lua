@@ -154,51 +154,43 @@ local function NotifyClient(self, _client,_id)
     return false
 end
 
-local function GetPrewarmScore(self, player, trackedTime)
-    
-    local activePrewarm = kCurrentHour >= self.Config.Restriction.Hour
-    
-    local activePlayed = false
-    local gameMode = Shine.GetGamemode()
-    if table.contains(Shine.kRankGameMode,gameMode) then
-        local score = player:GetScore()
-        local commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()
-        activePlayed = score > 50 or commTime > 300
-    elseif table.contains(Shine.kSeedingGameMode,gameMode) then
-        local kills = player:GetKills() or 0
-        local assists = player:GetAssistKills() or 0
-        local activePlayScore = kills * 2 + assists
-        activePlayed = activePlayScore > 30
-    end
-
-    local idleMultiplier = activePrewarm and self.Config.ScoreMultiplier.Idle or self.Config.ScoreMultiplier.Restricted
-    local activeMultiplier = activePrewarm and self.Config.ScoreMultiplier.Active or self.Config.ScoreMultiplier.RestrictedActive
-
-    local trackTimeMultiplier = activePlayed and activeMultiplier or idleMultiplier
-    --Shared.Message(gameMode .. " " .. tostring(activePlayed))
-    return trackTimeMultiplier * trackedTime
-end
-
 -- Track Clients Prewarm Time
 local function TrackClient(self, client, _clientID)
     local now = Shared.GetTime()
 
-    if not self.PrewarmTracker[_clientID] then
-        self.PrewarmTracker[_clientID] = now
-    end
-
-    local data = GetPlayerData(self,_clientID)
     local player = client:GetControllingPlayer()
-
-    local trackedTime = math.floor(now - self.PrewarmTracker[_clientID])
-    data.time = data.time + trackedTime
-
-    if not self.PrewarmData.Validated then
-        data.score = data.score + GetPrewarmScore(self,player,trackedTime)
+    local curData = { time = now, score = player:GetScore(), kills = player:GetKills() or 0, assists = player:GetAssistKills() or 0, commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()}
+    if not self.PrewarmTracker[_clientID] then
+        self.PrewarmTracker[_clientID] = curData
     end
 
-    self.PrewarmTracker[_clientID] = now
-    player:SetPrewarmData(data)
+    local prewarmData = GetPlayerData(self,_clientID)
+    local prevData = self.PrewarmTracker[_clientID]
+    local trackTime = math.floor(curData.time - prevData.time)
+    if not self.PrewarmData.Validated then
+
+        local activePrewarm = kCurrentHour >= self.Config.Restriction.Hour
+
+        local activePlayed = false
+        local gameMode = Shine.GetGamemode()
+        if table.contains(Shine.kRankGameMode,gameMode) then
+            activePlayed = (curData.commTime > prevData.commTime) or (curData.score > prevData.score)
+        elseif table.contains(Shine.kSeedingGameMode,gameMode) then
+            activePlayed = (curData.kills > prevData.kills) or (curData.assists > prevData.assists)
+        end
+
+        local idleMultiplier = activePrewarm and self.Config.ScoreMultiplier.Idle or self.Config.ScoreMultiplier.Restricted
+        local activeMultiplier = activePrewarm and self.Config.ScoreMultiplier.Active or self.Config.ScoreMultiplier.RestrictedActive
+
+        local trackTimeMultiplier = activePlayed and activeMultiplier or idleMultiplier
+        --Shared.Message(gameMode .. " " .. tostring(activePlayed))
+        prewarmData.score = prewarmData.score + trackTimeMultiplier * trackTime
+    end
+    
+    prewarmData.time = prewarmData.time + trackTime
+
+    self.PrewarmTracker[_clientID] = curData
+    player:SetPrewarmData(prewarmData)
 end
 
 local function TrackAllClients(self)
@@ -246,8 +238,6 @@ local function PrewarmValidate(self)
     if self.PrewarmData.Validated then return end
     self.PrewarmData.Validated = true
 
-    TrackAllClients(self)
-    
     local prewarmClients = {}
     for clientID,prewarmData in pairs(self.MemberInfos) do
         table.insert(prewarmClients, { clientID = clientID, data = prewarmData})
@@ -302,7 +292,7 @@ local function PrewarmValidate(self)
 
             if client then
                 Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                        string.format("今日预热已结算,预热分距最近的排名[%s],还差[%s]预热分,活跃参与预热对局即可获得更多的预热分数!.",lastSeenScore,lastSeenScore - curScore) )
+                        string.format("今日预热已结算,预热分距最近的排名[%s],还差[%s]预热分,活跃参与预热对局即可获得更多的预热分数!.",math.floor(lastSeenScore/60),math.floor((lastSeenScore - curScore)/60)))
             end
         end
 
@@ -356,13 +346,17 @@ function Plugin:OnFirstThink()
         --SavePersistent(self)
     end
 
+    self:TrackWithInterval()
+    
+end
+
+function Plugin:TrackWithInterval()
+    TrackAllClients(self)
+    self:SimpleTimer( 60,function() self:TrackWithInterval()  end )
 end
 
 function Plugin:SetGameState( Gamerules, State, OldState )
     if State == kGameState.Countdown then
-        TrackAllClients(self)
-        PrewarmValidate(self)
-
         if PrewarmValidateEnable(self) and not self.PrewarmData.Validated then
             local prewarmClients = {}
             for clientID,prewarmData in pairs(self.MemberInfos) do
@@ -401,7 +395,6 @@ function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam )
 end
 
 function Plugin:OnEndGame(_winningTeam)
-    TrackAllClients(self)
     --Validate(self)
     self:DispatchEndGameCredit()
 end

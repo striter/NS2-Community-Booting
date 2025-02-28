@@ -231,9 +231,9 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.lastSeenTimeStamp = GetNumber(rawData.lastSeenTimeStamp)
     data.lastSeenSkill = GetNumber(rawData.lastSeenSkill)
     data.lastSeenDay = rawData.lastSeenDay
-    
-    self:RecordResolveData(data,rawData)
 
+    data.signature = rawData.signature
+    self:RecordResolveData(data,rawData)
     player:SetPlayerExtraData(data)
 end
 
@@ -1019,6 +1019,18 @@ function Plugin:CreateMessageCommands()
     self:BindCommand( "history", "history", CheckHistory,true )
         :Help( "查询我的社区历史记录." )
 
+    local function SetSignature(_client,_signature)
+        if not _client then return end
+        local data = GetPlayerData(self,_client:GetUserId())
+        data.signature = _signature
+        local player = _client:GetControllingPlayer()
+        player:SetPlayerExtraData(data)
+    end
+    
+    self:BindCommand( "signature", "signature", SetSignature,true )
+        :AddParam{ Type = "string", TakeRestOfLine = true, Default = "这个人很懒没有设置个性签名" }
+        :Help( "设置我的个性签名. 示例!signature 在吗" )
+    
     local function EloCheck(_client,_id)
         local target = Shine.AdminGetClientByNS2ID(_client,_id)
         if not target then return end

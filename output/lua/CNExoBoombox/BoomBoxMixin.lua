@@ -30,6 +30,7 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.OST]  = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/TheFinals"), name = "The Finals (Season 1)" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/EveryDayIsNight"), name = "Every Day Is Night" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/2077"), name = "The Rebel Path" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/PTSD"), name = "PTSD" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/RisingTide"), name = "Rising Tide" },
