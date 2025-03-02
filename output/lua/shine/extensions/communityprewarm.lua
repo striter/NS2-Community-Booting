@@ -15,6 +15,7 @@ Plugin.DefaultConfig = {
         RestrictedActive = 1,
         Idle = 1,
         Active = 2,
+        Dead = -1,
     },
     EndGameReward = {
         BaseCredit = 8,
@@ -52,6 +53,7 @@ do
     Validator:AddFieldRule( "TierlessReward.BaseCredit",  Validator.IsType( "number", Plugin.DefaultConfig.TierlessReward.BaseCredit ))
     Validator:AddFieldRule( "ScoreMultiplier",  Validator.IsType( "table", Plugin.DefaultConfig.ScoreMultiplier ))
     Validator:AddFieldRule( "ScoreMultiplier.RestrictedActive",  Validator.IsType( "number", Plugin.DefaultConfig.ScoreMultiplier.RestrictedActive ))
+    Validator:AddFieldRule( "ScoreMultiplier.Dead",  Validator.IsType( "number", Plugin.DefaultConfig.ScoreMultiplier.Dead ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier))
@@ -155,10 +157,10 @@ local function NotifyClient(self, _client,_id)
 end
 
 -- Track Clients Prewarm Time
-local function TrackClient(self, client, _clientID)
+local function TrackClient(self, _client, _clientID)
     local now = Shared.GetTime()
 
-    local player = client:GetControllingPlayer()
+    local player = _client:GetControllingPlayer()
     local curData = { time = now, score = player:GetScore(), kills = player:GetKills() or 0, assists = player:GetAssistKills() or 0, commTime = player:GetAlienCommanderTime() + player:GetMarineCommanderTime()}
     if not self.PrewarmTracker[_clientID] then
         self.PrewarmTracker[_clientID] = curData
@@ -183,6 +185,17 @@ local function TrackClient(self, client, _clientID)
         local activeMultiplier = activePrewarm and self.Config.ScoreMultiplier.Active or self.Config.ScoreMultiplier.RestrictedActive
 
         local trackTimeMultiplier = activePlayed and activeMultiplier or idleMultiplier
+
+        if Shine.GetHumanPlayerCount() >= self.Config.Restriction.Player then
+            local playerTeam = player:GetTeamNumber()
+            if playerTeam == kSpectatorIndex or playerTeam == kTeamReadyRoom then
+                trackTimeMultiplier = self.Config.ScoreMultiplier.Dead
+                Shine:NotifyDualColour( _client, 255, 0,0,
+                        self.kPrefix, 255, 255, 255,
+                        string.format("当已满足预热人数条件,非对局内玩家的预热分加权为(%d)),请尽快加入战局!",trackTimeMultiplier))
+            end
+        end
+        
         --Shared.Message(gameMode .. " " .. tostring(activePlayed))
         prewarmData.score = prewarmData.score + trackTimeMultiplier * trackTime
     end
