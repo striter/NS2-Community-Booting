@@ -94,6 +94,7 @@ end
 -- Stored the name of the last killer.
 local gContext
 local gKillerName
+local gKillerSign
 local gKillerCallingCard
 local gKillerSteamId32
 local gKillerSkill
@@ -104,6 +105,7 @@ local gKillerWeaponIconIndex
 local function ClearKillerInfo()
     gContext = nil
     gKillerName = nil
+    gKillerSign = nil
     gKillerCallingCard = nil
     gKillerSteamId32 = nil
     gKillerSkill = nil
@@ -118,6 +120,7 @@ function GetAndClearKillerInfo()
     {
         Context = gContext,
         Name = gKillerName,
+        Sign = gKillerSign,
         CallingCard = gKillerCallingCard,
         SteamId = gKillerSteamId32,
         Skill = gKillerSkill,
@@ -265,7 +268,7 @@ local function AddDeathMessage(killerIsPlayer, killerIndex, killerTeamNumber, ic
         
             local techIdString = string.gsub(targetName, "%s+", "")
             local techId = StringToEnum(kTechId, techIdString)
-            local resOverride = false
+            local resOverride = false 
             
             if techIdString == "AdvancedArmory" then
                 resOverride = kArmoryCost + kAdvancedArmoryUpgradeCost
@@ -320,11 +323,10 @@ local function AddDeathMessage(killerIsPlayer, killerIndex, killerTeamNumber, ic
         if killerIsPlayer then -- We have direct info on our killer.
 
             --playerRecord.EntityTeamNumber: should color name text?
-
             gContext = killedSelf and kDeathSource.KilledSelf or kDeathSource.Player
             gKillerCallingCard = GetDeathMessageEntityCallingCard(killerIsPlayer, killerIndex, killedSelf)
             gKillerName = killedSelf and kNaturalCausesText or killerName
-
+            gKillerSign = killedSelf and "" or Scoreboard_GetPlayerData(killerIndex,"signature")
             -- Skill Badge
             gKillerSteamId32 = Scoreboard_GetPlayerData(killerIndex, "SteamId")
             gKillerSkill = Scoreboard_GetPlayerData(killerIndex, "Skill")

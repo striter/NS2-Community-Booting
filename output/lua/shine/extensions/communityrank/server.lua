@@ -50,6 +50,7 @@ Plugin.DefaultConfig = {
             DeltaQuitReputationStepMultiplier = 100,
             DeltaWin = 1,
             DeltaLost = 1,
+            DeltaMax = 200,
         },
     },
 }
@@ -68,6 +69,7 @@ do
     Validator:AddFieldRule( "Reputation.RageQuit.MinPlayer",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.MinPlayer ))
     Validator:AddFieldRule( "Reputation.RageQuit.DeltaWin",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaWin ))
     Validator:AddFieldRule( "Reputation.RageQuit.DeltaLost",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaLost ))
+    Validator:AddFieldRule( "Reputation.RageQuit.DeltaMax",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaMax ))
     Validator:AddFieldRule( "Reputation.RageQuit.DeltaQuitReputationStepMultiplier",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaQuitReputationStepMultiplier ))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
@@ -694,7 +696,7 @@ function Plugin:EndGameReputation(lastRoundData)
     table.clear(kRageQuitTracker)
 
     local gameLength = lastRoundData.RoundInfo.roundLength
-    if Shine.GetHumanPlayerCount() <= self.Config.Reputation.RageQuit.MinPlayer
+    if Shine.GetHumanPlayerCount() < self.Config.Reputation.RageQuit.MinPlayer
             or gameLength < self.Config.Reputation.RageQuit.CheckTime then
         return
     end
@@ -721,10 +723,14 @@ function Plugin:EndGameReputation(lastRoundData)
                 if playTime > self.Config.Reputation.RageQuit.ActivePlayTime and rageQuitType ~= kRageQuitType.Quit then
                     local wins = team == winningTeamType
                     local reputationDelta = wins and self.Config.Reputation.RageQuit.DeltaWin or self.Config.Reputation.RageQuit.DeltaLost
+                    
                     if reputationDelta ~=0 then
-                        ReputationPlayerDelta(self,steamId, reputationDelta,string.format("完成对局 (+%s)",reputationDelta))
+                        local data = GetPlayerData(self,steamId)
+                        if not data.reputation or data.reputation < self.Config.Reputation.RageQuit.DeltaMax then
+                            ReputationPlayerDelta(self,steamId, reputationDelta,string.format("完成对局 (+%s)",reputationDelta))
+                            ReputationDebugMessage(self,string.format("(ID:%-10s (Time):%-5i (team):%-5i (type:):%-5s (Delta):%-5i",steamId, playTime,team,EnumToString(kRageQuitType,rageQuitType),reputationDelta))
+                        end
                     end
-                    ReputationDebugMessage(self,string.format("(ID:%-10s (Time):%-5i (team):%-5i (type:):%-5s (Delta):%-5i",steamId, playTime,team,EnumToString(kRageQuitType,rageQuitType),reputationDelta))
                 end
             end
         end
@@ -776,8 +782,7 @@ function Plugin:EndGameRecord(lastRoundData)
 end
 
 function Plugin:EndGameLastSeenName(lastRoundData)
-    local gameLength = lastRoundData.RoundInfo.roundLength
-    if gameLength < 300 then return end --?
+    if not Shine.IsActiveRound(lastRoundData) then return end
     
     local currentTimeStamp = os.time()
     local currentDate = string.format("%s-%s-%s",kCurrentYear,kCurrentMonth,kCurrentDay)

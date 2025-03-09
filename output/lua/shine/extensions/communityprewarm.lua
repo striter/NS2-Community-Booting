@@ -34,6 +34,11 @@ Plugin.DefaultConfig = {
         MinCredit = 0.1,
         CreditPerScore = 0.0005 -- 1.8 per 3600 score
     },
+    LateGameAward = {
+        Hour = 22.5,
+        Credit = 1,
+        MaxPlayers = 28,
+    },
     ReturnReward = {
         Enabled = false,
         CreditFirstJoin = 4,
@@ -58,36 +63,39 @@ do
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier))
     Validator:AddFieldRule( "ReturnReward", Validator.IsType("table",Plugin.DefaultConfig.ReturnReward))
+    Validator:AddFieldRule( "LateGameAward",  Validator.IsType( "table", Plugin.DefaultConfig.LateGameAward))
     Plugin.ConfigValidator = Validator
 end
 
 local kPrewarmColor = { 235, 152, 78 }
 
-local PrewarmFile = "config://shine/temp/prewarm.json"
+local kPrewarmFile = "config://shine/temp/prewarm.json"
+local kPrewarmAward = "config://shine/temp/prewarmLastDay.json"
+local kPrewarmRecord = "config://shine/temp/prewarmRecord.json"
 
 function Plugin:Initialise()
     self.PrewarmTracker = {}
     self.MemberInfos = { }
     self:CreateMessageCommands()
 
-    local File, Err = Shine.LoadJSONFile(PrewarmFile)
-    self.PrewarmData = File or {
+    self.PrewarmData = Shine.LoadJSONFile(kPrewarmFile) or {
         ValidationDay = 0,
         Validated = false,
         UserData = {
             ["55022511"] = {tier = 0 ,score = 0, time = 100 , credit = 0 , name = "StriteR."}
         },
     }
-
+    self.PrewarmAwardFile = Shine.LoadJSONFile(kPrewarmAward) or { }
+    self.PrewarmRecordFile = Shine.LoadJSONFile(kPrewarmRecord) or { }
     return true
 end
 
-local function GetInGamePlayerCount()
-    local gameRules = GetGamerules()
-    if not gameRules then return 0 end
-    local team1Players,_,team1Bots = gameRules:GetTeam(kTeam1Index):GetNumPlayers()
-    local team2Players,_,team2Bots = gameRules:GetTeam(kTeam2Index):GetNumPlayers()
-    return  team1Players + team2Players - team1Bots - team2Bots
+local function GetCurrentRecordTable(self)
+    local key = tostring(kCurrentTimeStampDay)
+    if not self.PrewarmRecordFile[key] then
+        self.PrewarmRecordFile[key] = {}
+    end
+    return self.PrewarmRecordFile[key]
 end
 
 local function ReadPersistent(self)
@@ -101,10 +109,12 @@ local function SavePersistent(self)
         self.PrewarmData.UserData[tostring(k)] = v
     end
 
-    local Success, Err = Shine.SaveJSONFile( self.PrewarmData, PrewarmFile )
+    local Success, Err = Shine.SaveJSONFile( self.PrewarmData, kPrewarmFile)
     if not Success then
         Shared.Message( "Error saving prewarm file: "..Err )
     end
+    Shine.SaveJSONFile(self.PrewarmRecordFile,kPrewarmRecord)
+    Shine.SaveJSONFile(self.PrewarmAwardFile,kPrewarmAward)
 end
 
 function Plugin:ResetState()
@@ -204,6 +214,9 @@ local function TrackClient(self, _client, _clientID)
 
     self.PrewarmTracker[_clientID] = curData
     player:SetPrewarmData(prewarmData)
+
+    local record = GetCurrentRecordTable(self)
+    record.PlayerCount = table.Count(self.MemberInfos)
 end
 
 local function TrackAllClients(self)
@@ -243,14 +256,14 @@ local function PrewarmValidateEnable(self)
     return true
 end
 
-
 local function PrewarmValidate(self)
     if not PrewarmValidateEnable(self) then return end
-    if GetInGamePlayerCount() < self.Config.Restriction.Player then return end
+    if Shine.GetPlayingPlayersCount() < self.Config.Restriction.Player then return end
     
     if self.PrewarmData.Validated then return end
     self.PrewarmData.Validated = true
-
+    GetCurrentRecordTable(self).PrewarmTime = tostring(os.time())
+    
     local prewarmClients = {}
     for clientID,prewarmData in pairs(self.MemberInfos) do
         table.insert(prewarmClients, { clientID = clientID, data = prewarmData})
@@ -281,10 +294,6 @@ local function PrewarmValidate(self)
         local client = Shine.GetClientByNS2ID(prewarmClient.clientID)
         if curTierData then
             ValidateClient(self, clientID, prewarmClient.data,curTier, curTierData.Credit,curTierData.Rank)
-            if curTierData.Reputation then
-                Shared.ConsoleCommand(string.format("sh_rep_delta %s %s",prewarmClient.clientID, curTierData.Reputation,string.format("预热结算 (+%s)",curTierData.Reputation)))
-            end
-
             if curTierData.Inform then
                 nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60))
             end
@@ -409,26 +418,21 @@ end
 
 function Plugin:OnEndGame(_winningTeam)
     --Validate(self)
-    self:DispatchEndGameCredit()
+    if not self.PrewarmData.Validated then return end
+    
+    local lastRoundData = CHUDGetLastRoundStats();
+    if not Shine.IsActiveRound(lastRoundData) then return end
+    
+    self:DispatchEndGameCredit(lastRoundData)
+    self:DispatchTomorrowAward(lastRoundData)
 end
 
-
-function Plugin:DispatchEndGameCredit()
-
-    if not self.PrewarmData.Validated then return end
-
-    local lastRoundData = CHUDGetLastRoundStats();
-    if not lastRoundData then
-        Shared.Message("[CNCP] ERROR Option 'savestats' not enabled ")
-        return
-    end
-
-    local gameLengthInMinute = lastRoundData.RoundInfo.roundLength/ 60
-
+function Plugin:DispatchEndGameCredit(lastRoundData)
+    local gameLengthInMinute = lastRoundData.RoundInfo.roundLength / 60
     local totalReward = math.floor(self.Config.EndGameReward.BaseCredit  )
     local minuteBonus = math.floor(gameLengthInMinute / self.Config.EndGameReward.MinuteEachCredit)
     totalReward = totalReward + minuteBonus
-    local nonTeamPlayerCount = Shine.GetHumanPlayerCount() - GetInGamePlayerCount()
+    local nonTeamPlayerCount = Shine.GetHumanPlayerCount() - Shine.GetPlayingPlayersCount()
 
     local rewardPerPlayer = math.floor(totalReward * 10 / nonTeamPlayerCount) * 0.1
     rewardPerPlayer = Clamp(rewardPerPlayer,self.Config.EndGameReward.MinCredit,self.Config.EndGameReward.MaxCredit)
@@ -446,6 +450,40 @@ function Plugin:DispatchEndGameCredit()
     end
 end
 
+function Plugin:DispatchTomorrowAward(lastRoundData)
+
+    if kCurrentHour < self.Config.LateGameAward.Hour then return end
+    local playerCount = table.Count(lastRoundData.PlayerStats)
+    if playerCount >= self.Config.LateGameAward.MaxPlayers then return end
+
+    local gameLength = lastRoundData.RoundInfo.roundLength
+    for steamId , playerStat in pairs( lastRoundData.PlayerStats) do
+        local playTimeNormalized = (playerStat[kTeam1Index].timePlayed + playerStat[kTeam2Index].timePlayed) / gameLength
+        if playTimeNormalized > 0.9 then
+            local steamIdString = tostring(steamId)
+            local lateGameAwardData = self.PrewarmAwardFile[steamIdString]
+            if not lateGameAwardData then
+                lateGameAwardData = { credit = 0 , time = kCurrentTimeStampDay}
+                self.PrewarmAwardFile[steamIdString] = lateGameAwardData
+            end
+            lateGameAwardData.credit = lateGameAwardData.credit + self.Config.LateGameAward.Credit
+            Shine:NotifyDualColour( Client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                    string.format("尾声对局已结束,明日预热结束后您将获得额外[%d(+%d)]预热点.", lateGameAwardData.credit,self.Config.LateGameAward.Credit) )
+        end
+    end
+end
+
+function Plugin:QueryLateGameAward(_client)
+    local id = _client:GetUserId()
+    local stringId = tostring(id)
+    local lateGameAwardData = self.PrewarmAwardFile[stringId]
+    if not lateGameAwardData or 
+            lateGameAwardData.time == kCurrentTimeStampDay then
+        return
+    end
+    Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, lateGameAwardData.credit,"参与尾声对局"))
+    self.PrewarmAwardFile[idString] = nil
+end
 
 function Plugin:MapChange()
     TrackAllClients(self)
@@ -476,6 +514,7 @@ function Plugin:ClientConfirmConnect( _client )
     if PrewarmValidateEnable(self) then
         if self.PrewarmData.Validated then
             NotifyClient(self,_client,_client:GetUserId())
+            self:QueryLateGameAward(_client)
         else
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                     string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
@@ -543,7 +582,7 @@ function Plugin:CreateMessageCommands()
         end
     end)
         :AddParam{ Type = "steamid"}
-        :AddParam{ Type = "number", Round = false, Min = -5, Max = 5, Default = 1 }
+        :AddParam{ Type = "number", Round = false, Min = -10, Max = 10, Default = 1 }
         :AddParam{ Type = "string",Optional = true, TakeRestOfLine = true, Default = "未知原因" }
         :Help( "激励玩家预热点.")
     
@@ -577,16 +616,14 @@ function Plugin:CreateMessageCommands()
         
         targetData.credit = (targetData.credit or 0) + _value
         clientData.credit = clientData.credit - _value
-
+        Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",_client:GetUserId(), _value,string.format("分享预热点(+%d)",_value)))
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("你已给予<%s>%s[预热点],当前剩余%s,让ta对你好一点",_target:GetControllingPlayer():GetName(),_value, clientData.credit) )
-
         Shine:NotifyDualColour( _target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("<%s>给予了你%s[预热点],当前剩余%s,记得对ta好一点.",_client:GetControllingPlayer():GetName(),_value, targetData.credit) )
     end,true):AddParam{ Type = "client", NotSelf = true }
             :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 1 }
             :Help("将你的预热点分予其他玩家,例如:给予玩家<哈基米> 3个预热点 - !prewarm_give 哈基米 3")
-
     
     self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end )
         :AddParam{ Type = "steamid" }

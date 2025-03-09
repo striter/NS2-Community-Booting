@@ -2,6 +2,20 @@ local kBackgroundDesiredShowTime = 2 -- Desired seconds to show the black backgr
 local kContentsDesiredShowTime = 5 -- How long to show the calling card, name, etc
 local kBackgroundFadeInDelay = 0.45 -- When the black background starts fading in, compared to the contents
 
+local baseInitialize = GUIDeathScreen2.Initialize
+local kFontName = "Agency"
+local kSmallFontSize = 18
+function GUIDeathScreen2:Initialize(params, errorDepth)
+    baseInitialize(self,params,errorDepth)
+
+    self.killerSign = CreateGUIObject("killerSign", GUIText, self.background)
+    self.killerSign:AlignTop()
+    self.killerSign:SetFont(kFontName, kSmallFontSize)
+    self.killerSign:SetColor(1,1,1)
+    self.killerSign:SetPosition(0, self.callingCard:GetSize().y + 135)
+    table.insert(self.contentsObjs, self.killerSign)
+end
+
 function GUIDeathScreen2:ShowBackground(show, instant)
 
      local opacityTarget = show and 1 or 0
@@ -45,6 +59,13 @@ function GUIDeathScreen2:UpdateContentsFromKillerInfo()
     self.callingCard:SetTexture(cardTextureDetails.texture)
     self.callingCard:SetTexturePixelCoordinates(cardTextureDetails.texCoords)
     self.callingCard:SetVisible(true)
+
+    local killerSign = killerInfo.Sign
+    local killerSignVisible = killerSign and killerSign ~= ""
+    if killerSignVisible then
+        self.killerSign:SetText(killerSign)
+    end
+    self.killerSign:SetVisible(killerSignVisible)
     
     local context = killerInfo.Context
     if context == kDeathSource.Player or context == kDeathSource.Structure then -- We have information about the player who killed us (Structure = Commander)

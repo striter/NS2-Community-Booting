@@ -32,12 +32,13 @@ local Scripts = {
 Server.AddRestrictedFileHashes( "lua/shine/lib/gui/*.lua" )
 
 local tmpDate = os.date("*t", Shared.GetSystemTime())
-kCurrentTimeStamp = os.time()
 kCurrentYear = tmpDate.year
 kCurrentMonth = tmpDate.month
 kCurrentDay = tmpDate.day
 kCurrentHour = tmpDate.hour
 kCurrentHourFloat = kCurrentHour + tmpDate.min / 60
+kCurrentTimeStamp = os.time()
+kCurrentTimeStampDay = os.time({year = kCurrentYear,month = kCurrentMonth,day = kCurrentDay})
 
 Shine.BaseGamemode = "ns2"
 Shine.kRankGameMode = { "ns2", "NS2.0", "Siege2.0"  }

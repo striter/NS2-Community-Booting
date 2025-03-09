@@ -492,10 +492,10 @@ function Plugin:OnEndGame()
 		return
 	end
 
+	if not Shine.IsActiveRound(lastRoundData) then return end
+
 	local roundLength = lastRoundData.RoundInfo.roundLength
 	local playerCount = table.Count(lastRoundData.PlayerStats)
-	if roundLength < 300 or playerCount < 12 then return end
-
 	local team1CommData = {timePlayed = 0}
 	local team2CommData = {timePlayed = 0}
 	local function ValidatePlayer(steamId,name,playerData, teamData)

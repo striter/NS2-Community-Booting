@@ -315,6 +315,21 @@ function Shine.GetAllPlayers()
 	return Players, Count
 end
 
+function Shine.GetTeamPlayingPlayersCount(_teamIndex)
+	local gameRules = GetGamerules()
+	if not gameRules then return 0 end
+	
+	local Team = gameRules:GetTeam(_teamIndex)
+	if not Team then return end
+	
+	local players, _, bots = Team:GetNumPlayers()
+	return players - bots
+end
+
+function Shine.GetPlayingPlayersCount()
+	return Shine.GetTeamPlayingPlayersCount(kTeam1Index) + Shine.GetTeamPlayingPlayersCount(kTeam2Index)
+end
+
 --[[
 	Returns a table of all players sorted randomly.
 ]]
