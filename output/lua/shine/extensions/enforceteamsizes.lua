@@ -352,7 +352,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		local teamMaxPlayers = math.max(team1Players,team2Players)
 		if curTeamCount < teamMaxPlayers  then
 			if math.abs(team1Players - team2Players) > 1
-					or (curTeamCount < maxPlayerLimit and Shared.GetTime() > self.Config.SlotCoveringBegin * 60)
+			 and Shared.GetTime() > self.Config.SlotCoveringBegin * 60
 			then
 				self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
 				return

@@ -467,9 +467,14 @@ function Plugin:DispatchTomorrowAward(lastRoundData)
                 self.PrewarmAwardFile[steamIdString] = lateGameAwardData
             end
             lateGameAwardData.credit = lateGameAwardData.credit + self.Config.LateGameAward.Credit
-            Shine:NotifyDualColour( Client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                    string.format("尾声对局已结束,明日预热结束后您将获得额外[%d(+%d)]预热点.", lateGameAwardData.credit,self.Config.LateGameAward.Credit) )
-        end
+            local client = Shine.GetClientByNS2ID(steamId)
+            Shared.Message(string.format("[CNCP] Late Game Reward: %d" ,steamId))
+            if client then
+                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                        string.format("尾声对局已结束,明日预热结束后您将获得额外[%d(+%d)]预热点.", lateGameAwardData.credit,self.Config.LateGameAward.Credit) )
+            end
+            self.PrewarmAwardFile[steamIdString] = nil
+         end
     end
 end
 

@@ -15,7 +15,7 @@ function Shine.IsActiveRound(roundData)
 	if Shared.GetCheatsEnabled() then return true end
 
 	if not roundData.RoundInfo then return false end
-	if roundData.RoundInfo.roundLength < 300 or table.Count(lastRoundData.PlayerStats) < 12 then
+	if roundData.RoundInfo.roundLength < 300 or table.Count(roundData.PlayerStats) < 12 then
 		return false
 	end
 	return true
