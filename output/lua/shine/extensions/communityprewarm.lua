@@ -418,13 +418,14 @@ end
 
 function Plugin:OnEndGame(_winningTeam)
     --Validate(self)
+    
     if not self.PrewarmData.Validated then return end
     
     local lastRoundData = CHUDGetLastRoundStats();
     if not Shine.IsActiveRound(lastRoundData) then return end
     
     self:DispatchEndGameCredit(lastRoundData)
-    self:DispatchTomorrowAward(lastRoundData)
+    self:DispatchLateGameAward(lastRoundData)
 end
 
 function Plugin:DispatchEndGameCredit(lastRoundData)
@@ -450,7 +451,7 @@ function Plugin:DispatchEndGameCredit(lastRoundData)
     end
 end
 
-function Plugin:DispatchTomorrowAward(lastRoundData)
+function Plugin:DispatchLateGameAward(lastRoundData)
 
     if kCurrentHour < self.Config.LateGameAward.Hour then return end
     local playerCount = table.Count(lastRoundData.PlayerStats)
@@ -473,21 +474,25 @@ function Plugin:DispatchTomorrowAward(lastRoundData)
                 Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                         string.format("尾声对局已结束,明日预热结束后您将获得额外[%d(+%d)]预热点.", lateGameAwardData.credit,self.Config.LateGameAward.Credit) )
             end
-            self.PrewarmAwardFile[steamIdString] = nil
          end
     end
 end
 
 function Plugin:QueryLateGameAward(_client)
     local id = _client:GetUserId()
+    if kCurrentHour > self.Config.LateGameAward.Hour then
+        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                string.format("尾声对局启用,当战局玩家小于[%d]人且对局正常结束时,参与对局的玩家将获得明日的[%d]预热点.", self.Config.LateGameAward.MaxPlayers,self.Config.LateGameAward.Credit) )
+    end
+
     local stringId = tostring(id)
     local lateGameAwardData = self.PrewarmAwardFile[stringId]
     if not lateGameAwardData or 
             lateGameAwardData.time == kCurrentTimeStampDay then
         return
     end
-    Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, lateGameAwardData.credit,"参与尾声对局"))
-    self.PrewarmAwardFile[idString] = nil
+    Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, lateGameAwardData.credit,"尾声对局参与激励"))
+    self.PrewarmAwardFile[stringId] = nil
 end
 
 function Plugin:MapChange()

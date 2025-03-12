@@ -25,6 +25,7 @@ Plugin.DefaultConfig = {
 		TeamForceJoin = { 24 , 30, 36 },
 		SkillRange = {-1,-1},
 		BlockSpectators = true,
+		Refill = 2,
 	},
 	SettingOverride = {
 		HourRange = {-1,-1},
@@ -33,8 +34,9 @@ Plugin.DefaultConfig = {
 			MinPlayerCount = 16,
 			Team = { 12 , 12 },
 			TeamForceJoin = {30,34,38},
-			SkillRange = {-1,-1},
+			SkillRange = {-1,-1 },
 			BlockSpectators = false,
+			Refill = 1,
 		},
 	},
 	
@@ -72,8 +74,10 @@ do
 	Validator:AddFieldRule( "RestrictedOperation", Validator.IsType( "table", Plugin.DefaultConfig.RestrictedOperation ) )
 	Validator:AddFieldRule( "Setting", Validator.IsType( "table", Plugin.DefaultConfig.Setting ) )
 	Validator:AddFieldRule( "Setting.TeamForceJoin", Validator.IsType( "table", Plugin.DefaultConfig.Setting.TeamForceJoin ) )
+	Validator:AddFieldRule( "Setting.Refill", Validator.IsType( "number", Plugin.DefaultConfig.Setting.Refill ) )
 	Validator:AddFieldRule( "SettingOverride.HourRange", Validator.IsType( "table", Plugin.DefaultConfig.SettingOverride.HourRange ) )
 	Validator:AddFieldRule( "SettingOverride.Setting.TeamForceJoin", Validator.IsType( "table", Plugin.DefaultConfig.SettingOverride.Setting.TeamForceJoin ) )
+	Validator:AddFieldRule( "SettingOverride.Setting.Refill", Validator.IsType( "number", Plugin.DefaultConfig.SettingOverride.Setting.Refill ) )
 	Validator:AddFieldRule( "NewComerBypass",  Validator.IsType( "table", Plugin.DefaultConfig.NewComerBypass ))
 	Validator:AddFieldRule( "MessageNameColor",  Validator.IsType( "table", {0,255,0} ))
 
@@ -351,7 +355,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		local team2Players = Shine.GetTeamPlayingPlayersCount(kTeam2Index)
 		local teamMaxPlayers = math.max(team1Players,team2Players)
 		if curTeamCount < teamMaxPlayers  then
-			if math.abs(team1Players - team2Players) > 1
+			if math.abs(team1Players - team2Players) >= self.Constrains.Refill
 			 and Shared.GetTime() > self.Config.SlotCoveringBegin * 60
 			then
 				self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
@@ -420,8 +424,14 @@ local function RestrictionDisplay(self,_client)
 	--local playerLimitExtend = GetForceJoinLimit(self.Constrains.TeamForceJoin)
 	--local hourLimitMin = self.Constrains.MinHour
 	--local hourLimitMax = self.Constrains.MaxHour < 0  and "∞" or tostring(self.Constrains.MaxHour)
+	
+	local prewarmString = ""
+	for k,v in pairs(self.Constrains.TeamForceJoin) do
+		prewarmString = prewarmString .. tostring(v) .. " "
+	end
 
-	self:Notify(_client,string.format("战局人数:陆战队:%s,卡拉异形:%s", self.Constrains.Team[1], self.Constrains.Team[2]),self.Config.MessageNameColor,nil)
+
+	self:Notify(_client,string.format("战局人数:陆战队:%s 卡拉异形:%s 战局补位:大于等于%s人 预热点递进人数:%s", self.Constrains.Team[1], self.Constrains.Team[2],self.Constrains.Refill,prewarmString),self.Config.MessageNameColor,nil)
 end
 
 function Plugin:ClientConfirmConnect( Client )
@@ -442,7 +452,7 @@ function Plugin:CreateCommands()
 		RestrictionDisplay(self,_client:GetControllingPlayer())
 	end
 	
-	local function NofityAll()
+	local function NotifyAll()
 		for client in Shine.IterateClients() do
 			NotifyClient(client)
 		end
@@ -476,7 +486,7 @@ function Plugin:CreateCommands()
 			RRQPlugin:Pop()
 		end
 
-		NofityAll()
+		NotifyAll()
 	end
 	
 	self:BindCommand( "sh_restriction_size", "restriction_size", SetTeamSize)								 
@@ -500,7 +510,7 @@ function Plugin:CreateCommands()
 		self.Constrains.Mode = Plugin.SkillLimitMode.NONE
 		self.Constrains.SkillRange = {_min,_max}
 
-		NofityAll()
+		NotifyAll()
 	end
 	self:BindCommand( "sh_restriction_skill", "restriction_skill", SetSkillLimit)
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
