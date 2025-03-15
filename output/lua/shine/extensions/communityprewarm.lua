@@ -522,7 +522,7 @@ function Plugin:ClientConfirmConnect( _client )
     if PrewarmValidateEnable(self) then
         if self.PrewarmData.Validated then
             NotifyClient(self,_client,_client:GetUserId())
-            local prewarmData = GetPlayerData(self,id)
+            local prewarmData = GetPlayerData(self,clientID)
             if not prewarmData.validated then
                 prewarmData.validated = true
                 self:QueryLateGameAward(_client)
@@ -530,7 +530,7 @@ function Plugin:ClientConfirmConnect( _client )
             end
         else
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                    string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
+                    string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名`靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
         end
         return
     end

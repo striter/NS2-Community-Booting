@@ -29,7 +29,7 @@ if Server then
         end
         if Shine then
             Shine:NotifyDualColour( nil, 235, 152, 78 ,"[提示]",255, 255, 255,
-                    string.format("服务器已切换为[%s]",enabled and "练习模式" or "正常模式"))
+                    string.format("服务器已切换为[%s]",enable and "练习模式" or "正常模式"))
         end
     end)
 end 
