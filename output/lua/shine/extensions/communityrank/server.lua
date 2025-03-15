@@ -809,12 +809,13 @@ end
 function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
     local player = _targetClient:GetControllingPlayer()
     local data = GetPlayerData(self,_targetClient:GetUserId())
-    Shine:NotifyDualColour( _notifyClient:GetControllingPlayer(),  236, 112, 99 ,"[历史记录]",
+    Shine:NotifyDualColour( _notifyClient:GetControllingPlayer(),  236, 112, 99 ,"[社区记录]",
             255,255,255,
-            string.format("<%s>的记录:\n[总时长%dh] [总局数%d] [完整%d] [胜局%d] \n指挥：[时长%dh] [对局%d] [胜局%d]\n信誉值: %d点",
-                    player:GetName(), math.floor((data.timePlayed or 0)/60), data.roundPlayed or 0,data.roundFinished or 0, data.roundWin or 0,
-                    math.floor((data.timePlayedCommander or 0)/60),data.roundFinishedCommander or 0, data.roundWinCommander or 0,
-                    data.reputation or 0
+            string.format("<%s>的信息:\n社区: %d小时 %d信誉值\n战局: %d场次 %d胜局 %d参与\n指挥: %d场次 %d胜局 %d小时",
+                    player:GetName(), 
+                    math.floor((data.timePlayed or 0)/60),data.reputation or 0,
+                    data.roundFinished or 0, data.roundWin or 0,data.roundPlayed or 0,
+                    data.roundFinishedCommander or 0, data.roundWinCommander or 0,math.floor((data.timePlayedCommander or 0)/60)
             )
     )
 end
@@ -1017,11 +1018,11 @@ function Plugin:CreateMessageCommands()
         self:ValidatePlayerRecord(_client,_client)
     end
 
-    self:BindCommand( "history_check", "history_check", CheckPlayerHistory)
+    self:BindCommand( "sh_history_check", "history_check", CheckPlayerHistory)
         :AddParam{ Type = "steamid" }
         :Help( "查询玩家的社区历史记录." )
     
-    self:BindCommand( "history", "history", CheckHistory,true )
+    self:BindCommand( "sh_history", "history", CheckHistory,true )
         :Help( "查询我的社区历史记录." )
 
     local function SetSignature(_client,_signature)
@@ -1032,7 +1033,7 @@ function Plugin:CreateMessageCommands()
         player:SetPlayerExtraData(data)
     end
     
-    self:BindCommand( "signature", "signature", SetSignature,true )
+    self:BindCommand( "sh_signature", "signature", SetSignature,true )
         :AddParam{ Type = "string", TakeRestOfLine = true, Default = "这个人很懒没有设置个性签名" }
         :Help( "设置我的个性签名. 示例!signature 在吗" )
     
@@ -1048,11 +1049,11 @@ function Plugin:CreateMessageCommands()
                         player.commSkill,player.commSkillOffset,player:GetCommanderSkill(),player:GetCommanderSkillOffset()))
     end
     
-    self:BindCommand( "elo_check", "elo_check", EloCheck)
+    self:BindCommand( "sh_elo_check", "elo_check", EloCheck)
         :AddParam{ Type = "steamid" }
         :Help( "查询玩家的分数明细." )
 
-    self:BindCommand( "querydatabase", "querydatabase",  function()
+    self:BindCommand( "sh_querydatabase", "querydatabase",  function()
         Shine.PlayerInfoHub:QueryDB()
     end ):Help( "数据库挂了,尝试刷新一下." )
 end

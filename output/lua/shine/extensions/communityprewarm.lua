@@ -131,19 +131,7 @@ end
 
 local function GetPlayerData(self, _clientID)
     if not self.MemberInfos[_clientID] then
-        --Initial
-        local initialTier = 0
-        local initialCredit = 0
-
-        local userData = Shine:GetUserData(_clientID)
-        local groupName = userData and userData.Group or nil
-        local groupData = groupName and Shine:GetGroupData(groupName) or nil
-        if groupData and groupData.PrewarmCredit then
-            initialCredit = groupData.PrewarmCredit
-            initialTier = 5
-        end
-
-        self.MemberInfos[_clientID] = {name = "",score = 0, time = 0, tier = initialTier ,  credit = initialCredit }
+        self.MemberInfos[_clientID] = {name = "",score = 0, time = 0, tier = 0 ,  credit = 0 }
     end
 
     return self.MemberInfos[_clientID]
@@ -478,10 +466,20 @@ function Plugin:DispatchLateGameAward(lastRoundData)
     end
 end
 
+function Plugin:QueryGroupAward(_client)
+    local id = _client:GetUserId()
+    local userData = Shine:GetUserData(id)
+    local groupName = userData and userData.Group or nil
+    local groupData = groupName and Shine:GetGroupData(groupName) or nil
+    if groupData and groupData.PrewarmCredit then
+        Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s", id, groupData.PrewarmCredit,"社区段位激励"))
+    end
+end
+
 function Plugin:QueryLateGameAward(_client)
     local id = _client:GetUserId()
     if kCurrentHour > self.Config.LateGameAward.Hour then
-        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("尾声对局启用,当战局玩家小于[%d]人且对局正常结束时,参与对局的玩家将获得明日的[%d]预热点.", self.Config.LateGameAward.MaxPlayers,self.Config.LateGameAward.Credit) )
     end
 
@@ -524,7 +522,12 @@ function Plugin:ClientConfirmConnect( _client )
     if PrewarmValidateEnable(self) then
         if self.PrewarmData.Validated then
             NotifyClient(self,_client,_client:GetUserId())
-            self:QueryLateGameAward(_client)
+            local prewarmData = GetPlayerData(self,id)
+            if not prewarmData.validated then
+                prewarmData.validated = true
+                self:QueryLateGameAward(_client)
+                self:QueryGroupAward(_client)
+            end
         else
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                     string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
@@ -538,6 +541,9 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
     
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
+
+    local targetData = GetPlayerData(self,clientID)
+    if targetData.credit > 0 then return end
     
     local credit = 0
     local title = nil
@@ -554,7 +560,6 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
     end
 
     if credit > 0 then
-        local targetData = GetPlayerData(self, _client:GetUserId())
         targetData.credit = (targetData.credit or 0) + credit
         
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
@@ -626,7 +631,8 @@ function Plugin:CreateMessageCommands()
         
         targetData.credit = (targetData.credit or 0) + _value
         clientData.credit = clientData.credit - _value
-        Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",_client:GetUserId(), _value,string.format("分享预热点(+%d)",_value)))
+        local shareReputation = math.floor(_value * 0.5)
+        Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",_client:GetUserId(), shareReputation,string.format("分享预热点(+%d)",shareReputation)))
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("你已给予<%s>%s[预热点],当前剩余%s,让ta对你好一点",_target:GetControllingPlayer():GetName(),_value, clientData.credit) )
         Shine:NotifyDualColour( _target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,

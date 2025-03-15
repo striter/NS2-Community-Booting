@@ -78,6 +78,19 @@ function Plugin:CreateCommands()
     self:BindCommand("sh_warn_popup","warn_popup",WarnPopup)
             :AddParam{ Type = "client" }
             :AddParam{ Type = "string",Optional = true, TakeRestOfLine = true, Default = "不当的言行将会对他人造成严重影响!\n请注意你的行为!" }
+
+
+    local kFlipPrefixColor = { 235, 152, 78 }
+    local function FlipCoin(_client)
+        local value = math.random()
+        local player = _client:GetControllingPlayer()
+        Shine:NotifyDualColour( nil, kFlipPrefixColor[1], kFlipPrefixColor[2], kFlipPrefixColor[3],"[提示]",255, 255, 255,
+                string.format("%s投出了一枚硬币,结果为-%s", player:GetName(),value < 0.5 and "正面" or "反面"))
+
+        Shine.SendNetworkMessage(nil, "Shine_PopupWarning", {Message = _message},true)
+    end
+    self:BindCommand("sh_flip","flip",FlipCoin)
+            :Help( "抛出一枚硬币,并告知所有人结果." )
 end
 
 function Plugin:Cleanup()

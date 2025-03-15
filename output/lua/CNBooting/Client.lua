@@ -35,6 +35,9 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_RANDOM_SCALE"]="全体玩家 - [随机大小]"
     kTranslateMessage["VOTE_RANDOM_SCALE_QUERY"]="给所有人随机大小?"
 
+    kTranslateMessage["VOTE_PRACTICE_MODE"]="切换练习模式"
+    kTranslateMessage["VOTE_PRACTICE_MODE_QUERY"]="将服务器切换为练习模式?"
+    
     kTranslateMessage["COMMUNITY_RANK"]="社区 %s"
     kTranslateMessage["RANK_HOST"] = "(C6):<萌新>"
     kTranslateMessage["RANK_ADMIN"] = "(C5):<管理员>"
@@ -103,6 +106,9 @@ if kLocales then
     kLocales["VOTE_RANDOM_SCALE"]="Vote random scale"
     kLocales["VOTE_RANDOM_SCALE_QUERY"]="Dispatch everyone random scale?"
 
+    kLocales["VOTE_PRACTICE_MODE"]="Vote practice mode"
+    kLocales["VOTE_PRACTICE_MODE_QUERY"]="Change server to practice mode?"
+    
     kLocales["SKILL_TIER_COMM"]="Comm Tier(C) [Marine] %i\n                               [Alien] %i"
     kLocales["SKILL_TIER"]="Tier Score(P)   [Marine] %i\n                               [Alien] %i"
     kLocales["NS2_TIME_PLAYED"]="NS2 Time Played: %ih"

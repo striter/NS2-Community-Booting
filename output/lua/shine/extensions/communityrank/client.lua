@@ -236,8 +236,8 @@ function Plugin.GUIScoreboardSendKeyEvent(self, key, down)
         --  openUrlObservatory(steamId);
         --end);
         
-        self.hoverMenu:AddButton('NS2Panel 信息', teamColorBg, teamColorHighlight, textColor, function()
-          openUrlNs2Panel(steamId);
+        self.hoverMenu:AddButton('社区信息', teamColorBg, teamColorHighlight, textColor, function()
+            Shared.ConsoleCommand(string.format("sh_history_check %s",steamId))
         end);
           
         self.hoverMenu:AddButton('复制NS2ID', teamColorBg, teamColorHighlight, textColor, function()

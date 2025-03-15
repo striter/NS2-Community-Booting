@@ -108,19 +108,23 @@ function Plugin:SetMaxBots(bots, com)
 end
 
 function Plugin:CreateCommands()
-	local function MaxBots( _, Number, SaveIntoConfig )
 
-		self.MaxBots = Number
-		self:SetMaxBots( Number, self.Config.CommanderBots )
+	local function MaxBots(_, _number, _even, _save)
 
-		if SaveIntoConfig then
-			self.Config.MaxBots = Number
+		self.MaxBots = _number
+		self.EvenWithBots = _even
+		self:SetMaxBots(_number, self.Config.CommanderBots )
+
+		if _save then
+			self.Config.MaxBots = _number
+			self.Config.EvenWithBots = _even
 			self:SaveConfig()
 		end
 	end
 	local botsCommand = self:BindCommand( "sh_maxbots", "maxbots", MaxBots )
-	botsCommand:AddParam{ Type = "number", Min = 0, Error = "Please specify the amount of bots you want to set.", Help = "Maximum number of bots"  }
-	botsCommand:AddParam{ Type = "boolean", Default = false, Help = "true = save change", Optional = true  }
+	botsCommand:AddParam{ Type = "number", Min = 0, Error = "请指定bot最大数量", Help = "最大BOT数量"  }
+	botsCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 是否平均", Optional = true  }
+	botsCommand:AddParam{ Type = "boolean", Default = false, Help = "true = 保存设置", Optional = true  }
 	botsCommand:Help( "设置场内Bot的最大数量." )
 
 	local function ComBots( _, Enable, SaveIntoConfig )

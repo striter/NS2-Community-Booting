@@ -35,8 +35,7 @@ local tmpDate = os.date("*t", Shared.GetSystemTime())
 kCurrentYear = tmpDate.year
 kCurrentMonth = tmpDate.month
 kCurrentDay = tmpDate.day
-kCurrentHour = tmpDate.hour
-kCurrentHourFloat = kCurrentHour + tmpDate.min / 60
+kCurrentHour = tmpDate.hour + tmpDate.min / 60
 kCurrentTimeStamp = os.time()
 kCurrentTimeStampDay = os.time({year = kCurrentYear,month = kCurrentMonth,day = kCurrentDay})
 

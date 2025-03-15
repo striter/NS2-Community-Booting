@@ -553,6 +553,7 @@ end
 Script.Load("lua/VotingChangeMap.lua")
 Script.Load("lua/VotingResetGame.lua")
 Script.Load("lua/VotingAddCommanderBots.lua")
+Script.Load("lua/CNBooting/VotingSwitchPracticeMode.lua")
 Script.Load("lua/VotingKickPlayer.lua")
 --Script.Load("lua/VotingRandomizeRR.lua")
 --Script.Load("lua/VotingForceEvenTeams.lua")
@@ -644,10 +645,11 @@ if Client then
         AddVoteStartListener("VoteRandomScale", function(msg)
             return Locale.ResolveString("VOTE_RANDOM_SCALE_QUERY")
         end)
-
+        
         voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_RANDOM_SCALE"),nil, function( msg )
             AttemptToStartVote("VoteRandomScale", { })
         end)
+        
 
     end
     AddVoteSetupCallback(SetupAdditionalVotes)
