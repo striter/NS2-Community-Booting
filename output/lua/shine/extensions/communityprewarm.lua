@@ -471,6 +471,9 @@ function Plugin:QueryGroupAward(_client)
     local userData = Shine:GetUserData(id)
     local groupName = userData and userData.Group or nil
     local groupData = groupName and Shine:GetGroupData(groupName) or nil
+    local prewarmData = GetPlayerData(self,id)
+    if prewarmData.groupDailyQueried then return end
+    prewarmData.groupDailyQueried = true
     if groupData and groupData.PrewarmCredit then
         Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s", id, groupData.PrewarmCredit,"社区段位激励"))
     end
@@ -522,15 +525,11 @@ function Plugin:ClientConfirmConnect( _client )
     if PrewarmValidateEnable(self) then
         if self.PrewarmData.Validated then
             NotifyClient(self,_client,_client:GetUserId())
-            local prewarmData = GetPlayerData(self,clientID)
-            if not prewarmData.validated then
-                prewarmData.validated = true
-                self:QueryLateGameAward(_client)
-                self:QueryGroupAward(_client)
-            end
+            self:QueryLateGameAward(_client)
+            self:QueryGroupAward(_client)
         else
             Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                    string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名`靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
+                    string.format("服务器为预热状态,待预热成功后(开局时场内人数>=%s人),排名靠前的玩家将获得对应的预热激励.",self.Config.Restriction.Player) )
         end
         return
     end
