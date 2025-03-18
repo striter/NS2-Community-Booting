@@ -91,6 +91,71 @@ function Plugin:CreateCommands()
     end
     self:BindCommand("sh_flip","flip",FlipCoin)
             :Help( "抛出一枚硬币,并告知所有人结果." )
+
+
+    local function LoginCommander(commandStructure, client)
+        local player = client and client:GetControllingPlayer()
+
+        if commandStructure and player and commandStructure:GetIsBuilt() then
+
+            -- make up for not manually moving to CS and using it
+            commandStructure.occupied = not client:GetIsVirtual()
+
+            player:SetOrigin(commandStructure:GetDefaultEntryOrigin())
+
+            commandStructure:LoginPlayer( player, true )
+        else
+            if player then
+                Log("%s| Failed to Login commander[%s - %s(%s)] on ResetGame", self:GetClassName(), player:GetClassName(), player:GetId(),
+                        client:GetIsVirtual() and "BOT" or "HUMAN"
+                )
+            end
+        end
+    end
+
+    self:BindCommand( "sh_commforce", "commforce", function(_client,_target)
+        if _target:GetIsVirtual() then
+            Shine:NotifyError(_client,"无法对机器人使用该指令.")
+            return
+        end
+
+        local player = _target:GetControllingPlayer()
+        local teamNumber = player:GetTeamNumber()
+        if teamNumber == kSpectatorIndex or teamNumber == kTeamReadyRoom then
+            Shine:NotifyError(_client,"无法对非战局内玩家食用该指令.")
+            return
+        end
+
+        local workingCommandStructure
+        local commandStructures = GetEntitiesForTeam("CommandStructure", teamNumber)
+        for _, commandStructure in ipairs(commandStructures) do
+            if commandStructure.occupied then
+                workingCommandStructure = commandStructure
+                break
+            end
+        end
+
+        if not workingCommandStructure then
+            workingCommandStructure = GetEntitiesForTeam("CommandStructure", teamNumber)[1]
+        end
+
+        if not workingCommandStructure then
+            Shine:NotifyError(_client,"无法找到队伍内的活跃指挥站.")
+            return
+        end
+
+        local targetCommander = GetCommanderForTeam(teamNumber)
+        if targetCommander and targetCommander.Eject then
+            targetCommander:Eject()
+        end
+
+
+        if workingCommandStructure then
+            LoginCommander(workingCommandStructure,_target)
+        end
+    end )
+        :AddParam{ Type = "client" }
+        :Help( "强制该玩家成为队伍指挥,并将已有指挥踢出.")
 end
 
 function Plugin:Cleanup()
