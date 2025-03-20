@@ -347,6 +347,11 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
     return false
 end
 
+function Plugin:IsPrewarmPlayer(_client)
+    local data = GetPlayerData(self,_client:GetUserId())
+    return data.tier and data.tier > 0
+end
+
 -- Triggers
 function Plugin:OnFirstThink()
     ReadPersistent(self)

@@ -279,25 +279,33 @@ function Plugin:GetPlayerRestricted(_player,_team)
 	return false
 end
 
-local function GetForceJoinCredit(self)
+local function GetForceJoinCredit(self, _client, _communityPrewarm)
 	local gameStarted = GetGameInfoEntity():GetGameStarted()
-	
 	local playerCount = Shine.GetPlayingPlayersCount()
-	local credit = 0
-	local currentCount = 0
-	for k,v in pairs(self.Constrains.TeamForceJoin) do
-		currentCount = v
-		credit = credit + 1
+	local credit = 1
+	local count = 0
+	local matched 
+	for _,v in pairs(self.Constrains.TeamForceJoin) do
+		count = v
 		if playerCount < v then
+			matched = true
 			break
 		end
+		credit = credit + 1
 	end
 	
 	if gameStarted then
 		credit = credit + 0.5
 	end
 	
-	return credit,currentCount
+	local endFix = matched and string.format("(%s人内)",count) or "(最大)"
+	local title = string.format("当局入场通道%s", endFix)
+	if _communityPrewarm and _communityPrewarm:IsPrewarmPlayer(_client) then
+		credit = math.min(credit,2)
+		title = string.format("预热玩家通道%s", endFix)
+	end
+	
+	return credit, count,title
 end
 
 local kTeamNames = { "陆战队", "卡拉异形", "观战" }
@@ -339,15 +347,20 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	local forcePrivilegeTitle
 	local forceCredit
 	local teamName = kTeamNames[_newTeam]
+	local cpEnabled, communityPrewarm = Shine:IsExtensionEnabled( "communityprewarm" )
+	if not cpEnabled then
+		communityPrewarm = nil
+	end
+	
 	if _newTeam == kSpectatorIndex then
 		errorString =  "战局内存在可游玩空位,请尽快进入游戏!"
 		forceCredit = 0
 		forcePrivilegeTitle = "预热观战位"
 	else
-		local credit, count = GetForceJoinCredit(self)
+		local credit, count,forceJoinTitle = GetForceJoinCredit(self,client,communityPrewarm)
 		forceCredit = credit
-		forcePrivilegeTitle = "预热入场通道"
-		errorString = string.format( "<%s>已满[>=%s人],目前需[%s]预热点下场(%d人内),请等待空位或获得更多预热点.", teamName ,playerLimit,credit,count)
+		forcePrivilegeTitle = forceJoinTitle
+		errorString = string.format( "<%s>已满[>=%s人],当前需[%s]预热点获取%s,请等待空位或获得更多预热点.", teamName ,playerLimit,credit,forceJoinTitle)
 	end
 
 	if _newTeam ~= kSpectatorIndex then
@@ -373,9 +386,8 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			return
 		end
 
-		local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
-		if forceCredit and cpEnabled then
-			if cp:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
+		if forceCredit and communityPrewarm then
+			if communityPrewarm:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
 				table.insert(kTeamJoinTracker,userId)
 				return
 			end
