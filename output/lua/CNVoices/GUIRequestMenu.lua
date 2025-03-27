@@ -805,6 +805,10 @@ Event.Hook("Console_hiss", function()
     SendRequest(kVoiceId.Hiss)
 end)
 
+Event.Hook("Console_auv", function()
+    SendRequest(kVoiceId.AUV,kAUVItemId)
+end)
+
 Event.Hook("Console_screamlong", function()
     SendRequest(kVoiceId.ScreamLong,kScreamLongItemId)
 end)

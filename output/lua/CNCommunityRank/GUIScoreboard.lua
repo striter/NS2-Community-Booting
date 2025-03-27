@@ -1203,9 +1203,9 @@ function GUIScoreboard:UpdateTeam(updateTeam)
                     for i = 1, #player.BadgeItems do
                         local badgeItem = player.BadgeItems[i]
                         if GUIItemContainsPoint(badgeItem, mouseX, mouseY) and badgeItem:GetIsVisible() then
-                            local _, badgeNames = Badges_GetBadgeTextures(clientIndex, "scoreboard")
+                            local texture, badgeNames = Badges_GetBadgeTextures(clientIndex, "scoreboard")
                             local badge = ToString(badgeNames[i])
-                            self.badgeNameTooltip:SetText(GetBadgeFormalName(badge))
+                            self.badgeNameTooltip:SetText(GetBadgeFormalName(badge),texture[i],Vector(40,40,0))
                             hoverBadge = true
                             break
                         end

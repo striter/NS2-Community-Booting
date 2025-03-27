@@ -70,7 +70,10 @@ kLocales["KBei"]="北北北北北北北北北北北北北北北北"
 kLocales["KDS1"]="NS1 老玩家"
 kLocales["KDS2"]="NS2 独行者"
 
--- NSL Badges
-kLocales["NSL2023G"] = "2023年NS社区赛 - 团队指挥"
-kLocales["NSL2023S"] = "2023年NS社区赛 - 主力队员"
-kLocales["NSL2023B"] = "2023年NS社区赛 - 最佳后勤"
+-- League Badges 2025
+kLocales["M2025Recorder"] = "NS2CN - 2025社区赛 - 摄影师"
+
+kLocales["M2025S1Referee"] = "NS2CN - 2025社区赛\n第一赛季 - 主持人"
+kLocales["M2025S1Champion"] = "NS2CN - 2025社区赛\n第一赛季 - 冠军队" 
+kLocales["M2025S1RunnerUp"] = "NS2CN - 2025社区赛\n第一赛季 - 亚军队"
+kLocales["M2025S1Participator"] = "NS2CN - 2025社区赛\n第一赛季 - 参赛者"

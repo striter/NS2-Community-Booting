@@ -245,7 +245,7 @@ kShinePluginsTranslations["serverswitch"]={}
 kShinePluginsTranslations["serverswitch"]["VOTEMENU_BUTTON"]="服务器列表"
 
 kShinePluginsTranslations["serverswitchvote"]={}
-kShinePluginsTranslations["serverswitchvote"]["VOTEMENU_BUTTON"]="投票换服"
+kShinePluginsTranslations["serverswitchvote"]["VOTEMENU_BUTTON"]="换服"
 
 kShinePluginsTranslations["workshopupdater"]={}
 kShinePluginsTranslations["workshopupdater"]["NOTIFY_PREFIX"]= "[创意工坊]"
