@@ -220,6 +220,7 @@ local function ValidateClient(self, _clientID, _data, _tier, _credit,_scoreOverr
     _data.tier = _tier
     _data.credit = _credit
     _data.score = _scoreOverride and _scoreOverride or _data.score
+    self:Print(string.format("Validate %s %s %s %s",_clientID,_data.tier,_data.credit,_data.score ))
 
     local client = Shine.GetClientByNS2ID(_clientID)
     if not client then return end
@@ -636,11 +637,14 @@ function Plugin:CreateMessageCommands()
         targetData.credit = (targetData.credit or 0) + _value
         clientData.credit = clientData.credit - _value
         local shareReputation = math.floor(_value * 0.5)
-        Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",_client:GetUserId(), shareReputation,string.format("分享预热点(+%d)",shareReputation)))
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("你已给予<%s>%s[预热点],当前剩余%s,让ta对你好一点",_target:GetControllingPlayer():GetName(),_value, clientData.credit) )
         Shine:NotifyDualColour( _target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("<%s>给予了你%s[预热点],当前剩余%s,记得对ta好一点.",_client:GetControllingPlayer():GetName(),_value, targetData.credit) )
+
+        if targetData.tier == 0 then
+            Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",_client:GetUserId(), shareReputation,string.format("分享预热点(+%d)",shareReputation)))
+        end
     end,true):AddParam{ Type = "client", NotSelf = true }
             :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 1 }
             :Help("将你的预热点分予其他玩家,例如:给予玩家<哈基米> 3个预热点 - !prewarm_give 哈基米 3")

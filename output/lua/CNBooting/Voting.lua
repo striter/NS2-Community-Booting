@@ -515,19 +515,16 @@ if Client then
         local function SetupServerSwitchVote(voteMenu)
 
                 local function GetServerList()
-                    local address = Client.GetConnectedServerAddress()
                     local menuItems = { }
                     local ssvEnabled, ssv = Shine:IsExtensionEnabled( "serverswitchvote" )
                     if ssvEnabled and #ssv.QueryServers > 0 then
                         for _, data in ipairs(ssv.QueryServers) do
-                            if address ~= data.Address then
-                                if data.Amount ~= 0 then
-                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"),data.ID, data.Name,string.format("%s人", data.Amount)),
-                                                              extraData = { ip = data.Address , name = data.Name ,onlyAccepted = true , voteRequired = data.Amount } })
-                                else
-                                    table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"),data.ID, data.Name,"所有人"),
-                                                              extraData = { ip = data.Address , name = data.Name , onlyAccepted = false } } )
-                                end
+                            if data.Amount ~= 0 then
+                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"),data.ID, data.Name,string.format("%s人", data.Amount)),
+                                                          extraData = { ip = data.Address , name = data.Name ,onlyAccepted = true , voteRequired = data.Amount } })
+                            else
+                                table.insert(menuItems, { text = string.format(Locale.ResolveString("VOTE_SWITCH_SERVER_ELEMENT"),data.ID, data.Name,"所有人"),
+                                                          extraData = { ip = data.Address , name = data.Name , onlyAccepted = false } } )
                             end
                         end
                     else

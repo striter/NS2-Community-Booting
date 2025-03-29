@@ -17,6 +17,8 @@ function Plugin:Cleanup()
 end
 
 function Plugin:ReceiveAddServerList( Data )
+	local address = Client.GetConnectedServerAddress()
+	if address == Data.Address then return end
 	table.insert(self.QueryServers,{
 		ID = Data.ID,
 		Address = Data.Address,
