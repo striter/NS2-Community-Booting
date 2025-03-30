@@ -675,7 +675,7 @@ function Plugin:RageQuitValidate(Player,NewTeam)
         end
     end
 end
-
+local kRoundFinishNormalizedTime = 0.9
 function Plugin:EndGameReputation(lastRoundData)
     if not ReputationEnabled(self) then return end
 
@@ -693,13 +693,7 @@ function Plugin:EndGameReputation(lastRoundData)
             ReputationDebugMessage(self,string.format("(ID:%-10s  (Delta):%-5i",steamId,reputationDelta))
         end
     end
-    table.clear(kRageQuitTracker)
 
-    local gameLength = lastRoundData.RoundInfo.roundLength
-    if Shine.GetHumanPlayerCount() < self.Config.Reputation.RageQuit.MinPlayer
-            or gameLength < self.Config.Reputation.RageQuit.CheckTime then
-        return
-    end
 
     local winningTeamType = lastRoundData.RoundInfo.winningTeam
     local losingTeam
@@ -708,8 +702,12 @@ function Plugin:EndGameReputation(lastRoundData)
     elseif winningTeamType == kAlienTeamType then
         losingTeam = kMarineTeamType
     end
-    
-    if losingTeam ~= nil then
+
+    local gameLength = lastRoundData.RoundInfo.roundLength
+    if Shine.GetHumanPlayerCount() >= self.Config.Reputation.RageQuit.MinPlayer
+            and gameLength >= self.Config.Reputation.RageQuit.CheckTime
+            and losingTeam ~= nil
+    then
         ReputationDebugMessage(self,string.format("Covers:  Win:%s Lose:%s",winningTeamType,losingTeam))
         for Client in Shine.IterateClients() do
             if not Client:GetIsVirtual() then
@@ -719,11 +717,11 @@ function Plugin:EndGameReputation(lastRoundData)
                 local steamId = Client:GetUserId()
                 local playTime = player:GetPlayTime()
                 local team =  player:GetTeamNumber()
-                
-                if playTime > self.Config.Reputation.RageQuit.ActivePlayTime and rageQuitType ~= kRageQuitType.Quit then
+
+                if rageQuitType ~= kRageQuitType.Quit and playTime / gameLength > kRoundFinishNormalizedTime then
                     local wins = team == winningTeamType
                     local reputationDelta = wins and self.Config.Reputation.RageQuit.DeltaWin or self.Config.Reputation.RageQuit.DeltaLost
-                    
+
                     if reputationDelta ~=0 then
                         local data = GetPlayerData(self,steamId)
                         if not data.reputation or data.reputation < self.Config.Reputation.RageQuit.DeltaMax then
@@ -735,7 +733,8 @@ function Plugin:EndGameReputation(lastRoundData)
             end
         end
     end
-    
+
+    table.clear(kRageQuitTracker)
 end
 
 function Plugin:RecordResolveData(data,rawData)
@@ -755,7 +754,7 @@ function Plugin:EndGameRecord(lastRoundData)
     local function RecordPlayer(playerData,data,wins)
         local playTime = math.floor(data.timePlayed/60)
         local commTime = math.floor(data.commanderTime / 60)
-        local validPlay = data.timePlayed / gameLength > 0.9
+        local validPlay = data.timePlayed / gameLength > kRoundFinishNormalizedTime
         local validCommander = data.commanderTime / gameLength > 0.8
         
         playerData.timePlayed = (playerData.timePlayed or 0) + playTime
