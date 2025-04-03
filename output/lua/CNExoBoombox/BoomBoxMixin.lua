@@ -30,6 +30,7 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.OST]  = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/TheFinals"), name = "The Finals (Season 1)" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/ATrueCompetitor"), name = "A True Competitor" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/EveryDayIsNight"), name = "Every Day Is Night" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/2077"), name = "The Rebel Path" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/PTSD"), name = "PTSD" },
@@ -43,6 +44,7 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.TWO] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/BluSwing"), name = "満ちていく体温" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/Time26"), name = "表参道26時" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/P5"), name = "星と僕らと" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/WanderingAround"), name = "アルクアラウンド" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/TWO/dnmmm"), name = "电脑眠眠猫" },
