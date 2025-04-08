@@ -294,10 +294,6 @@ local function GetForceJoinCredit(self, _client, _communityPrewarm)
 		credit = credit + 1
 	end
 	
-	if gameStarted then
-		credit = credit + 0.5
-	end
-	
 	local endFix = matched and string.format("(%s人内)",count) or "(最大)"
 	local title = string.format("当局入场通道%s", endFix)
 	if _communityPrewarm and _communityPrewarm:IsPrewarmPlayer(_client) then
@@ -305,6 +301,10 @@ local function GetForceJoinCredit(self, _client, _communityPrewarm)
 		title = string.format("预热玩家通道%s", endFix)
 	end
 	
+	if gameStarted then
+		credit = credit + 0.5
+	end
+
 	return credit, count,title
 end
 

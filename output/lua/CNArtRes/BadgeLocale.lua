@@ -70,6 +70,7 @@ kLocales["KBei"]="北北北北北北北北北北北北北北北北"
 kLocales["KDS1"]="NS1 老玩家"
 kLocales["KDS2"]="NS2 独行者"
 
+kLocales["DDOS202503"]="于2025年3月攻击来临时\n依旧选择积极预热的玩家\n一生二 二生三 三生万物"
 -- League Badges 2025
 kLocales["M2025Recorder"] = "NS2CN - 2025社区赛 - 摄影师"
 

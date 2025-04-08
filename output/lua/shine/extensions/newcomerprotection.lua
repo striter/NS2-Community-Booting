@@ -274,7 +274,6 @@ local function UpdateRookie(self,_player)
 	local client,tier, estimateSkill = GetClientAndTier(_player)
 	if not client or client:GetIsVirtual() then return end
 
-
 	local team = _player:GetTeamNumber()
 	local playingTeam = (team == kTeam1Index or team == kTeam2Index)
 
@@ -330,12 +329,16 @@ function Plugin:GetRefundPercent(player)
 end
 
 function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
+	UpdateRookie(self,player)
+	if attacker and attacker:isa("Player") then
+		UpdateRookie(self,attacker)
+	end
+
 	if not Plugin.Config.Refund then return end
 
 	local client,tier = GetClientAndTier(player)
 	if not client or tier == 0 then return end
 
-	UpdateRookie(self,player)
 	local refund = 0
 	local refundAdditiveTable = Plugin.Config.RefundAdditive[player:GetClassName()]
 	if refundAdditiveTable then
