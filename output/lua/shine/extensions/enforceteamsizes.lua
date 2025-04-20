@@ -596,7 +596,6 @@ if Server then
 				team2Players = team2Players - team2Bots
 			end
 
-			Shared.Message(tostring(Plugin.Config.FreeJoinCount))
 			if team1Players + team2Players >= Plugin.Config.FreeJoinCount then
 				if (team1Players > team2Players) and (teamNumber == team1Number) then
 					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
