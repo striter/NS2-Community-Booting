@@ -43,6 +43,19 @@ Shine.BaseGamemode = "ns2"
 Shine.kRankGameMode = { "ns2", "NS2.0", "Siege2.0"  }
 Shine.kSeedingGameMode = {"Defense2.0","Combat"}
 
+Shine.kNS2EnabledGameMode ={
+	[ "ns2" ] = true,
+	[ "NS2.0" ] = true,
+	[ "Siege.0" ] = true,
+}
+Shine.kPvPEnabledGameMode = {
+	[ "ns2" ] = true,
+	[ "NS2.0" ] = true,
+	[ 'Siege2.0' ] = true,
+	[ 'GunGame' ] = true,
+	[ 'combat' ] = true,
+}
+
 Shine.LoadScripts( Scripts )
 
 Shine:Print( "Shine started up successfully." )

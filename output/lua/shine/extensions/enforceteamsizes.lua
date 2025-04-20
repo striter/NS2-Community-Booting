@@ -12,8 +12,11 @@ Plugin.SkillLimitMode = table.AsEnum{
 	"NONE", "NOOB",
 }
 
+Plugin.EnabledGamemodes = Shine.kNS2EnabledGameMode
+
 Plugin.DefaultConfig = {
 	SlotCoveringBegin = 15,
+	FreeJoinCount = 12,
 	DynamicStartupSeconds = 45,
 	DynamicStartupHourContribution = 0.01,
 	DynamicStartupSkillContribution = 0.001,
@@ -67,6 +70,7 @@ Plugin.CheckConfigTypes = true
 do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "SlotCoveringBegin",  Validator.IsType( "number", Plugin.DefaultConfig.SlotCoveringBegin ))
+	Validator:AddFieldRule( "FreeJoinCount",  Validator.IsType( "number", Plugin.DefaultConfig.FreeJoinCount ))
 	Validator:AddFieldRule( "PlayTimeBypass",  Validator.IsType( "number", Plugin.DefaultConfig.PlayTimeBypass ))
 	Validator:AddFieldRule( "DynamicStartupSeconds",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupSeconds ))
 	Validator:AddFieldRule( "DynamicStartupHourContribution",  Validator.IsType( "number", Plugin.DefaultConfig.DynamicStartupHourContribution ))
@@ -558,6 +562,64 @@ function Plugin:PreShuffleOptimiseTeams ( TeamMembers )
 			pcall( Gamerules.JoinTeam, Gamerules, TeamMembers[i][j], kTeamReadyRoom, nil, true )				--Move player into the ready room
 			TeamMembers[i][j] = nil
 		end
+	end
+end
+
+if Server then
+
+	local baseGetCanJoinTeamNumber = NS2Gamerules.GetCanJoinTeamNumber
+	function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
+		if player.isVirtual then return true end		--Let bots in without any errors
+
+		-- Every check below is disabled with cheats enabled
+		if Shared.GetCheatsEnabled() then
+			return true
+		end
+
+		if not Plugin.EnabledGamemodes[Shine.GetGamemode()] then
+			return baseGetCanJoinTeamNumber(self,player,teamNumber)
+		end
+
+		local forceEvenTeams = Server.GetConfigSetting("force_even_teams_on_join")
+		if forceEvenTeams then
+
+			local team1Players, _, team1Bots = self.team1:GetNumPlayers()
+			local team2Players, _, team2Bots = self.team2:GetNumPlayers()
+
+			local team1Number = self.team1:GetTeamNumber()
+			local team2Number = self.team2:GetTeamNumber()
+
+			-- only subtract bots IF we want to even teams with bots
+			--local client = player:GetClient()
+			if not player.isVirtual then
+				team1Players = team1Players - team1Bots
+				team2Players = team2Players - team2Bots
+			end
+
+			Shared.Message(tostring(Plugin.Config.FreeJoinCount))
+			if team1Players + team2Players >= Plugin.Config.FreeJoinCount then
+				if (team1Players > team2Players) and (teamNumber == team1Number) then
+					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
+					return false
+				elseif (team2Players > team1Players) and (teamNumber == team2Number) then
+					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
+					return false
+				end
+			end
+		end
+
+		-- Remove bot restrictions
+		-- Scenario: Veteran tries to join a team at rookie only server
+		--if teamNumber ~= kSpectatorIndex then --allow to spectate
+		--	local isRookieOnly = Server.IsDedicated() and not self.botTraining and self.gameInfo:GetRookieMode()
+		--
+		--	if isRookieOnly and player:GetSkillTier() > kRookieMaxSkillTier then
+		--		Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(2), true)
+		--		return false
+		--	end
+		--end
+
+		return true
 	end
 end
 

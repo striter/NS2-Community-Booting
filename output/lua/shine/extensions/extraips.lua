@@ -16,11 +16,7 @@ Plugin.DefaultConfig =
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 
-Plugin.EnabledGamemodes = {
-	["ns2"] = true,
-    ["NS2.0"] = true,
-    ["Siege2.0"] = true,
-}
+Plugin.EnabledGamemodes = Shine.kNS2EnabledGameMode
 
 function Plugin:Initialise()
     self.spawnedInfantryPortal = 0

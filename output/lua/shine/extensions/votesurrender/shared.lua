@@ -3,10 +3,7 @@
 ]]
 
 local Plugin = Shine.Plugin( ... )
-Plugin.EnabledGamemodes = {
-	[ "ns2" ] = true,
-	[ "mvm" ] = true
-}
+Plugin.EnabledGamemodes = Shine.kNS2EnabledGameMode
 
 function Plugin:SetupDataTable()
 	self:AddDTVar( "integer", "ConcedeTime", kMinTimeBeforeConcede )

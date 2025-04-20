@@ -1,0 +1,9 @@
+shader = "shaders/Model_emissive_alpha.surface_shader"
+albedoMap = "materials/CNLocalize/Banner_NS2CNTournament.dds"
+specularMap = "materials/CNLocalize/Banner_NS2CNTournament.dds"
+opacityMap = "materials/CNLocalize/Banner_NS2CNTournament_Opacity.dds"
+emissiveMap = "materials/CNLocalize/Banner_NS2CNTournament.dds"
+normalMap = "materials/dev/dev_normal.dds"
+specularMap = "materials/dev/black.dds"
+
+surface = "thin_metal"

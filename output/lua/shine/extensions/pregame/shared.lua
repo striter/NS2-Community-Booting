@@ -6,10 +6,7 @@ local Plugin = Shine.Plugin( ... )
 Plugin.NotifyPrefixColour = {
 	100, 100, 255
 }
-Plugin.EnabledGamemodes = {
-	[ "ns2" ] = true,
-	[ "mvm" ] = true
-}
+Plugin.EnabledGamemodes = Shine.kPvPEnabledGameMode
 
 Plugin.ScreenTextID = 2
 

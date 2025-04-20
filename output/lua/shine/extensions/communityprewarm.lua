@@ -197,7 +197,7 @@ local function TrackClient(self, _client, _clientID)
         end
         
         --Shared.Message(gameMode .. " " .. tostring(activePlayed))
-        prewarmData.score = prewarmData.score + trackTimeMultiplier * trackTime
+        prewarmData.score = math.max(0, prewarmData.score + trackTimeMultiplier * trackTime)
     end
     
     prewarmData.time = prewarmData.time + trackTime

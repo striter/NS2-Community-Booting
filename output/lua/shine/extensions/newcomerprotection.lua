@@ -78,10 +78,7 @@ do
 	Plugin.ConfigValidator = Validator
 end
 
-Plugin.EnabledGamemodes = {
-	["ns2"] = true,
-	["NS2.0"] = true,
-}
+Plugin.EnabledGamemodes = Shine.kNS2EnabledGameMode
 
 local kCommanderHistoryFile = "config://shine/temp/CommanderHistory.json"
 function Plugin:Initialise()

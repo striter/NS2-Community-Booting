@@ -33,6 +33,9 @@ debug.appendtoenum(kVoiceId, 'Kobe')
 debug.appendtoenum(kVoiceId, 'Meow')
 debug.appendtoenum(kVoiceId, 'Hiss')
 debug.appendtoenum(kVoiceId, 'AUV')
+debug.appendtoenum(kVoiceId, 'ddj')
+debug.appendtoenum(kVoiceId, 'qsrx')
+debug.appendtoenum(kVoiceId, 'tlj')
 
 kAdditionalSoundData = {
     [kVoiceId.Disease] = { Sound = "sound/CNTaunts.fev/ma/Laugh", Description = "REQUEST_DISEASE", Interval = 2, AlertTechId = kTechId.None },
@@ -70,6 +73,9 @@ kAdditionalSoundData = {
     [kVoiceId.Meow] = { Sound = "sound/CNTaunts.fev/CUSTOM/meow", Description = "喵", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.Hiss] = { Sound = "sound/CNTaunts.fev/CUSTOM/hiss", Description = "哈气", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.AUV] = { Sound = "sound/CNTaunts.fev/CUSTOM/auv", Description = "地道", Interval = 2, AlertTechId = kTechId.None },
+    [kVoiceId.tlj] = { Sound = "sound/CNTaunts.fev/CUSTOM/tlj", Description = "《跳楼机》", Interval = 40, AlertTechId = kTechId.None },
+    [kVoiceId.qsrx] = { Sound = "sound/CNTaunts.fev/CUSTOM/qsrx", Description = "《牵私人戏》", Interval = 11, AlertTechId = kTechId.None },
+    [kVoiceId.ddj] = { Sound = "sound/CNTaunts.fev/CUSTOM/ddj", Description = "叮咚鸡", Interval = 1, AlertTechId = kTechId.None },
 }
 
 for _, data in pairs(kAdditionalSoundData) do
@@ -81,8 +87,8 @@ function GetAdditionalVoiceSoundData(voiceId)
 end
 
 local kSpectatorMenu = {
-    [LEFT_MENU] = { kVoiceId.Disease, kVoiceId.Kobe, kVoiceId.AatroxLaugh, kVoiceId.ScreamLong, kVoiceId.Pyro, kVoiceId.PyroLaugh },
-    [RIGHT_MENU] = { kVoiceId.AUV, kVoiceId.LockerRoom, kVoiceId.XuanStory, kVoiceId.OttoStory, kVoiceId.wsdy, kVoiceId.Hajmi }
+    [LEFT_MENU] = { kVoiceId.Disease, kVoiceId.ddj, kVoiceId.Kobe, kVoiceId.ScreamLong, kVoiceId.Pyro, kVoiceId.PyroLaugh },
+    [RIGHT_MENU] = { kVoiceId.AUV, kVoiceId.LockerRoom, kVoiceId.XuanStory, kVoiceId.qsrx, kVoiceId.tlj, kVoiceId.Hajmi }
 }
 
 function GetRequestMenuTeam(side, className, teamType)

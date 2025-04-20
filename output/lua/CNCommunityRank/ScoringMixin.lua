@@ -2,6 +2,7 @@ ScoringMixin.networkVars.rankDelta = "integer"
 ScoringMixin.networkVars.rankOffsetDelta = "integer"
 ScoringMixin.networkVars.rankCommDelta = "integer"
 ScoringMixin.networkVars.rankCommOffsetDelta = "integer"
+ScoringMixin.networkVars.prewarmTier = "integer (0 to 6)"
 
 local baseInitMixin = ScoringMixin.__initmixin
 function ScoringMixin:__initmixin()

@@ -3,26 +3,310 @@ Warning: QPainter::setPen: Painter not active
 Warning: QPainter::setBrush: Painter not active
 Warning: QPainter::setRenderHint: Painter must be active to set rendering hints
 Warning: QPainter::setPen: Painter not active
-Debug: "16:53:28 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event" 
-Debug: "16:53:32 ..\..\src\propertyeditor.cpp:1508 EM: Set Name" 
-Debug: "16:53:35 ..\..\src\simpleeventcontroller.cpp:1310 IR: Remove Sounds from Playlist" 
-Debug: "16:53:56 ..\..\src\simpleeventcontroller.cpp:1734 IS: Add Sound to Playlist" 
+Debug: "13:59:27 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event" 
+Debug: "13:59:35 ..\..\src\simpleeventcontroller.cpp:1310 IR: Remove Sounds from Playlist" 
+Debug: "13:59:37 ..\..\src\simpleeventcontroller.cpp:1734 IS: Add Sound to Playlist" 
+Debug: "13:59:46 ..\..\src\propertyeditor.cpp:1508 EM: Set Name" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:58 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "13:59:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:00:11 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event" 
+Debug: "14:00:13 ..\..\src\simpleeventcontroller.cpp:1734 IS: Add Sound to Playlist" 
+Debug: "14:00:14 ..\..\src\simpleeventcontroller.cpp:1310 IR: Remove Sounds from Playlist" 
+Debug: "14:00:16 ..\..\src\propertyeditor.cpp:1508 EM: Set Name" 
+Debug: "14:00:18 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event" 
+Debug: "14:00:20 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:2202 CH: Delete Events/Event Groups/Event Categories" 
+Debug: "14:00:21 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event" 
+Debug: "14:00:24 ..\..\src\propertyeditor.cpp:1508 EM: Set Name" 
+Debug: "14:00:26 ..\..\src\simpleeventcontroller.cpp:1734 IS: Add Sounds to Playlist" 
+Debug: "14:00:28 ..\..\src\simpleeventcontroller.cpp:1310 IR: Remove Sounds from Playlist" 
+Debug: "14:00:29 ..\..\src\simpleeventcontroller.cpp:960 ID: Set Playlist Behavior" 
+Debug: "14:00:32 ..\..\src\simpleeventcontroller.cpp:960 ID: Set Playlist Behavior" 
+Debug: "14:00:36 ..\..\src\simpleeventcontroller.cpp:348 IP: Reorder Sounds in Playlist" 
+Debug: "14:00:37 ..\..\src\simpleeventcontroller.cpp:348 IP: Reorder Sounds in Playlist" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
+Debug: "14:01:24 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Fade In" 
 Debug: 
 Building project 'CNTaunts'...
-Debug: Building project E:\Github\NS2-Request-Extension\CNTaunts\CNTaunts.fev...
-Debug: Unique sound defs 2/35
+Debug: Building project E:\Github\NS2-Community-Booting\CNTaunts\CNTaunts.fev...
+Debug: Unique sound defs 2/38
 Debug: Retrieving sound file info...
 Debug: Retrieving reverb info...
 Debug: FEV file written ok
 Debug: Unique Envelope Points: 0 of 0
-Debug: Unique Strings: 1613 characters of 1631
+Debug: Unique Strings: 1711 characters of 1729
 Debug: Caching sound file details for ''...
 Debug: ..\sounds\CZHL.mp3
-Debug: ..\sounds\DDD.mp3
-Debug: ..\sounds\Hitme.mp3
 Debug: ..\sounds\LIBERITY.mp3
-Debug: ..\sounds\SUMMER.mp3
-Debug: ..\sounds\Willings.mp3
 Debug: ..\sounds\aniki\ah.mp3
 Debug: ..\sounds\aniki\slap1.mp3
 Debug: ..\sounds\aniki\slap2.mp3
@@ -34,7 +318,13 @@ Debug: ..\sounds\aniki\speak4.mp3
 Debug: ..\sounds\aniki\speak5.mp3
 Debug: ..\sounds\aniki\speak6.mp3
 Debug: ..\sounds\aniki\wu.mp3
-Debug: ..\sounds\djdl.mp3
+Debug: ..\sounds\cat\Cat.hiss1.ogg
+Debug: ..\sounds\cat\Cat_hiss2.ogg
+Debug: ..\sounds\cat\Cat_hiss3.ogg
+Debug: ..\sounds\cat\Cat_idle1.ogg
+Debug: ..\sounds\cat\Cat_idle2.ogg
+Debug: ..\sounds\cat\Cat_idle3.ogg
+Debug: ..\sounds\cat\Cat_idle4.ogg
 Debug: ..\sounds\jester\sfx_herostory_jes2_cam_use.wav
 Debug: ..\sounds\jester\sfx_herostory_jes2_cres_use.wav
 Debug: ..\sounds\jester\sfx_herostory_jes2_dim_use.wav
@@ -89,7 +379,25 @@ Debug: sounds\aatrox\fx\675104782.ogg
 Debug: sounds\aatrox\laugh\1077982003.ogg
 Debug: sounds\aatrox\laugh\1849868127.ogg
 Debug: sounds\aatrox\laugh\250232896.ogg
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](1).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](2).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](3).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](4).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](5).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](6).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](8).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](9).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com].mp3
+Debug: sounds\ddj\ddj1.wav
+Debug: sounds\ddj\ddj2.wav
+Debug: sounds\ddj\ddj3.wav
+Debug: sounds\ddj\ddj4.wav
+Debug: sounds\ddj\qsrx.mp3
+Debug: sounds\ddj\tlj.mp3
 Debug: sounds\hajmi.mp3
+Debug: sounds\kobe\man8out.mp3
+Debug: sounds\kobe\mann.mp3
+Debug: sounds\kobe\whatcanisay.mp3
 Debug: sounds\pyro\36-101soundboards.mp3
 Debug: sounds\pyro\37-101soundboards.mp3
 Debug: sounds\pyro\38-101soundboards.mp3
@@ -131,138 +439,732 @@ Debug: sounds\scientist\z-101soundboards(3).mp3
 Debug: sounds\scientist\z-101soundboards(4).mp3
 Debug: sounds\scientist\z-101soundboards(5).mp3
 Debug: sounds\scientist\z-101soundboards.mp3
+Debug: sounds\wsdy.mp3
 Debug: Building 'CNTaunts_bank.fsb'
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\DDD.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\CZHL.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\Hitme.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\LIBERITY.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\SUMMER.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\Willings.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\ah.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak4.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak6.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak5.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\wu.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\djdl.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cam_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_dim_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cres_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_imp_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_mel_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\lockerRoom.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh0.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh5.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ALAF.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\AllIn.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\DDD0.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\HXB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\JB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\JCHZ.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ONDS.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ONDS2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_AXB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_B3L.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_BZL.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_CSND.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_YYSZ.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_ZWLP.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\YBMN.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Story.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Aha.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Rea.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Awesome.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Bilibili.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Dog.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Eat.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Laile.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Macdonald.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Mom2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Story.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\ohoo.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\ohoo1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\1298283680.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\132360961.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\1731344248.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\314047986.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\557528815.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\675104782.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\1849868127.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\1077982003.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\250232896.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\36-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\37-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\38-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\39-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\4-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\45-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\60-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\61-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\62-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\63-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\64-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\65-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\66-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\67-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\70-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\9-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\laugh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\pyro-in-pain-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\aaaaahhhh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\agh-wa-ha-wa-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\ahhhgg-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aa-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aaaargh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aaargh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ack-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\stop-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\stop-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\wow-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(3).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(4).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(5).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\hajmi.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\LIBERITY.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\CZHL.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\ah.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\slap1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\slap2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\slap3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak4.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak5.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak6.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat.hiss1.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\wu.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_hiss2.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_hiss3.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_idle1.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_idle2.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_idle4.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_idle3.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cam_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cres_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_imp_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_dim_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_mel_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\lockerRoom.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh0.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\ALAF.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh5.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\AllIn.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\DDD0.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\HXB.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\JB.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\JCHZ.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\ONDS.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\ONDS2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\OXG1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\OXG2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\OXG3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_AXB.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_B3L.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_BZL.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_CSND.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_YYSZ.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_ZWLP.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\YBMN.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Story.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Rea.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Aha.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Awesome.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Bilibili.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Dog.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Eat.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Laile.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Macdonald.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Story.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Mom2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\ohoo1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\ohoo.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\woof2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\woof1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\1298283680.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\woof3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\1731344248.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\132360961.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\314047986.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\557528815.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\675104782.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\laugh\1077982003.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\laugh\1849868127.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\laugh\250232896.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](2).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](4).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](3).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](6).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](5).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](9).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](8).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com].mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\ddj2.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\ddj1.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\ddj3.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\ddj4.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\qsrx.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\hajmi.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\kobe\man8out.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\kobe\mann.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\kobe\whatcanisay.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\36-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\37-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\38-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\39-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\4-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\45-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\60-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\61-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\62-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\63-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\64-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\65-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\66-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\67-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\70-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\9-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\laugh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\pyro-in-pain-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\aaaaahhhh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\agh-wa-ha-wa-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\ahhhgg-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\aa-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\aaaargh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\aaargh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\ack-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\agh-101soundboards(1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\agh-101soundboards(2).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\agh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\ah-101soundboards(1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\ah-101soundboards(2).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\ah-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\stop-101soundboards(1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\stop-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\wow-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(2).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(3).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(4).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(5).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\wsdy.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\tlj.mp3
 Debug: Writing FSB...
 Debug: Finished building FSB
 Debug: 
 Debug: 
 Summary of build:
-SUCCESS: E:/Github/NS2-Request-Extension/CNTaunts/CNTaunts.fev
+SUCCESS: E:/Github/NS2-Community-Booting/CNTaunts/CNTaunts.fev
 SUCCESS: CNTaunts_bank.fsb
-Debug: "16:58:41 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:2202 CH: Delete Events/Event Groups/Event Categories" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:56 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:57 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:57 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:57 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:57 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:57 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:57 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:57 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:57 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:14:59 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:00 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:04 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
+Debug: "14:15:05 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume" 
 Debug: 
 Building project 'CNTaunts'...
-Debug: Building project E:\Github\NS2-Request-Extension\CNTaunts\CNTaunts.fev...
-Debug: Unique sound defs 2/30
+Debug: Building project E:\Github\NS2-Community-Booting\CNTaunts\CNTaunts.fev...
+Debug: Unique sound defs 2/38
 Debug: Retrieving sound file info...
 Debug: Retrieving reverb info...
 Debug: FEV file written ok
 Debug: Unique Envelope Points: 0 of 0
-Debug: Unique Strings: 1361 characters of 1379
+Debug: Unique Strings: 1711 characters of 1729
 Debug: Caching sound file details for ''...
 Debug: ..\sounds\CZHL.mp3
 Debug: ..\sounds\LIBERITY.mp3
@@ -277,6 +1179,13 @@ Debug: ..\sounds\aniki\speak4.mp3
 Debug: ..\sounds\aniki\speak5.mp3
 Debug: ..\sounds\aniki\speak6.mp3
 Debug: ..\sounds\aniki\wu.mp3
+Debug: ..\sounds\cat\Cat.hiss1.ogg
+Debug: ..\sounds\cat\Cat_hiss2.ogg
+Debug: ..\sounds\cat\Cat_hiss3.ogg
+Debug: ..\sounds\cat\Cat_idle1.ogg
+Debug: ..\sounds\cat\Cat_idle2.ogg
+Debug: ..\sounds\cat\Cat_idle3.ogg
+Debug: ..\sounds\cat\Cat_idle4.ogg
 Debug: ..\sounds\jester\sfx_herostory_jes2_cam_use.wav
 Debug: ..\sounds\jester\sfx_herostory_jes2_cres_use.wav
 Debug: ..\sounds\jester\sfx_herostory_jes2_dim_use.wav
@@ -331,7 +1240,25 @@ Debug: sounds\aatrox\fx\675104782.ogg
 Debug: sounds\aatrox\laugh\1077982003.ogg
 Debug: sounds\aatrox\laugh\1849868127.ogg
 Debug: sounds\aatrox\laugh\250232896.ogg
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](1).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](2).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](3).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](4).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](5).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](6).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](8).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](9).mp3
+Debug: sounds\auv\syf6h-nf3j3-[AudioTrimmer.com].mp3
+Debug: sounds\ddj\ddj1.wav
+Debug: sounds\ddj\ddj2.wav
+Debug: sounds\ddj\ddj3.wav
+Debug: sounds\ddj\ddj4.wav
+Debug: sounds\ddj\qsrx.mp3
+Debug: sounds\ddj\tlj.mp3
 Debug: sounds\hajmi.mp3
+Debug: sounds\kobe\man8out.mp3
+Debug: sounds\kobe\mann.mp3
+Debug: sounds\kobe\whatcanisay.mp3
 Debug: sounds\pyro\36-101soundboards.mp3
 Debug: sounds\pyro\37-101soundboards.mp3
 Debug: sounds\pyro\38-101soundboards.mp3
@@ -373,356 +1300,147 @@ Debug: sounds\scientist\z-101soundboards(3).mp3
 Debug: sounds\scientist\z-101soundboards(4).mp3
 Debug: sounds\scientist\z-101soundboards(5).mp3
 Debug: sounds\scientist\z-101soundboards.mp3
+Debug: sounds\wsdy.mp3
 Debug: Building 'CNTaunts_bank.fsb'
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\CZHL.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\LIBERITY.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\ah.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak4.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak6.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak5.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\wu.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cam_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cres_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_dim_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_imp_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\lockerRoom.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_mel_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh0.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh5.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\AllIn.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ALAF.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\DDD0.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\HXB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\JB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\JCHZ.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ONDS2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ONDS.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_AXB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_BZL.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_B3L.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_CSND.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_ZWLP.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_YYSZ.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Story.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\YBMN.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Rea.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Aha.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Bilibili.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Awesome.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Dog.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Eat.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Laile.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Macdonald.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Mom2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Story.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\ohoo.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\ohoo1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\1298283680.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\132360961.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\1731344248.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\314047986.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\675104782.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\557528815.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\1849868127.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\1077982003.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\250232896.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\hajmi.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\36-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\38-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\37-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\39-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\45-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\4-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\60-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\61-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\62-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\63-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\64-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\66-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\67-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\65-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\70-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\9-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\laugh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\pyro-in-pain-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\aaaaahhhh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\agh-wa-ha-wa-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\ahhhgg-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aa-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aaaargh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aaargh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ack-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\stop-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\stop-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\wow-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(3).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(4).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(5).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\CZHL.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\ah.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\LIBERITY.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\slap2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\slap1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\slap3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak5.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak4.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\wu.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\aniki\speak6.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat.hiss1.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_hiss3.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_hiss2.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_idle2.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_idle1.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_idle3.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cam_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\cat\Cat_idle4.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cres_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_dim_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_imp_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\jester\sfx_herostory_jes2_mel_use.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\lockerRoom.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh0.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\ALAF.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\ma\laugh5.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\AllIn.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\DDD0.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\HXB.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\JCHZ.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\JB.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\ONDS.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\ONDS2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\OXG2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\OXG1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\OXG3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_AXB.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_B3L.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_BZL.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_CSND.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_YYSZ.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Speak_ZWLP.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\Story.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Aha.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\otto\YBMN.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Rea.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Awesome.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Bilibili.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Dog.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Eat.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Laile.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Macdonald.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Speak_Mom2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\Story.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\ohoo.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\ohoo1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\woof2.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\woof1.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\1298283680.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\..\sounds\xuan\woof3.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\132360961.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\1731344248.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\557528815.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\314047986.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\fx\675104782.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\laugh\1077982003.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\laugh\1849868127.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\aatrox\laugh\250232896.ogg
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](2).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](3).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](4).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](5).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](8).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](6).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com](9).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\auv\syf6h-nf3j3-[AudioTrimmer.com].mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\ddj1.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\ddj2.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\ddj3.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\ddj4.wav
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\qsrx.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\ddj\tlj.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\hajmi.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\kobe\man8out.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\kobe\whatcanisay.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\kobe\mann.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\36-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\37-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\38-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\39-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\4-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\45-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\60-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\61-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\62-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\63-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\64-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\65-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\66-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\67-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\70-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\9-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\pyro-in-pain-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\pyro\laugh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\aaaaahhhh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\agh-wa-ha-wa-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\ahhhgg-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\aaaargh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\aa-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\aaargh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\ack-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\agh-101soundboards(2).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\agh-101soundboards(1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\agh-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\ah-101soundboards(1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\ah-101soundboards(2).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\ah-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\stop-101soundboards(1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\wow-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\scream\stop-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(1).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(2).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(3).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(4).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards(5).mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\scientist\z-101soundboards.mp3
+Debug: Encoded E:\Github\NS2-Community-Booting\CNTaunts\sounds\wsdy.mp3
 Debug: Writing FSB...
 Debug: Finished building FSB
 Debug: 
 Debug: 
 Summary of build:
-SUCCESS: E:/Github/NS2-Request-Extension/CNTaunts/CNTaunts.fev
-SUCCESS: CNTaunts_bank.fsb
-Debug: 
-Building project 'CNTaunts'...
-Debug: Building project E:\Github\NS2-Request-Extension\CNTaunts\CNTaunts.fev...
-Debug: Unique sound defs 2/30
-Debug: Retrieving sound file info...
-Debug: Retrieving reverb info...
-Debug: FEV file written ok
-Debug: Unique Envelope Points: 0 of 0
-Debug: Unique Strings: 1361 characters of 1379
-Debug: Caching sound file details for ''...
-Debug: ..\sounds\CZHL.mp3
-Debug: ..\sounds\LIBERITY.mp3
-Debug: ..\sounds\aniki\ah.mp3
-Debug: ..\sounds\aniki\slap1.mp3
-Debug: ..\sounds\aniki\slap2.mp3
-Debug: ..\sounds\aniki\slap3.mp3
-Debug: ..\sounds\aniki\speak1.mp3
-Debug: ..\sounds\aniki\speak2.mp3
-Debug: ..\sounds\aniki\speak3.mp3
-Debug: ..\sounds\aniki\speak4.mp3
-Debug: ..\sounds\aniki\speak5.mp3
-Debug: ..\sounds\aniki\speak6.mp3
-Debug: ..\sounds\aniki\wu.mp3
-Debug: ..\sounds\jester\sfx_herostory_jes2_cam_use.wav
-Debug: ..\sounds\jester\sfx_herostory_jes2_cres_use.wav
-Debug: ..\sounds\jester\sfx_herostory_jes2_dim_use.wav
-Debug: ..\sounds\jester\sfx_herostory_jes2_imp_use.wav
-Debug: ..\sounds\jester\sfx_herostory_jes2_mel_use.wav
-Debug: ..\sounds\lockerRoom.mp3
-Debug: ..\sounds\ma\laugh0.mp3
-Debug: ..\sounds\ma\laugh1.mp3
-Debug: ..\sounds\ma\laugh2.mp3
-Debug: ..\sounds\ma\laugh3.mp3
-Debug: ..\sounds\ma\laugh5.mp3
-Debug: ..\sounds\otto\ALAF.mp3
-Debug: ..\sounds\otto\AllIn.mp3
-Debug: ..\sounds\otto\DDD0.mp3
-Debug: ..\sounds\otto\HXB.mp3
-Debug: ..\sounds\otto\JB.mp3
-Debug: ..\sounds\otto\JCHZ.mp3
-Debug: ..\sounds\otto\ONDS.mp3
-Debug: ..\sounds\otto\ONDS2.mp3
-Debug: ..\sounds\otto\OXG1.mp3
-Debug: ..\sounds\otto\OXG2.mp3
-Debug: ..\sounds\otto\OXG3.mp3
-Debug: ..\sounds\otto\Speak_AXB.mp3
-Debug: ..\sounds\otto\Speak_B3L.mp3
-Debug: ..\sounds\otto\Speak_BZL.mp3
-Debug: ..\sounds\otto\Speak_CSND.mp3
-Debug: ..\sounds\otto\Speak_YYSZ.mp3
-Debug: ..\sounds\otto\Speak_ZWLP.mp3
-Debug: ..\sounds\otto\Story.mp3
-Debug: ..\sounds\otto\YBMN.mp3
-Debug: ..\sounds\xuan\Aha.mp3
-Debug: ..\sounds\xuan\Rea.mp3
-Debug: ..\sounds\xuan\Speak_Awesome.mp3
-Debug: ..\sounds\xuan\Speak_Bilibili.mp3
-Debug: ..\sounds\xuan\Speak_Dog.mp3
-Debug: ..\sounds\xuan\Speak_Eat.mp3
-Debug: ..\sounds\xuan\Speak_Laile.mp3
-Debug: ..\sounds\xuan\Speak_Macdonald.mp3
-Debug: ..\sounds\xuan\Speak_Mom2.mp3
-Debug: ..\sounds\xuan\Story.mp3
-Debug: ..\sounds\xuan\ohoo.mp3
-Debug: ..\sounds\xuan\ohoo1.mp3
-Debug: ..\sounds\xuan\woof1.mp3
-Debug: ..\sounds\xuan\woof2.mp3
-Debug: ..\sounds\xuan\woof3.mp3
-Debug: sounds\aatrox\fx\1298283680.ogg
-Debug: sounds\aatrox\fx\132360961.ogg
-Debug: sounds\aatrox\fx\1731344248.ogg
-Debug: sounds\aatrox\fx\314047986.ogg
-Debug: sounds\aatrox\fx\557528815.ogg
-Debug: sounds\aatrox\fx\675104782.ogg
-Debug: sounds\aatrox\laugh\1077982003.ogg
-Debug: sounds\aatrox\laugh\1849868127.ogg
-Debug: sounds\aatrox\laugh\250232896.ogg
-Debug: sounds\hajmi.mp3
-Debug: sounds\pyro\36-101soundboards.mp3
-Debug: sounds\pyro\37-101soundboards.mp3
-Debug: sounds\pyro\38-101soundboards.mp3
-Debug: sounds\pyro\39-101soundboards.mp3
-Debug: sounds\pyro\4-101soundboards.mp3
-Debug: sounds\pyro\45-101soundboards.mp3
-Debug: sounds\pyro\60-101soundboards.mp3
-Debug: sounds\pyro\61-101soundboards.mp3
-Debug: sounds\pyro\62-101soundboards.mp3
-Debug: sounds\pyro\63-101soundboards.mp3
-Debug: sounds\pyro\64-101soundboards.mp3
-Debug: sounds\pyro\65-101soundboards.mp3
-Debug: sounds\pyro\66-101soundboards.mp3
-Debug: sounds\pyro\67-101soundboards.mp3
-Debug: sounds\pyro\70-101soundboards.mp3
-Debug: sounds\pyro\9-101soundboards.mp3
-Debug: sounds\pyro\laugh-101soundboards.mp3
-Debug: sounds\pyro\pyro-in-pain-101soundboards.mp3
-Debug: sounds\scientist\aaaaahhhh-101soundboards.mp3
-Debug: sounds\scientist\agh-wa-ha-wa-101soundboards.mp3
-Debug: sounds\scientist\ahhhgg-101soundboards.mp3
-Debug: sounds\scientist\scream-101soundboards.mp3
-Debug: sounds\scientist\scream\aa-101soundboards.mp3
-Debug: sounds\scientist\scream\aaaargh-101soundboards.mp3
-Debug: sounds\scientist\scream\aaargh-101soundboards.mp3
-Debug: sounds\scientist\scream\ack-101soundboards.mp3
-Debug: sounds\scientist\scream\agh-101soundboards(1).mp3
-Debug: sounds\scientist\scream\agh-101soundboards(2).mp3
-Debug: sounds\scientist\scream\agh-101soundboards.mp3
-Debug: sounds\scientist\scream\ah-101soundboards(1).mp3
-Debug: sounds\scientist\scream\ah-101soundboards(2).mp3
-Debug: sounds\scientist\scream\ah-101soundboards.mp3
-Debug: sounds\scientist\scream\stop-101soundboards(1).mp3
-Debug: sounds\scientist\scream\stop-101soundboards.mp3
-Debug: sounds\scientist\scream\wow-101soundboards.mp3
-Debug: sounds\scientist\z-101soundboards(1).mp3
-Debug: sounds\scientist\z-101soundboards(2).mp3
-Debug: sounds\scientist\z-101soundboards(3).mp3
-Debug: sounds\scientist\z-101soundboards(4).mp3
-Debug: sounds\scientist\z-101soundboards(5).mp3
-Debug: sounds\scientist\z-101soundboards.mp3
-Debug: Building 'CNTaunts_bank.fsb'
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\LIBERITY.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\CZHL.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\ah.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\slap2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak5.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak4.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\speak6.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\aniki\wu.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cam_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_cres_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_dim_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_imp_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\lockerRoom.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\jester\sfx_herostory_jes2_mel_use.wav
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh0.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\ma\laugh5.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ALAF.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\AllIn.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\DDD0.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\HXB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\JB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\JCHZ.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ONDS.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\ONDS2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\OXG3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_AXB.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_B3L.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_BZL.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_CSND.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_ZWLP.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Speak_YYSZ.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\Story.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\otto\YBMN.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Aha.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Rea.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Awesome.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Bilibili.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Dog.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Eat.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Laile.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Macdonald.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Story.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\Speak_Mom2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\ohoo1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\ohoo.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof2.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof1.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\..\sounds\xuan\woof3.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\1298283680.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\132360961.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\1731344248.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\557528815.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\314047986.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\fx\675104782.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\1077982003.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\1849868127.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\hajmi.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\aatrox\laugh\250232896.ogg
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\36-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\37-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\39-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\38-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\4-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\60-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\45-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\61-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\62-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\63-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\65-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\64-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\67-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\66-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\70-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\9-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\laugh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\pyro\pyro-in-pain-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\agh-wa-ha-wa-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\aaaaahhhh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\ahhhgg-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aa-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aaaargh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\aaargh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ack-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\agh-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\ah-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\stop-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\stop-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\scream\wow-101soundboards.mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(1).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(2).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(3).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(4).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards(5).mp3
-Debug: Encoded E:\Github\NS2-Request-Extension\CNTaunts\sounds\scientist\z-101soundboards.mp3
-Debug: Writing FSB...
-Debug: Finished building FSB
-Debug: 
-Debug: 
-Summary of build:
-SUCCESS: E:/Github/NS2-Request-Extension/CNTaunts/CNTaunts.fev
+SUCCESS: E:/Github/NS2-Community-Booting/CNTaunts/CNTaunts.fev
 SUCCESS: CNTaunts_bank.fsb

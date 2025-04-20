@@ -14,5 +14,6 @@ if AddHintModPanel then
 
     --Shared.Message("[CNCE] Banner Welcome:" .. tostring(titleRandom))
     AddHintModPanel(PrecacheAsset(string.format("materials/CNLocalize/Banner_Welcome1.material")), "https://docs.qq.com/doc/DUFlBR0ZJeFRiRnRi","社区指南(不读让NS2CN玩家后悔终生)")
-    AddHintModPanel(PrecacheAsset(string.format("materials/CNLocalize/Banner_Court.material")), "https://docs.qq.com/doc/DUFZ1aWJacU5iV3h0","NS2CN社区异闻录,仅供娱乐,请勿当真.")
+    AddHintModPanel(PrecacheAsset(string.format("materials/CNLocalize/Banner_Court.material")), "https://docs.qq.com/doc/DUFZ1aWJacU5iV3h0","NS2CN社区异闻录.")
+    AddHintModPanel(PrecacheAsset(string.format("materials/CNLocalize/Banner_NS2CNTournament.material")), "https://docs.qq.com/doc/DSWR6ZnFqRnpoTkVa","原来还有不是6v6的比赛?")
 end

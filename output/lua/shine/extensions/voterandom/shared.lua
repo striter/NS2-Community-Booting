@@ -8,10 +8,7 @@ local Plugin = Shine.Plugin( ... )
 Plugin.NotifyPrefixColour = {
 	100, 255, 100
 }
-Plugin.EnabledGamemodes = {
-	[ "ns2" ] = true,
-	[ "mvm" ] = true
-}
+Plugin.EnabledGamemodes = Shine.kNS2EnabledGameMode
 
 do
 	local Values = {

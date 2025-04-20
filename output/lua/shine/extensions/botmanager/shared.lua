@@ -9,14 +9,7 @@ function Plugin:SetupDataTable()
 	self:AddDTVar( "boolean", "LoginCommanderBotAtLogout", false )
 end
 
-Plugin.EnabledGamemodes = {
-	[ "ns2" ] = true,
-	[ "NS2.0" ] = true,
-	[ 'Siege2.0' ] = true,
-	[ 'GunGame' ] = true,
-	[ 'combat' ] = true,
-}
-
+Plugin.EnabledGamemodes = Shine.kPvPEnabledGameMode
 
 function Plugin:Initialise()
 	self.Enabled = true
@@ -24,61 +17,6 @@ function Plugin:Initialise()
 end
 
 if Server then
-
-	local baseGetCanJoinTeamNumber = NS2Gamerules.GetCanJoinTeamNumber
-	function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
-		if player.isVirtual then return true end		--Let bots in without any errors
-		
-		if not Plugin.EnabledGamemodes[Shine.GetGamemode()] then
-			return baseGetCanJoinTeamNumber(self,player,teamNumber)
-		end
-
-		-- Every check below is disabled with cheats enabled
-		if Shared.GetCheatsEnabled() then
-			return true
-		end
-		
-		local forceEvenTeams = Server.GetConfigSetting("force_even_teams_on_join")
-		if forceEvenTeams then
-			
-			local team1Players, _, team1Bots = self.team1:GetNumPlayers()
-			local team2Players, _, team2Bots = self.team2:GetNumPlayers()
-			
-			local team1Number = self.team1:GetTeamNumber()
-			local team2Number = self.team2:GetTeamNumber()
-			
-			-- only subtract bots IF we want to even teams with bots
-			--local client = player:GetClient()
-			if not player.isVirtual then
-				team1Players = team1Players - team1Bots
-				team2Players = team2Players - team2Bots
-			end
-			
-			if team1Players + team2Players >= 12 then
-				if (team1Players > team2Players) and (teamNumber == team1Number) then
-					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
-					return false
-				elseif (team2Players > team1Players) and (teamNumber == team2Number) then
-					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
-					return false
-				end
-			end
-		end
-	
-		-- Remove bot restrictions
-		-- Scenario: Veteran tries to join a team at rookie only server
-		--if teamNumber ~= kSpectatorIndex then --allow to spectate
-		--	local isRookieOnly = Server.IsDedicated() and not self.botTraining and self.gameInfo:GetRookieMode()
-		--
-		--	if isRookieOnly and player:GetSkillTier() > kRookieMaxSkillTier then
-		--		Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(2), true)
-		--		return false
-		--	end
-		--end
-		
-		return true
-	end
-
 	local baseUpdateBots = BotTeamController.UpdateBots
 	function BotTeamController:UpdateBots()
 		if Plugin.EvenWithBots then
