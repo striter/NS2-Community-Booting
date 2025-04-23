@@ -61,7 +61,7 @@ function GUIDeathScreen2:UpdateContentsFromKillerInfo()
     self.callingCard:SetVisible(true)
 
     local killerSign = killerInfo.Sign
-    local killerSignVisible = killerSign and killerSign ~= ""
+    local killerSignVisible = killerSign and killerSign ~= "" or false
     if killerSignVisible then
         self.killerSign:SetText(killerSign)
     end

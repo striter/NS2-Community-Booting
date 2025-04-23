@@ -412,16 +412,20 @@ function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam )
     PrewarmValidate(self)
 end
 
+
 function Plugin:OnEndGame(_winningTeam)
     --Validate(self)
     
     if not self.PrewarmData.Validated then return end
     
     local lastRoundData = CHUDGetLastRoundStats();
-    if not Shine.IsActiveRound(lastRoundData) then return end
-    
-    self:DispatchEndGameCredit(lastRoundData)
-    self:DispatchLateGameAward(lastRoundData)
+    if Shine.IsActiveRound(lastRoundData) then
+        self:DispatchEndGameCredit(lastRoundData)
+    end
+
+    if self:IsActiveLateGameRound(lastRoundData) then
+        self:DispatchLateGameAward(lastRoundData)
+    end
 end
 
 function Plugin:DispatchEndGameCredit(lastRoundData)
@@ -447,14 +451,24 @@ function Plugin:DispatchEndGameCredit(lastRoundData)
     end
 end
 
-function Plugin:DispatchLateGameAward(lastRoundData)
+function Plugin:IsActiveLateGameRound(_lastRoundData)
+    if not _lastRoundData.RoundInfo then return false end
+    local playerCount = table.Count(_lastRoundData.PlayerStats)
+    local minimumLength = 300 + math.max(12 - playerCount,0) * 60
+    if _lastRoundData.RoundInfo.roundLength < minimumLength then
+        return false
+    end
+    return true
+end
+
+function Plugin:DispatchLateGameAward(_lastRoundData)
 
     if kCurrentHour < self.Config.LateGameAward.Hour then return end
-    local playerCount = table.Count(lastRoundData.PlayerStats)
+    local playerCount = table.Count(_lastRoundData.PlayerStats)
     if playerCount >= self.Config.LateGameAward.MaxPlayers then return end
 
     local lateGameClients = {}
-    for steamId , playerStat in pairs(lastRoundData.PlayerStats) do
+    for steamId , playerStat in pairs(_lastRoundData.PlayerStats) do
         local playTime = (playerStat[kTeam1Index].timePlayed + playerStat[kTeam2Index].timePlayed) 
         table.insert(lateGameClients, { steamId = steamId, playTime = playTime})
     end

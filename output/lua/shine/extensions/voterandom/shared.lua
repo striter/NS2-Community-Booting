@@ -10,6 +10,7 @@ Plugin.NotifyPrefixColour = {
 }
 Plugin.EnabledGamemodes = Shine.kNS2EnabledGameMode
 
+
 do
 	local Values = {
 		"ALLOW_ALL", "REQUIRE_INVITE", "BLOCK"
