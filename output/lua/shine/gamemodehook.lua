@@ -21,7 +21,7 @@ Shine.kSeedingGameMode = {"Defense2.0","Combat"}
 Shine.kNS2EnabledGameMode ={
 	[ "ns2" ] = true,
 	[ "NS2.0" ] = true,
-	[ "Siege.0" ] = true,
+	[ "Siege2.0" ] = true,
 }
 Shine.kPvPEnabledGameMode = {
 	[ "ns2" ] = true,

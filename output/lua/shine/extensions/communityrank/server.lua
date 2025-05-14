@@ -1017,7 +1017,7 @@ function Plugin:CreateMessageCommands()
         self:ValidatePlayerRecord(_client,_client)
     end
 
-    self:BindCommand( "sh_history_check", "history_check", CheckPlayerHistory)
+    self:BindCommand( "sh_history_check", "history_check", CheckPlayerHistory,true)
         :AddParam{ Type = "steamid" }
         :Help( "查询玩家的社区历史记录." )
     

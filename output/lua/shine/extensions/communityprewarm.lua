@@ -656,8 +656,8 @@ function Plugin:CreateMessageCommands()
         local targetData = GetPlayerData(self, _target:GetUserId())
         local targetTier = targetData.tier or 0
         if targetTier <= 0 then
-            if targetData.credit > 4  then
-                Shine:NotifyError(_client,"对方已有足够的信誉点.")
+            if targetData.credit > 5 then
+                Shine:NotifyError(_client,"对方已有足够的预热点.")
                 return
             end
         end

@@ -29,6 +29,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ClearMorning"), name = "Clear Morning" },
     },
     [EBoomBoxTrack.OST]  = {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/Aegis"), name = "Aegis" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/TheFinals"), name = "The Finals (Season 1)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/ATrueCompetitor"), name = "A True Competitor" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/EveryDayIsNight"), name = "Every Day Is Night" },

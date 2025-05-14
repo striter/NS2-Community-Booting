@@ -72,9 +72,21 @@ kLocales["KDS2"]="NS2 独行者"
 
 kLocales["DDOS202503"]="于2025年3月攻击来临时\n依旧选择积极预热的玩家\n一生二 二生三 三生万物"
 -- League Badges 2025
-kLocales["M2025Recorder"] = "NS2CN - 2025社区赛 - 摄影师"
+kLocales["NSL2023G"] = "2023年NS社区赛 - 团队指挥"
+kLocales["NSL2023S"] = "2023年NS社区赛 - 主力队员"
+kLocales["NSL2023B"] = "2023年NS社区赛 - 最佳后勤"
 
-kLocales["M2025S1Referee"] = "NS2CN - 2025社区赛\n第一赛季 - 主持人"
-kLocales["M2025S1Champion"] = "NS2CN - 2025社区赛\n第一赛季 - 冠军队" 
-kLocales["M2025S1RunnerUp"] = "NS2CN - 2025社区赛\n第一赛季 - 亚军队"
-kLocales["M2025S1Participator"] = "NS2CN - 2025社区赛\n第一赛季 - 参赛者"
+kLocales["M2025Recorder"] = "NS2CN2025社区赛 摄影师"
+kLocales["M2025Participator"] = "NS2CN 2025社区赛 参赛者"
+
+kLocales["M2025S1Referee"] = "NS2CN 2025年社区赛\n第一赛季 <练枪杯> 主持人"
+kLocales["M2025S1Champion"] = "NS2CN 2025年社区赛\n第一赛季 <练枪杯> 冠军队" 
+kLocales["M2025S1RunnerUp"] = "NS2CN 2025年社区赛\n第一赛季 <练枪杯> 亚军队"
+
+kLocales["M2025S15Referee"] = "NS2CN 2025年社区赛\n第一赛季 <豆豆杯> 主持人"
+kLocales["M2025S15Champion"] = "NS2CN 2025年社区赛\n第一赛季 <豆豆杯> 冠军队"
+kLocales["M2025S15RunnerUp"] = "NS2CN 2025年社区赛\n第一赛季 <豆豆杯> 亚军队"
+
+kLocales["M2025S2Referee"] = "NS2CN 2025年社区赛\n第二赛季 <狗跳杯> 主持人"
+kLocales["M2025S2Champion"] = "NS2CN 2025年社区赛\n第二赛季 <狗跳杯> 冠军队"
+kLocales["M2025S2RunnerUp"] = "NS2CN 2025年社区赛\n第二赛季 <狗跳杯> 亚军队"
