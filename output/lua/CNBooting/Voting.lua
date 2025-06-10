@@ -63,7 +63,7 @@ if Server then
     end
 
     activeVoteResults = nil
-    local activeVoteName, activeVoteData, activeVoteStartedAtTime
+    local activeVoteName,activeVoteData, activeVoteStartedAtTime
     local activeVoteId = 0
     local lastVoteStartAtTime
     local lastTimeVoteResultsSent = 0
@@ -660,8 +660,7 @@ if Server then
         if msg.onlyAccepted then
             local acceptClients = {}
             local message = {ip = msg.ip}
-            
-            for i = 1, #activeVoteResults.voters do
+            for i = 1, math.min(#activeVoteResults.voters,msg.voteRequired) do
                 local voterId = activeVoteResults.voters[i]
                 local client = Shine.GetClientByNS2ID(voterId)
                 if activeVoteResults.votes[voterId] and client then

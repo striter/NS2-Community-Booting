@@ -242,13 +242,14 @@ local function Reset(self)
     self.PrewarmData.Validated = false
 end
 
-local function PrewarmValidateEnable(self)
+local function PrewarmdScoreEnable(self)
     if kCurrentHour < self.Config.Restriction.Hour then return false end
     return true
 end
 
 local function PrewarmValidate(self)
-    if not PrewarmValidateEnable(self) then return end
+    if not PrewarmdScoreEnable(self) then return end
+    if not table.contains(Shine.kRankGameMode,GetGamemode()) then return end
     if Shine.GetPlayingPlayersCount() < self.Config.Restriction.Player then return end
     
     if self.PrewarmData.Validated then return end
@@ -375,7 +376,7 @@ end
 
 function Plugin:SetGameState( Gamerules, State, OldState )
     if State == kGameState.Countdown then
-        if PrewarmValidateEnable(self) and not self.PrewarmData.Validated then
+        if PrewarmdScoreEnable(self) and not self.PrewarmData.Validated then
             local prewarmClients = {}
             for clientID,prewarmData in pairs(self.MemberInfos) do
                 table.insert(prewarmClients, { clientID = clientID, data = prewarmData})
@@ -453,7 +454,7 @@ end
 
 function Plugin:IsActiveLateGameRound(_lastRoundData)
     if not _lastRoundData.RoundInfo then return false end
-    local playerCount = table.Count(_lastRoundData.PlayerStats)
+    local playerCount = table.countkeys(_lastRoundData.PlayerStats)
     local minimumLength = 300 + math.max(12 - playerCount,0) * 60
     if _lastRoundData.RoundInfo.roundLength < minimumLength then
         return false
@@ -556,7 +557,7 @@ function Plugin:ClientConfirmConnect( _client )
     local player = _client:GetControllingPlayer()
     data.name = player:GetName()
 
-    if PrewarmValidateEnable(self) then
+    if PrewarmdScoreEnable(self) then
         if self.PrewarmData.Validated then
             NotifyClient(self,_client,_client:GetUserId())
             self:QueryLateGameAward(_client)
