@@ -5,13 +5,13 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_SWITCH_SERVER_QUERY_ALL"] = "将所有人送去 <%s>?"
     kTranslateMessage["VOTE_SWITCH_SERVER_INVALID"] = "主动投票换服已被禁用,请联系管理发起换服."
     
-    kTranslateMessage["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] 上车! "
-    kTranslateMessage["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] 原地打坐."
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] 人齐发车/上车! "
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] 原地打坐/改票."
 
-    kTranslateMessage["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_YES"] = "[%{key}s] 上车!."
-    kTranslateMessage["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"] = "  未成功发车,乘客获得[%s]预热点."
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_YES"] = "[%s] 上车/[%s]预热点!."
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"] = "[%s] 下车改票."
     kTranslateMessage["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_REQUIREMENT"] = "需%s名乘客"
-    
+    kTranslateMessage["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_TIPS"] = "蹭车导致错发车者将受到惩罚.\n请及时调整发车意愿!."
 
     kTranslateMessage["VOTE_MUTE_PLAYER"] = "玩家处理 - [禁言]"
     kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言一局?"
@@ -75,9 +75,10 @@ if kLocales then
 
     kLocales["VOTE_AFFECT_ACCEPTED_YES"] = "[%{key}s] Lets go!"
     kLocales["VOTE_AFFECT_ACCEPTED_NO"] = "[%{key}s] I'd like to stay for more times."
-    kLocales["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_YES"] = "[%{key}s] Lets Go!."
-    kLocales["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"] = "[%s] Prewarm Credit for each active participators."
+    kLocales["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_YES"] = "[%s] Lets Go/[%s]Prewarm Credit!."
+    kLocales["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"] = "[%s] I've Change Mind."
     kLocales["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_REQUIREMENT"] = "(%s Acceptor Required)"
+    kLocales["VOTE_AFFECT_ACCEPTED_FAIL_REWARD_TIPS"] = "Penalty for those rejoin too soon.\nChange your vote before its too late."
     
     kLocales["VOTE_MUTE_PLAYER"] = "Vote Mute player"
     kLocales["VOTE_MUTE_PLAYER_QUERY"] = "Mute <%s> for 10min?"

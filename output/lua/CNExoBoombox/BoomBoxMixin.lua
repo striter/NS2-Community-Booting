@@ -64,9 +64,7 @@ local kTrackAssets = {
     [EBoomBoxTrack.SONG] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/Slumlord"), name = "Slumlord" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/LastCall"), name = "Last Call" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/AllThisTime"), name = "All This Time" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/Metamodernity"), name = "Metamodernity" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/RunAway"), name = "RunAway" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/NoGood"), name = "No Good" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/WhenYouGonnaLearn"), name = "When You Gonna Learn?" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/SONG/ShipMyBodyBackToTexas"), name = "Ship My Body Back To Texas" },

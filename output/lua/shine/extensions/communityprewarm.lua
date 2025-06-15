@@ -70,6 +70,7 @@ do
 end
 
 local kPrewarmColor = { 235, 152, 78 }
+local kErrorColor = { 236, 112, 99 }
 
 local kPrewarmFile = "config://shine/temp/prewarm.json"
 local kPrewarmAward = "config://shine/temp/prewarmLastDay.json"
@@ -623,10 +624,11 @@ function Plugin:CreateMessageCommands()
         local targetId = target:GetUserId()
         local targetData = GetPlayerData(self,targetId)
         targetData.credit = targetData.credit + _credit
-        Shine:NotifyDualColour(target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+        local colorTable = _credit > 0 and kPrewarmColor or kErrorColor
+        Shine:NotifyDualColour(target, colorTable[1], colorTable[2], colorTable[3],self.kPrefix,255, 255, 255,
                 string.format("因<%s>获得[%s]预热点,现有[%s]预热点.",_reason,_credit,targetData.credit) )
         if _client then
-            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+            Shine:NotifyDualColour( _client, colorTable[1], colorTable[2], colorTable[3],self.kPrefix,255, 255, 255,
                     string.format("<%s>获得[%s]预热点,现有[%s]预热点.", target:GetControllingPlayer():GetName(),_credit,targetData.credit) )
         end
     end)

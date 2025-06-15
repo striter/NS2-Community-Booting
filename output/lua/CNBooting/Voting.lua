@@ -660,16 +660,22 @@ if Server then
         if msg.onlyAccepted then
             local acceptClients = {}
             local message = {ip = msg.ip}
-            for i = 1, math.min(#activeVoteResults.voters,msg.voteRequired) do
+            local count = math.min(#activeVoteResults.voters,msg.voteRequired)
+            for i = 1, count do
                 local voterId = activeVoteResults.voters[i]
                 local client = Shine.GetClientByNS2ID(voterId)
                 if activeVoteResults.votes[voterId] and client then
                     table.insert(acceptClients,client)
                 end
             end
-            
-            for _,client in pairs(acceptClients) do
-                Server.SendNetworkMessage(client,"Redirect",message, true)
+
+            local ssvEnabled, ssv = Shine:IsExtensionEnabled( "serverswitchvote" )
+            if ssvEnabled then
+                ssv:RedirClientsWithPenalty(msg.ip,acceptClients,count)
+            else
+                for _,client in pairs(acceptClients) do
+                    Server.SendNetworkMessage(client,"Redirect",message, true)
+                end
             end
         else
             Server.SendNetworkMessage("Redirect",{ ip = msg.ip }, true)

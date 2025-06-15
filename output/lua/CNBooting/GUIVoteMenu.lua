@@ -4,6 +4,38 @@ local function Vote(self,prefer)
     SendVoteChoice(prefer)
 end
 
+
+local function UpdateSizeOfUI(self, screenWidth, screenHeight)
+    local titleFontName = Fonts.kAgencyFB_Small
+    self.tipsText:SetFontName(titleFontName)
+    self.tipsText:SetScale(GetScaledVector())
+    self.tipsText:SetPosition(GUIScale(Vector(4, 14, 0)))
+end
+
+local kNoTextColor = Color(0.6, 0, 0, 1)
+local baseOnInitialize = GUIVoteMenu.Initialize
+function GUIVoteMenu:Initialize()
+    baseOnInitialize(self)
+
+    self.tipsText = GUIManager:CreateTextItem()
+    self.tipsText:SetColor(kNoTextColor)
+    self.tipsText:SetAnchor(GUIItem.Left, GUIItem.Center)
+    self.tipsText:SetTextAlignmentX(GUIItem.Align_Min)
+    self.tipsText:SetTextAlignmentY(GUIItem.Align_Min)
+    self.tipsText:SetText("提示")
+    self.noBackground:AddChild(self.tipsText)
+
+    UpdateSizeOfUI(self, Client.GetScreenWidth(), Client.GetScreenHeight())
+end
+
+
+local baseOnUninitialize = GUIVoteMenu.Uninitialize
+function GUIVoteMenu:Uninitialize()
+    baseOnUninitialize(self)
+    GUI.DestroyItem(self.tipsText)
+    self.tipsText = nil
+end
+
 function GUIVoteMenu:SendKeyEvent(key, down)
 
     --if down and self.votedYes == nil and voteId ~= self.lastVotedId and voteId > 0 then
@@ -45,17 +77,19 @@ function GUIVoteMenu:Update(deltaTime)
 
     if self.visible and GetCurrentVoteQuery() ~= nil then
         local data = GetActiveVoteData()
+        local tipsText = nil
         if data.onlyAccepted then
             if self.yesText and self.noText then
 
                 if data.failReward ~= nil and data.failReward > 0 then
                     local yes, no, required = GetVoteResults()
                     local failReward = math.ceil(data.failReward * 10) / 10
-                    self.yesText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_YES"), { key = GetPrettyInputName("VoteYes") }))
-                    self.noText:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"), failReward))
+                    self.yesText:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_YES"),  GetPrettyInputName("VoteYes"),failReward ))
+                    self.noText:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_NO"), GetPrettyInputName("VoteNo") ))
                     if not self.votedYes then
                         self.yesCount:SetText(string.format(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_REQUIREMENT"), required))
                     end
+                    tipsText = Locale.ResolveString("VOTE_AFFECT_ACCEPTED_FAIL_REWARD_TIPS")
                 else
                     self.yesText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_YES"), { key = GetPrettyInputName("VoteYes") }))
                     self.noText:SetText(StringReformat(Locale.ResolveString("VOTE_AFFECT_ACCEPTED_NO"), { key = GetPrettyInputName("VoteNo") }))
@@ -64,5 +98,9 @@ function GUIVoteMenu:Update(deltaTime)
             
         end
         self.noCount:SetIsVisible(not data.onlyAccepted)
+        self.tipsText:SetIsVisible(tipsText ~= nil)
+        if tipsText then
+            self.tipsText:SetText(tipsText)
+        end
     end
 end

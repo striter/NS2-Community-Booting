@@ -85,32 +85,60 @@ function Plugin:ProcessRecallPenalty( Client )
 	local id = Client:GetUserId()
 	if not table.contains(self.RedirHistory.Clients,id) then return end
 	table.removevalue(self.RedirHistory.Clients,id)
-	
+	Shine:Print( "[SSV] %s<%s> Penalty Proceed", true, Shine.GetClientInfo( Client ) , IPAddressToString( Server.GetClientAddress( Client ) )  )
+
 	local index = self.Config.RecallPenalty.Count - recallPenaltyCount
-	Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",id, self.Config.RecallPenalty.Reputation,string.format("分服回流(%d)",self.Config.RecallPenalty.Reputation)))
-	Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, self.Config.RecallPenalty.Credit,"分服回流"))
+	Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",id, self.Config.RecallPenalty.Reputation,"蹭车回流惩罚"))
+	Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, self.Config.RecallPenalty.Credit,"蹭车回流惩罚"))
 	self.RedirHistory.RecallPenaltyCount = recallPenaltyCount - 1
 end
 
-function Plugin:RedirClients(_targetIP,_count,_newcomerMode)
+local function SaveRedirPenalty(self)
+	local Success, Err = Shine.SaveJSONFile(self.RedirHistory, LocalFilePath)
+	if not Success then
+		Shared.Message( "Error saving last redir file: "..Err )
+	end
+end
+function Plugin:RedirClientsWithPenalty(_targetIP, _clients,_count)
 	self.RedirHistory.RecallPenaltyCount = self.Config.RecallPenalty.Count
 	self.RedirHistory.Clients = {}
+	
+	local count = _count
+	for _,client in pairs(_clients) do
+		table.insert(self.RedirHistory.Clients,client:GetUserId())
+		Shine:Print( "[SSV] %s<%s> Penalty Recorded", true, Shine.GetClientInfo( client ) , IPAddressToString( Server.GetClientAddress( client ) )  )
+		self:RedirectClient(client,_targetIP)
+		count = count - 1
+		if count <= 0 then
+			break
+		end
+	end
+	SaveRedirPenalty(self)
+end
+
+function Plugin:RedirClients(_targetIP,_count,_newcomerMode)
 	
 	local clients = {}
 	for Client in Shine.IterateClients() do
 		local player = Client:GetControllingPlayer()
 		if player then
-			table.insert(clients,{
-				client = Client,
-				priority = math.max(player:GetPlayerSkill() , player:GetCommanderSkill()),
-			})
+			if Shine:HasAccess(Client, "sh_adminmenu" ) then
+				Shine:NotifyDualColour(Client,146, 43, 33,kPrefix, 253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
+			elseif player:isa("Commander") then
+				Shine:NotifyDualColour(Client,146, 43, 33,kPrefix, 253, 237, 236, "检测到您为指挥官,已跳过强制分服.")
+			else
+				table.insert(clients,{
+					client = Client,
+					priority = math.max(player:GetPlayerSkill() , player:GetCommanderSkill()),
+				})
+			end
 		end
 	end
 
 	if _newcomerMode ~= Plugin.RedirMode.RANDOM then
 		local newComer = _newcomerMode == Plugin.RedirMode.NOOB
 		table.sort(clients,function (a, b)
-			if newcomer then
+			if newComer then
 				return a.priority < b.priority
 			else
 				return a.priority > b.priority
@@ -118,24 +146,11 @@ function Plugin:RedirClients(_targetIP,_count,_newcomerMode)
 		end)
 	end
 
-	local count = _count
+	local redirClients = {}
 	for _,data in pairs(clients) do
-		local client =  data.client
-		local player = client:GetControllingPlayer()
-		if Shine:HasAccess(client, "sh_adminmenu" ) then
-			Shine:NotifyDualColour(client,146, 43, 33,kPrefix, 253, 237, 236, "检测到[管理员]身份,已跳过强制换服,请在做好换服准备(如关门/锁观战)后前往预期服务器.")
-		elseif player:isa("Commander") then
-			Shine:NotifyDualColour(client,146, 43, 33,kPrefix, 253, 237, 236, "检测到您为指挥官,已跳过强制分服.")
-		else
-			table.insert(self.RedirHistory.Clients,client:GetUserId())
-			self:RedirectClient(client,_targetIP)
-			count = count - 1
-		end
-
-		if count <= 0 then
-			break
-		end
+		table.insert(redirClients,data.client)
 	end
+	self:RedirClientsWithPenalty(_targetIP,redirClients,_count)
 end
 
 function Plugin:OnEndGame(_winningTeam)
@@ -143,12 +158,8 @@ function Plugin:OnEndGame(_winningTeam)
 end
 
 function Plugin:MapChange()
-	local Success, Err = Shine.SaveJSONFile(self.RedirHistory, LocalFilePath)
-	if not Success then
-		Shared.Message( "Error saving last redir file: "..Err )
-	end
+	SaveRedirPenalty(self)
 end
-
 
 function Plugin:OnFirstThink()
 	self:SimpleTimer( self.Config.CrowdAdvert.NotifyTimer, function() self:NotifyCrowdRedirect() end )
