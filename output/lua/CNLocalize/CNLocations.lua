@@ -513,3 +513,28 @@ kTranslateLocations["Control Room"] = "控制室"
 kTranslateLocations["Orange castle"] = "橙方城堡"
 kTranslateLocations["Blue Castle"] = "蓝方城堡"
 
+--ns2_nothing
+kTranslateLocations["Viaduct"] = "高架桥"
+kTranslateLocations["Viaduct North"] = "桥北区"
+kTranslateLocations["Viaduct South"] = "桥南区"
+kTranslateLocations["Viaduct Corridor"] = "登桥入口"
+kTranslateLocations["Red Room"] = "红房"
+kTranslateLocations["Communications"] = "通信枢纽"
+kTranslateLocations["Cargo Bay"] = "货舱"
+kTranslateLocations["The Junction"] = "交叉路口"
+kTranslateLocations["Threshold"] = "起始点"
+kTranslateLocations["Docking Wing"] = "停泊侧翼"
+kTranslateLocations["Pipe Room"] = "管道控制室"
+kTranslateLocations["Painted Corridor"] = "赤色走廊"
+kTranslateLocations["Foreboding"] = "坠落空间"
+kTranslateLocations["Silo North"] = "筒仓北区"
+kTranslateLocations["Silo South"] = "筒仓南区"
+kTranslateLocations["Transport"] = "转运区"
+kTranslateLocations["Miasma"] = "东翼通道"
+kTranslateLocations["Ominous"] = "西翼通道"
+
+
+
+
+
+
