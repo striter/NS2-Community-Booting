@@ -15,7 +15,7 @@ Shared.RegisterNetworkMessage("SendVote", { voteId = "integer", choice = "boolea
 kVoteState = enum( { 'InProgress', 'Passed', 'Failed' } )
 Shared.RegisterNetworkMessage("VoteResults", { voteId = "integer", yesVotes = "integer (0 to 255)", noVotes = "integer (0 to 255)", requiredVotes = "integer (0 to 255)", state = "enum kVoteState" })
 Shared.RegisterNetworkMessage("VoteComplete", { voteId = "integer" })
-kVoteCannotStartReason = enum( { 'VoteAllowedToStart', 'VoteInProgress', 'Waiting', 'Spam', 'DisabledByAdmin', 'GameInProgress', 'TooEarly', 'TooLate', 'UnsupportedGamemode', 'ThunderdomeDisallowed' } )
+kVoteCannotStartReason = enum( { 'VoteAllowedToStart', 'VoteInProgress', 'Waiting', 'Spam', 'DisabledByAdmin', 'GameInProgress', 'TooEarly', 'TooLate', 'UnsupportedGamemode', 'ThunderdomeDisallowed','ReputationLow' } )
 Shared.RegisterNetworkMessage("VoteCannotStart", { reason = "enum kVoteCannotStartReason" })
 
 local kVoteCannotStartReasonStrings = { }
@@ -28,6 +28,7 @@ kVoteCannotStartReasonStrings[kVoteCannotStartReason.TooEarly] = "VOTE_TOO_EARLY
 kVoteCannotStartReasonStrings[kVoteCannotStartReason.TooLate] = "VOTE_TOO_LATE"
 kVoteCannotStartReasonStrings[kVoteCannotStartReason.UnsupportedGamemode] = "VOTE_GAMEMODE_NOT_SUPPORTED"
 kVoteCannotStartReasonStrings[kVoteCannotStartReason.ThunderdomeDisallowed] = "VOTE_THUNDERDOME_DISALLOWED"
+kVoteCannotStartReasonStrings[kVoteCannotStartReason.ReputationLow] = "VOTE_REPUTATION_LOW"
 
 -- to prevent message from being re-hooked when interface is re-created.
 local hookedVoteTypes = {}
@@ -233,21 +234,28 @@ if Server then
 
     local function OnSendVote(client, message)
 
-        if activeVoteName then
-
-            local votingDone = Shared.GetTime() - activeVoteStartedAtTime >= kVoteExpireTime
-            if not votingDone and message.voteId == activeVoteId then
-                local clientId = client:GetUserId()
-                if not table.contains(activeVoteResults.voters,clientId) then
-                    table.insert(activeVoteResults.voters, clientId)
-                end 
-
-                activeVoteResults.votes[clientId] = message.choice
-                lastVoteSent = Shared.GetTime()
+        if not activeVoteName then return end
+        
+        local votingDone = Shared.GetTime() - activeVoteStartedAtTime >= kVoteExpireTime
+        if not votingDone and message.voteId == activeVoteId then
+            local clientId = client:GetUserId()
+            Shared.Message(tostring(activeVoteName))
+            if activeVoteName == "VoteSwitchServer" then
+                local player = client:GetControllingPlayer()
+                local reputation = player.reputation or 0
+                if reputation < 100 then
+                    Server.SendNetworkMessage(client, "VoteCannotStart", { reason = kVoteCannotStartReason.ReputationLow }, true)
+                    return
+                end
             end
+            
+            if not table.contains(activeVoteResults.voters,clientId) then
+                table.insert(activeVoteResults.voters, clientId)
+            end 
 
+            activeVoteResults.votes[clientId] = message.choice
+            lastVoteSent = Shared.GetTime()
         end
-
     end
     Server.HookNetworkMessage("SendVote", OnSendVote)
 
