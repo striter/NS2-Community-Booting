@@ -80,6 +80,8 @@ do
     Validator:AddFieldRule( "Elo.Constants.Default",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Constants.Default))
     Plugin.ConfigValidator = Validator
 end
+local kReputationGainColorTable = { 235, 152, 78 }
+local kRageQuitColorTable = { 236, 112, 99 }
 function Plugin:Initialise()
     self.MemberInfos = { }
     self:CreateMessageCommands()
@@ -285,6 +287,8 @@ function GetOwnsItem(_itemID)
     return true
 end
 
+local kPrefix = "[信誉值]"
+
 Plugin.kBadgeRows = {1,2,3,4,10}
 local function DispatchBadge(_clientId, _name)
     for _, i in pairs(Plugin.kBadgeRows) do
@@ -349,6 +353,9 @@ function Plugin:ClientConfirmConnect(_client)
     if clientID <= 0 then return end
     
     self:UpdateClientData(_client,clientID)
+    Shine:NotifyDualColour( player,
+            kReputationGainColorTable[1], kReputationGainColorTable[2], kReputationGainColorTable[3],kPrefix,
+            255, 255, 255,string.format("当前服务器信誉值上限[%s],赢得获胜[+%s],完成比赛[+%s]",self.Config.Reputation.RageQuit.DeltaMax,self.Config.Reputation.RageQuit.DeltaWin,self.Config.Reputation.RageQuit.DeltaLost),true, data )
 end
 
 ----Elo
@@ -531,9 +538,7 @@ function Plugin:EndGameElo(lastRoundData)
 end
 
 --Reputation
-local kDefaultReputation = 50
-local kReputationGainColorTable = { 235, 152, 78 }
-local kRageQuitColorTable = { 236, 112, 99 }
+local kDefaultReputation = 48
 local function ReputationPlayerDelta(self, _steamId, _delta, _reputationTitle)
     local data = GetPlayerData(self,_steamId)
     data.reputation = (data.reputation or kDefaultReputation) + _delta
@@ -552,7 +557,7 @@ local function ReputationPlayerDelta(self, _steamId, _delta, _reputationTitle)
 
         if _delta > 0 then
             Shine:NotifyDualColour( player,
-                    kReputationGainColorTable[1], kReputationGainColorTable[2], kReputationGainColorTable[3],"[信誉分]",
+                    kReputationGainColorTable[1], kReputationGainColorTable[2], kReputationGainColorTable[3],kPrefix,
                     255, 255, 255,string.format("%s,现有[%s]信誉分",_reputationTitle,data.reputation),true, data )
         else
 

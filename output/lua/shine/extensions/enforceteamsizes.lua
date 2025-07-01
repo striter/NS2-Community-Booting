@@ -441,13 +441,13 @@ local function RestrictionDisplay(self,_client)
 	--local hourLimitMin = self.Constrains.MinHour
 	--local hourLimitMax = self.Constrains.MaxHour < 0  and "∞" or tostring(self.Constrains.MaxHour)
 	
-	local prewarmString = ""
-	for k,v in pairs(self.Constrains.TeamForceJoin) do
-		prewarmString = prewarmString .. tostring(v) .. " "
-	end
+	--local prewarmString = ""
+	--for k,v in pairs(self.Constrains.TeamForceJoin) do
+	--	prewarmString = prewarmString .. tostring(v) .. " "
+	--end
 
 
-	self:Notify(_client,string.format("战局人数:陆战队:%s 卡拉异形:%s 战局补位:大于等于%s人 预热点递进人数:%s", self.Constrains.Team[1], self.Constrains.Team[2],self.Constrains.Refill,prewarmString),self.Config.MessageNameColor,nil)
+	self:Notify(_client,string.format("战局人数:陆战队:%s 卡拉异形:%s 战局补位:大于等于%s人", self.Constrains.Team[1], self.Constrains.Team[2],self.Constrains.Refill),self.Config.MessageNameColor,nil)
 end
 
 function Plugin:ClientConfirmConnect( Client )
