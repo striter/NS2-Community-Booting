@@ -420,7 +420,7 @@ Plugin.kDamageBonusReduction = {
 	["Skulk"] = 1,
 	["Lerk"] = 0.5, ["Prowler"] = 0.5,
 	["Fade"] = 0.33, ["Vokex"] = 0.33,
-	["Gorge"] = 0.2, ["Onos"] = 0.2,
+	["Gorge"] = 0.33, ["Onos"] = 0.2,
 
 	["Marine"] = 1,
 	["JetpackMarine"] = 0.5,
@@ -474,6 +474,7 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 					damageParam = damageParam * classBonusReduction
 				end
 
+				damageParam = math.max(damageParam,-0.8)
 				damageTable.damage = damageTable.damage * ( 1 + damageParam)
 			end
 		end

@@ -353,7 +353,7 @@ function Plugin:ClientConfirmConnect(_client)
     if clientID <= 0 then return end
     
     self:UpdateClientData(_client,clientID)
-    Shine:NotifyDualColour( player,
+    Shine:NotifyDualColour( _client:GetControllingPlayer(),
             kReputationGainColorTable[1], kReputationGainColorTable[2], kReputationGainColorTable[3],kPrefix,
             255, 255, 255,string.format("当前服务器信誉值上限[%s],赢得获胜[+%s],完成比赛[+%s]",self.Config.Reputation.RageQuit.DeltaMax,self.Config.Reputation.RageQuit.DeltaWin,self.Config.Reputation.RageQuit.DeltaLost),true, data )
 end
