@@ -648,7 +648,7 @@ function Plugin:CreateMessageCommands()
         :AddParam{ Type = "string",Optional = true, TakeRestOfLine = true, Default = "未知原因" }
         :Help( "激励玩家预热点.")
     
-    self:BindCommand("sh_prewarm_give","prewarm_give", function(_client, _target, _value)
+    self:BindCommand("sh_prewarm_give","prewarm_give", function(_client, _target)
         if not self.PrewarmData.Validated then
             Shine:NotifyError(_client,"预热状态无法使用该指令")
             return
@@ -662,7 +662,8 @@ function Plugin:CreateMessageCommands()
             return
         end
 
-        if selfCredit < _value then
+        local value = 1
+        if selfCredit < value then
             Shine:NotifyError(_client,"你的预热点不足.")
             return
         end
@@ -674,24 +675,23 @@ function Plugin:CreateMessageCommands()
             return
         end
         
-        if targetData.credit > 10 then
+        if targetData.credit > 5 then
             Shine:NotifyError(_client,"对方已有足够的预热点.")
             return
         end
         
-        targetData.credit = (targetData.credit or 0) + _value
-        clientData.credit = clientData.credit - _value
-        local shareReputation = math.floor(_value * 0.5)
+        targetData.credit = (targetData.credit or 0) + value
+        clientData.credit = clientData.credit - value
+        local shareReputation = value
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("你已给予<%s>%s[预热点],当前剩余%s,让ta对你好一点",_target:GetControllingPlayer():GetName(),_value, clientData.credit) )
+                string.format("你已给予<%s>%s[预热点],当前剩余%s,让ta对你好一点",_target:GetControllingPlayer():GetName(), value, clientData.credit) )
         Shine:NotifyDualColour( _target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("<%s>给予了你%s[预热点],当前剩余%s,记得对ta好一点.",_client:GetControllingPlayer():GetName(),_value, targetData.credit) )
+                string.format("<%s>给予了你%s[预热点],当前剩余%s,记得对ta好一点.",_client:GetControllingPlayer():GetName(), value, targetData.credit) )
 
         if targetData.tier == 0 then
             Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",_client:GetUserId(), shareReputation,string.format("分享预热点(+%d)",shareReputation)))
         end
     end,true):AddParam{ Type = "client", NotSelf = true }
-            :AddParam{ Type = "number", Round = true, Min = 1, Max = 5, Default = 1 }
             :Help("将你的预热点分予其他玩家,例如:给予玩家<哈基米> 3个预热点 - !prewarm_give 哈基米 3")
     
     self:BindCommand( "sh_prewarm_validate", "prewarm_validate", function(_client,_targetID,_tier,_credit) ValidateClient(self,_targetID,nil,_tier,_credit) end )

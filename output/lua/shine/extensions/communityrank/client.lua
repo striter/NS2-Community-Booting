@@ -232,7 +232,7 @@ function Plugin.GUIScoreboardSendKeyEvent(self, key, down)
             local player = Client.GetLocalPlayer()
             if player and player.prewarmTier > 0 and steamId ~= Client.GetSteamId() then
                 self.hoverMenu:AddButton('给予预热点', teamColorBg, teamColorHighlight, textColor, function()
-                    Shared.ConsoleCommand(string.format("sh_prewarm_give %s %s",steamId,2))
+                    Shared.ConsoleCommand(string.format("sh_prewarm_give %s",steamId))
                 end);
             end
 
