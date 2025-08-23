@@ -25,7 +25,7 @@ if Client then
         kLocales["CNVO_VOLUME"] = "Volume"
         kLocales["CNVO_WEB"] = "Manual"
         
-        kLocales["REQUEST_DISEASE"] = "突发恶疾"
+        kLocales["REQUEST_DISEASE"] = "恶疾"
         kLocales["REQUEST_OTTO_OXG"] = "欧西给"
         kLocales["REQUEST_OTTO_KTHULU"] = "古神语"
         kLocales["REQUEST_OTTO_DDD"] = "唢呐演奏"

@@ -1,3 +1,6 @@
 *output/materials
 *.fsbcache
-*CNBoomBox/Sounds
+*.fdp.bak
+CNBoomBox/CNBoomBox_bank.fsb
+CNBoomBox/fmod_designer.log
+output/sound/CNTaunts_bank.fsb

@@ -25,7 +25,7 @@ Plugin.DefaultConfig = {
 		Mode = Plugin.SkillLimitMode.NOOB,
 		MinPlayerCount = 28,
 		Team = { 12 , 12 },
-		TeamForceJoin = { 24 , 30, 36 },
+		TeamForceJoin = { 0,4 , 6, 8,10 },
 		SkillRange = {-1,-1},
 		BlockSpectators = true,
 		Refill = 2,
@@ -36,7 +36,7 @@ Plugin.DefaultConfig = {
 			Mode = Plugin.SkillLimitMode.NONE,
 			MinPlayerCount = 16,
 			Team = { 12 , 12 },
-			TeamForceJoin = {30,34,38},
+			TeamForceJoin = {4,8,12},
 			SkillRange = {-1,-1 },
 			BlockSpectators = false,
 			Refill = 1,
@@ -284,8 +284,7 @@ function Plugin:GetPlayerRestricted(_player,_team)
 end
 
 local function GetForceJoinCredit(self, _client, _communityPrewarm)
-	local gameStarted = GetGameInfoEntity():GetGameStarted()
-	local playerCount = Shine.GetPlayingPlayersCount()
+	local playerCount = table.countkeys(kTeamJoinTracker)
 	local credit = 1
 	local count = 0
 	local matched 
@@ -298,17 +297,13 @@ local function GetForceJoinCredit(self, _client, _communityPrewarm)
 		credit = credit + 1
 	end
 	
-	local endFix = matched and string.format("(%s人内)",count) or "(最大)"
+	local endFix = matched and string.format("(前%s名)",count) or "(最大值)"
 	local title = string.format("当局入场通道%s", endFix)
 	if _communityPrewarm and _communityPrewarm:IsPrewarmPlayer(_client) then
-		credit = math.min(credit,2)
+		credit = 0
 		title = string.format("预热玩家通道%s", endFix)
 	end
 	
-	if gameStarted then
-		credit = credit + 0.5
-	end
-
 	return credit, count,title
 end
 
@@ -349,7 +344,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 
 	local errorString
 	local forcePrivilegeTitle
-	local forceCredit
+	local extraSlotCredit
 	local teamName = kTeamNames[_newTeam]
 	local cpEnabled, communityPrewarm = Shine:IsExtensionEnabled( "communityprewarm" )
 	if not cpEnabled then
@@ -358,28 +353,17 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	
 	if _newTeam == kSpectatorIndex then
 		errorString =  "战局内存在可游玩空位,请尽快进入游戏!"
-		forceCredit = 0
+		extraSlotCredit = 0
 		forcePrivilegeTitle = "预热观战位"
 	else
 		local credit, count,forceJoinTitle = GetForceJoinCredit(self,client,communityPrewarm)
-		forceCredit = credit
+		extraSlotCredit = credit
 		forcePrivilegeTitle = forceJoinTitle
-		errorString = string.format( "<%s>已满[>=%s人],当前需[%s]预热点获取%s,请等待空位或获得更多预热点.", teamName ,playerLimit,credit,forceJoinTitle)
+		errorString = string.format( "<%s>已满[>=%s人],当前需要[%s]预热点%s入场,请等待空位或获得更多预热点.", teamName ,playerLimit,credit,forceJoinTitle)
 	end
 
 	if _newTeam ~= kSpectatorIndex then
-		local team1Players = Shine.GetTeamPlayingPlayersCount(kTeam1Index)
-		local team2Players = Shine.GetTeamPlayingPlayersCount(kTeam2Index)
-		local teamMaxPlayers = math.max(team1Players,team2Players)
-		if curTeamCount < teamMaxPlayers  then
-			if math.abs(team1Players - team2Players) >= self.Constrains.Refill
-			 and Shared.GetTime() > self.Config.SlotCoveringBegin * 60
-			then
-				self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
-				return
-			end
-		end
-
+		
 		if table.contains(kTeamJoinTracker,userId) then
 			self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
 			return
@@ -389,9 +373,27 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			self:Notify(_player, "[异常离开补位通道]已启用.",priorColorTable,nil)
 			return
 		end
+		
+		local gamestarted = GetGamerules():GetGameStarted()
+		if gamestarted then
+			local team1Players = Shine.GetTeamPlayingPlayersCount(kTeam1Index)
+			local team2Players = Shine.GetTeamPlayingPlayersCount(kTeam2Index)
+			local teamMaxPlayers = math.max(team1Players,team2Players)
+			if curTeamCount < teamMaxPlayers  then
+				if math.abs(team1Players - team2Players) >= self.Constrains.Refill
+						and Shared.GetTime() > self.Config.SlotCoveringBegin * 60
+				then
+					self:Notify(_player, "已进行对局补位.",priorColorTable,nil)
+					return
+				end
+			else
+				errorString = "战局已正式开始,仅可进行补位."
+				extraSlotCredit = nil
+			end
+		end
 
-		if forceCredit and communityPrewarm then
-			if communityPrewarm:GetPrewarmPrivilege(client,forceCredit,forcePrivilegeTitle) then
+		if extraSlotCredit and communityPrewarm then
+			if communityPrewarm:GetPrewarmPrivilege(client, extraSlotCredit,forcePrivilegeTitle,true) then
 				table.insert(kTeamJoinTracker,userId)
 				return
 			end
@@ -576,7 +578,7 @@ if Server then
 			return true
 		end
 
-		if not Plugin.EnabledGamemodes[Shine.GetGamemode()] then
+		if not Plugin or not Plugin.EnabledGamemodes[Shine.GetGamemode()] then
 			return baseGetCanJoinTeamNumber(self,player,teamNumber)
 		end
 

@@ -36,6 +36,8 @@ debug.appendtoenum(kVoiceId, 'AUV')
 debug.appendtoenum(kVoiceId, 'ddj')
 debug.appendtoenum(kVoiceId, 'qsrx')
 debug.appendtoenum(kVoiceId, 'tlj')
+debug.appendtoenum(kVoiceId,'ottoDown')
+debug.appendtoenum(kVoiceId,'laugh')
 
 kAdditionalSoundData = {
     [kVoiceId.Disease] = { Sound = "sound/CNTaunts.fev/ma/Laugh", Description = "REQUEST_DISEASE", Interval = 2, AlertTechId = kTechId.None },
@@ -76,6 +78,8 @@ kAdditionalSoundData = {
     [kVoiceId.tlj] = { Sound = "sound/CNTaunts.fev/CUSTOM/tlj", Description = "《跳楼机》", Interval = 40, AlertTechId = kTechId.None },
     [kVoiceId.qsrx] = { Sound = "sound/CNTaunts.fev/CUSTOM/qsrx", Description = "《牵私人戏》", Interval = 11, AlertTechId = kTechId.None },
     [kVoiceId.ddj] = { Sound = "sound/CNTaunts.fev/CUSTOM/ddj", Description = "叮咚鸡", Interval = 1, AlertTechId = kTechId.None },
+    [kVoiceId.ottoDown] = { Sound = "sound/CNTaunts.fev/Otto/down", Description = "唐笑", Interval = 2, AlertTechId = kTechId.None },
+    [kVoiceId.laugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/laugh", Description = "笑", Interval = 2, AlertTechId = kTechId.None },
 }
 
 for _, data in pairs(kAdditionalSoundData) do
@@ -87,7 +91,7 @@ function GetAdditionalVoiceSoundData(voiceId)
 end
 
 local kSpectatorMenu = {
-    [LEFT_MENU] = { kVoiceId.Disease, kVoiceId.ddj, kVoiceId.Kobe, kVoiceId.ScreamLong, kVoiceId.Pyro, kVoiceId.PyroLaugh },
+    [LEFT_MENU] = { kVoiceId.Disease, kVoiceId.ddj, kVoiceId.ottoDown, kVoiceId.ScreamLong, kVoiceId.laugh, kVoiceId.PyroLaugh },
     [RIGHT_MENU] = { kVoiceId.AUV, kVoiceId.LockerRoom, kVoiceId.XuanStory, kVoiceId.qsrx, kVoiceId.tlj, kVoiceId.Hajmi }
 }
 

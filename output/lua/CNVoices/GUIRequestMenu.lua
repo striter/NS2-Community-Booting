@@ -805,6 +805,16 @@ Event.Hook("Console_hiss", function()
     SendRequest(kVoiceId.Hiss)
 end)
 
+Event.Hook("Console_ottoDown", function()
+    SendRequest(kVoiceId.ottoDown)
+end)
+
+Event.Hook("Console_laugh", function()
+    SendRequest(kVoiceId.laugh)
+end)
+
+
+
 Event.Hook("Console_auv", function()
     SendRequest(kVoiceId.AUV,kAUVItemId)
 end)

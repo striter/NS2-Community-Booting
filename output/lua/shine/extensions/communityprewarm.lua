@@ -324,7 +324,7 @@ local function PrewarmValidate(self)
     --SavePersistent(self)
 end
 
-function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
+function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege, _limitCheck)
     if not self.PrewarmData.Validated then return end
 
     local data = GetPlayerData(self,_client:GetUserId())
@@ -339,18 +339,24 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege)
 
     local credit = data.credit or 0
     if credit >= _cost then
-        data.credit = credit - _cost
-        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-                255, 255, 255,string.format("使用 %s [预热点],当前剩余 %s [预热点].\n已获得特权:<%s>.", _cost,data.credit,_privilege) )
+        if not _limitCheck then
+            data.credit = credit - _cost
+            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
+                    255, 255, 255,string.format("使用%s[预热点],当前剩余 %s [预热点].\n获得特权:<%s>.", _cost,data.credit,_privilege) )
+        else
+            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
+                    255, 255, 255,string.format("当前拥有[预热点]%s,已达到要求[>=%s].,\n获得特权<%s>.", data.credit,_cost,_privilege) )
+        end
         return true
     end
 
     if credit > 0 then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,
-                255, 255, 255,string.format("您当前的[预热点]%s 不足以获取特权 %s , 需求%s.",credit, _privilege,_cost) )
+                255, 255, 255,string.format("当前[预热点]%s 不足以获取特权 %s , 需%s.",credit, _privilege,_cost) )
     end
     return false
 end
+
 
 function Plugin:IsPrewarmPlayer(_client)
     local data = GetPlayerData(self,_client:GetUserId())
@@ -623,6 +629,11 @@ function Plugin:CreateMessageCommands()
         
         local targetId = target:GetUserId()
         local targetData = GetPlayerData(self,targetId)
+        if targetData.credit > 256 then
+            Shine:NotifyError(_client,"信誉值已超过上限(256),无法再获得更多的信誉值.")
+            return
+        end
+        
         targetData.credit = targetData.credit + _credit
         local colorTable = _credit > 0 and kPrewarmColor or kErrorColor
         Shine:NotifyDualColour(target, colorTable[1], colorTable[2], colorTable[3],self.kPrefix,255, 255, 255,
@@ -658,11 +669,14 @@ function Plugin:CreateMessageCommands()
 
         local targetData = GetPlayerData(self, _target:GetUserId())
         local targetTier = targetData.tier or 0
-        if targetTier <= 0 then
-            if targetData.credit > 5 then
-                Shine:NotifyError(_client,"对方已有足够的预热点.")
-                return
-            end
+        if targetTier > 0 then
+            Shine:NotifyError(_client,"对方已有预热段位.")
+            return
+        end
+        
+        if targetData.credit > 10 then
+            Shine:NotifyError(_client,"对方已有足够的预热点.")
+            return
         end
         
         targetData.credit = (targetData.credit or 0) + _value

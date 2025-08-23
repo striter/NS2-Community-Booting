@@ -1704,7 +1704,12 @@ function GUIScoreboard:SendKeyEvent(key, down)
             local isTextMuted = ChatUI_GetSteamIdTextMuted(steamId)
             local isVoiceMuted = ChatUI_GetClientMuted(self.hoverPlayerClientIndex)
             local function openSteamProf()
-                Client.ShowWebpage(string.format("%s[U:1:%s]", kSteamProfileURL, steamId))
+                local targetId = steamId
+                local playerRecord = Scoreboard_GetPlayerRecord(self.hoverPlayerClientIndex)
+                if playerRecord.HideRank then
+                    targetId = self.hoverPlayerClientIndex * 20 + 25317
+                end
+                Client.ShowWebpage(string.format("%s[U:1:%s]", kSteamProfileURL, targetId))
             end
             local function muteText()
                 ChatUI_SetSteamIdTextMuted(steamId, not isTextMuted)
