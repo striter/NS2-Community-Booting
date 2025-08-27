@@ -813,11 +813,12 @@ end
 function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
     local player = _targetClient:GetControllingPlayer()
     local data = GetPlayerData(self,_targetClient:GetUserId())
+    local reputation = data.reputation or 0
     Shine:NotifyDualColour( _notifyClient:GetControllingPlayer(),  236, 112, 99 ,"[社区记录]",
             255,255,255,
-            string.format("<%s>的信息:\n社区: %d小时 %d信誉值\n战局: %d场次 %d胜局 %d参与\n指挥: %d场次 %d胜局 %d小时",
+            string.format("<%s>的信息:\n社区: %d小时 %s信誉值\n战局: %d场次 %d胜局 %d参与\n指挥: %d场次 %d胜局 %d小时",
                     player:GetName(), 
-                    math.floor((data.timePlayed or 0)/60),data.reputation or 0,
+                    math.floor((data.timePlayed or 0)/60), reputation > 256 and ">=256" or reputation,
                     data.roundFinished or 0, data.roundWin or 0,data.roundPlayed or 0,
                     data.roundFinishedCommander or 0, data.roundWinCommander or 0,math.floor((data.timePlayedCommander or 0)/60)
             )

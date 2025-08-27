@@ -25,7 +25,7 @@ Plugin.DefaultConfig = {
 		Mode = Plugin.SkillLimitMode.NOOB,
 		MinPlayerCount = 28,
 		Team = { 12 , 12 },
-		TeamForceJoin = { 0,4 , 6, 8,10 },
+        TeamForceJoin = { 24 , 30, 36 },
 		SkillRange = {-1,-1},
 		BlockSpectators = true,
 		Refill = 2,
@@ -36,7 +36,7 @@ Plugin.DefaultConfig = {
 			Mode = Plugin.SkillLimitMode.NONE,
 			MinPlayerCount = 16,
 			Team = { 12 , 12 },
-			TeamForceJoin = {4,8,12},
+			TeamForceJoin = {30,36,42},
 			SkillRange = {-1,-1 },
 			BlockSpectators = false,
 			Refill = 1,
@@ -284,7 +284,7 @@ function Plugin:GetPlayerRestricted(_player,_team)
 end
 
 local function GetForceJoinCredit(self, _client, _communityPrewarm)
-	local playerCount = table.countkeys(kTeamJoinTracker)
+    local playerCount = Shine.GetPlayingPlayersCount()
 	local credit = 1
 	local count = 0
 	local matched 
@@ -394,7 +394,6 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 
 		if extraSlotCredit and communityPrewarm then
 			if communityPrewarm:GetPrewarmPrivilege(client, extraSlotCredit,forcePrivilegeTitle,true) then
-				table.insert(kTeamJoinTracker,userId)
 				return
 			end
 		end

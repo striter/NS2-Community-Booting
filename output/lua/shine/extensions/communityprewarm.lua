@@ -601,10 +601,10 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
     end
 
     if credit > 0 then
-        targetData.credit = (targetData.credit or 0) + credit
+        targetData.tier = 5
         
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("%s,已被给予%s[预热点]用于加入战局,欢迎加入NS2CN!",title,credit) )
+                string.format("%s,今天可自由入场,欢迎加入NS2CN!",title) )
     end
 end
 
@@ -675,18 +675,13 @@ function Plugin:CreateMessageCommands()
             return
         end
         
-        if targetData.credit > 5 then
-            Shine:NotifyError(_client,"对方已有足够的预热点.")
-            return
-        end
-        
         targetData.credit = (targetData.credit or 0) + value
         clientData.credit = clientData.credit - value
         local shareReputation = value
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("你已给予<%s>%s[预热点],当前剩余%s,让ta对你好一点",_target:GetControllingPlayer():GetName(), value, clientData.credit) )
+                string.format("你已给予<%s>%s[预热点](剩余%s),对方目前已有%s预热点.",_target:GetControllingPlayer():GetName(), value, clientData.credit,targetData.credit) )
         Shine:NotifyDualColour( _target, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("<%s>给予了你%s[预热点],当前剩余%s,记得对ta好一点.",_client:GetControllingPlayer():GetName(), value, targetData.credit) )
+                string.format("<%s>给予了你%s[预热点],当前剩余%s.",_client:GetControllingPlayer():GetName(), value, targetData.credit) )
 
         if targetData.tier == 0 then
             Shared.ConsoleCommand(string.format("sh_rep_delta %s %s %s",_client:GetUserId(), shareReputation,string.format("分享预热点(+%d)",shareReputation)))
