@@ -1,8 +1,8 @@
-EBoomBoxTrack = enum{ 'OST', 'SONG', 'TWO', 'CUSTOM'}
+EBoomBoxTrack = enum{ 'OST', 'EN', 'JP', 'CUSTOM'}
 gBoomBoxDefine = {
     [EBoomBoxTrack.OST] = {titleKey = "BOOMBOX_OST",key = "OST",configPath = "BB_OST_Volume"},
-    [EBoomBoxTrack.SONG] = {titleKey = "BOOMBOX_SONG",key = "SONG",configPath = "BB_SONG_Volume"},
-    [EBoomBoxTrack.TWO] = {titleKey = "BOOMBOX_TWO",key = "TWO",configPath = "BB_TWO_Volume"},
+    [EBoomBoxTrack.EN] = {titleKey = "BOOMBOX_SONG",key = "SONG",configPath = "BB_SONG_Volume"},
+    [EBoomBoxTrack.JP] = {titleKey = "BOOMBOX_TWO",key = "TWO",configPath = "BB_TWO_Volume"},
     [EBoomBoxTrack.CUSTOM] = {titleKey = "BOOMBOX_CUSTOM",key = "CUSTOM",configPath = "BB_CUSTOM_Volume"},
 }
 kBoomBoxDefaultValue = 0.8

@@ -43,7 +43,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/VortalCombat"), name = "Vortal Combat" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/EXO"), name = "Exosuit" },
     },
-    [EBoomBoxTrack.TWO] = {
+    [EBoomBoxTrack.JP] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Ame"), name = "Ame(A)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/LightDance"), name = "ライトダンス" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/BluSwing"), name = "満ちていく体温" },
@@ -63,7 +63,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Monster"), name = "怪物" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/FreesiaLive"), name = "フリージア" },
     },
-    [EBoomBoxTrack.SONG] = {
+    [EBoomBoxTrack.EN] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LikeAHabit"), name = "Like A Habit" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"), name = "Slumlord" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Starchild"), name = "Starchild" },

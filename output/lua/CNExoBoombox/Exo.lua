@@ -24,11 +24,11 @@ function Exo:HandleButtons(input)
             end
 
             if bit.band(input.commands,Move.Weapon3) ~= 0 then
-                self:SwitchTrack(EBoomBoxTrack.TWO)
+                self:SwitchTrack(EBoomBoxTrack.JP)
             end
 
             if bit.band(input.commands,Move.Weapon4) ~= 0 then
-                self:SwitchTrack(EBoomBoxTrack.SONG)
+                self:SwitchTrack(EBoomBoxTrack.EN)
             end
 
             if bit.band(input.commands,Move.Weapon5) ~= 0 then
