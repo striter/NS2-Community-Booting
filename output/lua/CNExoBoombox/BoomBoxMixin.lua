@@ -29,6 +29,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ClearMorning"), name = "Clear Morning" },
     },
     [EBoomBoxTrack.OST]  = {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/NeoCity"), name = "Neo City" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/TheFinals"), name = "The Finals (Season 1)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/IndustrialHero"), name = "Industrial Hero" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/Aegis"), name = "Aegis" },
@@ -65,6 +66,7 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.EN] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LikeAHabit"), name = "Like A Habit" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Sleepwalker"), name = "Sleepwalker" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"), name = "Slumlord" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Starchild"), name = "Starchild" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/IRemember"), name = "I Remember" },

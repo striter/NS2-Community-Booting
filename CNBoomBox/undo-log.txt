@@ -1,0 +1,10 @@
+13:11:33 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
+13:11:37 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
+13:11:42 ..\..\src\simpleeventcontroller.cpp:1734 IS: Add Sounds to Playlist
+13:11:43 ..\..\src\simpleeventcontroller.cpp:1310 IR: Remove Sounds from Playlist
+13:11:47 ..\..\src\simpleeventcontroller.cpp:960 ID: Set Playlist Behavior
+13:11:51 ..\..\src\simpleeventcontroller.cpp:960 ID: Set Playlist Behavior
+13:12:04 c:\anthill_jobs\job510040\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
+13:12:10 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
+13:12:16 ..\..\src\simpleeventcontroller.cpp:1734 IS: Add Sound to Playlist
+13:12:17 ..\..\src\simpleeventcontroller.cpp:1310 IR: Remove Sounds from Playlist

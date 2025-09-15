@@ -390,12 +390,19 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 				errorString = "战局已正式开始,仅可进行补位."
 				extraSlotCredit = nil
 			end
-		end
+    end
 
-		if extraSlotCredit and communityPrewarm then
-			if communityPrewarm:GetPrewarmPrivilege(client, extraSlotCredit,forcePrivilegeTitle,true) then
-				return
-			end
+		if communityPrewarm then
+            if extraSlotCredit ~= nil then
+                if communityPrewarm:GetPrewarmPrivilege(client, extraSlotCredit,forcePrivilegeTitle,true) then
+                    return
+                end
+            else
+                if communityPrewarm:IsPrewarmPlayer(client) and communityPrewarm:GetPrewarmPrivilege(client, 2, "预热中途入场") then
+                    table.insert(kTeamJoinTracker,client:GetUserId())
+                    return
+                end 
+            end
 		end
 
 		local reputationConfig = self.Config.ReputationBypass

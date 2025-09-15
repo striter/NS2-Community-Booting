@@ -144,7 +144,7 @@ local function CheckPlayerForcePurchase(self, player, purchaseTech)
 			if cost > 0 then
 				--local replaceMapName = LookupTechData(purchaseTech,kTechDataMapName)
 				local additionalCost = math.floor(cost * 0.2) + 1
-				cost = cost + additionalCost
+				cost = math.max(player:GetResources(), cost + additionalCost)
 				player:AddResources(-cost)
 				player.lastUpgradeList = {}
 				Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
@@ -295,9 +295,9 @@ function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, 
 	end
 
 	if mapName == Skulk.kMapName then
-		if CheckPlayerForcePurchase(self,player,kTechId.Fade) then
-			mapName = Fade.kMapName
-		end
+		if CheckPlayerForcePurchase(self,player,kTechId.Onos) then
+			mapName = Onos.kMapName
+        end
 	end
 
 	return Player.Replace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
