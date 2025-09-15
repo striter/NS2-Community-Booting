@@ -135,22 +135,24 @@ local function GetClientAndTier(player)
 	return client,tier,verifySkill
 end
 
-local function CheckPlayerForcePurchase(self, player, purchaseTech)
+local function CheckPlayerForcePurchase(self, player, purchaseTech,validate)
 	local client,tier = GetClientAndTier(player)
 	if client and tier > 0 then
 		local pRes = player:GetResources()
-		if pRes > self.Config.RefundForcePurchase then
-			local cost = LookupTechData(purchaseTech,kTechDataCostKey,0)
-			if cost > 0 then
-				--local replaceMapName = LookupTechData(purchaseTech,kTechDataMapName)
-				local additionalCost = math.floor(cost * 0.2) + 1
-				cost = math.max(player:GetResources(), cost + additionalCost)
-				player:AddResources(-cost)
-				player.lastUpgradeList = {}
-				Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
-						234, 250, 241, string.format("个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为科技/演化.",cost, additionalCost))
+        local cost = LookupTechData(purchaseTech,kTechDataCostKey,0)
+        if cost > 0 then
+            local comparer = validate and cost or self.Config.RefundForcePurchase
+		    if pRes >= comparer then
+                if not validate then
+                    local additionalCost = math.floor(cost * 0.2) + 1
+                    cost = math.max(player:GetResources(), cost + additionalCost)
+                    player:AddResources(-cost)
+                    player.lastUpgradeList = {}
+                    Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
+                            234, 250, 241, string.format("个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为对应科技.",cost, additionalCost))
+                end
 				Shine:NotifyDualColour( player, 88, 214, 141, "[提示]",
-						234, 250, 241, "过度积攒个人资源将导致您和您的队伍团队处于劣势!请积极寻找自己的职能定位." )
+						234, 250, 241, "积攒个人资源将导致您和您的队伍团队处于劣势!请积极寻找自己的职能定位." )
 				return true
 			end
 		end
@@ -295,8 +297,11 @@ function Plugin:OnMarineReplace(player,mapName, newTeamNumber, preserveWeapons, 
 	end
 
 	if mapName == Skulk.kMapName then
-		if CheckPlayerForcePurchase(self,player,kTechId.Onos) then
-			mapName = Onos.kMapName
+		if CheckPlayerForcePurchase(self,player,kTechId.Onos,true)
+                and #GetEntitiesForTeamWithinRange("Player", GetEnemyTeamNumber(player:GetTeamNumber()), player:GetOrigin(), kARCRange) == 0 then
+            player = Player.Replace(player,mapName, newTeamNumber, preserveWeapons, atOrigin, extraValues, isPickup)
+            player:AddTimedCallback(function(saver) saver:ProcessBuyAction({kTechId.Onos}) end,0)
+            return player
         end
 	end
 
@@ -343,11 +348,13 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 	end
 
 	local techID = player:GetTechId()
-	if techID == kTechId.Exo then	--....?
-		techID = kTechId.Exosuit
-	elseif techID == kTechId.JetpackMarine then	--....???
-		techID = kTechId.Jetpack
-	end
+    if techID == kTechId.Exo then	--....?
+        techID = kTechId.Exosuit
+    elseif techID == kTechId.JetpackMarine then	--....???
+        techID = kTechId.Jetpack
+    elseif techID == kTechId.Embryo then
+        techID = player.gestationTypeTechId or kTechId.Skulk
+    end
 
 	local cost = LookupTechData(techID,kTechDataCostKey,0)
 	if cost > 0 then
