@@ -29,7 +29,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ClearMorning"), name = "Clear Morning" },
     },
     [EBoomBoxTrack.OST]  = {
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/NeoCity"), name = "Neo City" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/NeoCity"), name = "Neo City",assetBattle = PrecacheAsset("sound/CNBoomBox.fev/OST/NeoCityBattle") },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/TheFinals"), name = "The Finals (Season 1)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/IndustrialHero"), name = "Industrial Hero" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/Aegis"), name = "Aegis" },
@@ -125,7 +125,12 @@ if Server then
         then return end
 
         local tracks = kTrackAssets[self.selectedTrack]
-        local music = StartSoundEffectOnEntity(tracks[self.selectedTrackIndex].asset,self,1)
+        local track = tracks[self.selectedTrackIndex]
+        local asset = track.asset
+        if track.assetBattle and self.GetIsInCombat and self:GetIsInCombat() then
+            asset = track.assetBattle
+        end
+        local music = StartSoundEffectOnEntity(asset,self,1)
         self.musicId = music:GetId()
         self:SetRelevancyDistance(kMaxRelevancyDistance)
     end

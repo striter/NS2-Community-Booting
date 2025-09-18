@@ -138,10 +138,10 @@ local function UpdateSpectatorMode(self, input)
             self:SetSpectatorMode(kSpectatorMode.FirstPerson)
             self.timeFromLastAction = 0
 
-        elseif bit.band(input.commands, Move.Weapon4) ~= 0 then
-
-            self:SetSpectatorMode(kSpectatorMode.Tinyman)
-            self.timeFromLastAction = 0
+        --elseif bit.band(input.commands, Move.Weapon4) ~= 0 then
+        --
+        --    self:SetSpectatorMode(kSpectatorMode.Tinyman)
+        --    self.timeFromLastAction = 0
 
         end
 
