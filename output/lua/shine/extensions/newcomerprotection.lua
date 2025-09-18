@@ -145,7 +145,7 @@ local function CheckPlayerForcePurchase(self, player, purchaseTech,validate)
 		    if pRes >= comparer then
                 if not validate then
                     local additionalCost = math.floor(cost * 0.2) + 1
-                    cost = math.max(player:GetResources(), cost + additionalCost)
+                    cost = math.min(player:GetResources(), cost + additionalCost)
                     player:AddResources(-cost)
                     player.lastUpgradeList = {}
                     Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
