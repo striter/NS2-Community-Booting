@@ -38,6 +38,7 @@ debug.appendtoenum(kVoiceId, 'qsrx')
 debug.appendtoenum(kVoiceId, 'tlj')
 debug.appendtoenum(kVoiceId,'ottoDown')
 debug.appendtoenum(kVoiceId,'laugh')
+debug.appendtoenum(kVoiceId,'chicken')
 
 kAdditionalSoundData = {
     [kVoiceId.Disease] = { Sound = "sound/CNTaunts.fev/ma/Laugh", Description = "REQUEST_DISEASE", Interval = 2, AlertTechId = kTechId.None },
@@ -80,6 +81,7 @@ kAdditionalSoundData = {
     [kVoiceId.ddj] = { Sound = "sound/CNTaunts.fev/CUSTOM/ddj", Description = "叮咚鸡", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.ottoDown] = { Sound = "sound/CNTaunts.fev/Otto/down", Description = "唐笑", Interval = 2, AlertTechId = kTechId.None },
     [kVoiceId.laugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/laugh", Description = "笑", Interval = 2, AlertTechId = kTechId.None },
+    [kVoiceId.chicken] = { Sound = "sound/CNTaunts.fev/CUSTOM/chicken", Description = "鸡", Interval = 0.8, AlertTechId = kTechId.None },
 }
 
 for _, data in pairs(kAdditionalSoundData) do
@@ -92,7 +94,7 @@ end
 
 local kSpectatorMenu = {
     [LEFT_MENU] = { kVoiceId.Disease, kVoiceId.ddj, kVoiceId.ottoDown, kVoiceId.ScreamLong, kVoiceId.laugh, kVoiceId.PyroLaugh },
-    [RIGHT_MENU] = { kVoiceId.AUV, kVoiceId.LockerRoom, kVoiceId.XuanStory, kVoiceId.qsrx, kVoiceId.tlj, kVoiceId.Hajmi }
+    [RIGHT_MENU] = { kVoiceId.chicken, kVoiceId.LockerRoom, kVoiceId.XuanStory, kVoiceId.qsrx, kVoiceId.tlj, kVoiceId.Hajmi }
 }
 
 function GetRequestMenuTeam(side, className, teamType)
