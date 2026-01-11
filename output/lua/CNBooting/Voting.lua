@@ -634,7 +634,8 @@ if Client then
             AddVoteStartListener("VoteFuckPolitican", function(msg)
                 return string.format(Locale.ResolveString("VOTE_FUCK_POLITICAN_QUERY"), Scoreboard_GetPlayerName(msg.targetClient))
             end)
-            
+
+
         end
 
 
@@ -646,15 +647,6 @@ if Client then
             local random = math.random(1,5)
             return Locale.ResolveString(string.format("VOTE_KILL_ALL_QUERY%i",random))
         end)
-
-        AddVoteStartListener("VoteRandomScale", function(msg)
-            return Locale.ResolveString("VOTE_RANDOM_SCALE_QUERY")
-        end)
-        
-        voteMenu:AddMainMenuOption(Locale.ResolveString("VOTE_RANDOM_SCALE"),nil, function( msg )
-            AttemptToStartVote("VoteRandomScale", { })
-        end)
-        
 
     end
     AddVoteSetupCallback(SetupAdditionalVotes)
@@ -740,16 +732,6 @@ if Server then
     SetVoteSuccessfulCallback("VoteKillAll", 1, function( msg )
         for _, player in ientitylist(Shared.GetEntitiesWithClassname("Player")) do
             player:Kill(nil,nil,player:GetOrigin())
-        end
-    end)
-
-    SetVoteSuccessfulCallback("VoteRandomScale", 1, function( msg )
-        if not Player.SetScale then
-            return
-        end
-        for _, player in ientitylist(Shared.GetEntitiesWithClassname("Player")) do
-            local random = 0.25 + math.random() * 1.5
-            player:SetScale(random)
         end
     end)
 end

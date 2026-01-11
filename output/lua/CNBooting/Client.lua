@@ -31,10 +31,8 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_KILL_ALL_QUERY3"] = "听说群友不来开黑啦?"
     kTranslateMessage["VOTE_KILL_ALL_QUERY4"] = "你是红裤衩吗."
     kTranslateMessage["VOTE_KILL_ALL_QUERY5"] = "你难道没有自己的生活行吗?"
+    kTranslateMessage["MENU_RETURN"] = "返回"
     
-    kTranslateMessage["VOTE_RANDOM_SCALE"]="全体玩家 - [随机大小]"
-    kTranslateMessage["VOTE_RANDOM_SCALE_QUERY"]="给所有人随机大小?"
-
     kTranslateMessage["VOTE_PRACTICE_MODE"]="切换练习模式"
     kTranslateMessage["VOTE_PRACTICE_MODE_QUERY"]="将服务器切换为练习模式?"
     
@@ -63,7 +61,6 @@ if kTranslateMessage then
 
     kTranslateMessage["COMMUNITY_GUI_BUTTON"]="点击查看社区指南"
     kTranslateMessage["COMMUNITY_GROUP_BUTTON"]="加入我们的群聊"
-    
 end
 
 if kLocales then
@@ -98,9 +95,6 @@ if kLocales then
     kLocales["VOTE_KILL_ALL_QUERY3"] = "Are u talk politics often?"
     kLocales["VOTE_KILL_ALL_QUERY4"] = "Are u a racist?"
     kLocales["VOTE_KILL_ALL_QUERY5"] = "Im a <Sanji Survivor>?"
-
-    kLocales["VOTE_RANDOM_SCALE"]="Vote random scale"
-    kLocales["VOTE_RANDOM_SCALE_QUERY"]="Dispatch everyone random scale?"
 
     kLocales["VOTE_PRACTICE_MODE"]="Vote practice mode"
     kLocales["VOTE_PRACTICE_MODE_QUERY"]="Change server to practice mode?"

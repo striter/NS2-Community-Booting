@@ -796,8 +796,18 @@ function Plugin:EndGameLastSeenName(lastRoundData)
         playerData.lastSeenTimeStamp = currentTimeStamp
         playerData.lastSeenSkill = playerStat.skill
         playerData.lastSeenDay = currentDate
-        playerData.lastSeenNameTimes = (playerData.lastSeenNameTimes or 0) + 1
-        if not playerData.lastSeenName or playerData.lastSeenNameTimes >= 30 then
+        if playerData.lastSeenName == nil then
+            playerData.lastSeenName = currentName
+            playerData.lastSeenNameTimes = nil
+        else
+            if currentName ~= playerData.lastSeenName then
+                playerData.lastSeenNameTimes = (playerData.lastSeenNameTimes or 0) + 1
+            else
+                playerData.lastSeenNameTimes = nil
+            end
+        end
+        
+        if playerData.lastSeenNameTimes >= 30 then
             playerData.lastSeenNameTimes = nil
             playerData.lastSeenName = currentName
         end

@@ -14,7 +14,7 @@ end
 
 function Plugin:CreateCommands()
     --Common commands
-    local function KillSelf(_client,scale)
+    local function KillSelf(_client)
         local player = _client:GetControllingPlayer()
         if player and HasMixin(player, "Live") and player:GetCanDie() then
             player:Kill(player, nil, player:GetOrigin())
@@ -37,33 +37,6 @@ function Plugin:CreateCommands()
     AddParam{ Type = "client"}:
     AddParam{ Type = "number", Help = "睡觉时间", Round = true, Min = 1, Max = 30, Optional = true, Default = 5 }:
     Help( "强制睡觉(仅陆战队可用)." )
-    
-    --Admin comamnds
-	local function AdminScalePlayer( _client, _target, scale )
-        local player = _target:GetControllingPlayer()
-        if not player or not player.SetScale then return end
-        player:SetScale(scale)
-        Shine:AdminPrint( nil, "%s set %s scale to %s", true,  Shine.GetClientInfo( _client ), Shine.GetClientInfo( target ), scale )
-	end
-
-    self:BindCommand( "sh_scale", "scale", AdminScalePlayer )
-    :AddParam{ Type = "client" }
-    :AddParam{ Type = "number", Round = false, Min = 0.1, Max = 5, Optional = true, Default = 0.5 }
-    :Help( "设置ID对应玩家的大小." )
-
-    local function AdminSetAllScale( _client, scale )
-        for client in Shine.IterateClients() do
-            local player = client:GetControllingPlayer()
-            if not player.SetScale then return end
-            player:SetScale(scale)
-		end
-
-        Shine:AdminPrint( nil, "%s set all scale to %s", true,  Shine.GetClientInfo( _client ), scale )
-	end
-
-    self:BindCommand( "sh_scale_all", "scale_all", AdminSetAllScale )
-    :AddParam{ Type = "number", Round = false, Min = 0.1, Max = 5, Optional = true, Default = 0.5 }
-    :Help( "设置所有玩家的大小." )
 
     local function SwitchLocalize(_client)
         Server.SendNetworkMessage(_client, "SwitchLocalize", {},true)
@@ -79,7 +52,6 @@ function Plugin:CreateCommands()
             :AddParam{ Type = "client" }
             :AddParam{ Type = "string",Optional = true, TakeRestOfLine = true, Default = "不当的言行将会对他人造成严重影响!\n请注意你的行为!" }
 
-
     local kFlipPrefixColor = { 235, 152, 78 }
     local function FlipCoin(_client)
         local value = math.random()
@@ -91,7 +63,6 @@ function Plugin:CreateCommands()
     end
     self:BindCommand("sh_flip","flip",FlipCoin)
             :Help( "抛出一枚硬币,并告知所有人结果." )
-
 
     local function LoginCommander(commandStructure, client)
         local player = client and client:GetControllingPlayer()

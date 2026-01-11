@@ -26,7 +26,7 @@ kShinePluginsTranslations["Core"]["SETTINGS_TAB"]="设置"
 kShinePluginsTranslations["Core"]["PLUGINS_TAB"]="插件"
 kShinePluginsTranslations["Core"]["CLIENT_PLUGINS"]="本地插件"
 kShinePluginsTranslations["Core"]["ENABLED"]="已启用"
-kShinePluginsTranslations["Core"]["ENABLED"]="已金庸"
+kShinePluginsTranslations["Core"]["DISABLED"]="已禁用"
 
 kShinePluginsTranslations["Core"]["Surrender"]="投降 /remake"
 kShinePluginsTranslations["Core"]["Unstuck"]="尝试脱困"
@@ -60,6 +60,8 @@ kShinePluginsTranslations["Core"]["ERROR_NO_MATCHING_PLAYER"]= "找不到名字�
 kShinePluginsTranslations["Core"]["ERROR_NO_MATCHING_PLAYERS"]= "找不到名字或NS2ID'{PlayerName}'的玩家们."
 kShinePluginsTranslations["Core"]["ERROR_CANT_TARGET"]= "无法把命令作用于{PlayerName},权限不足."
 kShinePluginsTranslations["Core"]["ERROR_CANT_TARGET_MULTIPLE"]= "无法把命令作用于你选择的任何人,权限不足."
+kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_LEVEL_ERROR"]= "启用时警告."
+kShinePluginsTranslations["Core"]["SYSTEM_NOTIFICATIONS_LEVEL_WARNING"]= "启用时报错."
 
 kShinePluginsTranslations["chatbox"]={}
 kShinePluginsTranslations["chatbox"]["SAY_ALL"]="对所有人发言"
@@ -150,6 +152,7 @@ kShinePluginsTranslations["ban"]["DURATION_HINT"]= "输入封禁时间"
 kShinePluginsTranslations["ban"]["REASON"]= "理由"
 
 kShinePluginsTranslations["basecommands"]={}
+kShinePluginsTranslations["basecommands"]["NAME"]="名字"
 kShinePluginsTranslations["basecommands"]["NOTIFY_PREFIX"]= "[禁言]"
 kShinePluginsTranslations["basecommands"]["FORCE_START"]="强制对局开启."
 kShinePluginsTranslations["basecommands"]["ALL_TALK_TAG"]="[全局语音]"
@@ -193,6 +196,7 @@ kShinePluginsTranslations["basecommands"]["PLUGIN"]="插件名"
 kShinePluginsTranslations["basecommands"]["STATE"]="状态"
 kShinePluginsTranslations["basecommands"]["UNLOAD_PLUGIN"]="卸载"
 kShinePluginsTranslations["basecommands"]["LOAD_PLUGIN"]="安装"
+kShinePluginsTranslations["basecommands"]["RELOAD_PLUGIN"]="重启"
 kShinePluginsTranslations["basecommands"]["ERROR_NOT_GAGGED"]="<{TargetName}>未被禁言"
 kShinePluginsTranslations["basecommands"]["ERROR_BE_GAGGED"]="您已被[暂时禁言],请静待禁言结束.切记保持友善度!"
 kShinePluginsTranslations["basecommands"]["ERROR_BE_GAGGED_PERMANENT"]="您已被[永久禁言],请联系管理解封.切记保持友善度,文明游戏从我做起!"
@@ -201,6 +205,9 @@ kShinePluginsTranslations["basecommands"]["PLAYER_GAGGED"]="将<{TargetName}>禁
 kShinePluginsTranslations["basecommands"]["PLAYER_UNGAGGED"]="解除<{TargetName}>的禁言."
 kShinePluginsTranslations["basecommands"]["PLUGIN_SAVED_AS_ENABLED"]="插件为启用状态"
 kShinePluginsTranslations["basecommands"]["PLUGIN_SAVED_AS_DISABLED"]="插件为禁用状态"
+kShinePluginsTranslations["basecommands"]["UNLOAD_PLUGIN_SAVE_TIP"]="将插件锁定为永久禁用状态"
+kShinePluginsTranslations["basecommands"]["LOAD_PLUGIN_SAVE_TIP"]="将插件锁定为永久启用状态"
+kShinePluginsTranslations["basecommands"]["OFFICIAL_PLUGIN_TOOLTIP"]="Shine官方插件."
 
 -- Fun commands
 kShinePluginsTranslations["funcommands"]={}
@@ -374,6 +381,8 @@ kShinePluginsTranslations["pregame"]["WAITING_FOR_ALIENS"]= "等待卡拉异形�
 kShinePluginsTranslations["pregame"]["WAITING_FOR_MARINES"]= "等待边境拓荒者部队选择他们的指挥员."
 kShinePluginsTranslations["pregame"]["ROUND_START_ABORTED_MAP_VOTE_STARTED"]= "开局终止,换图提名以开始."
 kShinePluginsTranslations["pregame"]["ROUND_START_ABORTED_MAX_PLAYERS"] = "开局终止,双方需要指挥官."
+kShinePluginsTranslations["pregame"]["ABORT_MARINES_EMPTY"]= "开局终止,陆战队无玩家."
+kShinePluginsTranslations["pregame"]["ABORT_ALIENS_EMPTY"] = "开局中止,卡拉异形队无玩家."
 
 -- Map Vote
 kShinePluginsTranslations["mapvote"]={}

@@ -29,8 +29,8 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ClearMorning"), name = "Clear Morning" },
     },
     [EBoomBoxTrack.OST]  = {
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/NeoCity"), name = "Neo City",assetBattle = PrecacheAsset("sound/CNBoomBox.fev/OST/NeoCityBattle") },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/TheFinals"), name = "The Finals (Season 1)" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/NeoCity"), name = "Neo City",assetBattle = PrecacheAsset("sound/CNBoomBox.fev/OST/NeoCityBattle") },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/IndustrialHero"), name = "Industrial Hero" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/Aegis"), name = "Aegis" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/ATrueCompetitor"), name = "A True Competitor" },
@@ -65,9 +65,9 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/FreesiaLive"), name = "フリージア" },
     },
     [EBoomBoxTrack.EN] = {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"), name = "Slumlord" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LikeAHabit"), name = "Like A Habit" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Sleepwalker"), name = "Sleepwalker" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"), name = "Slumlord" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Starchild"), name = "Starchild" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/IRemember"), name = "I Remember" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Origami"), name = "Origami" },
