@@ -27,6 +27,7 @@ kShinePluginsTranslations["Core"]["PLUGINS_TAB"]="插件"
 kShinePluginsTranslations["Core"]["CLIENT_PLUGINS"]="本地插件"
 kShinePluginsTranslations["Core"]["ENABLED"]="已启用"
 kShinePluginsTranslations["Core"]["DISABLED"]="已禁用"
+kShinePluginsTranslations["Core"]["OFFICIAL_PLUGIN_TOOLTIP"]="Shine官方插件."
 
 kShinePluginsTranslations["Core"]["Surrender"]="投降 /remake"
 kShinePluginsTranslations["Core"]["Unstuck"]="尝试脱困"
@@ -207,7 +208,6 @@ kShinePluginsTranslations["basecommands"]["PLUGIN_SAVED_AS_ENABLED"]="插件为�
 kShinePluginsTranslations["basecommands"]["PLUGIN_SAVED_AS_DISABLED"]="插件为禁用状态"
 kShinePluginsTranslations["basecommands"]["UNLOAD_PLUGIN_SAVE_TIP"]="将插件锁定为永久禁用状态"
 kShinePluginsTranslations["basecommands"]["LOAD_PLUGIN_SAVE_TIP"]="将插件锁定为永久启用状态"
-kShinePluginsTranslations["basecommands"]["OFFICIAL_PLUGIN_TOOLTIP"]="Shine官方插件."
 
 -- Fun commands
 kShinePluginsTranslations["funcommands"]={}

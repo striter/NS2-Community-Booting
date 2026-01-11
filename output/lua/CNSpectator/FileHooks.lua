@@ -1,1 +1,1 @@
-ModLoader.SetupFileHook( "lua/Spectator.lua", "lua/CNTiny/Spectator.lua", "replace")
+ModLoader.SetupFileHook( "lua/Spectator.lua", "lua/CNSpectator/Spectator.lua", "replace")

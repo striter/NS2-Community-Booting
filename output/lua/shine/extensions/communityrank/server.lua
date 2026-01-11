@@ -807,7 +807,7 @@ function Plugin:EndGameLastSeenName(lastRoundData)
             end
         end
         
-        if playerData.lastSeenNameTimes >= 30 then
+        if playerData.lastSeenNameTimes ~= nil and playerData.lastSeenNameTimes >= 30 then
             playerData.lastSeenNameTimes = nil
             playerData.lastSeenName = currentName
         end
