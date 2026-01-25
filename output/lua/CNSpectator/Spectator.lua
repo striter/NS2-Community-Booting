@@ -46,7 +46,7 @@ local kSpectatorModeClass =
     [kSpectatorMode.FirstPerson] = FirstPersonSpectatorMode,
     [kSpectatorMode.Overhead] = OverheadSpectatorMode,
     [kSpectatorMode.KillCam] = KillCamSpectatorMode,
-    --[kSpectatorMode.Tinyman] = TinymanSpectatorMode
+    [kSpectatorMode.Tinyman] = TinymanSpectatorMode
 }
 
 local kDefaultFreeLookSpeed = Player.kWalkMaxSpeed * 3
@@ -113,9 +113,9 @@ local function UpdateSpectatorMode(self, input)
 
         if bit.band(input.commands, Move.Jump) ~= 0 then
 
-            --if self.specMode ~= kSpectatorMode.Tinyman then
-            --    self:SetSpectatorMode(NextSpectatorMode(self))
-            --end
+            if self.specMode ~= kSpectatorMode.Tinyman then
+                self:SetSpectatorMode(NextSpectatorMode(self))
+            end
             self.timeFromLastAction = 0
 
             if self:GetIsOverhead() then
@@ -138,10 +138,10 @@ local function UpdateSpectatorMode(self, input)
             self:SetSpectatorMode(kSpectatorMode.FirstPerson)
             self.timeFromLastAction = 0
 
-        --elseif bit.band(input.commands, Move.Weapon4) ~= 0 then
-        --
-        --    self:SetSpectatorMode(kSpectatorMode.Tinyman)
-        --    self.timeFromLastAction = 0
+        elseif bit.band(input.commands, Move.Weapon4) ~= 0 then
+
+            self:SetSpectatorMode(kSpectatorMode.Tinyman)
+            self.timeFromLastAction = 0
 
         end
 

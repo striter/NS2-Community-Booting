@@ -10,7 +10,7 @@ local originalHandleButtons = Exo.HandleButtons
 function Exo:HandleButtons(input)
     originalHandleButtons(self, input)
 
-    if not self.pressingMusicButtons and bit.band(input.commands, Move.Weapon1 + Move.Weapon2 + Move.Weapon3 + Move.Weapon4 + Move.Weapon5) ~= 0 then
+    if not self.pressingMusicButtons and bit.band(input.commands, Move.Weapon1 + Move.Weapon2 + Move.Weapon3 + Move.Weapon4 + Move.Weapon5 + Move.Reload) ~= 0 then
         self.pressingMusicButtons = true
 
         if Server then
@@ -32,13 +32,18 @@ function Exo:HandleButtons(input)
             end
 
             if bit.band(input.commands,Move.Weapon5) ~= 0 then
+                self:SwitchTrack(EBoomBoxTrack.CN)
+            end
+
+            if bit.band(input.commands,Move.Reload) ~= 0 then
                 self:Action()
             end
         end
-        
+
     else
         self.pressingMusicButtons = false
     end
+
 end
 
 if Server then

@@ -274,6 +274,11 @@ function Plugin:GetPlayerRestricted(_player,_team)
 			minTimeToWait = math.min(minTimeToWait, awaitTime)
 		end
 
+        local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
+        if cpEnabled then
+            minTimeToWait = minTimeToWait - cp:GetPrewarmCredit(client)
+        end
+
 		if minTimeToWait > now then
 			self:Notify(_player,string.format("战局准备中,请于%i秒后再次加入.",minTimeToWait - now),errorColorTable,nil)
 			return true

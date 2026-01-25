@@ -1,9 +1,10 @@
-EBoomBoxTrack = enum{ 'OST', 'EN', 'JP', 'CUSTOM'}
+EBoomBoxTrack = enum{'CUSTOM', 'OST', 'EN', 'JP','CN'}
 gBoomBoxDefine = {
+    [EBoomBoxTrack.CUSTOM] = {titleKey = "BOOMBOX_CUSTOM",key = "CUSTOM",configPath = "BB_CUSTOM_Volume"},
     [EBoomBoxTrack.OST] = {titleKey = "BOOMBOX_OST",key = "OST",configPath = "BB_OST_Volume"},
     [EBoomBoxTrack.EN] = {titleKey = "BOOMBOX_SONG",key = "SONG",configPath = "BB_SONG_Volume"},
     [EBoomBoxTrack.JP] = {titleKey = "BOOMBOX_TWO",key = "TWO",configPath = "BB_TWO_Volume"},
-    [EBoomBoxTrack.CUSTOM] = {titleKey = "BOOMBOX_CUSTOM",key = "CUSTOM",configPath = "BB_CUSTOM_Volume"},
+    [EBoomBoxTrack.CN] = {titleKey = "BOOMBOX_CN",key = "CN",configPath = "BB_CN_VOLUME"},
 }
 kBoomBoxDefaultValue = 0.8
 
@@ -26,6 +27,7 @@ if Client then
         kTranslateMessage["BOOMBOX_OST"]="原声"
         kTranslateMessage["BOOMBOX_SONG"]="英语"
         kTranslateMessage["BOOMBOX_TWO"]="日语"
+        kTranslateMessage["BOOMBOX_CN"]="中文"
         kTranslateMessage["BOOMBOX_VOLUME"]="音量校正[%s]"
         kTranslateMessage["BOOMBOX_STOP"]="停止"
         kTranslateMessage["BOOMBOX_RANDOM"]="随机"
@@ -34,9 +36,10 @@ if Client then
     if kLocales then
         kLocales["BOOMBOX_TITLE"]="BoomBox"
         kLocales["BOOMBOX_OST"]="OST"
-        kLocales["BOOMBOX_SONG"]="Song"
-        kLocales["BOOMBOX_TWO"]="Anim"
-        kLocales["BOOMBOX_CUSTOM"]="Cstm"
+        kLocales["BOOMBOX_SONG"]="EN"
+        kLocales["BOOMBOX_CUSTOM"]="Custom"
+        kLocales["BOOMBOX_TWO"]="JP"
+        kLocales["BOOMBOX_CN"]="CN"
         kLocales["BOOMBOX_VOLUME"]="Volume[%s]"
         kLocales["BOOMBOX_STOP"]="Stop"
         kLocales["BOOMBOX_RANDOM"]="Random"

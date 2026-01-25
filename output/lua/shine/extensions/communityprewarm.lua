@@ -358,6 +358,14 @@ function Plugin:GetPrewarmPrivilege(_client, _cost, _privilege, _limitCheck)
 end
 
 
+function Plugin:GetPrewarmCredit(_client)
+    if not self.PrewarmData.Validated then return end
+
+    local data = GetPlayerData(self,_client:GetUserId())
+    return data.credit or 0
+end
+
+
 function Plugin:IsPrewarmPlayer(_client)
     local data = GetPlayerData(self,_client:GetUserId())
     return data.tier and data.tier > 0

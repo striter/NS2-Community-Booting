@@ -11,22 +11,27 @@ BoomBoxMixin.networkVars =
 
 local kTrackAssets = {
     [EBoomBoxTrack.CUSTOM]  =  {
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ygkldnh"), name = "阳光开朗大男孩" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/SoundHorizon"), name = "恋人を射ち堕とした日" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED1"), name = "未来への咆哮" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED2"), name = "ライオン" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WeAllLiftTogether"), name = "We All Lift Together" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/seeuagain"), name = "See you again (两倍速)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjmidnightcity"), name = "哈基Midnight City" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjm"), name = "哈基基米慌慌" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/cjdl"), name = "不眠之夜" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/LOTUS"), name = "美丽的神话" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/GetOverTheWorld"), name = "Get Over The World" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WonderFunnyHarmony"), name = "Wonder Funny Harmony" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/zxmzf"), name = "最炫民族风" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/cjdl"), name = "不眠之夜" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Girl"), name = "恋爱困难女孩" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/LOTUS"), name = "美丽的神话" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Youngthink"), name = "ヰ世界の宝石譚" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/SonOfTheGround"), name = "大地之子-沙林mix" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/ClearMorning"), name = "Clear Morning" },
+    },
+    [EBoomBoxTrack.CN]  =  {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CN/ygkldnh"), name = "阳光开朗大男孩" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CN/ndyjgzxd"), name = "难得有几个真兄弟" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CN/zxmzf"), name = "最炫民族风" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CN/Girl"), name = "恋爱困难女孩" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CN/gxfc"), name = "恭喜发财" },
     },
     [EBoomBoxTrack.OST]  = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/TheFinals"), name = "The Finals (Season 1)" },
@@ -46,6 +51,7 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.JP] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Ame"), name = "Ame(A)" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Shock"), name = "ショック！" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/LightDance"), name = "ライトダンス" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/BluSwing"), name = "満ちていく体温" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Time26"), name = "表参道26時" },
@@ -66,6 +72,9 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.EN] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"), name = "Slumlord" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Preach"), name = "Preach" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/mutual"), name = "mutual" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/MakesMeWonder"), name = "Makes Me Wonder" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LikeAHabit"), name = "Like A Habit" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Sleepwalker"), name = "Sleepwalker" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Starchild"), name = "Starchild" },

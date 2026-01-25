@@ -52,7 +52,7 @@ function GUIExoEject:Initialize()
 
     self.button1 = GUICreateButtonIcon("Weapon1")
     self.button1:SetAnchor(GUIItem.Left, GUIItem.Bottom)
-    self.button1:SetPosition(Vector(120, -120, 0))
+    self.button1:SetPosition(Vector(110, -120, 0))
     self.text1 = GetGUIManager():CreateTextItem()
     self.text1:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
     self.text1:SetTextAlignmentX(GUIItem.Align_Center)
@@ -68,7 +68,7 @@ function GUIExoEject:Initialize()
 
     self.button2 = GUICreateButtonIcon("Weapon2")
     self.button2:SetAnchor(GUIItem.Left, GUIItem.Bottom)
-    self.button2:SetPosition(Vector(180, -120, 0))
+    self.button2:SetPosition(Vector(162, -120, 0))
     self.text2 = GetGUIManager():CreateTextItem()
     self.text2:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
     self.text2:SetTextAlignmentX(GUIItem.Align_Center)
@@ -84,7 +84,7 @@ function GUIExoEject:Initialize()
 
     self.button3 = GUICreateButtonIcon("Weapon3")
     self.button3:SetAnchor(GUIItem.Left, GUIItem.Bottom)
-    self.button3:SetPosition(Vector(240, -120, 0))
+    self.button3:SetPosition(Vector(214, -120, 0))
     self.text3 = GetGUIManager():CreateTextItem()
     self.text3:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
     self.text3:SetTextAlignmentX(GUIItem.Align_Center)
@@ -99,7 +99,7 @@ function GUIExoEject:Initialize()
 
     self.button4 = GUICreateButtonIcon("Weapon4")
     self.button4:SetAnchor(GUIItem.Left, GUIItem.Bottom)
-    self.button4:SetPosition(Vector(300, -120, 0))
+    self.button4:SetPosition(Vector(266, -120, 0))
     self.text4 = GetGUIManager():CreateTextItem()
     self.text4:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
     self.text4:SetTextAlignmentX(GUIItem.Align_Center)
@@ -114,20 +114,36 @@ function GUIExoEject:Initialize()
 
     self.button5 = GUICreateButtonIcon("Weapon5")
     self.button5:SetAnchor(GUIItem.Left, GUIItem.Bottom)
-    self.button5:SetPosition(Vector(360, -120, 0))
+    self.button5:SetPosition(Vector(318, -120, 0))
 
     self.text5 = GetGUIManager():CreateTextItem()
     self.text5:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
     self.text5:SetTextAlignmentX(GUIItem.Align_Center)
     self.text5:SetTextAlignmentY(GUIItem.Align_Center)
-    self.text5:SetText(Locale.ResolveString("BOOMBOX_STOP"))
+    self.text5:SetText(Locale.ResolveString(gBoomBoxDefine[EBoomBoxTrack.CN].titleKey))
     self.text5:SetPosition(kTextOffset)
     self.text5:SetScale(GetScaledVector())
     self.text5:SetFontName(kFontName)
     GUIMakeFontScale(self.text5)
     self.text5:SetColor(kMarineFontColor)
     self.button5:AddChild(self.text5)
+    
+    self.button6 = GUICreateButtonIcon("Reload")
+    self.button6:SetAnchor(GUIItem.Left, GUIItem.Bottom)
+    self.button6:SetPosition(Vector(370, -120, 0))
 
+    self.text6 = GetGUIManager():CreateTextItem()
+    self.text6:SetAnchor(GUIItem.Middle, GUIItem.Bottom)
+    self.text6:SetTextAlignmentX(GUIItem.Align_Center)
+    self.text6:SetTextAlignmentY(GUIItem.Align_Center)
+    self.text6:SetText(Locale.ResolveString("BOOMBOX_STOP"))
+    self.text6:SetPosition(kTextOffset)
+    self.text6:SetScale(GetScaledVector())
+    self.text6:SetFontName(kFontName)
+    GUIMakeFontScale(self.text6)
+    self.text6:SetColor(kMarineFontColor)
+    self.button6:AddChild(self.text6)
+    
     self.button = GUICreateButtonIcon("Drop")
     self.button:SetAnchor(GUIItem.Left, GUIItem.Bottom)
     self.button:SetPosition( Vector(430, -120, 0))
@@ -181,6 +197,9 @@ function GUIExoEject:Uninitialize()
         GUI.DestroyItem(self.button5)
     end
 
+    if self.button6 then
+        GUI.DestroyItem(self.button6)
+    end
 end
 
 function GUIExoEject:Update(deltaTime)
@@ -193,6 +212,6 @@ function GUIExoEject:Update(deltaTime)
     end
     
     self.title:SetText(player:GetBoomBoxTitle())
-    self.text5:SetText(player:GetBoomBoxAction())
+    self.text6:SetText(player:GetBoomBoxAction())
     self.button:SetIsVisible(player:GetCanEject())
 end

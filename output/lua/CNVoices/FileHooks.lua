@@ -16,7 +16,7 @@ if Client then
 
     if kTranslateMessage then
         kTranslateMessage["CNVO_TITLE"] = "语音拓展"
-        kTranslateMessage["CNVO_VOLUME"] = "音量矫正"
+        kTranslateMessage["CNVO_VOLUME"] = "音量"
         kTranslateMessage["CNVO_WEB"] = "使用说明"
     end
 
