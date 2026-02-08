@@ -304,7 +304,7 @@ local function GetForceJoinCredit(self, _client, _communityPrewarm)
 	
 	local endFix = matched and string.format("(前%s名)",count) or "(最大值)"
 	local title = string.format("当局入场通道%s", endFix)
-	if _communityPrewarm and _communityPrewarm:IsPrewarmPlayer(_client) then
+	if _communityPrewarm and _communityPrewarm:IsPrewarmPlayer(_client:GetUserId()) then
 		credit = 0
 		title = string.format("预热玩家通道%s", endFix)
 	end
@@ -324,32 +324,28 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	
 	local client = Server.GetOwner(_player)
 	if not client or client:GetIsVirtual()  then return end
-	local userId = client:GetUserId()
+	local clientID = client:GetUserId()
 
 	local newComerConfig = self.Config.NewComerBypass
 	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 	if newComerConfig.Enable then
 		local isNewcomer = newComerConfig.Skill <= 0 or _player:GetPlayerSkill() < newComerConfig.Skill
 		if isNewcomer and newComerConfig.Hour > 0 and crEnabled then
-			local communityData = cr:GetCommunityData(userId)
+			local communityData = cr:GetCommunityData(clientID)
 			if communityData.timePlayed then
 				isNewcomer = isNewcomer and (communityData.timePlayed / 60) < newComerConfig.Hour
 			end
 		end
+        
 		if isNewcomer then
 			--self:Notify(_player, "您为[新人优待玩家],已忽视上述限制!",priorColorTable,nil)
 			return
 		end
 	end
-	
-	if Shine:HasAccess( client, "sh_priorslot" ) then
-		self:Notify(_player, "[高级预留玩家]特权启用.",priorColorTable,nil)
-		return
-	end
 
 	local errorString
 	local forcePrivilegeTitle
-	local extraSlotCredit
+	local bypassCredit
 	local teamName = kTeamNames[_newTeam]
 	local cpEnabled, communityPrewarm = Shine:IsExtensionEnabled( "communityprewarm" )
 	if not cpEnabled then
@@ -358,23 +354,23 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	
 	if _newTeam == kSpectatorIndex then
 		errorString =  "战局内存在可游玩空位,请尽快进入游戏!"
-		extraSlotCredit = 0
+		bypassCredit = 0
 		forcePrivilegeTitle = "预热观战位"
 	else
 		local credit, count,forceJoinTitle = GetForceJoinCredit(self,client,communityPrewarm)
-		extraSlotCredit = credit
+		bypassCredit = credit
 		forcePrivilegeTitle = forceJoinTitle
 		errorString = string.format( "<%s>已满[>=%s人],当前需要[%s]预热点%s入场,请等待空位或获得更多预热点.", teamName ,playerLimit,credit,forceJoinTitle)
 	end
 
 	if _newTeam ~= kSpectatorIndex then
-		
-		if table.contains(kTeamJoinTracker,userId) then
+
+        if table.contains(kTeamJoinTracker, clientID) then
 			self:Notify(_player, "[当局入场通道]特权启用.",priorColorTable,nil)
 			return
 		end
 
-		if table.contains(kTeamRejoinTracker,userId) then
+		if table.contains(kTeamRejoinTracker, clientID) then
 			self:Notify(_player, "[异常离开补位通道]已启用.",priorColorTable,nil)
 			return
 		end
@@ -393,22 +389,30 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 				end
 			else
 				errorString = "战局已正式开始,仅可进行补位."
-				extraSlotCredit = nil
+				bypassCredit = nil
 			end
-    end
-
-		if communityPrewarm then
-            if extraSlotCredit ~= nil then
-                if communityPrewarm:GetPrewarmPrivilege(client, extraSlotCredit,forcePrivilegeTitle,true) then
-                    return
-                end
-            else
-                if communityPrewarm:IsPrewarmPlayer(client) and communityPrewarm:GetPrewarmPrivilege(client, 2, "预热中途入场") then
-                    table.insert(kTeamJoinTracker,client:GetUserId())
-                    return
-                end 
+        end
+        
+        if bypassCredit ~= nil then
+            if crEnabled and cr:GetMemberLevel(clientID) == 2 then
+                self:Notify(_player, "[昌吉大会员]特权启用.",priorColorTable,nil)
+                return
             end
-		end
+
+            if Shine:HasAccess( client, "sh_priorslot" ) then
+                self:Notify(_player, "[高级预留玩家]特权启用.",priorColorTable,nil)
+                return
+            end
+
+            if communityPrewarm and communityPrewarm:GetPrewarmPrivilege(client, bypassCredit,forcePrivilegeTitle,true) then
+                return
+            end
+        else
+            if communityPrewarm and communityPrewarm:IsPrewarmPlayer(clientID) and communityPrewarm:GetPrewarmPrivilege(client, 2, "预热中途入场") then
+                table.insert(kTeamJoinTracker,clientID)
+                return
+            end 
+        end
 
 		local reputationConfig = self.Config.ReputationBypass
 		if reputationConfig.Enable and crEnabled then

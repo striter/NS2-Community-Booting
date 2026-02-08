@@ -30,8 +30,29 @@ end
 
 Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     Plugin.playerCommunityData = Message
-    Shared.Message(string.format("[CNCT] Tier Set %i|%i|%i|%i|%i",Message.Tier,Message.TimePlayed,Message.RoundWin,Message.TimePlayedCommander,Message.RoundWinCommander ))
+    Shared.Message(string.format("[CNCT] Tier Set %i|%i|%i|%i|%i|%i|%i",
+            Message.Tier,Message.TimePlayed,Message.RoundWin,Message.TimePlayedCommander,Message.RoundWinCommander,Message.MemberLevel,Message.MemberExpireDate ))
 
+    local skillTierIcon = GetMainMenu().navBar.playerScreen.skillTierIcon
+    local isRookie = skillTierIcon:GetIsRookie()
+    local skill = skillTierIcon:GetSkill()
+    local isBot = skillTierIcon:GetIsBot()
+    local adagradSum = skillTierIcon:GetAdagradSum()
+    local skillTier, tierTooltip = GetPlayerSkillTier(skill, isRookie, adagradSum, isBot)
+    local tooltip = string.format(Locale.ResolveString("SKILLTIER_TOOLTIP"), Locale.ResolveString(tierTooltip), skillTier)
+    tooltip = tooltip .. "\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Message.Tier)
+    tooltip = tooltip .. "\n" .. string.format(Locale.ResolveString("PLAY_HISTORY"),math.floor(Message.TimePlayed / 720),Message.RoundWin)
+    if Message.TimePlayedCommander > 0 then
+        tooltip = tooltip .. "\n" .. string.format(Locale.ResolveString("COMMANDER_HISTORY"),math.floor(Message.TimePlayedCommander / 60),Message.RoundWinCommander)
+    end
+
+    if(Message.MemberLevel > 0) then
+        tooltip = tooltip .. "\n\n" .. string.format(Locale.ResolveString("MEMBER_HISTORY"),Message.MemberLevel,FormatDateTimeString(Message.MemberExpireDate))
+    end
+    
+    skillTierIcon:GetIconObject():SetTooltip(tooltip)
+
+    
     Shine.Hook.SetupGlobalHook( "GetOwnsItem", "GetCommunityOwnsItem", "Replace" )
 
     GetGlobalEventDispatcher():FireEvent("OnUserStatsAndItemsRefreshed")

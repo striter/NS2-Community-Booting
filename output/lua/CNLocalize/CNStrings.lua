@@ -57,6 +57,14 @@ kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP_SPEC"] = "服务器当前无战场空�
 kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP"] = "当前服务器已满.\n*如果您拥有[预留位]则可以继续加入.\n*或你可以等待新的空位开启.\n*亦或者加入一个新的服务器."
 kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP_SPEC_AND_RS"] = "当前服务器已满.\n*如果您拥有[预留位]则可以继续加入.\n*或者你可以尝试观战."
 
+kTranslateMessage["PLAY_HISTORY"]="游玩时长 %s天\n战局获胜 %s局"
+kTranslateMessage["COMMANDER_HISTORY"]="指挥时长 %s时\n指挥胜场 %s局"
+kTranslateMessage["MEMBER_HISTORY"]="昌吉社员[%s]\n    (到期时间:%s)"
+
+kLocales["PLAY_HISTORY"]="Time Played :%sh \nRounds win: %s"
+kLocales["COMMANDER_HISTORY"]="Time Commander: %sm \nRounds win as commander: %s"
+kLocales["MEMBER_HISTORY"]="Sanji Comrade [%s] (Time Expires:%s)"
+
 kTranslateMessage["RESOURCED_ADDED_MARINE"] = "(+%s 军需补给点)"
 kTranslateMessage["RESOURCED_ADDED_ALIEN"] = "(+%s 进化因子)"
 

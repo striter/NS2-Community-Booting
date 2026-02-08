@@ -36,7 +36,7 @@ if kTranslateMessage then
     kTranslateMessage["VOTE_PRACTICE_MODE"]="切换练习模式"
     kTranslateMessage["VOTE_PRACTICE_MODE_QUERY"]="将服务器切换为练习模式?"
     
-    kTranslateMessage["COMMUNITY_RANK"]="社区 %s"
+    kTranslateMessage["COMMUNITY_RANK"]="社区段位 %s"
     kTranslateMessage["RANK_HOST"] = "(C6):<萌新>"
     kTranslateMessage["RANK_ADMIN"] = "(C5):<管理员>"
     kTranslateMessage["RANK_C5"] = "(C5):<Onos>"
@@ -47,7 +47,9 @@ if kTranslateMessage then
     kTranslateMessage["RANK_DEFAULT"] = "(C0):<Hydra>"
     kTranslateMessage["RANK_LIVER"] = "(C3):<Vokex>"
     kTranslateMessage["RANK_INVALID"] = "(C?):<未知>"
-    
+
+
+
     kTranslateMessage["SKILL_TIER"]="段位分(P): [陆战队] %i\n                [卡拉异形] %i"
     kTranslateMessage["SKILL_TIER_COMM"]="指挥分(C): [陆战队] %i\n                [卡拉异形] %i"
     kTranslateMessage["NS2_TIME_PLAYED"]="总游戏时长: %i小时"

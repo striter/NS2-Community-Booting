@@ -359,16 +359,24 @@ end
 
 
 function Plugin:GetPrewarmCredit(_client)
-    if not self.PrewarmData.Validated then return end
+    if not self.PrewarmData.Validated then return 0 end
 
     local data = GetPlayerData(self,_client:GetUserId())
     return data.credit or 0
 end
 
 
-function Plugin:IsPrewarmPlayer(_client)
-    local data = GetPlayerData(self,_client:GetUserId())
+function Plugin:IsPrewarmPlayer(_clientID)
+    local data = GetPlayerData(self, _clientID)
     return data.tier and data.tier > 0
+end
+
+function Plugin:IsLateGameSeeder(_clientID)
+    local targetData = GetPlayerData(self,_clientID)
+    if self.PrewarmAwardFile[tostring(_clientID)] then
+        return true
+    end
+    return targetData.isLateGameSeeder
 end
 
 -- Triggers
@@ -544,6 +552,8 @@ function Plugin:QueryLateGameAward(_client)
     end
     Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, lateGameAwardData.credit,"尾声对局参与激励"))
     self.PrewarmAwardFile[stringId] = nil
+    local targetData = GetPlayerData(self,id)
+    targetData.isLateGameSeeder = true
 end
 
 function Plugin:MapChange()

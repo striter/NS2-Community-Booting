@@ -6,6 +6,8 @@ Shared.RegisterNetworkMessage( "Shine_CommunityTier", {
     RoundWinCommander = "integer (0 to 4096)",
     TimePlayed = "integer (0 to 16777216)",
     TimePlayedCommander = "integer (0 to 16777216)",
+    MemberLevel = "integer (0 to 8)",
+    MemberExpireDate = "integer"
 } )
 Shared.RegisterNetworkMessage( "Shine_CommunityGadgets", {
     ItemID = "integer (0 to 16777216)",

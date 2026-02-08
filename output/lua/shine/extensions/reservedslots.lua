@@ -109,7 +109,17 @@ do
 	local function IsSpectator( Client ) return Client:GetIsSpectator() end
 
 	function Plugin:GetNumOccupiedReservedSlots()
-		local Clients, Count = Shine:GetClientsWithAccess( "sh_reservedslot" )
+        local Count = 0
+        local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+        for Client in Shine.IterateClients() do
+            local clientID = Client:GetUserId()
+            if (clientID > 0 and crEnabled and cr:GetMemberLevel(clientID) > 0)
+                or Shine:HasAccess( Client, "sh_reservedslot" )
+            then
+                Count = Count + 1
+            end
+        end
+        
 		if self.Config.SlotType == self.SlotType.ALL then
 			-- When reserving all slots, the slot type a
 			-- reserved player is in doesn't matter.
@@ -122,6 +132,7 @@ do
 		-- For reserved player slots, only count those not in spectator slots.
 		return Count - Min( NumInSpectate, self:GetMaxSpectatorSlots() )
 	end
+    
 end
 
 function Plugin:GetFreeReservedSlots()
@@ -215,6 +226,14 @@ function Plugin:HasReservedSlotAccess( Client )
 	if RangeValid(self.Config.SkillByPassRange) and InRange(self.Config.SkillByPassRange, self.HistoryRank[tostring(Client)] or 0) then
 		return true
 	end
+    
+    local cpEnabled, communityPrewarm = Shine:IsExtensionEnabled( "communityprewarm" )
+    if communityPrewarm then
+        local clientID = Client
+        if communityPrewarm:IsPrewarmPlayer(clientID) or communityPrewarm:IsLateGameSeeder(clientID) then
+            return true
+        end
+    end
 
 	return Shine:HasAccess( Client, "sh_reservedslot" )
 end

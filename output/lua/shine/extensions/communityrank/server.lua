@@ -180,6 +180,7 @@ function Plugin:OnEndGame(_winningTeam)
     self:EndGameReputation(lastRoundData)
     self:EndGameRecord(lastRoundData)
     self:EndGameLastSeenName(lastRoundData)
+    self:EndGameMember(lastRoundData)
     SavePersistent(self)
 end
 
@@ -221,8 +222,7 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     local data = GetPlayerData(self,clientID)
     --Resolve Data 
     data.fakeData = nil
-    data.fakeBot = GetBoolean(rawData.fakeBot)
-    data.hideRank = GetBoolean(rawData.hideRank)
+    
     data.rank = GetNumber(rawData.rank)
     data.rankOffset = GetNumber(rawData.rankOffset)
     data.rankComm = GetNumber(rawData.rankComm)
@@ -237,7 +237,12 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.lastSeenDay = rawData.lastSeenDay
 
     data.signature = rawData.signature
+    data.emblem = GetNumber(rawData.emblem)
+    data.fakeBot = GetBoolean(rawData.fakeBot)
+    data.hideRank = GetBoolean(rawData.hideRank)
+    
     self:RecordResolveData(data,rawData)
+    self:MemberResolveData(data,rawData)
     player:SetPlayerExtraData(data)
 end
 
@@ -328,7 +333,9 @@ function Plugin:UpdateClientData(_client, _clientId)        --Split cause connec
         TimePlayed = communityData.timePlayed or 0,
         RoundWin = communityData.roundWin or 0,
         TimePlayedCommander = communityData.timePlayedCommander or 0,
-        RoundWinCommander = communityData.roundWinCommander or 0
+        RoundWinCommander = communityData.roundWinCommander or 0,
+        MemberLevel = communityData.memberLevel or 0,
+        MemberExpireDate = communityData.memberExpireDate or 0,
     }
 
     local hourPlayed = math.floor(syncData.TimePlayed / 60.0)
@@ -640,9 +647,6 @@ function Plugin:OnReputationPenaltyCheck()
                         player:DeductAbilityEnergy(50)
                     end
                 end
-
-                --data.reputation = reputation + 1
-                --player:SetPlayerExtraData(data)
             end
         end
     end
@@ -661,7 +665,8 @@ function Plugin:RageQuitValidate(Player,NewTeam)
     
     if Player:GetIsVirtual() then return end
     
-    local clientId = Player:GetClient():GetUserId()
+    local client = Player:GetClient()
+    local clientId = client:GetUserId()
     if NewTeam == 1 or NewTeam == 2 then        --Join team1 or 2
         if kRageQuitTracker[clientId] == kRageQuitType.Quit then        --Rejoin
             kRageQuitTracker[clientId] = kRageQuitType.None
@@ -669,7 +674,6 @@ function Plugin:RageQuitValidate(Player,NewTeam)
             kRageQuitTracker[clientId] = kRageQuitType.Cover
         end
     else                    --Quit
-
         local playTime = Player:GetPlayTime()
         if playTime < self.Config.Reputation.RageQuit.ActivePlayTime then return end
         
@@ -677,9 +681,13 @@ function Plugin:RageQuitValidate(Player,NewTeam)
             kRageQuitTracker[clientId] = kRageQuitType.None
         else
             kRageQuitTracker[clientId] = kRageQuitType.Quit
+            Shine:NotifyDualColour( client, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
+                    255, 255, 255,"由于对局中途离开,您已被标记请及时回到游戏,否则将被扣除信誉值!" )
         end
+
     end
 end
+
 local kRoundFinishNormalizedTime = 0.9
 function Plugin:EndGameReputation(lastRoundData)
     if not ReputationEnabled(self) then return end
@@ -750,6 +758,33 @@ function Plugin:RecordResolveData(data,rawData)
     data.roundFinishedCommander = GetNumber(rawData.roundFinishedCommander)
     data.roundWin = GetNumber(rawData.roundWin)
     data.roundWinCommander = GetNumber(rawData.roundWinCommander)
+end
+
+function Plugin:MemberResolveData(data,rawData)
+    data.memberExpireDate = GetNumber(rawData.memberExpireDate)
+    data.memberLevel = GetNumber(rawData.memberLevel)
+end
+
+function Plugin:GetMemberLevel(clientID)
+    local data = GetPlayerData(self,clientID)
+    return data.memberLevel or 0
+end
+
+function Plugin:EndGameMember(lastRoundData)
+    for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
+        
+        local data = GetPlayerData(self,steamId)
+
+        if data.memberExpireDate ~= nil and kCurrentTimeStamp > data.memberExpireDate then
+            data.memberExpireDate = nil
+            data.memberLevel = nil
+
+            local target = Shine.GetClientByNS2ID(steamId)
+            if target then
+                Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉会员]", 255,255,255, string.format("你的昌吉社员已到期,感谢您对社区的支持."  ))
+            end
+        end
+    end
 end
 
 function Plugin:EndGameRecord(lastRoundData)
@@ -824,15 +859,18 @@ function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
     local player = _targetClient:GetControllingPlayer()
     local data = GetPlayerData(self,_targetClient:GetUserId())
     local reputation = data.reputation or 0
+    local queries = string.format("<%s>的信息:\n社区: %d小时 %s信誉值\n战局: %d场次 %d胜局 %d参与\n指挥: %d场次 %d胜局 %d小时",
+            player:GetName(),
+            math.floor((data.timePlayed or 0)/60), reputation > 256 and ">=256" or reputation,
+            data.roundFinished or 0, data.roundWin or 0,data.roundPlayed or 0,
+            data.roundFinishedCommander or 0, data.roundWinCommander or 0,math.floor((data.timePlayedCommander or 0)/60))
+
+    if _notifyClient == _targetClient and data.memberLevel then
+        queries = queries .. string.format("\n昌吉社员: %d级 到期时间:%s",data.memberLevel,FormatDateTimeString(data.memberExpireDate))
+    end
+    
     Shine:NotifyDualColour( _notifyClient:GetControllingPlayer(),  236, 112, 99 ,"[社区记录]",
-            255,255,255,
-            string.format("<%s>的信息:\n社区: %d小时 %s信誉值\n战局: %d场次 %d胜局 %d参与\n指挥: %d场次 %d胜局 %d小时",
-                    player:GetName(), 
-                    math.floor((data.timePlayed or 0)/60), reputation > 256 and ">=256" or reputation,
-                    data.roundFinished or 0, data.roundWin or 0,data.roundPlayed or 0,
-                    data.roundFinishedCommander or 0, data.roundWinCommander or 0,math.floor((data.timePlayedCommander or 0)/60)
-            )
-    )
+            255,255,255,queries)
 end
 
 function Plugin:CreateMessageCommands()
@@ -972,6 +1010,29 @@ function Plugin:CreateMessageCommands()
     local botSwitchCommand = self:BindCommand( "sh_fakebot", "fakebot", FakeBotSwitch )
     botSwitchCommand:Help( "假扮成BOT." )
     
+    --Member Level
+    local function SetMemberLevel(_client, _id, _level, _days)
+        local target = Shine.AdminGetClientByNS2ID(_client,_id)
+        if not target then return end
+
+        local data = GetPlayerData(self,_id)
+        data.memberLevel = _level ~= 0 and _level or nil
+        data.memberExpireDate = data.memberLevel == nil and nil
+                or os.time({ year = kCurrentYear, month = kCurrentMonth, day = kCurrentDay + 1 + _days, hour = 3, min = 0, sec = 0 })
+        
+        if data.memberLevel then
+            Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉会员]", 255,255,255,
+                    string.format("你已成为[昌吉社员|等级%s]\n到期时间%s,感谢您对社区的支持!",data.memberLevel,FormatDateTimeString(data.memberExpireDate)))
+        end
+        self:UpdateClientData(target,_id)
+    end
+
+    self:BindCommand( "sh_member_set", "member_set", SetMemberLevel)
+        :AddParam{ Type = "steamid" }
+        :AddParam{ Type = "number", Round = true, Min = 0, Max = 3,  Default = 0 }
+        :AddParam{ Type = "number", Round = true, Min = 0, Max = 30,Optional = true,  Default = 0 }
+        :Help( "设置玩家的昌吉社员. 如!member_set 55022511 1 30 设置55022511 为30天的1期社员(次日计算),若level为0清空状态" )
+    
     --Hide Rank
     local function HideRankSwitchID(_client,_id)
         local target = Shine.AdminGetClientByNS2ID(_client,_id)
@@ -1057,6 +1118,7 @@ function Plugin:CreateMessageCommands()
         if not target then return end
 
         local player = target:GetControllingPlayer()
+        local queries = 
         Shine:NotifyDualColour( _client:GetControllingPlayer(),  236, 112, 99 ,"[查询]", 255,255,255,
                 string.format("<%s>的查询信息:\n玩家: [hive:%d/%d] [ns2cn:%d/%d] \n指挥：[hive:%d/%d] [ns2cn:%d/%d]",
                         player:GetName(),
