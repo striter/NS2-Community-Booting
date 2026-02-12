@@ -37,7 +37,7 @@ Plugin.DefaultConfig = {
 		Count = 0,
 		SlotDelta = 2,
 	},
-	SkillByPassRange = {-1,-1},
+    MaxHourByPass = -1,
 }
 
 Plugin.CheckConfig = true
@@ -47,10 +47,10 @@ do
 	local Validator = Shine.Validator()
 	Validator:AddFieldRule( "SlotType", Validator.InEnum( Plugin.SlotType, Plugin.SlotType.PLAYABLE ) )
 	Validator:AddFieldRule( "DynamicSlot",  Validator.IsType( "table", Plugin.DefaultConfig.DynamicSlot  ))
-	Validator:AddFieldRule( "SkillByPassRange",  Validator.IsType( "table", Plugin.DefaultConfig.SkillByPassRange  ))
+    Validator:AddFieldRule( "MaxHourByPass",  Validator.IsType( "number", Plugin.DefaultConfig.MaxHourByPass  ))
 	Plugin.ConfigValidator = Validator
 end
-local LocalRankPath = "config://shine/temp/history_rank.json"
+local kLocalFilePath = "config://shine/temp/resslotsHistory.json"
 
 function Plugin:Initialise()
 	self.Config.Slots = Max( Floor( tonumber( self.Config.Slots ) or 0 ), 0 )
@@ -59,25 +59,23 @@ function Plugin:Initialise()
 	self:CreateCommands()
 	self.Enabled = true
 
-	local File, Err = Shine.LoadJSONFile(LocalRankPath)
-	self.HistoryRank = File or {}
+	local File, Err = Shine.LoadJSONFile(kLocalFilePath)
+	self.LastSeenHour = File or {}
 
 	return true
 end
 
-function Plugin:OnCommunityDBReceived(rawTable)
-	for k,v in pairs(rawTable) do
-		local lastSeenSkill = v.lastSeenSkill
-		if lastSeenSkill then
-			self.HistoryRank[tostring(k)] = tonumber(v.lastSeenSkill)
-		end
-	end
-
-	local Success, Err = Shine.SaveJSONFile( self.HistoryRank, LocalRankPath)
-	if not Success then
-		Shared.Message( "Error saving history rank file: "..Err )
-	end
+function Plugin:OnPlayerCommunityDataReceived(_client,data)
+    self.LastSeenHour[tostring(_client:GetUserId())] = math.floor((data.timePlayed or 0) / 60.0)
 end
+
+function Plugin:MapChange()
+    local Success, Err = Shine.SaveJSONFile( self.LastSeenHour, kLocalFilePath)
+    if not Success then
+        Shared.Message( "Error saving history rank file: "..Err )
+    end
+end
+
 
 function Plugin:OnFirstThink()
 	self:SetReservedSlotCount( self:GetFreeReservedSlots() )
@@ -186,45 +184,13 @@ function Plugin:GetMaxSpectatorSlots()
 	return GetMaxSpectators()
 end
 
-local function RangeValid(range)
-	return range[1] >= 0 or range[2] >= 0
-end
-
-local function InRange(range,value)
-	if range[1] > 0 and range[2] > 0 then
-		return range[1] <= value and value <= range[2]
-	end
-
-	if range[1] < 0 and range[2] > 0 then
-		return value <= range[2]
-	end
-
-	if range[1] > 0 and range[2] < 0 then
-		return range[1] <= value
-	end
-
-	return true
-end
-
-local function RangeString(range)
-	if range[1] > 0 and range[2] > 0 then
-		return string.format("[%s-%s]",range[1],range[2])
-	end
-
-	if range[1] < 0 and range[2] > 0 then
-		return string.format("[<=%s]",range[2])
-	end
-
-	if range[1] > 0 and range[2] < 0 then
-		return string.format("[>=%s]",range[1])
-	end
-
-	return "无限制"
-end
-
 function Plugin:HasReservedSlotAccess( Client )
-	if RangeValid(self.Config.SkillByPassRange) and InRange(self.Config.SkillByPassRange, self.HistoryRank[tostring(Client)] or 0) then
-		return true
+    
+	if self.Config.MaxHourByPass >= 0 then
+        local hourRecord = self.LastSeenHour[tostring(Client)]
+        if not hourRecord or self.Config.MaxHourByPass >= hourRecord then
+            return true
+        end
 	end
     
     local cpEnabled, communityPrewarm = Shine:IsExtensionEnabled( "communityprewarm" )

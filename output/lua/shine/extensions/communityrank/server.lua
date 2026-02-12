@@ -781,7 +781,7 @@ function Plugin:EndGameMember(lastRoundData)
 
             local target = Shine.GetClientByNS2ID(steamId)
             if target then
-                Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉会员]", 255,255,255, string.format("你的昌吉社员已到期,感谢您对社区的支持."  ))
+                Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉社员]", 255,255,255, string.format("你的昌吉社员已到期,感谢您对社区的支持."  ))
             end
         end
     end
@@ -865,7 +865,7 @@ function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
             data.roundFinished or 0, data.roundWin or 0,data.roundPlayed or 0,
             data.roundFinishedCommander or 0, data.roundWinCommander or 0,math.floor((data.timePlayedCommander or 0)/60))
 
-    if _notifyClient == _targetClient and data.memberLevel then
+    if data.memberLevel then
         queries = queries .. string.format("\n昌吉社员: %d级 到期时间:%s",data.memberLevel,FormatDateTimeString(data.memberExpireDate))
     end
     
@@ -1021,7 +1021,7 @@ function Plugin:CreateMessageCommands()
                 or os.time({ year = kCurrentYear, month = kCurrentMonth, day = kCurrentDay + 1 + _days, hour = 3, min = 0, sec = 0 })
         
         if data.memberLevel then
-            Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉会员]", 255,255,255,
+            Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉社员]", 255,255,255,
                     string.format("你已成为[昌吉社员|等级%s]\n到期时间%s,感谢您对社区的支持!",data.memberLevel,FormatDateTimeString(data.memberExpireDate)))
         end
         self:UpdateClientData(target,_id)
@@ -1030,7 +1030,7 @@ function Plugin:CreateMessageCommands()
     self:BindCommand( "sh_member_set", "member_set", SetMemberLevel)
         :AddParam{ Type = "steamid" }
         :AddParam{ Type = "number", Round = true, Min = 0, Max = 3,  Default = 0 }
-        :AddParam{ Type = "number", Round = true, Min = 0, Max = 30,Optional = true,  Default = 0 }
+        :AddParam{ Type = "number", Round = true, Min = 0, Max = 360,Optional = true,  Default = 0 }
         :Help( "设置玩家的昌吉社员. 如!member_set 55022511 1 30 设置55022511 为30天的1期社员(次日计算),若level为0清空状态" )
     
     --Hide Rank

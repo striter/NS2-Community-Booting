@@ -1,51 +1,212 @@
-16:25:54 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1554 HP: Add Template
-16:26:00 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1638 BZ: Add Event Group
-16:26:03 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
-16:26:12 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:26:16 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:26:18 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:26:20 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
-16:26:24 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:26:35 ..\..\src\eventlistview.cpp:451 CB: Move Event to Group
-16:26:46 ..\..\src\eventlistview.cpp:451 CB: Move Event to Group
-16:26:51 ..\..\src\eventlistview.cpp:451 CB: Move Event to Group
-16:26:55 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
-16:26:57 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:27:06 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:27:07 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:27:17 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
-16:27:38 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:2202 CH: Delete Events/Event Groups/Event Categories
-16:28:03 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
-16:28:07 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:28:12 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:28:13 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:28:21 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
-16:28:24 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:28:27 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:28:28 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:28:31 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
-16:28:35 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:28:37 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:28:38 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:28:51 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
-16:28:55 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:29:00 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:29:02 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:29:03 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:29:07 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:29:08 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:29:14 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:29:15 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
-16:30:35 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\builddialog.ui.h:274 AG: Find Missing Sound Files
-16:31:44 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:31:47 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:31:48 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:31:58 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:32:48 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
-16:32:52 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:32:53 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:33:00 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:33:03 ..\..\src\simpleeventcontroller.cpp:1388 IL: Set Bank
-16:33:05 ..\..\src\simpleeventcontroller.cpp:1388 IL: Set Bank
-16:33:08 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
-16:33:10 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
+13:01:00 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
+13:01:04 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
+13:01:12 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
+13:01:13 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:27 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:28 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:28 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:28 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:28 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:28 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:28 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:28 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:28 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:29 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:30 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:31 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:31 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:36 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:37 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:01:51 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
+13:02:02 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
+13:02:04 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
+13:02:09 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:15 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:16 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:17 ..\..\src\bulkeditorcontroller.cpp:192 IT: Set Volume
+13:02:26 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
+13:02:38 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
+13:02:39 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
+13:02:40 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
+13:02:54 c:\jk\workspace\build__4.44__designer_win\fmod4\tools\fmod_designer\src\eventform.ui.h:1983 CG: Paste Event
+13:02:55 ..\..\src\propertyeditor.cpp:1508 EM: Set Name
+13:02:56 ..\..\src\simpleeventcontroller.cpp:1741 IS: Add Sound to Playlist
+13:02:57 ..\..\src\simpleeventcontroller.cpp:1317 IR: Remove Sounds from Playlist
+13:03:04 ..\..\src\propertyeditor.cpp:1508 EM: Set Name

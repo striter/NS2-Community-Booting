@@ -37,8 +37,8 @@ Plugin.DefaultConfig = {
     LateGameAward = {
         Hour = 22.5,
         Credit = 1,
-        RewardPlayers = 20,
         MaxPlayers = 32,
+        ActiveDurationNormalized = 0.8,
     },
     ReturnReward = {
         Enabled = false,
@@ -65,7 +65,7 @@ do
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier))
     Validator:AddFieldRule( "ReturnReward", Validator.IsType("table",Plugin.DefaultConfig.ReturnReward))
     Validator:AddFieldRule( "LateGameAward",  Validator.IsType( "table", Plugin.DefaultConfig.LateGameAward))
-    Validator:AddFieldRule( "LateGameAward.RewardPlayers",  Validator.IsType( "number", Plugin.DefaultConfig.LateGameAward.RewardPlayers))
+    Validator:AddFieldRule( "LateGameAward.ActiveDurationNormalized",  Validator.IsType( "number", Plugin.DefaultConfig.LateGameAward.ActiveDurationNormalized))
     Plugin.ConfigValidator = Validator
 end
 
@@ -500,26 +500,29 @@ function Plugin:DispatchLateGameAward(_lastRoundData)
     local function LateGameCompare(a, b) return a.playTime > b.playTime end
     table.sort(lateGameClients, LateGameCompare)
 
-    local index = 0
     for _,data in pairs(lateGameClients) do
         local steamId = data.steamId
-        local steamIdString = tostring(steamId)
-        local lateGameAwardData = self.PrewarmAwardFile[steamIdString]
-        if not lateGameAwardData then
-            lateGameAwardData = { credit = 0 , time = kCurrentTimeStampDay}
-            self.PrewarmAwardFile[steamIdString] = lateGameAwardData
-        end
-        lateGameAwardData.credit = lateGameAwardData.credit + self.Config.LateGameAward.Credit
+
         local client = Shine.GetClientByNS2ID(steamId)
         if client then
-            Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                    string.format("尾声对局已结束,明日预热结束后您将获得额外[%d(+%d)]预热点.", lateGameAwardData.credit,self.Config.LateGameAward.Credit) )
-        end
-        Shared.Message(string.format("[CNCP] Late Game Reward: %d" ,steamId))
+            local playtimeNormalized = data.playTime / _lastRoundData.RoundInfo.roundLength
+            local successful = playtimeNormalized >= self.Config.LateGameAward.ActiveDurationNormalized
+            if successful then
+                local steamIdString = tostring(steamId)
+                local lateGameAwardData = self.PrewarmAwardFile[steamIdString]
+                if not lateGameAwardData then
+                    lateGameAwardData = { credit = 0 , time = kCurrentTimeStampDay}
+                    self.PrewarmAwardFile[steamIdString] = lateGameAwardData
+                end
+                lateGameAwardData.credit = lateGameAwardData.credit + self.Config.LateGameAward.Credit
+                Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                        string.format("尾声对局已结束,明日预热结束后您将获得额外[%d(+%d)]预热点.", lateGameAwardData.credit,self.Config.LateGameAward.Credit))
+            else
+                Shine:NotifyDualColour( client, kErrorColor[1], kErrorColor[2], kErrorColor[3],self.kPrefix,255, 255, 255, 
+                        "尾声对局已结束,由于您的对局时长不足,暂未获得尾声对局特权,请于下局保持活跃.")
+            end
 
-        index = index + 1
-        if index >= self.Config.LateGameAward.RewardPlayers then
-            break
+            Shared.Message(string.format("[CNCP] Late Game Reward: %d %d %s" ,steamId,playtimeNormalized,successful and "Valid" or "Failure"))
         end
     end
 end
@@ -541,7 +544,7 @@ function Plugin:QueryLateGameAward(_client)
     local id = _client:GetUserId()
     if kCurrentHour > self.Config.LateGameAward.Hour then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("当前处于尾声对局激励.当参与人数小于[%d]的有效战局结束后,对局时长排名前[%s]玩家将获得次日的[%d]预热点.", self.Config.LateGameAward.MaxPlayers,self.Config.LateGameAward.RewardPlayers,self.Config.LateGameAward.Credit) )
+                string.format("当前处于尾声对局激励.当参与人数小于[%d]的有效战局结束后,完整参与对局的所有玩家将获得次日的[%d]预热点.", self.Config.LateGameAward.MaxPlayers,self.Config.LateGameAward.Credit) )
     end
 
     local stringId = tostring(id)

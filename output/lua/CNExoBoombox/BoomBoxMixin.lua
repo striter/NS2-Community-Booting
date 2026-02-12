@@ -11,6 +11,7 @@ BoomBoxMixin.networkVars =
 
 local kTrackAssets = {
     [EBoomBoxTrack.CUSTOM]  =  {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Farewell"), name = "远航星的告别" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/SoundHorizon"), name = "恋人を射ち堕とした日" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED1"), name = "未来への咆哮" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED2"), name = "ライオン" },
@@ -52,6 +53,8 @@ local kTrackAssets = {
     [EBoomBoxTrack.JP] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Ame"), name = "Ame(A)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Shock"), name = "ショック！" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/MoonAfterglow"), name = "三日月サンセット" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/IDontLikeMondays"), name = "WOLF VIBES" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/LightDance"), name = "ライトダンス" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/BluSwing"), name = "満ちていく体温" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Time26"), name = "表参道26時" },
@@ -73,6 +76,7 @@ local kTrackAssets = {
     [EBoomBoxTrack.EN] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"), name = "Slumlord" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Preach"), name = "Preach" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/BrandNew"), name = "Brand New" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/mutual"), name = "mutual" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/MakesMeWonder"), name = "Makes Me Wonder" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LikeAHabit"), name = "Like A Habit" },
