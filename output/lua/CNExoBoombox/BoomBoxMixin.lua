@@ -11,6 +11,7 @@ BoomBoxMixin.networkVars =
 
 local kTrackAssets = {
     [EBoomBoxTrack.CUSTOM]  =  {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Beats"), name = "My Soul, Your Beats!" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Farewell"), name = "远航星的告别" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/SoundHorizon"), name = "恋人を射ち堕とした日" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED1"), name = "未来への咆哮" },
@@ -76,6 +77,8 @@ local kTrackAssets = {
     [EBoomBoxTrack.EN] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"), name = "Slumlord" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Preach"), name = "Preach" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Hypotheticals"), name = "Hypotheticals" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/OneNightinBurbank"), name = "One Night in Burbank" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/BrandNew"), name = "Brand New" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/mutual"), name = "mutual" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/MakesMeWonder"), name = "Makes Me Wonder" },
