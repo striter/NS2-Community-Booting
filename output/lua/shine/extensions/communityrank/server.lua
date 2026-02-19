@@ -1024,6 +1024,7 @@ function Plugin:CreateMessageCommands()
             Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉社员]", 255,255,255,
                     string.format("你已成为[昌吉社员|等级%s]\n到期时间%s,感谢您对社区的支持!",data.memberLevel,FormatDateTimeString(data.memberExpireDate)))
         end
+        target:GetControllingPlayer():SetPlayerExtraData(data)
         self:UpdateClientData(target,_id)
     end
 

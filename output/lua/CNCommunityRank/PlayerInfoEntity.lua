@@ -60,6 +60,7 @@ local networkVars =
     signature = string.format("string(%d)",kMaxNameLength * 4),
     ns2TimePlayed = "integer",
     reputation = "integer(-512 to 3584)",
+    memberLevel = "integer (0 to 7)",
 -----------
     adagradSum = "float",
     currentTech = "integer",
@@ -159,6 +160,7 @@ function PlayerInfoEntity:UpdateScore()
                 self.signature = scorePlayer.signature
                 self.ns2TimePlayed = scorePlayer.ns2TimePlayed
                 self.reputation = scorePlayer.reputation
+                self.memberLevel = scorePlayer.memberLevel
             -------------
                 self.adagradSum = scorePlayer:GetAdagradSum()
                 local scoreClient = scorePlayer:GetClient()

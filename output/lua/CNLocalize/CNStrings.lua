@@ -59,11 +59,9 @@ kTranslateMessage["AUTOJOIN_JOIN_TOOLTIP_SPEC_AND_RS"] = "当前服务器已满.
 
 kTranslateMessage["PLAY_HISTORY"]="游玩时长 %s天\n战局获胜 %s局"
 kTranslateMessage["COMMANDER_HISTORY"]="指挥时长 %s时\n指挥胜场 %s局"
-kTranslateMessage["MEMBER_HISTORY"]="昌吉社员[%s]\n    (到期时间:%s)"
 
 kLocales["PLAY_HISTORY"]="Time Played :%sh \nRounds win: %s"
 kLocales["COMMANDER_HISTORY"]="Time Commander: %sm \nRounds win as commander: %s"
-kLocales["MEMBER_HISTORY"]="Sanji Comrade [%s] (Time Expires:%s)"
 
 kTranslateMessage["RESOURCED_ADDED_MARINE"] = "(+%s 军需补给点)"
 kTranslateMessage["RESOURCED_ADDED_ALIEN"] = "(+%s 进化因子)"
@@ -392,7 +390,7 @@ kTranslateMessage["HELP_SCREEN_METABOLIZE"]="新陈代谢"
 kTranslateMessage["HELP_SCREEN_METABOLIZE_ADV"]="高等新陈代谢"
 kTranslateMessage["HELP_SCREEN_METABOLIZE_ADV_DESCRIPTION"]="是新陈代谢的高级版本。既恢复体力又恢复生命值。"
 kTranslateMessage["HELP_SCREEN_METABOLIZE_ADV_REQUIREMENT"]="前提是指挥员研发解锁了高等新陈代谢"
-kTranslateMessage["HELP_SCREEN_METABOLIZE_DESCRIPTION"]="为Fade恢复些许体力。"
+kTranslateMessage["HELP_SCREEN_METABOLIZE_DESCRIPTION"]="恢复些许体力。"
 kTranslateMessage["HELP_SCREEN_METABOLIZE_REQUIREMENT"]="前提是指挥员研发解锁了新陈代谢"
 kTranslateMessage["HELP_SCREEN_MINES"]="地雷"
 kTranslateMessage["HELP_SCREEN_MINES_DESCRIPTION"]="把从地板上、墙壁上或天花板上过来的异形炸成渣渣。真正做到使他们“一朝被蛇咬，十年怕井绳”。"

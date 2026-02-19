@@ -47,8 +47,12 @@ if kTranslateMessage then
     kTranslateMessage["RANK_DEFAULT"] = "(C0):<Hydra>"
     kTranslateMessage["RANK_LIVER"] = "(C3):<Vokex>"
     kTranslateMessage["RANK_INVALID"] = "(C?):<未知>"
-
-
+    kTranslateMessage["COMMUNITY_MEMBER_LEVEL"]="昌吉重工 %s"
+    kTranslateMessage["COMMUNITY_MEMBER_LEVEL_DATETIME"]="\n    (到期时间:%s)"
+    
+    kTranslateMessage["COMMUNITY_MEMBER_LEVEL0"]=""
+    kTranslateMessage["COMMUNITY_MEMBER_LEVEL1"]="(S1):昌吉小社员"
+    kTranslateMessage["COMMUNITY_MEMBER_LEVEL2"]="(S2):昌吉大社员"
 
     kTranslateMessage["SKILL_TIER"]="段位分(P): [陆战队] %i\n                [卡拉异形] %i"
     kTranslateMessage["SKILL_TIER_COMM"]="指挥分(C): [陆战队] %i\n                [卡拉异形] %i"
@@ -115,6 +119,11 @@ if kLocales then
     kLocales["RANK_LIVER"] = "Vokex (C3)"
     kLocales["RANK_INVALID"] = "Unknown (C?)"
     kLocales["COMMUNITY_RANK"]="NS2CN Tier %s"
+    kLocales["COMMUNITY_MEMBER_LEVEL"]="Sanji Industries %s"
+    kLocales["COMMUNITY_MEMBER_LEVEL0"]=""
+    kLocales["COMMUNITY_MEMBER_LEVEL1"]=":Recruit (S1)"
+    kLocales["COMMUNITY_MEMBER_LEVEL2"]=":Comrade (S2)"
+    kLocales["COMMUNITY_MEMBER_LEVEL_DATETIME"]="\n    (Time Expires:%s)"
     kLocales["COMMUNITY_REPUTATION_POSITIVE"]="Reputation: %s"
     kLocales["COMMUNITY_REPUTATION_NEGATIVE"]="Toxicity: %s"
     kLocales["STATUS_QUEUE"]="Queue %i"

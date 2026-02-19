@@ -130,6 +130,7 @@ function Scoreboard_ReloadPlayerData()
         playerRecord.signature = pie.signature
         playerRecord.ns2TimePlayed = pie.ns2TimePlayed
         playerRecord.reputation = pie.reputation
+        playerRecord.memberLevel = pie.memberLevel
     ------------
 
         if playerRecord.IsCommander then

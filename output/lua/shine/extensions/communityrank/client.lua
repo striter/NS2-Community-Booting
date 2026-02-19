@@ -47,7 +47,8 @@ Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     end
 
     if(Message.MemberLevel > 0) then
-        tooltip = tooltip .. "\n\n" .. string.format(Locale.ResolveString("MEMBER_HISTORY"),Message.MemberLevel,FormatDateTimeString(Message.MemberExpireDate))
+        tooltip = tooltip .. "\n\n" .. string.format(Locale.ResolveString("COMMUNITY_MEMBER_LEVEL"),Locale.ResolveString(string.format("COMMUNITY_MEMBER_LEVEL%i",Message.MemberLevel)))
+        tooltip = tooltip .. string.format(Locale.ResolveString("COMMUNITY_MEMBER_LEVEL_DATETIME"),FormatDateTimeString(Message.MemberExpireDate))
     end
     
     skillTierIcon:GetIconObject():SetTooltip(tooltip)
@@ -167,6 +168,9 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                         end
 
                         description = description .. "\n\n" .. string.format(Locale.ResolveString("COMMUNITY_RANK"),Locale.ResolveString(pr.Group))
+                        if pr.memberLevel ~= 0 then
+                            description = description .. "\n" .. string.format(Locale.ResolveString("COMMUNITY_MEMBER_LEVEL"),Locale.ResolveString(string.format("COMMUNITY_MEMBER_LEVEL%i",pr.memberLevel)))
+                        end
                         if pr.reputation ~= 0 then
                             description = description .. "\n" .. (pr.reputation > 0 and string.format(Locale.ResolveString("COMMUNITY_REPUTATION_POSITIVE"),pr.reputation > 256 and ">=256" or pr.reputation )
                                     or string.format(Locale.ResolveString("COMMUNITY_REPUTATION_NEGATIVE"),-pr.reputation ))
@@ -178,8 +182,6 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                                 description = description .. "\n" .. string.format( Locale.ResolveString("COMMUNITY_PREWARM"), pr.prewarmScore)
                             end
                         end
-
-
                     end
                     scoreboard.badgeNameTooltip:SetText(description)
                 end
