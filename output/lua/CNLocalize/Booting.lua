@@ -66,7 +66,6 @@ if Client then
     -- Fonts Fix
     local hasFontAssetsPatched = GetFileExists("CNFontAssets.readme")
     if not hasFontAssetsPatched then
-        Shared.Message("[CNLocalize] Font Assets Override Patched")
         ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "replace")
         ModLoader.SetupFileHook("lua/GUI/FontGlobals.lua", "lua/CNLocalize/FontGlobals.lua", "replace")
     end

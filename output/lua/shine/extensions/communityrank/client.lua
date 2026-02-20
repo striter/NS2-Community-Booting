@@ -19,7 +19,7 @@ function Plugin:OnFirstThink()
 end
 
 Shine.HookNetworkMessage( "Shine_CommunityGadgets", function(Message)
-    Shared.Message(string.format("[CNCT] Item Get %i",Message.ItemID))
+    --Shared.Message(string.format("[CNCT] Item Get %i",Message.ItemID))
     Plugin.playerCommunityGadgets[Message.ItemID] = true
 end )
 
@@ -30,8 +30,8 @@ end
 
 Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     Plugin.playerCommunityData = Message
-    Shared.Message(string.format("[CNCT] Tier Set %i|%i|%i|%i|%i|%i|%i",
-            Message.Tier,Message.TimePlayed,Message.RoundWin,Message.TimePlayedCommander,Message.RoundWinCommander,Message.MemberLevel,Message.MemberExpireDate ))
+    --Shared.Message(string.format("[CNCT] Tier Set %i|%i|%i|%i|%i|%i|%i",
+    --        Message.Tier,Message.TimePlayed,Message.RoundWin,Message.TimePlayedCommander,Message.RoundWinCommander,Message.MemberLevel,Message.MemberExpireDate ))
 
     local skillTierIcon = GetMainMenu().navBar.playerScreen.skillTierIcon
     local isRookie = skillTierIcon:GetIsRookie()
