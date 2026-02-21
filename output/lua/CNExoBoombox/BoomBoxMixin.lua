@@ -17,9 +17,7 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED1"), name = "未来への咆哮" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/UED2"), name = "ライオン" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WeAllLiftTogether"), name = "We All Lift Together" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/seeuagain"), name = "See you again (两倍速)" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjmidnightcity"), name = "哈基Midnight City" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/hjm"), name = "哈基基米慌慌" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/cjdl"), name = "不眠之夜" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/LOTUS"), name = "美丽的神话" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/GetOverTheWorld"), name = "Get Over The World" },
@@ -42,7 +40,6 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/Aegis"), name = "Aegis" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/ATrueCompetitor"), name = "A True Competitor" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/2077"), name = "The Rebel Path" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/PTSD"), name = "PTSD" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/RisingTide"), name = "Rising Tide" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/Castlevania"), name = "狂月の招き" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/OST/MMFight"), name = "激闘" },
@@ -53,16 +50,12 @@ local kTrackAssets = {
     },
     [EBoomBoxTrack.JP] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Ame"), name = "Ame(A)" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Shock"), name = "ショック！" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/MoonAfterglow"), name = "三日月サンセット" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/IDontLikeMondays"), name = "WOLF VIBES" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/LightDance"), name = "ライトダンス" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/BluSwing"), name = "満ちていく体温" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Time26"), name = "表参道26時" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/P5"), name = "星と僕らと" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/WanderingAround"), name = "アルクアラウンド" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/dnmmm"), name = "电脑眠眠猫" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Elephant"), name = "象" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Flamingo"), name = "Flamingo" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/StepIt"), name = "Step It" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Hear"), name = "聴きたかったダンスミュージック、リキッドルームに" },
@@ -77,26 +70,19 @@ local kTrackAssets = {
     [EBoomBoxTrack.EN] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"), name = "Slumlord" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Preach"), name = "Preach" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Hypotheticals"), name = "Hypotheticals" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/OneNightinBurbank"), name = "One Night in Burbank" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/BrandNew"), name = "Brand New" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/mutual"), name = "mutual" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/MakesMeWonder"), name = "Makes Me Wonder" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LikeAHabit"), name = "Like A Habit" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Sleepwalker"), name = "Sleepwalker" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Starchild"), name = "Starchild" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/IRemember"), name = "I Remember" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Origami"), name = "Origami" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Rockin"), name = "Rockin'" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/SevenDaysInSundayJune"), name = "Seven Days In Sunday June" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LastCall"), name = "Last Call" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Metamodernity"), name = "Metamodernity" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/NoGood"), name = "No Good" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/WhenYouGonnaLearn"), name = "When You Gonna Learn?" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/ShipMyBodyBackToTexas"), name = "Ship My Body Back To Texas" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/FreeBird"), name = "Free Bird" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/HowYouLikeMeNow"), name = "How you like me now" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/TheFeelings"), name = "The Feelings" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/WestCoast"), name = "West Coast" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/GreenRiver"), name = "Green River" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/AfterTheDisco"), name = "After the Disco" },
@@ -114,7 +100,7 @@ function BoomBoxMixin:__initmixin()
 end
 
 if Client then
-    
+
     function BoomBoxMixin:GetBoomBoxTitle()
         if self.musicId ~= Entity.invalidId then
             return string.format("%s", kTrackAssets[self.selectedTrack][self.selectedTrackIndex].name)
@@ -127,14 +113,14 @@ if Client then
         if self.musicId ~= Entity.invalidId  then
             return Locale.ResolveString("BOOMBOX_STOP")
         end
-        
+
         return Locale.ResolveString("BOOMBOX_RANDOM")
     end
-    
+
 end
 
 if Server then
-    
+
     local function Play(self)
         if self.volume == 1
                 or self.selectedTrackIndex <= 0
@@ -150,7 +136,7 @@ if Server then
         self.musicId = music:GetId()
         self:SetRelevancyDistance(kMaxRelevancyDistance)
     end
-    
+
     function BoomBoxMixin:SwitchTrack(_trackIndex)
         self:DestroyMusic()
 
@@ -192,7 +178,7 @@ if Server then
             _from.musicId = Entity.invalidId
         end
     end
-    
+
     function BoomBoxMixin:DestroyMusic()
         if self.musicId ~= Entity.invalidId then
             local musicEntity = Shared.GetEntity(self.musicId)
@@ -203,7 +189,7 @@ if Server then
             self.musicId = Entity.invalidId
         end
     end
-    
+
     --For exosuit's messy states
     function BoomBoxMixin:SaveMusic()
         local id = self.musicId
@@ -212,7 +198,7 @@ if Server then
             local musicEntity = Shared.GetEntity(id)
             musicEntity:SetParent(nil)
         end
-        
+
         return id
     end
 
@@ -224,7 +210,7 @@ if Server then
         end
         self:DestroyMusic()
     end
-    
+
     function BoomBoxMixin:OnKill()
         self:DestroyMusic()
     end
