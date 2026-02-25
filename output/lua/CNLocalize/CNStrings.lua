@@ -72,7 +72,6 @@ Locale.kLocales["RESOURCED_ADDED_ALIEN"] = "(+%d Evolve Matter)"
 Locale.kTranslateMessage["AFK_WARNING"]="你已经一动不动了%{timeAFK}d秒钟，达到%{maxAFKTime}d秒时你将会被服务器自动踢出。"
 Locale.kTranslateMessage["AIR_PURIFIER"]="空气净化器"
 Locale.kTranslateMessage["ALERT"]="警告"
-Locale.kTranslateMessage["RESTART"]="重启"
 
 Locale.kTranslateMessage["ABM_EVOLVE_FOR"]="进化需要资源"
 Locale.kTranslateMessage["ABM_GAME_NOT_STARTED"]="战局尚未开始"

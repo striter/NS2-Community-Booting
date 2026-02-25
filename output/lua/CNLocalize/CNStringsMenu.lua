@@ -1,4 +1,6 @@
 --Loading
+Locale.kTranslateMessage["RESTART"]="重启"
+Locale.kTranslateMessage["RETURN"]="返回"
 Locale.kTranslateMessage["LOADING_VAC"] = "服务器受到<VAC>保护.\n作弊将导致永久封禁."
 Locale.kTranslateMessage["LOADING_MODLIST"] = "正在运行的MOD:\n"
 
