@@ -13,8 +13,9 @@ ModLoader.SetupFileHook( "lua/Voting.lua", "lua/CNBooting/Voting.lua", "replace"
 ModLoader.SetupFileHook( "lua/VotingChangeMap.lua", "lua/CNBooting/VotingChangeMap.lua", "replace")
 ModLoader.SetupFileHook( "lua/GUIVoteMenu.lua", "lua/CNBooting/GUIVoteMenu.lua", "post")
 ModLoader.SetupFileHook( "lua/shine/core/shared/hook.lua", "lua/shine/gamemodehook.lua", "post" )
-
-Script.Load("lua/CNBooting/CNPersistent.lua")
+if Client then
+    ModLoader.SetupFileHook( "lua/Shared.lua", "lua/CNBooting/CNPersistent.lua", "post" )
+end
 
 -- workaround because Las is lazy
 if AddHintModPanel then return end

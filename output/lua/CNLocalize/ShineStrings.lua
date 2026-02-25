@@ -1,19 +1,19 @@
 --Common
-kShineTranslations={}
-kShineTranslations["TIME_VALUE"]= "{Value} {TimeUnit}"
-kShineTranslations["TIME_SENTENCE"]= "{Before}{After}"
-kShineTranslations["TIME_SEPARATOR"]= ","
+Shine.Locale.kTranslations={}
+Shine.Locale.kTranslations["TIME_VALUE"]= "{Value} {TimeUnit}"
+Shine.Locale.kTranslations["TIME_SENTENCE"]= "{Before}{After}"
+Shine.Locale.kTranslations["TIME_SEPARATOR"]= ","
 
-kShineTranslations["SECOND"] = "{Value:Pluralise:秒|秒}"
-kShineTranslations["MINUTE"] = "{Value:Pluralise:分钟|分钟}"
-kShineTranslations["HOUR"] = "{Value:Pluralise:小时|小时}"
-kShineTranslations["DAY"] = "{Value:Pluralise:天|天}"
-kShineTranslations["WEEK"] ="{Value:Pluralise:星期|星期}"
+Shine.Locale.kTranslations["SECOND"] = "{Value:Pluralise:秒|秒}"
+Shine.Locale.kTranslations["MINUTE"] = "{Value:Pluralise:分钟|分钟}"
+Shine.Locale.kTranslations["HOUR"] = "{Value:Pluralise:小时|小时}"
+Shine.Locale.kTranslations["DAY"] = "{Value:Pluralise:天|天}"
+Shine.Locale.kTranslations["WEEK"] ="{Value:Pluralise:星期|星期}"
 
-kShineTranslations["MARINE"]="边境拓荒者部队"
-kShineTranslations["ALIEN"]="卡拉异型"
-kShineTranslations["ERROR_TAG"]="[错误]"
-kShineTranslations["BACK"]="上一级"
+Shine.Locale.kTranslations["MARINE"]="边境拓荒者部队"
+Shine.Locale.kTranslations["ALIEN"]="卡拉异型"
+Shine.Locale.kTranslations["ERROR_TAG"]="[错误]"
+Shine.Locale.kTranslations["BACK"]="上一级"
 
 --Plugins
 kShinePluginsTranslations={}
@@ -235,18 +235,18 @@ kShinePluginsTranslations["commbans"]["NOTIFY_PREFIX"]="[指挥员黑名单]"
 kShinePluginsTranslations["commbans"]["Comm Bans"]="指挥封禁"
 kShinePluginsTranslations["commbans"]["BAN"]="禁止其指挥"
 
-kShineTranslations["ENABLE_ALLTALK"]="开启全局语音"
-kShineTranslations["DISABLE_ALLTALK"]="关闭全局语音"
-kShineTranslations["TEAM_PREFERENCE_HINT"]="队伍偏好"
-kShineTranslations["ALLTALK_ENABLED"]="全局语音正处于开启状态"
-kShineTranslations["ALLTALK_DISABLED"]="全局语音已关闭"
-kShineTranslations["ALLTALK_NOTIFY_ENABLED"]="已开启."
-kShineTranslations["ALLTALK_NOTIFY_DISABLED"]="已关闭."
-kShineTranslations["PLAYER_VOTED_ENABLE"] = "{PlayerName} 投票开启全局语音 (还需  {VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
-kShineTranslations["PLAYER_VOTED_DISABLE"] = "{PlayerName} 投票关闭全局语音 (还需  {VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
-kShineTranslations["ERROR_ALREADY_VOTED_ENABLE"]= "已参与过开启全局语音投票."
-kShineTranslations["ERROR_ALREADY_VOTED_DISABLE"]= "已参与过关闭全局语音投票."
-kShineTranslations["ERROR_CANNOT_VOTE_IN_SPECTATE"]= "观察者不允许参与此投票."
+Shine.Locale.kTranslations["ENABLE_ALLTALK"]="开启全局语音"
+Shine.Locale.kTranslations["DISABLE_ALLTALK"]="关闭全局语音"
+Shine.Locale.kTranslations["TEAM_PREFERENCE_HINT"]="队伍偏好"
+Shine.Locale.kTranslations["ALLTALK_ENABLED"]="全局语音正处于开启状态"
+Shine.Locale.kTranslations["ALLTALK_DISABLED"]="全局语音已关闭"
+Shine.Locale.kTranslations["ALLTALK_NOTIFY_ENABLED"]="已开启."
+Shine.Locale.kTranslations["ALLTALK_NOTIFY_DISABLED"]="已关闭."
+Shine.Locale.kTranslations["PLAYER_VOTED_ENABLE"] = "{PlayerName} 投票开启全局语音 (还需  {VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
+Shine.Locale.kTranslations["PLAYER_VOTED_DISABLE"] = "{PlayerName} 投票关闭全局语音 (还需  {VotesNeeded} {VotesNeeded:Pluralise: 票| 票})"
+Shine.Locale.kTranslations["ERROR_ALREADY_VOTED_ENABLE"]= "已参与过开启全局语音投票."
+Shine.Locale.kTranslations["ERROR_ALREADY_VOTED_DISABLE"]= "已参与过关闭全局语音投票."
+Shine.Locale.kTranslations["ERROR_CANNOT_VOTE_IN_SPECTATE"]= "观察者不允许参与此投票."
 
 kShinePluginsTranslations["serverswitch"]={}
 kShinePluginsTranslations["serverswitch"]["VOTEMENU_BUTTON"]="服务器列表"

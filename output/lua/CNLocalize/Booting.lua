@@ -1,14 +1,29 @@
-Shared.RegisterNetworkMessage("SwitchLocalize", {})
-if Client then
-    gForceLocalize = true
-    if CNPersistent then
-        if CNPersistent.forceLocalize ~= nil then
-            gForceLocalize = CNPersistent.forceLocalize
-        end
-    end
 
-    if gForceLocalize then
-        gCommunityGuideTable = {
+Shared.RegisterNetworkMessage("SwitchLocalize", {})
+
+if Client then
+
+    --local function OnConsoleHttp(url)
+    --    Shared.Message("Pending:" .. url)
+    --    Shared.SendHTTPRequest(url,"GET",{},function(response)
+    --        Shared.Message(response) 
+    --    end)
+    --end
+    --
+    --Event.Hook("Console_http", OnConsoleHttp)
+
+
+    --Core
+    if not Locale.kTranslateMessage then
+        Locale.kTranslateMessage = {}
+        Locale.kLocales = {}
+    end
+    Locale.kForceLocalize = true
+    if CNPersistent and CNPersistent.forceLocalize ~= nil then
+        Locale.kForceLocalize = CNPersistent.forceLocalize
+    end
+    if Locale.kForceLocalize then
+        Locale.kCommunityGuideTable = {
             mainPulloutTitle = "欢迎来到<物竞天择2中国社区>",
             subPulloutTitle = "点击查看指南",
 
@@ -16,7 +31,7 @@ if Client then
             url = "https://docs.qq.com/doc/DUFlBR0ZJeFRiRnRi",
         }
     else
-        gCommunityGuideTable = {
+        Locale.kCommunityGuideTable = {
             mainPulloutTitle = "Welcome to <NS2CN>",
             subPulloutTitle = "Click to read Guide",
 
@@ -25,44 +40,6 @@ if Client then
         }
     end
 
-    function SetLocalize(_value)
-        gForceLocalize = _value
-        if CNPersistent then
-            CNPersistent.forceLocalize = gForceLocalize
-            CNPersistentSave()
-        end
-    end
-
-    Client.HookNetworkMessage("SwitchLocalize", function(message)
-        SetLocalize(not gForceLocalize)
-    end )
-
-
-    --Core
-    if not kTranslateMessage then
-        kTranslateMessage = {}
-        kLocales = {}
-    end
-
-    Script.Load("lua/CNLocalize/CNStrings.lua")
-    Script.Load("lua/CNLocalize/CNStringsMenu.lua")
-    local baseResolveString = Locale.ResolveString
-    function CNLocalizeResolve(input)
-        if not input then return "" end
-
-        local resolvedString = gForceLocalize and rawget(kTranslateMessage,input) or nil
-        resolvedString = resolvedString or rawget(kLocales,input)
-        return resolvedString or baseResolveString(input)
-    end
-    Locale.ResolveString = CNLocalizeResolve
-
-    local baseGetCurrentLanguage = Locale.GetCurrentLanguage
-    function CNGetCurrentLanguage()
-        return gForceLocalize and "zhCN" or baseGetCurrentLanguage(self)
-    end
-    Locale.GetCurrentLanguage = CNGetCurrentLanguage
-
-
     -- Fonts Fix
     local hasFontAssetsPatched = GetFileExists("CNFontAssets.readme")
     if not hasFontAssetsPatched then
@@ -70,13 +47,43 @@ if Client then
         ModLoader.SetupFileHook("lua/GUI/FontGlobals.lua", "lua/CNLocalize/FontGlobals.lua", "replace")
     end
 
+    Script.Load("lua/CNLocalize/CNStringsMenu.lua")
+    ModLoader.SetupFileHook("lua/Locale.lua", "lua/CNLocalize/CNStrings.lua", "post")
+    local baseGetCurrentLanguage = Locale.GetCurrentLanguage
+    local function CNGetCurrentLanguage()
+        return Locale.kForceLocalize and "zhCN" or baseGetCurrentLanguage(self)
+    end
+    Locale.GetCurrentLanguage = CNGetCurrentLanguage
 
     --Locations
-    Script.Load("lua/CNLocalize/CNLocations.lua")
-    function CNResolveLocation(input)
-        if not gForceLocalize then return input end
-        return kTranslateLocations[input] or input
+    Locale.kTranslateLocations = {}
+    ModLoader.SetupFileHook("lua/Locale.lua", "lua/CNLocalize/CNLocations.lua", "post")
+    function Locale.ResolveLocation(input)
+        if not Locale.kForceLocalize then return input end
+        return Locale.kTranslateLocations[input] or input
     end
+
+    Client.HookNetworkMessage("SwitchLocalize", function(message)
+        Locale.SetLocalize(not Locale.kForceLocalize)
+    end )
+
+    function Locale.SetLocalize(_value)
+        Locale.kForceLocalize = _value
+        if CNPersistent then
+            CNPersistent.forceLocalize = Locale.kForceLocalize
+            CNPersistentSave()
+        end
+    end
+
+    local baseResolveString = Locale.ResolveString
+    local function CNLocalizeResolve(input)
+        if not input then return "" end
+
+        local resolvedString = Locale.kForceLocalize and rawget(Locale.kTranslateMessage,input) or nil
+        resolvedString = resolvedString or rawget(Locale.kLocales,input)
+        return resolvedString or baseResolveString(input)
+    end
+    Locale.ResolveString = CNLocalizeResolve
 
     ModLoader.SetupFileHook("lua/GUIMinimap.lua", "lua/CNLocalize/GUIMinimap.lua", "post")
     ModLoader.SetupFileHook("lua/GUIUnitStatus.lua", "lua/CNLocalize/GUIUnitStatus.lua", "replace")
@@ -119,16 +126,6 @@ if Client then
     ModLoader.SetupFileHook("lua/GUIInsight_Location.lua", "lua/CNLocalize/Spectator/GUIInsight_Location.lua", "post")
     ModLoader.SetupFileHook("lua/GUIInsight_TechPoints.lua", "lua/CNLocalize/Spectator/GUIInsight_TechPoints.lua", "replace")
     ModLoader.SetupFileHook("lua/GUIInsight_PlayerFrames.lua", "lua/CNLocalize/Spectator/GUIInsight_PlayerFrames.lua", "replace")
-
-
-    --local function OnConsoleHttp(url)
-    --    Shared.Message("Pending:" .. url)
-    --    Shared.SendHTTPRequest(url,"GET",{},function(response)
-    --        Shared.Message(response) 
-    --    end)
-    --end
-    --
-    --Event.Hook("Console_http", OnConsoleHttp)
 
 
 end

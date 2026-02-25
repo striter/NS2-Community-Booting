@@ -89,7 +89,7 @@ function GUIMenuNewsFeedPullout:Initialize(params, errorDepth)
     
     self.label = CreateGUIObject("newsLabelLeft", GUIMenuText, self,
     {
-        text = gCommunityGuideTable.mainPulloutTitle,
+        text = Locale.kCommunityGuideTable.mainPulloutTitle,
         font = MenuStyle.kOptionFont,
         anchor = Vector(0.25, 0.5, 0),
         hotSpot = Vector(0.5, 0.5, 0),
@@ -97,7 +97,7 @@ function GUIMenuNewsFeedPullout:Initialize(params, errorDepth)
 
     self.label2 = CreateGUIObject("newsLabelRight", GUIMenuText, self,
     {
-        text = gCommunityGuideTable.subPulloutTitle,
+        text = Locale.kCommunityGuideTable.subPulloutTitle,
         font = MenuStyle.kOptionFont,
         anchor = Vector(0.75, 0.5, 0),
         hotSpot = Vector(0.5, 0.5, 0),

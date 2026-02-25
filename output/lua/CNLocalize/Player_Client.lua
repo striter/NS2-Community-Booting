@@ -8,7 +8,7 @@ function PlayerUI_GetPingInfo(player, teamInfo, onMiniMap)
     local pingPos = teamInfo:GetPingPosition()
 
     local location = GetLocationForPoint(pingPos)
-    local locationName = location and CNResolveLocation(location:GetName()) or ""
+    local locationName = location and Locale.ResolveLocation(location:GetName()) or ""
 
     if not onMiniMap then
         position = GetClampedScreenPosition(pingPos, 40)
@@ -36,11 +36,11 @@ function PlayerUI_GetLocationName()
 
         if playerLocation ~= nil then
 
-            locationName = CNResolveLocation(playerLocation.name)
+            locationName = Locale.ResolveLocation(playerLocation.name)
 
         elseif playerLocation == nil and locationName ~= nil then
 
-            locationName = CNResolveLocation(player:GetLocationName())
+            locationName = Locale.ResolveLocation(player:GetLocationName())
 
         elseif locationName == nil then
 
@@ -87,7 +87,7 @@ function PlayerUI_GetObjectiveInfo()
                 player.showingObjective = true
 
                 local text = StringReformat(Locale.ResolveString("OBJECTIVE_PROGRESS"),
-                        { location = CNResolveLocation(objectiveInfoEnt:GetLocationName()),
+                        { location = Locale.ResolveLocation(objectiveInfoEnt:GetLocationName()),
                           name = GetDisplayNameForTechId(objectiveInfoEnt:GetTechId()),
                           health = math.ceil(healthFraction * 100) })
 

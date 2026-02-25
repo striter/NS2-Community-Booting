@@ -60,7 +60,7 @@ function GUIMinimap:InitializeLocationNames()
         SetupLocationTextItem(locationText)
         locationText:SetColor(Color(1.0, 1.0, 1.0, 0.65))
 
-        locationText:SetText(CNResolveLocation( location.Name))
+        locationText:SetText(Locale.ResolveLocation( location.Name))
         locationText:SetPosition( Vector(posX, posY, 0) )
 
         self.minimap:AddChild(locationText)

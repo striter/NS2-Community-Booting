@@ -1060,7 +1060,7 @@ do
 		if Data.LocationID > 0 then
 			local Location = Shared.GetString( Data.LocationID )
 			if StringFind( Location, "[^%s]" ) then
-				return StringFormat( Locale.ResolveString("TEAM_PREFIX_LOCATION"), CNResolveLocation(Location) )
+				return StringFormat( Locale.ResolveString("TEAM_PREFIX_LOCATION"), Locale.ResolveLocation(Location) )
 			end
 		end
 

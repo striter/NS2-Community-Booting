@@ -23,7 +23,7 @@ function Plugin:Initialise()
                                     label = "中文用户点我",
                                 },
                                 callback = function(popup)
-                                    SetLocalize(true)
+                                    Locale.SetLocalize(true)
                                     popup:Close()
                                     ChatUI_AddSystemMessage("不要忘记看一看位于主菜单底部的<社区指南>!")
                                 end,
@@ -35,7 +35,7 @@ function Plugin:Initialise()
                                     label = "I prefer English",
                                 },
                                 callback = function(popup)
-                                    SetLocalize(false)
+                                    Locale.SetLocalize(false)
                                     popup:Close()
                                     ChatUI_AddSystemMessage("Rejoin/Reconnect required to get menu re-translate.\nThen you can check our <Community Guide> located at Main Menu Bottom!")
                                 end,

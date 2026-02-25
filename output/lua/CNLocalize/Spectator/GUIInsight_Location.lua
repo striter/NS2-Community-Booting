@@ -14,9 +14,9 @@ function GUIInsight_Location:Update(deltaTime)
         
         local nearestLocation = GetLocationForPoint(player:GetOrigin())
         if nearestLocation == nil then
-            nearestLocationName = CNResolveLocation("Unknown")
+            nearestLocationName = Locale.ResolveLocation("Unknown")
         else
-            nearestLocationName = CNResolveLocation(nearestLocation.name)
+            nearestLocationName = Locale.ResolveLocation(nearestLocation.name)
         end
         self.locationText:SetText(nearestLocationName)
         self.locationTextBack:SetText(nearestLocationName)

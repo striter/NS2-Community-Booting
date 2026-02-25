@@ -2,10 +2,10 @@ GUIMenuNavBar.kNewsFeedConfig =
 {
     {
         name = "communityWelcomeCN",
-        label = gCommunityGuideTable.urlTitle,
+        label = Locale.kCommunityGuideTable.urlTitle,
         webPageParams =
         {
-            url = gCommunityGuideTable.url,
+            url = Locale.kCommunityGuideTable.url,
             renderSize = kDefaultNewsFeedWebViewSize,
             wheelEnabled = true,
             clickMode = "Full",

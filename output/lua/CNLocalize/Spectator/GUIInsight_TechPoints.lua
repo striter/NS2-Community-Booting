@@ -250,7 +250,7 @@ function GUIInsight_TechPoints:UpdateTechPoint(techPoint, techPointRecord, curre
     local techId = techPointRecord.TechId
     local powerFraction = techPointRecord.PowerNodeFraction
     local location = Shared.GetString(techPointRecord.Location)
-    location = CNResolveLocation(location)
+    location = Locale.ResolveLocation(location)
     
     if teamChanged then
     

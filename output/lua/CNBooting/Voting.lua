@@ -239,7 +239,7 @@ if Server then
         local votingDone = Shared.GetTime() - activeVoteStartedAtTime >= kVoteExpireTime
         if not votingDone and message.voteId == activeVoteId then
             local clientId = client:GetUserId()
-            Shared.Message(tostring(activeVoteName))
+            --Shared.Message(tostring(activeVoteName))
             if activeVoteName == "VoteSwitchServer" then
                 local player = client:GetControllingPlayer()
                 local reputation = player.reputation or 0

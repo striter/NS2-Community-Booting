@@ -6,9 +6,9 @@ local baseGetLocalisedString = Shine.Locale.GetLocalisedString
 
 function Shine.Locale:GetLocalisedString( Source, Lang, Key )
     
-    if not gForceLocalize then return baseGetLocalisedString(self,Source,Lang,Key) end
+    if not Locale.kForceLocalize then return baseGetLocalisedString(self,Source,Lang,Key) end
     
-    local finalValue = rawget(kShineTranslations,Key)
+    local finalValue = rawget(Shine.Locale.kTranslations,Key)
     if finalValue then
         return finalValue
     end

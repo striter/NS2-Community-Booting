@@ -21,7 +21,7 @@ function MarineGhostModel:Update()
 
         if commandStation ~= nil and GetLocationForPoint(commandStation:GetOrigin()) then
             commandStationOrigin = commandStation:GetOrigin()
-            beaconToLocationText = CNResolveLocation( GetLocationForPoint(commandStationOrigin):GetName())
+            beaconToLocationText = Locale.ResolveLocation( GetLocationForPoint(commandStationOrigin):GetName())
         end
 
         if commandStationOrigin then
@@ -70,16 +70,16 @@ function MarineGhostModel:Update()
                 local screenPos = Client.WorldToScreen(modelCoords.origin)
                 local textPos = self.powerIcon:GetPosition()
                 local powerPoint = GetPowerPointForLocation(location:GetName())
-                local text = string.format("%s", CNResolveLocation( location:GetName()))
+                local text = string.format("%s", Locale.ResolveLocation( location:GetName()))
                 local builtFraction = powerPoint:GetBuiltFraction()
                 local healthFraction = powerPoint:GetHealthScalar()
                 if builtFraction < 1 then
                     text = StringReformat(Locale.ResolveString("POWER_BUILT"),
-                            { location = CNResolveLocation( location:GetName()),
+                            { location = Locale.ResolveLocation( location:GetName()),
                               percentage = builtFraction*100 })
                 elseif builtFraction > 0 and healthFraction < 1 then
                     text = StringReformat(Locale.ResolveString("POWER_HEALTH"),
-                            { location = CNResolveLocation( location:GetName()),
+                            { location = Locale.ResolveLocation( location:GetName()),
                               percentage = healthFraction*100 })
                 end
                 self.powerLocationText:SetText(text)

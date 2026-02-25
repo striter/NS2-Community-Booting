@@ -32,7 +32,7 @@ function GUIHiveStatus:UpdateStatusSlot( slotIdx, slotData )
         --cheaper to just force visible instead of checking visibility each update
         self.statusSlots[slotIdx].background:SetIsVisible( self.visible )
         self.statusSlots[slotIdx].frame:SetIsVisible( self.visible )
-        self.statusSlots[slotIdx].locationText:SetText( CNResolveLocation( Shared.GetString( slotData.locationId ) ) )
+        self.statusSlots[slotIdx].locationText:SetText( Locale.ResolveLocation( Shared.GetString( slotData.locationId ) ) )
         self.statusSlots[slotIdx].locationText:SetIsVisible( self.visible )
         self.statusSlots[slotIdx].locationBackground:SetIsVisible( self.visible )
         

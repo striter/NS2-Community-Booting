@@ -3,7 +3,7 @@ function TunnelEntrance:GetDestinationLocationName()
 
     local location = Shared.GetEntity(self.destLocationId)
     if location then
-        return CNResolveLocation(location:GetName())
+        return Locale.ResolveLocation(location:GetName())
     end
     
 end
