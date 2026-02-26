@@ -532,6 +532,101 @@ Locale.kTranslateLocations["Transport"] = "转运区"
 Locale.kTranslateLocations["Miasma"] = "东翼通道"
 Locale.kTranslateLocations["Ominous"] = "西翼通道"
 
+--ns2_fusion
+Locale.kTranslateLocations["Converters"] = "变流器"
+Locale.kTranslateLocations["Intake"] = "入气口"
+Locale.kTranslateLocations["Supports"] = "支撑区"
+Locale.kTranslateLocations["Power Storage"] = "储能区"
+Locale.kTranslateLocations["Fortress"] = "要塞"
+Locale.kTranslateLocations["Cooling"] = "冷凝区"
+Locale.kTranslateLocations["Servers"] = "服务器机房"
+Locale.kTranslateLocations["Corner"] = "转角"
+Locale.kTranslateLocations["Station"] = "车站"
+Locale.kTranslateLocations["Unloading"] = "卸货区"
+Locale.kTranslateLocations["Slice"] = "分流区"
+Locale.kTranslateLocations["Cascade"] = "级联楼梯"
+Locale.kTranslateLocations["Dice"] = "连接处"
+Locale.kTranslateLocations["Turnip"] = "变电室"
+Locale.kTranslateLocations["Stalk"] = "转运室"
+Locale.kTranslateLocations["Vista"] = "观景台"
+
+--ns2_veil_five
+Locale.kTranslateLocations["Gas Line"] = "燃气通路"
+
+--ns2_spaceship_refined
+Locale.kTranslateLocations["Engine Room"] = "引擎室"
+Locale.kTranslateLocations["Corridors"] = "走廊"
+Locale.kTranslateLocations["Shuttle East"] = "东接驳区"
+Locale.kTranslateLocations["Shuttle West"] = "西接驳区"
+Locale.kTranslateLocations["Onos Bar"] = "大牛吧"
+Locale.kTranslateLocations["Lunch Room"] = "餐厅"
+Locale.kTranslateLocations["Weapon Room"] = "武器库"
+Locale.kTranslateLocations["Garden"] = "园艺室"
+Locale.kTranslateLocations["Quarters"] = "休息区"
+Locale.kTranslateLocations["Showers"] = "淋浴间"
+Locale.kTranslateLocations["Conference"] = "会议室"
+Locale.kTranslateLocations["Prison"] = "监狱"
+Locale.kTranslateLocations["Laboratory"] = "实验室"
+Locale.kTranslateLocations["Simulation"] = "冷库"
+Locale.kTranslateLocations["Echo"] = "C-航站楼"
+Locale.kTranslateLocations["Charlie"] = "E-航站楼"
+Locale.kTranslateLocations["Tower"] = "塔台"
+
+--ns2_metal
+Locale.kTranslateLocations["Control Rooms"] = "控制室"
+Locale.kTranslateLocations["Storage D"] = "D-贮藏室"
+Locale.kTranslateLocations["Power Banks"] = "能量节点"
+Locale.kTranslateLocations["Cooling Storage"] = "冷藏区"
+Locale.kTranslateLocations["Cooling System"] = "制冷系统"
+Locale.kTranslateLocations["Cooling Processing"] = "冷却加工区"
+Locale.kTranslateLocations["Mineral Processing"] = "矿物处理室"
+Locale.kTranslateLocations["Heating Room"] = "加热区"
+Locale.kTranslateLocations["Fluid Processing"] = "流体处理区"
+Locale.kTranslateLocations["Sector F"] = "F-分区"
+Locale.kTranslateLocations["Smelter"] = "熔炼车间"
+Locale.kTranslateLocations["Supply Way"] = "物流通道"
+
+--ns2_prison
+Locale.kTranslateLocations["HQ"] = "总部"
+Locale.kTranslateLocations["C-harlie"] = "C-连接区"
+Locale.kTranslateLocations["O-scar"] = "O-连接区"
+Locale.kTranslateLocations["L-ima"] = "L-连接区"
+Locale.kTranslateLocations["K-ilo"] = "K-连接区"
+
+Locale.kTranslateLocations["Loadout"] = "装配室"
+Locale.kTranslateLocations["Staging Area"] = "转运站"
+Locale.kTranslateLocations["Surveillance"] = "监控室"
+Locale.kTranslateLocations["Yard"] = "活动场所"
+Locale.kTranslateLocations["Laundry"] = "洗衣房"
+Locale.kTranslateLocations["General Population"] = "常规监区"
+
+Locale.kTranslateLocations["Quarry"] = "矿场"
+Locale.kTranslateLocations["Cantina"] = "餐厅"
+Locale.kTranslateLocations["Med Bay"] = "医疗室"
+Locale.kTranslateLocations["Parking"] = "停泊区"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
