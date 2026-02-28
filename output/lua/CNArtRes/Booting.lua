@@ -5,7 +5,7 @@
 ---
 
 if Client then
-    ModLoader.SetupFileHook( "lua/Client.lua", "lua/CNArtRes/BadgeLocale.lua", "post" )
+    ModLoader.SetupFileHook( "lua/Locale.lua", "lua/CNArtRes/BadgeLocale.lua", "post" )
 end
 
 if AddHintModPanel then
