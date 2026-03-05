@@ -393,8 +393,9 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			end
         end
         
+        local memberLevel = crEnabled and cr:GetMemberLevel(clientID) or 0
         if bypassCredit ~= nil then
-            if crEnabled and cr:GetMemberLevel(clientID) == 2 then
+            if memberLevel == 2 then
                 self:Notify(_player, "[昌吉大会员]特权启用.",priorColorTable,nil)
                 return
             end
@@ -418,13 +419,37 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 		if reputationConfig.Enable and crEnabled then
 			local canUse,current = cr:UseCommunityReputation(_player,reputationConfig.Limit,0)
 			if canUse then
-				self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权(当前有%d点).",reputationConfig.Cost,current),priorColorTable)
+                if memberLevel >= 1 then
+                    self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点](昌吉社员减半),以获得本场越位特权(当前有%d点).",math.floor(reputationConfig.Cost / 2),current),priorColorTable)
+                else
+                    self:Notify(_player,string.format("你可以于聊天框输入!rep_join,使用[%s信誉点]获得本场越位特权(当前有%d点).",reputationConfig.Cost,current),priorColorTable)
+                end
 			end
 		end
 	end
 
 	self:Notify(_player, errorString,errorColorTable)
 	return false
+end
+
+local function RepJoin(_client)
+    local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+    if not crEnabled then return end
+    local clientID = _client:GetUserId()
+    local memberLevel = cr:GetMemberLevel(clientID) or 0
+    local reputationConfig = self.Config.ReputationBypass
+    local cost = reputationConfig.Cost
+    if memberLevel == 1 then
+        cost = math.floor(cost / 2)
+    end
+    if cr:UseCommunityReputation(_client:GetControllingPlayer(),reputationConfig.Limit,cost) then
+        table.insert(kTeamJoinTracker,clientID)
+        if memberLevel >= 1 then
+            self:Notify(_client,string.format("已使用[%s信誉点](昌吉会员减半),获得当局入场特权!",cost),priorColorTable)
+        else
+            self:Notify(_client,string.format("已使用[%s信誉点],获得当局入场特权!",cost),priorColorTable)
+        end
+    end
 end
 
 local function PlaytimeBypassValidate(self,_player)
@@ -550,16 +575,6 @@ function Plugin:CreateCommands()
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
 	:Help( "示例: !restriction_skill 1000 -1 true.将服务器的入场分数设置为,[10-∞],并且保存,-1代表无限制" )
 	
-	local function RepJoin(_client)
-		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
-		if not crEnabled then return end
-		
-		local reputationConfig = self.Config.ReputationBypass
-		if cr:UseCommunityReputation(_client:GetControllingPlayer(),reputationConfig.Limit,reputationConfig.Cost) then
-			table.insert(kTeamJoinTracker,_client:GetUserId())
-			self:Notify(_client,string.format("已使用[%s信誉点],获得当局入场特权!",reputationConfig.Cost),priorColorTable)
-		end
-	end
 	self:BindCommand( "sh_rep_join", "rep_join", RepJoin,true)
 		:Help( "使用信誉点获得游戏加入特权" )
 end

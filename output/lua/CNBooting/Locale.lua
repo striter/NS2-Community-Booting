@@ -51,7 +51,7 @@ if Locale.kTranslateMessage then
     Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL_DATETIME"]="\n    (到期时间:%s)"
     
     Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL0"]=""
-    Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL1"]="(S1):昌吉小社员"
+    Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL1"]="(S1):昌吉社员"
     Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL2"]="(S2):昌吉大社员"
 
     Locale.kTranslateMessage["SKILL_TIER"]="段位分(P): [陆战队] %i\n                [卡拉异形] %i"
