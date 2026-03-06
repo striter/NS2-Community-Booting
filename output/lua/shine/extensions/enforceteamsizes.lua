@@ -562,7 +562,7 @@ function Plugin:CreateCommands()
 		local memberLevel = cr:GetMemberLevel(clientID) or 0
 		local reputationConfig = self.Config.ReputationBypass
 		local cost = reputationConfig.Cost
-		if memberLevel == 1 then
+		if memberLevel >= 1 then
 			cost = math.floor(cost / 2)
 		end
 		if cr:UseCommunityReputation(_client:GetControllingPlayer(),reputationConfig.Limit,cost) then
