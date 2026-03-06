@@ -432,26 +432,6 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 	return false
 end
 
-local function RepJoin(_client)
-    local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
-    if not crEnabled then return end
-    local clientID = _client:GetUserId()
-    local memberLevel = cr:GetMemberLevel(clientID) or 0
-    local reputationConfig = self.Config.ReputationBypass
-    local cost = reputationConfig.Cost
-    if memberLevel == 1 then
-        cost = math.floor(cost / 2)
-    end
-    if cr:UseCommunityReputation(_client:GetControllingPlayer(),reputationConfig.Limit,cost) then
-        table.insert(kTeamJoinTracker,clientID)
-        if memberLevel >= 1 then
-            self:Notify(_client,string.format("已使用[%s信誉点](昌吉会员减半),获得当局入场特权!",cost),priorColorTable)
-        else
-            self:Notify(_client,string.format("已使用[%s信誉点],获得当局入场特权!",cost),priorColorTable)
-        end
-    end
-end
-
 local function PlaytimeBypassValidate(self,_player)
 	if not _player or _player:GetIsVirtual() then return end
 	if _player:GetPlayTime() < self.Config.PlayTimeBypass then return end
@@ -574,7 +554,27 @@ function Plugin:CreateCommands()
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 }
 	:AddParam{ Type = "number", Round = true, Min = -1, Default = -1 , Optional = true}
 	:Help( "示例: !restriction_skill 1000 -1 true.将服务器的入场分数设置为,[10-∞],并且保存,-1代表无限制" )
-	
+
+	local function RepJoin(_client)
+		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+		if not crEnabled then return end
+		local clientID = _client:GetUserId()
+		local memberLevel = cr:GetMemberLevel(clientID) or 0
+		local reputationConfig = self.Config.ReputationBypass
+		local cost = reputationConfig.Cost
+		if memberLevel == 1 then
+			cost = math.floor(cost / 2)
+		end
+		if cr:UseCommunityReputation(_client:GetControllingPlayer(),reputationConfig.Limit,cost) then
+			table.insert(kTeamJoinTracker,clientID)
+			if memberLevel >= 1 then
+				self:Notify(_client,string.format("已使用[%s信誉点](昌吉会员减半),获得当局入场特权!",cost),priorColorTable)
+			else
+				self:Notify(_client,string.format("已使用[%s信誉点],获得当局入场特权!",cost),priorColorTable)
+			end
+		end
+	end
+
 	self:BindCommand( "sh_rep_join", "rep_join", RepJoin,true)
 		:Help( "使用信誉点获得游戏加入特权" )
 end
