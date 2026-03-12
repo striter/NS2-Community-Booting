@@ -12,6 +12,7 @@ ModLoader.SetupFileHook( "lua/Badges_Server.lua", "lua/CNBooting/Badges_Server.l
 ModLoader.SetupFileHook( "lua/Voting.lua", "lua/CNBooting/Voting.lua", "replace")
 ModLoader.SetupFileHook( "lua/VotingChangeMap.lua", "lua/CNBooting/VotingChangeMap.lua", "replace")
 ModLoader.SetupFileHook( "lua/GUIVoteMenu.lua", "lua/CNBooting/GUIVoteMenu.lua", "post")
+ModLoader.SetupFileHook( "lua/Player.lua", "lua/CNBooting/Player.lua", "post")
 ModLoader.SetupFileHook( "lua/shine/core/shared/hook.lua", "lua/shine/gamemodehook.lua", "post" )
 if Client then
     ModLoader.SetupFileHook( "lua/Shared.lua", "lua/CNBooting/CNPersistent.lua", "post" )
