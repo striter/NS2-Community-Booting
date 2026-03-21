@@ -285,10 +285,6 @@ Plugin.ConnectionHandlers = {
 		-- reserved slot access and only reserved slots are left.
 
 		local denyReason = HasSlots and "请获取预留位.\nSlot is reserved." or "服务器已满.\nServer full."
-		if RangeValid(self.Config.SkillByPassRange) then
-			local rangeString = RangeString(self.Config.SkillByPassRange)
-			denyReason = string.format("%s分段可获本服预留位.\nSlot reserved for specific skill players.",rangeString)
-		end
 
 		return false, denyReason
 	end
