@@ -167,16 +167,29 @@ local kMarineRespawnEquipment = {
 	{map = Welder.kMapName,info = "焊枪 "}
 }
 
+local kGearsPrefix = "[新晋装备]"
+local kMemberPrefix = "[昌吉社员]"
 local function CheckMarineGadgets(self,player)
 	if not Plugin.Config.MarineGears then return end
 
 	local client,tier = GetClientAndTier(player)
-	if not client or tier == 0 then return end
+    if not client then return end
+    
+    local prefix = kGearsPrefix
+	if tier == 0 or tier > #kMarineRespawnEquipment then
+        local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+        local memberLevel = crEnabled and cr:GetMemberLevel(client:GetUserId()) or 0
+        if memberLevel == 2 then
+            prefix = kMemberPrefix
+            tier = 3
+        else
+            return
+        end
+    end
 
 	local techId = player:GetTechId()
 	local resultString = nil
 	if techId == kTechId.Marine then
-		local equipments = {}
 		for i=tier,#kMarineRespawnEquipment do
 			local equipment = kMarineRespawnEquipment[i]
 			if not equipment.slot or not player:GetWeaponInHUDSlot(equipment.slot) then
@@ -195,7 +208,7 @@ local function CheckMarineGadgets(self,player)
 
 	if resultString then
 		Shine:NotifyDualColour( player,
-				88, 214, 141, string.format("[新晋-装备%i]",tier),
+				88, 214, 141, prefix,
 				234, 250, 241, string.format("初始装备:%s 已派发", resultString))
 		return true
 	end
