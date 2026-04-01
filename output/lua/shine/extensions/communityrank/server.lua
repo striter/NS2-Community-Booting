@@ -43,9 +43,7 @@ Plugin.DefaultConfig = {
         PenaltyStarts = 0,
         PenaltyCheckInterval = 300,
         RageQuit = {
-            CheckTime = 1200,
             MinPlayer = 12,
-            ActivePlayTime = 60,
             DeltaQuit = -5,
             DeltaQuitReputationStepMultiplier = 100,
             DeltaWin = 1,
@@ -657,13 +655,12 @@ function Plugin:OnReputationPenaltyCheck()
 end
 
 function Plugin:RageQuitValidate(Player,NewTeam)
-    if not ReputationEnabled(self)
-        or not GetGamerules():GetGameStarted() 
-        or Shine.GetHumanPlayerCount() <= self.Config.Reputation.RageQuit.MinPlayer
-        or Shared:GetTime() < self.Config.Reputation.RageQuit.CheckTime 
-            then return end     --Only validate when join a late game
-    
     if Player:GetIsVirtual() then return end
+    
+    if not ReputationEnabled(self)
+        or GetGamerules():GetGameState() < kGameState.Countdown
+        or Shine.GetHumanPlayerCount() <= self.Config.Reputation.RageQuit.MinPlayer
+            then return end     --Only validate when join a late game
     
     local client = Player:GetClient()
     local clientId = client:GetUserId()
@@ -671,18 +668,19 @@ function Plugin:RageQuitValidate(Player,NewTeam)
         if kRageQuitTracker[clientId] == kRageQuitType.Quit then        --Rejoin
             kRageQuitTracker[clientId] = kRageQuitType.None
         else
-            kRageQuitTracker[clientId] = kRageQuitType.Cover
+            if GetGamerules():GetGameState() > kGameState.Countdown then
+                kRageQuitTracker[clientId] = kRageQuitType.Cover
+            end
         end
     else                    --Quit
-        local playTime = Player:GetPlayTime()
-        if playTime < self.Config.Reputation.RageQuit.ActivePlayTime then return end
         
         if kRageQuitTracker[clientId] == kRageQuitType.Cover then       --But leave
             kRageQuitTracker[clientId] = kRageQuitType.None
         else
+            
             kRageQuitTracker[clientId] = kRageQuitType.Quit
             Shine:NotifyDualColour( client, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
-                    255, 255, 255,"由于对局中途离开,您已被标记请及时回到游戏,否则将被扣除信誉值!" )
+                    255, 255, 255,"您已被标记<对局中途离开>.请对你的队友负责并及时回到游戏,否则将被扣除信誉值!" )
         end
 
     end
@@ -718,7 +716,6 @@ function Plugin:EndGameReputation(lastRoundData)
 
     local gameLength = lastRoundData.RoundInfo.roundLength
     if Shine.GetHumanPlayerCount() >= self.Config.Reputation.RageQuit.MinPlayer
-            and gameLength >= self.Config.Reputation.RageQuit.CheckTime
             and losingTeam ~= nil
     then
         ReputationDebugMessage(self,string.format("Covers:  Win:%s Lose:%s",winningTeamType,losingTeam))

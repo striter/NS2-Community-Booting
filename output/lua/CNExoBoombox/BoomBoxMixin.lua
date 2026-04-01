@@ -89,6 +89,14 @@ local kTrackAssets = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/PolishGirl"), name = "Polish Girl" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Valkyrie"), name = "Valkyrie" },
     },
+    [EBoomBoxTrack.Calm] = {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/MoonLightSlow"), name = "三日月サンセット -Rearrange 2020-" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/NewSlow"), name = "New Slow" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/Fabulous"), name = "FABULOUS -Glow our vibes-" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/BusinessSolutions"), name = "Business Solutions" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/madhouse"), name = "madhouse" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/TickTock"), name = "Tick Tock" },
+    },
 }
 
 function BoomBoxMixin:__initmixin()

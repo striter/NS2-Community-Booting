@@ -9,7 +9,10 @@ end
 local originalHandleButtons = Exo.HandleButtons
 function Exo:HandleButtons(input)
     originalHandleButtons(self, input)
+    self:HandleBoomboxButtons(input)
+end
 
+function Exo:HandleBoomboxButtons(input)
     if not self.pressingMusicButtons and bit.band(input.commands, Move.Weapon1 + Move.Weapon2 + Move.Weapon3 + Move.Weapon4 + Move.Weapon5 + Move.Reload) ~= 0 then
         self.pressingMusicButtons = true
 
@@ -43,7 +46,6 @@ function Exo:HandleButtons(input)
     else
         self.pressingMusicButtons = false
     end
-
 end
 
 if Server then

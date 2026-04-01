@@ -1,14 +1,16 @@
-EBoomBoxTrack = enum{'CUSTOM', 'OST', 'EN', 'JP','CN'}
+EBoomBoxTrack = enum{'CUSTOM', 'OST', 'EN', 'JP','CN','Calm'}
 gBoomBoxDefine = {
     [EBoomBoxTrack.CUSTOM] = {titleKey = "BOOMBOX_CUSTOM",key = "CUSTOM",configPath = "BB_CUSTOM_Volume"},
     [EBoomBoxTrack.OST] = {titleKey = "BOOMBOX_OST",key = "OST",configPath = "BB_OST_Volume"},
     [EBoomBoxTrack.EN] = {titleKey = "BOOMBOX_SONG",key = "SONG",configPath = "BB_SONG_Volume"},
     [EBoomBoxTrack.JP] = {titleKey = "BOOMBOX_TWO",key = "TWO",configPath = "BB_TWO_Volume"},
     [EBoomBoxTrack.CN] = {titleKey = "BOOMBOX_CN",key = "CN",configPath = "BB_CN_VOLUME"},
+    [EBoomBoxTrack.Calm] = {titleKey = "BOOMBOX_CALM",key = "CALM",configPath = "BB_CALM_VOLUME"},
 }
 kBoomBoxDefaultValue = 0.8
 
 ModLoader.SetupFileHook( "lua/Exo.lua", "lua/CNExoBoombox/Exo.lua", "post" )
+ModLoader.SetupFileHook( "lua/ReadyRoomExo.lua", "lua/CNExoBoombox/ReadyRoomExo.lua", "post" )
 ModLoader.SetupFileHook( "lua/GUIExoEject.lua", "lua/CNExoBoombox/GUIExoEject.lua", "post" )
 ModLoader.SetupFileHook( "lua/Exosuit.lua", "lua/CNExoBoombox/Exosuit.lua", "post" )
 ModLoader.SetupFileHook( "lua/Onos.lua", "lua/CNExoBoombox/Onos.lua", "post" )
