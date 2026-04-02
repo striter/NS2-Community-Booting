@@ -189,11 +189,15 @@ function Plugin:SetGameState( Gamerules, State, OldState )
 end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
-    self:RageQuitValidate(Player,NewTeam)
+    self:RageQuitValidate(Player,OldTeam,NewTeam)
 end
 
 function Plugin:ClientDisconnect( _client )
-    self:RageQuitValidate(_client:GetControllingPlayer(),kTeamReadyRoom)
+    local player = _client:GetControllingPlayer()
+    local playTime = Player:GetPlayTime()
+    if playTime > 0 then
+        self:RageQuitValidate(player,kTeam1Index,kTeamReadyRoom)
+    end
 end
 
 local function GetUserGroup(Client)
@@ -654,30 +658,36 @@ function Plugin:OnReputationPenaltyCheck()
     end )
 end
 
-function Plugin:RageQuitValidate(Player,NewTeam)
+function Plugin:RageQuitValidate(Player,OldTeam,NewTeam)
     if Player:GetIsVirtual() then return end
     
     if not ReputationEnabled(self)
-        or GetGamerules():GetGameState() < kGameState.Countdown
         or Shine.GetHumanPlayerCount() <= self.Config.Reputation.RageQuit.MinPlayer
-            then return end     --Only validate when join a late game
+            then return end
+
+    local state = GetGamerules():GetGameState()
+    local validState = state == kGameState.Countdown or state == kGameState.Started
+    if not validState then return end
+    
+    local oldInTeam = OldTeam == kTeam1Index or OldTeam == kTeam2Index
+    local newInTeam =  NewTeam == kTeam1Index or NewTeam == kTeam2Index
+    
+    if oldInTeam == newInTeam then return end   -- No team diff
     
     local client = Player:GetClient()
     local clientId = client:GetUserId()
-    if NewTeam == 1 or NewTeam == 2 then        --Join team1 or 2
+    if newInTeam then        --Join team1 or 2
         if kRageQuitTracker[clientId] == kRageQuitType.Quit then        --Rejoin
             kRageQuitTracker[clientId] = kRageQuitType.None
         else
-            if GetGamerules():GetGameState() > kGameState.Countdown then
+            if state == kGameState.Started then
                 kRageQuitTracker[clientId] = kRageQuitType.Cover
             end
         end
     else                    --Quit
-        
         if kRageQuitTracker[clientId] == kRageQuitType.Cover then       --But leave
             kRageQuitTracker[clientId] = kRageQuitType.None
         else
-            
             kRageQuitTracker[clientId] = kRageQuitType.Quit
             Shine:NotifyDualColour( client, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
                     255, 255, 255,"您已被标记<对局中途离开>.请对你的队友负责并及时回到游戏,否则将被扣除信誉值!" )
