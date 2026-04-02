@@ -194,10 +194,8 @@ end
 
 function Plugin:ClientDisconnect( _client )
     local player = _client:GetControllingPlayer()
-    local playTime = player:GetPlayTime()
-    if playTime > 0 then
-        self:RageQuitValidate(player,kTeam1Index,kTeamReadyRoom)
-    end
+    local teamNumber = player:GetPlayerInfo().teamNumber
+    self:RageQuitValidate(player,teamNumber,kTeamReadyRoom)
 end
 
 local function GetUserGroup(Client)
