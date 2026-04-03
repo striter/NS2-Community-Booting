@@ -695,7 +695,12 @@ function Plugin:CreateMessageCommands()
             Shine:NotifyError(_client,"对方已有预热段位.")
             return
         end
-        
+
+        local inTeamPlayers = Shine.GetPlayingPlayersCount()
+        if inTeamPlayers < 20 then
+            Shine:NotifyError(_client,"场内人数不足,无需给予预热点.")
+            return
+        end
         targetData.credit = (targetData.credit or 0) + value
         clientData.credit = clientData.credit - value
         local shareReputation = value
