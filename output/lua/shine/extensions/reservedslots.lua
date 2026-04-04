@@ -60,7 +60,7 @@ function Plugin:Initialise()
 	self.Enabled = true
 
 	local File, Err = Shine.LoadJSONFile(kLocalFilePath)
-	self.LastSeenHour = File or {}
+	self.ValidatePlayHour = File or {}
 
 	return true
 end
@@ -68,15 +68,15 @@ end
 function Plugin:OnPlayerCommunityDataReceived(_client,data)
     local hourPlayed = math.floor((data.timePlayed or 0) / 60.0)
     
-    if (data.memberLevel > 0) then
+    if data.memberLevel and data.memberLevel > 0 then
         hourPlayed = 0
     end
     
-    self.LastSeenHour[tostring(_client:GetUserId())] = hourPlayed
+    self.ValidatePlayHour[tostring(_client:GetUserId())] = hourPlayed
 end
 
 function Plugin:MapChange()
-    local Success, Err = Shine.SaveJSONFile( self.LastSeenHour, kLocalFilePath)
+    local Success, Err = Shine.SaveJSONFile( self.ValidatePlayHour, kLocalFilePath)
     if not Success then
         Shared.Message( "Error saving history rank file: "..Err )
     end
@@ -193,7 +193,7 @@ end
 function Plugin:HasReservedSlotAccess( Client )
     
 	if self.Config.MaxHourByPass >= 0 then
-        local hourRecord = self.LastSeenHour[tostring(Client)]
+        local hourRecord = self.ValidatePlayHour[tostring(Client)]
         if not hourRecord or self.Config.MaxHourByPass >= hourRecord then
             return true
         end
