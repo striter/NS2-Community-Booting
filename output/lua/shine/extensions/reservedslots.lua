@@ -66,7 +66,13 @@ function Plugin:Initialise()
 end
 
 function Plugin:OnPlayerCommunityDataReceived(_client,data)
-    self.LastSeenHour[tostring(_client:GetUserId())] = math.floor((data.timePlayed or 0) / 60.0)
+    local hourPlayed = math.floor((data.timePlayed or 0) / 60.0)
+    
+    if (data.memberLevel > 0) then
+        hourPlayed = 0
+    end
+    
+    self.LastSeenHour[tostring(_client:GetUserId())] = hourPlayed
 end
 
 function Plugin:MapChange()
