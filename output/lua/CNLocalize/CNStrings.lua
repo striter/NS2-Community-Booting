@@ -1,3 +1,6 @@
+
+Locale.kTranslateMessage["LOADING"]= "加载中..."
+
 Locale.kTranslateMessage["SB_AVGSKILL"]="%i 均分"
 Locale.kTranslateMessage["SB_COMMSKILL"]="%i 指挥"
 Locale.kTranslateMessage["CHAT_COMMANDER"]="[指挥]"

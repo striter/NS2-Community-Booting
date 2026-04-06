@@ -606,7 +606,7 @@ Locale.kTranslateLocations["Med Bay"] = "医疗室"
 Locale.kTranslateLocations["Parking"] = "停泊区"
 
 
-
+Locale.kTranslateLocations["Elevator Access"]="电梯间"
 
 
 
