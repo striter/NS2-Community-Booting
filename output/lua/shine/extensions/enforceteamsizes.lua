@@ -320,7 +320,10 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 
 	local curTeamCount = Shine.GetTeamPlayingPlayersCount(_newTeam)
 	local playerLimit = self:GetPlayerLimit(_gamerules, _newTeam)
-    if playerLimit == 0 then return end
+    if playerLimit == 0 then
+        self:Notify(_player, "由于服务器设定,无法加入该阵营,请尝试另一个阵营.",errorColorTable)
+        return false
+    end
 	if curTeamCount < playerLimit then return end
 	
 	local client = Server.GetOwner(_player)
