@@ -1,4 +1,5 @@
 {
+    "NOTIFY_PREFIX": "[Chat]",
 	"CATEGORY": "Base Commands",
 	"EJECT": "Eject",
 	"EJECT_TIP": "Ejects the player from the command station/hive.",
@@ -78,7 +79,10 @@
 	"PLAYER_GAGGED": "gagged {TargetName} for {Duration:Duration:REST_OF_MAP}.",
 	"PLAYER_GAGGED_PERMANENTLY": "gagged {TargetName} permanently.",
 	"PLAYER_UNGAGGED": "ungagged {TargetName}.",
-	"ERROR_NOT_COMMANDER": "{TargetName} is not a commander.",
+    "ERROR_BE_GAGGED_ROUNDS": "Due to server polity,complete {TargetCount} rounds without exiting for type,speak and chat.  ",
+    "ERROR_BE_GAGGED_PERMANENT": "You have been gaged permanent, contact @StriteR. in ns2-official discord for ungag",
+    "ERROR_BE_GAGGED": "You have been gaged, wait till ungag and make sure ur friendly and chilling enough.",
+    "ERROR_NOT_COMMANDER": "{TargetName} is not a commander.",
 	"ERROR_NOT_GAGGED": "{TargetName} is not gagged.",
 	"ERROR_INTERP_CONSTRAINT": "Interp is constrained by send rate to be {Rate:Format:%.2f}ms minimum.",
 	"ERROR_TICKRATE_CONSTRAINT": "Tick rate cannot be less than move rate ({Rate}).",

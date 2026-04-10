@@ -19,6 +19,7 @@ function Image:Init( Params )
 	self.TextureCoordinates = Params.TextureCoordinates
 	self.TexturePixelCoordinates = Params.TexturePixelCoordinates
 	self.Tooltip = Params.Tooltip
+	self.Anchor = Params.Anchor
 
 	self.DoClick = Params.DoClick
 	self.DoRightClick = Params.DoRightClick
@@ -61,6 +62,10 @@ function Image:MakeElement( Context )
 	-- Size already computed from auto-size in wrapping step.
 	Image:SetSize( self.Size )
 	Image:SetTooltip( self.Tooltip )
+
+	if self.Anchor then
+		Image:SetAnchor( self.Anchor )
+	end
 
 	if self.TextureCoordinates then
 		Image:SetTextureCoordinates( unpack( self.TextureCoordinates, 1, 4 ) )

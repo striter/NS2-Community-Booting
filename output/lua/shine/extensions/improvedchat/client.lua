@@ -966,6 +966,11 @@ local DEFAULT_IMAGE_SIZE = Units.UnitVector(
 	Units.Percentage.ONE_HUNDRED
 )
 
+local BADGE_IMAGE_SIZE = Units.UnitVector(
+	0,
+	Units.Percentage( 80 )
+)
+
 do
 	local function ParseEmoji( Contents, Message, EmojiElementCreator, Context )
 		local CurrentIndex = 1
@@ -1095,7 +1100,7 @@ do
 		local IsRookie = Entry and Entry.IsRookie and Entry.Skill < 900
 
 		local Contents = {}
-
+		
 		local ChatTag = self.ChatTags[ Data.SteamID ]
 		if ChatTag and ( not Data.TeamOnly or self.dt.DisplayChatTagsInTeamChat ) then
 			if ChatTag.Image then
@@ -1124,10 +1129,29 @@ do
 			Prefix = GetTeamPrefix( Data )
 		end
 
-		Prefix = StringFormat( "%s%s: ", Prefix, Data.Name )
-
 		Contents[ #Contents + 1 ] = ColourElement( IntToColour( GetColorForTeamNumber( Data.TeamNumber ) ) )
 		Contents[ #Contents + 1 ] = TextElement( Prefix )
+		
+		if Data.ClientID ~= -1 and Badges_GetBadgeTextures then
+			local BadgeTextures, BadgeNames, BadgeColumns = Badges_GetBadgeTextures( Data.ClientID, "scoreboard" )
+			if BadgeTextures and BadgeColumns then
+				for i = 1, #BadgeTextures do
+					if BadgeColumns[ i ] == 10 and BadgeTextures[ i ] and BadgeTextures[ i ] ~= "" then
+						Contents[ #Contents + 1 ] = ImageElement( {
+							Texture = BadgeTextures[ i ],
+							AutoSize = BADGE_IMAGE_SIZE,
+							AspectRatio = 1,
+							Anchor = "BottomMiddle",
+                            Tooltip = GetBadgeFormalName(BadgeNames[i])
+						} )
+						Contents[ #Contents + 1 ] = TextElement( " " )
+						break
+					end
+				end
+			end
+		end
+
+		Contents[ #Contents + 1 ] = TextElement( StringFormat( "%s: ", Data.Name ) )
 
 		Contents[ #Contents + 1 ] = ColourElement( kChatTextColor[ Data.TeamType ] )
 

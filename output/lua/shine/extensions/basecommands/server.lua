@@ -52,7 +52,7 @@ Plugin.DefaultConfig = {
 		}
 	}
 }
-
+Plugin.kRoundsRequirement = 2
 Plugin.CheckConfig = true
 Plugin.CheckConfigTypes = true
 
@@ -1839,6 +1839,18 @@ end
 
 function Plugin:IsClientGagged( Client )
 	local ID = Client:GetUserId()
+
+    local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+    if crEnabled then
+        local data = cr:GetCommunityData(ID)
+        if not data.fakeData then
+            local roundFinished = data.roundFinished or 0
+            if roundFinished < Plugin.kRoundsRequirement then
+                return true
+            end
+        end
+    end
+    
 	local GagData = self.Gagged[ ID ]
 
 	if not GagData then return false end
@@ -1857,13 +1869,32 @@ end
 function Plugin:NotifyGagStatus(_client)
 	local clientID = _client:GetUserId()
 	if clientID <= 0 then return end
+
+    local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+    if crEnabled then
+        local data = cr:GetCommunityData(clientID)
+        if not data.fakeData then
+            local roundFinished = data.roundFinished or 0
+            if roundFinished < Plugin.kRoundsRequirement then
+                Plugin:SendTranslatedNotify( _client,  "ERROR_BE_GAGGED_ROUNDS" ,{
+                    TargetCount = Plugin.kRoundsRequirement - roundFinished
+                }  )
+                return
+            end 
+        end
+    end
+    
 	local GagData = self.Gagged[ clientID ]
-	if not GagData then return false end
+	if not GagData then return  end
 	local gagPermanent = self.Config.GaggedPlayers[tostring(clientID)]
-	if gagPermanent then return Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED_PERMANENT" ) end
-	if GagData then return Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED" ) end
+	if gagPermanent then Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED_PERMANENT" ) end
+	if GagData then Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED" ) end
 end
-function Plugin:ClientConnect( _client )
+
+--function Plugin:ClientConfirmConnect(_client,data)
+--    self:NotifyGagStatus(_client)
+--end
+function Plugin:OnPlayerCommunityDataReceived(_client,data)
 	self:NotifyGagStatus(_client)
 end
 

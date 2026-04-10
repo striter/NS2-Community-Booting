@@ -4,6 +4,7 @@
 
 local Plugin = Shine.Plugin( ... )
 
+Plugin.NotifyPrefixColour = { 0, 155, 255 }
 Plugin.ToggleNotificationKeys = {
 	"CHEATS_TOGGLED",
 	"ALLTALK_TOGGLED",
@@ -82,7 +83,9 @@ function Plugin:SetupDataTable()
 			Rate = "integer (0 to 1000)"
 		}
 	}
-
+    self:AddTranslatedNotify( "ERROR_BE_GAGGED_ROUNDS", {
+        TargetCount = "integer (0 to 256)"
+    } )
 	self:AddNetworkMessages( "AddTranslatedMessage", {
 		[ MessageTypes.Empty ] = {
 			"RESET_GAME", "HIVE_TEAMS", "FORCE_START", "VOTE_STOPPED"
