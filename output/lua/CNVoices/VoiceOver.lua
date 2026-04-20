@@ -7,6 +7,7 @@ debug.appendtoenum(kVoiceId, 'OttoDDD')
 debug.appendtoenum(kVoiceId, 'OttoJB')
 debug.appendtoenum(kVoiceId, 'OttoStory')
 debug.appendtoenum(kVoiceId, 'OttoONDS')
+debug.appendtoenum(kVoiceId, 'OttoWXHN')
 debug.appendtoenum(kVoiceId, 'XuanSpeak')
 debug.appendtoenum(kVoiceId, 'XuanWoof')
 debug.appendtoenum(kVoiceId, 'XuanOhoo')
@@ -28,17 +29,16 @@ debug.appendtoenum(kVoiceId, 'PyroLaugh')
 debug.appendtoenum(kVoiceId, 'Aatrox')
 debug.appendtoenum(kVoiceId, 'AatroxLaugh')
 debug.appendtoenum(kVoiceId, 'Hajmi')
-debug.appendtoenum(kVoiceId, 'wsdy')
 debug.appendtoenum(kVoiceId, 'Kobe')
 debug.appendtoenum(kVoiceId, 'Meow')
 debug.appendtoenum(kVoiceId, 'Hiss')
 debug.appendtoenum(kVoiceId, 'AUV')
 debug.appendtoenum(kVoiceId, 'ddj')
-debug.appendtoenum(kVoiceId, 'qsrx')
 debug.appendtoenum(kVoiceId, 'tlj')
 debug.appendtoenum(kVoiceId,'ottoDown')
 debug.appendtoenum(kVoiceId,'laugh')
 debug.appendtoenum(kVoiceId,'chicken')
+debug.appendtoenum(kVoiceId,'nllaugh')
 
 kAdditionalSoundData = {
     [kVoiceId.Disease] = { Sound = "sound/CNTaunts.fev/ma/Laugh", Description = "REQUEST_DISEASE", Interval = 2, AlertTechId = kTechId.None },
@@ -50,6 +50,7 @@ kAdditionalSoundData = {
     [kVoiceId.OttoJB] = { Sound = "sound/CNTaunts.fev/Otto/JB", Description = "REQUEST_OTTO_JB", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.OttoStory] = { Sound = "sound/CNTaunts.fev/Otto/Story", Description = "REQUEST_OTTO_STORY", Interval = 63.3, AlertTechId = kTechId.None },
     [kVoiceId.OttoONDS] = { Sound = "sound/CNTaunts.fev/Otto/ONDS", Description = "REQUEST_OTTO_ONDS", Interval = 0.5, AlertTechId = kTechId.None },
+    [kVoiceId.OttoWXHN] = { Sound = "sound/CNTaunts.fev/Otto/wxhn", Description = "我喜欢你", Interval = 0.5, AlertTechId = kTechId.None },
     [kVoiceId.XuanSpeak] = { Sound = "sound/CNTaunts.fev/Xuan/Speak", Description = "REQUEST_XUAN_SPEAK", AlertTechId = kTechId.None },
     [kVoiceId.XuanWoof] = { Sound = "sound/CNTaunts.fev/Xuan/Woof", Description = "REQUEST_XUAN_WOOF", AlertTechId = kTechId.None },
     [kVoiceId.XuanOhoo] = { Sound = "sound/CNTaunts.fev/Xuan/Ohoo", Description = "REQUEST_XUAN_OHOO", Interval = 0.75, AlertTechId = kTechId.None },
@@ -72,16 +73,15 @@ kAdditionalSoundData = {
     [kVoiceId.AatroxLaugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/AatroxLaugh", Description = "亚托克斯 [2]", Interval = 1.25, AlertTechId = kTechId.None },
     [kVoiceId.Hajmi] = { Sound = "sound/CNTaunts.fev/CUSTOM/Hajmi", Description = "哈吉米", Interval = 16, AlertTechId = kTechId.None },
     [kVoiceId.Kobe] = { Sound = "sound/CNTaunts.fev/CUSTOM/kobe", Description = "mann", Interval = 1, AlertTechId = kTechId.None },
-    [kVoiceId.wsdy] = { Sound = "sound/CNTaunts.fev/CUSTOM/wsdy", Description = "我是毒液", Interval = 16, AlertTechId = kTechId.None },
     [kVoiceId.Meow] = { Sound = "sound/CNTaunts.fev/CUSTOM/meow", Description = "喵", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.Hiss] = { Sound = "sound/CNTaunts.fev/CUSTOM/hiss", Description = "哈气", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.AUV] = { Sound = "sound/CNTaunts.fev/CUSTOM/auv", Description = "地道", Interval = 2, AlertTechId = kTechId.None },
     [kVoiceId.tlj] = { Sound = "sound/CNTaunts.fev/CUSTOM/tlj", Description = "《跳楼机》", Interval = 40, AlertTechId = kTechId.None },
-    [kVoiceId.qsrx] = { Sound = "sound/CNTaunts.fev/CUSTOM/qsrx", Description = "《牵私人戏》", Interval = 11, AlertTechId = kTechId.None },
     [kVoiceId.ddj] = { Sound = "sound/CNTaunts.fev/CUSTOM/ddj", Description = "叮咚鸡", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.ottoDown] = { Sound = "sound/CNTaunts.fev/Otto/down", Description = "唐笑", Interval = 2, AlertTechId = kTechId.None },
     [kVoiceId.laugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/laugh", Description = "笑", Interval = 2, AlertTechId = kTechId.None },
     [kVoiceId.chicken] = { Sound = "sound/CNTaunts.fev/CUSTOM/chicken", Description = "鸡", Interval = 0.8, AlertTechId = kTechId.None },
+    [kVoiceId.nllaugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/nllaugh", Description = "奶龙大笑", Interval = 15, AlertTechId = kTechId.None },
 }
 
 for _, data in pairs(kAdditionalSoundData) do
@@ -92,13 +92,52 @@ function GetAdditionalVoiceSoundData(voiceId)
     return kAdditionalSoundData[voiceId]
 end
 
-local kSpectatorMenu = {
-    [LEFT_MENU] = { kVoiceId.Disease, kVoiceId.ddj, kVoiceId.ottoDown, kVoiceId.ScreamLong, kVoiceId.laugh, kVoiceId.PyroLaugh },
-    [RIGHT_MENU] = { kVoiceId.chicken, kVoiceId.LockerRoom, kVoiceId.XuanStory, kVoiceId.qsrx, kVoiceId.tlj, kVoiceId.Hajmi }
-}
+local function ShuffleTable(tbl)
+    local shuffled = {}
+    for _, v in ipairs(tbl) do
+        table.insert(shuffled, v)
+    end
+    for i = #shuffled, 2, -1 do
+        local j = math.random(i)
+        shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+    end
+    return shuffled
+end
+
+local function BuildRandomizedSpectatorMenu()
+    local allVoices = {}
+    for voiceId, _ in pairs(kAdditionalSoundData) do
+        table.insert(allVoices, voiceId)
+    end
+
+    local shuffled = ShuffleTable(allVoices)
+    local half = math.ceil(#shuffled / 2)
+
+    local leftMenu = {}
+    local rightMenu = {}
+
+    local length = 6
+    for i = 1, length do
+        table.insert(leftMenu, shuffled[i])
+    end
+    for i = length + 1, length * 2 do
+        table.insert(rightMenu, shuffled[i])
+    end
+
+    return {
+        [LEFT_MENU] = leftMenu,
+        [RIGHT_MENU] = rightMenu
+    }
+end
+
+local kSpectatorMenu
 
 function GetRequestMenuTeam(side, className, teamType)
     if teamType == kNeutralTeamType then
+        if not kSpectatorMenu then
+            kSpectatorMenu = BuildRandomizedSpectatorMenu()
+        end
+
         return kSpectatorMenu[side]
     end
 

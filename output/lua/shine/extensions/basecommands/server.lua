@@ -1838,6 +1838,8 @@ function Plugin:OnCustomVoteSuccess( Data )
 end
 
 function Plugin:IsClientGagged( Client )
+    if Client:GetIsVirtual() then return false end
+    
 	local ID = Client:GetUserId()
 
     local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
