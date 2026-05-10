@@ -32,7 +32,7 @@ if Client then
         Locale.kLocales["REQUEST_OTTO_JB"] = "基掰"
         Locale.kLocales["REQUEST_OTTO_STORY"] = "《营养》"
         Locale.kLocales["REQUEST_OTTO_FOOD"] = "韭菜盒子"
-        Locale.kLocales["REQUEST_OTTO_SPEAK"] = "负能量"
+        Locale.kLocales["REQUEST_OTTO_SPEAK"] = "轮椅"
         Locale.kLocales["REQUEST_OTTO_ONDS"] = "欧内的手"
         Locale.kLocales["REQUEST_XUAN_SPEAK"] = "小吠"
         Locale.kLocales["REQUEST_XUAN_WOOF"] = "狂吠"
@@ -53,9 +53,6 @@ if Client then
         Locale.kLocales["REQUEST_JESTER"] = "崩溃"
         Locale.kLocales["REQUEST_WU"] = "芜?"
         Locale.kLocales["REQUEST_AH"] = "啊?"
-
-        Locale.kLocales["MUTE_REQUEST_CUSTOM"] = "太吵请点我"
-        Locale.kLocales["UNMUTE_REQUEST_CUSTOM"] = "太安静请点我"
 
         Locale.kLocales["VOTE_DISEASE"] = "全体玩家 - [突发恶疾]"
         Locale.kLocales["VOTE_DISEASE_QUERY1"] = "一把米诺"

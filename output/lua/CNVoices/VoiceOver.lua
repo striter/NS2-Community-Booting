@@ -61,7 +61,7 @@ kAdditionalSoundData = {
     [kVoiceId.CZHL] = { Sound = "sound/CNTaunts.fev/CUSTOM/CZHL", Description = "REQUEST_CZHL", Interval = 14, AlertTechId = kTechId.None },
     [kVoiceId.Scream] = { Sound = "sound/CNTaunts.fev/CUSTOM/Scream", Description = "REQUEST_SCREAM", Interval = 0.5, AlertTechId = kTechId.None },
     [kVoiceId.ScreamLong] = { Sound = "sound/CNTaunts.fev/CUSTOM/ScreamLong", Description = "REQUEST_SCREAMLONG", Interval = 1, AlertTechId = kTechId.None },
-    [kVoiceId.Jester] = { Sound = "sound/CNTaunts.fev/CUSTOM/Jester", Description = "REQUEST_JESTER", Interval = 2.5, AlertTechId = kTechId.None },
+    [kVoiceId.Jester] = { Sound = "sound/CNTaunts.fev/CUSTOM/Jester", Description = "REQUEST_JESTER", Interval = 2.5, AlertTechId = kTechId.None,SkipShuffle = true },
     [kVoiceId.LockerRoom] = { Sound = "sound/CNTaunts.fev/Aniki/Wrestle", Description = "REQUEST_LOCKERROOM", Interval = 50, AlertTechId = kTechId.None },
     [kVoiceId.Ah] = { Sound = "sound/CNTaunts.fev/Aniki/ah", Description = "REQUEST_AH", Interval = 0.75, AlertTechId = kTechId.None },
     [kVoiceId.Wu] = { Sound = "sound/CNTaunts.fev/Aniki/wu", Description = "REQUEST_WU", Interval = 0.75, AlertTechId = kTechId.None },
@@ -71,9 +71,9 @@ kAdditionalSoundData = {
     [kVoiceId.PyroLaugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/PyroLaugh", Description = "Pyro [2]", Interval = 1.25, AlertTechId = kTechId.None },
     [kVoiceId.Aatrox] = { Sound = "sound/CNTaunts.fev/CUSTOM/Aatrox", Description = "亚托克斯", Interval = 2, AlertTechId = kTechId.None },
     [kVoiceId.AatroxLaugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/AatroxLaugh", Description = "亚托克斯 [2]", Interval = 1.25, AlertTechId = kTechId.None },
-    [kVoiceId.Hajmi] = { Sound = "sound/CNTaunts.fev/CUSTOM/Hajmi", Description = "哈吉米", Interval = 16, AlertTechId = kTechId.None },
+    [kVoiceId.Hajmi] = { Sound = "sound/CNTaunts.fev/CUSTOM/Hajmi", Description = "《哈吉米》", Interval = 16, AlertTechId = kTechId.None },
     [kVoiceId.Kobe] = { Sound = "sound/CNTaunts.fev/CUSTOM/kobe", Description = "mann", Interval = 1, AlertTechId = kTechId.None },
-    [kVoiceId.Meow] = { Sound = "sound/CNTaunts.fev/CUSTOM/meow", Description = "喵", Interval = 1, AlertTechId = kTechId.None },
+    [kVoiceId.Meow] = { Sound = "sound/CNTaunts.fev/CUSTOM/meow", Description = "哈基米", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.Hiss] = { Sound = "sound/CNTaunts.fev/CUSTOM/hiss", Description = "哈气", Interval = 1, AlertTechId = kTechId.None },
     [kVoiceId.AUV] = { Sound = "sound/CNTaunts.fev/CUSTOM/auv", Description = "地道", Interval = 2, AlertTechId = kTechId.None },
     [kVoiceId.tlj] = { Sound = "sound/CNTaunts.fev/CUSTOM/tlj", Description = "《跳楼机》", Interval = 40, AlertTechId = kTechId.None },
@@ -106,8 +106,10 @@ end
 
 local function BuildRandomizedSpectatorMenu()
     local allVoices = {}
-    for voiceId, _ in pairs(kAdditionalSoundData) do
-        table.insert(allVoices, voiceId)
+    for voiceId, data in pairs(kAdditionalSoundData) do
+        if not data.SkipShuffle then
+            table.insert(allVoices, voiceId)
+        end
     end
 
     local shuffled = ShuffleTable(allVoices)

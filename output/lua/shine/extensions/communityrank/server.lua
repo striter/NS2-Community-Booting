@@ -40,8 +40,6 @@ Plugin.DefaultConfig = {
     Reputation = {
         Enable = true,
         Debug = true,
-        PenaltyStarts = 0,
-        PenaltyCheckInterval = 300,
         RageQuit = {
             MinPlayer = 12,
             DeltaQuit = -5,
@@ -61,8 +59,6 @@ do
     Validator:AddFieldRule( "Reputation",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation ))
     Validator:AddFieldRule( "Reputation.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Reputation.Debug ))
     Validator:AddFieldRule( "Reputation.Enable",  Validator.IsType( "boolean", Plugin.DefaultConfig.Reputation.Enable ))
-    Validator:AddFieldRule( "Reputation.PenaltyStarts",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.PenaltyStarts ))
-    Validator:AddFieldRule( "Reputation.PenaltyCheckInterval",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.PenaltyCheckInterval ))
     Validator:AddFieldRule( "Reputation.RageQuit",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit ))
     Validator:AddFieldRule( "Reputation.RageQuit.MinPlayer",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.MinPlayer ))
     Validator:AddFieldRule( "Reputation.RageQuit.DeltaWin",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaWin ))
@@ -161,7 +157,6 @@ end
 -- Triggers
 function Plugin:OnFirstThink()
     ReadPersistent(self)
-    self:OnReputationPenaltyCheck()
     Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
 end
 
@@ -593,74 +588,20 @@ function Plugin:OnReputationRoundStart()
         local steamId = Client:GetUserId()
         if steamId > 0 then
             local data = GetPlayerData(self,steamId)
-            local reputation = data.reputation or 0
-            local team = player:GetTeamNumber()
             if data.reputationPenaltyLog then
                 Shine:NotifyDualColour( player, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
-                        255, 255, 255,string.format("由于您[%s],导致信誉值降低,若信誉值过低将受到不可预期的惩罚.\n请保证参与比赛的完整性,尊重你的队友与对手.",data.reputationPenaltyLog),true, data )
+                        255, 255, 255,string.format("由于您近期的行为[%s],致使信誉值降低.\n比赛需要所有人积极参与并保证完整性!.\n非主观原因如掉线断电等,请截图带理由私聊群管理(Q群-540422237).",data.reputationPenaltyLog),true, data )
                 data.reputationPenaltyLog = nil
-            else
-                if reputation < self.Config.Reputation.PenaltyStarts and (team == 1 or team == 2) then
-                    Shine:NotifyDualColour( player, kRageQuitColorTable[1], kRageQuitColorTable[2], kRageQuitColorTable[3],"[规范行为通知]",
-                            255, 255, 255,"由于您近期的行为导致信誉值过低,在对局中将受到不可预期的惩罚.\n请规范自身的游戏行为完整参与比赛以提升信誉值.",true, data )
-                end
             end
         end
     end
-end
-
-function Plugin:OnReputationPenaltyCheck()
-    if not ReputationEnabled(self) then return end
-    if GetGamerules():GetGameStarted() then
-        for Client in Shine.IterateClients() do
-            local player = Client:GetControllingPlayer()
-            local team = player:GetTeamNumber()
-            
-            local steamId = Client:GetUserId()
-            if steamId <=0 then return end
-            
-            local data = GetPlayerData(self,steamId)
-            local reputation = data.reputation or 0
-            if reputation < self.Config.Reputation.PenaltyStarts
-                    and (team == 1 or team == 2)
-            then
-                if player:isa("Marine") then
-                    local random = math.random(1,3)
-                    if random == 1 then
-                        local weapon = player:GetWeaponInHUDSlot(1)
-                        if weapon then
-                            player:Drop(weapon,true,true)
-                        end
-                    elseif random == 2 then
-                        player:SetStun(1)
-                    else
-                        player:SetParasited(nil)
-                    end
-                elseif player:isa("Exo") then
-                    player:SetParasited(nil)
-                elseif player:isa("Alien") then
-                    local random = math.random(1,2)
-                    if random == 1 then
-                        player:SetVelocity(-player:GetVelocity())
-                        player:DisableGroundMove(1)
-                    elseif random == 2 then
-                        player:DeductAbilityEnergy(50)
-                    end
-                end
-            end
-        end
-    end
-    
-    self:SimpleTimer( self.Config.Reputation.PenaltyCheckInterval, function()
-        self:OnReputationPenaltyCheck()
-    end )
 end
 
 function Plugin:RageQuitValidate(Player,OldTeam,NewTeam)
     if Player:GetIsVirtual() then return end
     
     if not ReputationEnabled(self)
-        or Shine.GetHumanPlayerCount() <= self.Config.Reputation.RageQuit.MinPlayer
+        or Shine.GetPlayingPlayersCount() <= self.Config.Reputation.RageQuit.MinPlayer
             then return end
 
     local state = GetGamerules():GetGameState()
