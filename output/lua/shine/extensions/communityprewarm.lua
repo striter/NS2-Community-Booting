@@ -22,6 +22,8 @@ Plugin.DefaultConfig = {
         MinuteEachCredit = 4,
         MinCredit = 0.5,
         MaxCredit = 3,
+        CommanderCredit = 3,
+        CommanderMinMinute = 5,
     },
     ["Tier"] = {
         [1] = { Count = 1, Credit = 15,Inform = true, },
@@ -55,6 +57,8 @@ do
     local Validator = Shine.Validator()
     Validator:AddFieldRule( "EndGameReward",  Validator.IsType( "table", Plugin.DefaultConfig.EndGameReward ))
     Validator:AddFieldRule( "EndGameReward.MaxCredit",  Validator.IsType( "number", Plugin.DefaultConfig.EndGameReward.MaxCredit ))
+    Validator:AddFieldRule( "EndGameReward.CommanderCredit",  Validator.IsType( "number", Plugin.DefaultConfig.EndGameReward.CommanderCredit ))
+    Validator:AddFieldRule( "EndGameReward.CommanderMinMinute",  Validator.IsType( "number", Plugin.DefaultConfig.EndGameReward.CommanderMinMinute ))
     Validator:AddFieldRule( "TierlessReward",  Validator.IsType( "table", Plugin.DefaultConfig.TierlessReward ))
     Validator:AddFieldRule( "TierlessReward.BaseCredit",  Validator.IsType( "number", Plugin.DefaultConfig.TierlessReward.BaseCredit ))
     Validator:AddFieldRule( "ScoreMultiplier",  Validator.IsType( "table", Plugin.DefaultConfig.ScoreMultiplier ))
@@ -458,19 +462,56 @@ function Plugin:DispatchEndGameCredit(lastRoundData)
     local minuteBonus = math.floor(gameLengthInMinute / self.Config.EndGameReward.MinuteEachCredit)
     totalReward = totalReward + minuteBonus
     local nonTeamPlayerCount = Shine.GetHumanPlayerCount() - Shine.GetPlayingPlayersCount()
+    if nonTeamPlayerCount <= 0 then
+        Shared.Message("[CNCP] End Game Reward: No non-team players, skipping spectator reward.")
+    else
+        local rewardPerPlayer = math.floor(totalReward * 10 / nonTeamPlayerCount) * 0.1
+        rewardPerPlayer = Clamp(rewardPerPlayer,self.Config.EndGameReward.MinCredit,self.Config.EndGameReward.MaxCredit)
+        Shared.Message(string.format("[CNCP] End Game Reward: T %s(+%s) | C: %s | Each %s" , totalReward,minuteBonus, nonTeamPlayerCount,rewardPerPlayer))
+        for Client, _ in Shine.IterateClients() do
+            local Player = Client.GetControllingPlayer and Client:GetControllingPlayer()
+            local team = Player:GetTeamNumber()
+            local clientID = Client:GetUserId()
+            if team == kTeamReadyRoom or team == kSpectatorIndex then
+                local data = GetPlayerData(self,clientID)
+                data.credit = (data.credit or 0) + rewardPerPlayer
+                Shine:NotifyDualColour( Client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
+                        string.format("对局结束,非局内玩家已获得%s[预热点]用于获取当日特权,您当前拥有%s[预热点].",rewardPerPlayer,data.credit) )
+            end
+        end
+    end
 
-    local rewardPerPlayer = math.floor(totalReward * 10 / nonTeamPlayerCount) * 0.1
-    rewardPerPlayer = Clamp(rewardPerPlayer,self.Config.EndGameReward.MinCredit,self.Config.EndGameReward.MaxCredit)
-    Shared.Message(string.format("[CNCP] End Game Reward: T %s(+%s) | C: %s | Each %s" , totalReward,minuteBonus, nonTeamPlayerCount,rewardPerPlayer))
-    for Client, _ in Shine.IterateClients() do
-        local Player = Client.GetControllingPlayer and Client:GetControllingPlayer()
-        local team = Player:GetTeamNumber()
-        local clientID = Client:GetUserId()
-        if team == kTeamReadyRoom or team == kSpectatorIndex then
-            local data = GetPlayerData(self,clientID)
-            data.credit = (data.credit or 0) + rewardPerPlayer
-            Shine:NotifyDualColour( Client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                    string.format("对局结束,非局内玩家已获得%s[预热点]用于获取当日特权,您当前拥有%s[预热点].",rewardPerPlayer,data.credit) )
+    -- Commander bonus: find the player with most commander time in each team and reward a fixed credit
+    local commanderCredit = self.Config.EndGameReward.CommanderCredit
+    local commanderMinSeconds = (self.Config.EndGameReward.CommanderMinMinute or 5) * 60
+    if commanderCredit and commanderCredit ~= 0 then
+        local topCommSteamId = { [kTeam1Index] = nil, [kTeam2Index] = nil }
+        local topCommTime   = { [kTeam1Index] = 0,   [kTeam2Index] = 0   }
+
+        for steamId, playerStat in pairs(lastRoundData.PlayerStats) do
+            for _, teamIdx in ipairs({ kTeam1Index, kTeam2Index }) do
+                local teamEntry = playerStat[teamIdx]
+                if teamEntry and teamEntry.commanderTime and teamEntry.commanderTime > topCommTime[teamIdx] then
+                    topCommTime[teamIdx]   = teamEntry.commanderTime
+                    topCommSteamId[teamIdx] = steamId
+                end
+            end
+        end
+
+        for _, teamIdx in ipairs({ kTeam1Index, kTeam2Index }) do
+            local steamId = topCommSteamId[teamIdx]
+            if steamId and topCommTime[teamIdx] > commanderMinSeconds then
+                local client = Shine.GetClientByNS2ID(steamId)
+                if client and not client:GetIsVirtual() then
+                    local data = GetPlayerData(self, steamId)
+                    data.credit = (data.credit or 0) + commanderCredit
+                    local player = client:GetControllingPlayer()
+                    player:SetPrewarmData(data)
+                    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
+                            string.format("感谢你本局担任指挥,已获得%s[预热点],当前拥有%s[预热点].", commanderCredit, data.credit) )
+                    Shared.Message(string.format("[CNCP] Commander Reward: ID:%s Team:%s CommTime:%s Credit:+%s", steamId, teamIdx, topCommTime[teamIdx], commanderCredit))
+                end
+            end
         end
     end
 end
