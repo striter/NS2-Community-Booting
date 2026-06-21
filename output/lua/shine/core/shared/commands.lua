@@ -102,7 +102,8 @@ do
 		ERROR_CANT_TARGET = ErrorMessages.PlayerName,
 		COMMAND_DEFAULT_ERROR = ErrorMessages.BadArgument,
 		COMMAND_RESTRICTED_ARG = ErrorMessages.ArgNum,
-		COMMAND_NO_PERMISSION = ErrorMessages.CommandName
+		COMMAND_NO_PERMISSION = ErrorMessages.CommandName,
+		COMMAND_NOT_FOUND = ErrorMessages.CommandName
 	}
 
 	for Key, Data in pairs( Errors ) do

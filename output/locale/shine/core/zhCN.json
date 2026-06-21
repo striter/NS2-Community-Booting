@@ -57,5 +57,6 @@
 	"ERROR_CANT_TARGET_MULTIPLE": "无法把命令作用于你选择的任何人，权限不足。",
 	"COMMAND_DEFAULT_ERROR": "Incorrect argument #{ArgNum} to {CommandName}, expected {ExpectedType}.",
 	"COMMAND_RESTRICTED_ARG": "Invalid argument #{ArgNum}, restricted in rank settings.",
-	"COMMAND_NO_PERMISSION": "你无法使用{CommandName}，权限不足。"
+	"COMMAND_NO_PERMISSION": "你无法使用{CommandName}，权限不足.",
+	"COMMAND_NOT_FOUND": "未知命令：{CommandName}."
 }

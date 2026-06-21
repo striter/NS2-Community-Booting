@@ -62,6 +62,7 @@
 	"COMMAND_DEFAULT_ERROR": "Incorrect argument #{ArgNum} to {CommandName}, expected {ExpectedType}.",
 	"COMMAND_RESTRICTED_ARG": "Invalid argument #{ArgNum}, restricted in rank settings.",
 	"COMMAND_NO_PERMISSION": "You do not have permission to use {CommandName}.",
+	"COMMAND_NOT_FOUND": "Unknown command: {CommandName}.",
 
 	"GENERAL_CLIENT_SETTINGS": "General",
 	"NS2_MENU_OPTIONS_TITLE": "SHINE OPTIONS",

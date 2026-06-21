@@ -922,8 +922,18 @@ Shine.Hook.Add( "PlayerSay", "CommandExecute", function( Client, Message )
 		Exploded[ 1 ] = StringSub( FirstWord, 2 )
 	end
 
-	local CommandObj = Shine.ChatCommands[ TableRemove( Exploded, 1 ) ]
-	if not CommandObj or CommandObj.Disabled then return end
+	local CommandName = TableRemove( Exploded, 1 )
+	local CommandObj = Shine.ChatCommands[ CommandName ]
+	if not CommandObj or CommandObj.Disabled then
+		-- If used a ! directive on an unknown command, block chat and notify the player.
+		if Directive == "!" then
+			Shine:SendTranslatedCommandError( Client, "COMMAND_NOT_FOUND", {
+				CommandName = CommandName
+			}, nil, false )
+			return ""
+		end
+		return
+	end
 
 	if not Directive and not CommandObj.ShouldAlwaysMatchChat then
 		return
