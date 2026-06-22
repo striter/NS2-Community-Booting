@@ -47,6 +47,11 @@ Plugin.DefaultConfig = {
             DeltaWin = 1,
             DeltaLost = 1,
             DeltaMax = 200,
+            AttackDetection = {
+                Enabled = true,
+                DisconnectThreshold = 4,
+                TimeWindow = 10,
+            },
         },
     },
 }
@@ -65,6 +70,10 @@ do
     Validator:AddFieldRule( "Reputation.RageQuit.DeltaLost",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaLost ))
     Validator:AddFieldRule( "Reputation.RageQuit.DeltaMax",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaMax ))
     Validator:AddFieldRule( "Reputation.RageQuit.DeltaQuitReputationStepMultiplier",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.DeltaQuitReputationStepMultiplier ))
+    Validator:AddFieldRule( "Reputation.RageQuit.AttackDetection",  Validator.IsType( "table", Plugin.DefaultConfig.Reputation.RageQuit.AttackDetection ))
+    Validator:AddFieldRule( "Reputation.RageQuit.AttackDetection.Enabled",  Validator.IsType( "boolean", Plugin.DefaultConfig.Reputation.RageQuit.AttackDetection.Enabled ))
+    Validator:AddFieldRule( "Reputation.RageQuit.AttackDetection.DisconnectThreshold",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.AttackDetection.DisconnectThreshold ))
+    Validator:AddFieldRule( "Reputation.RageQuit.AttackDetection.TimeWindow",  Validator.IsType( "number", Plugin.DefaultConfig.Reputation.RageQuit.AttackDetection.TimeWindow ))
     Validator:AddFieldRule( "Elo.Check",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Check ))
     Validator:AddFieldRule( "Elo.Debug",  Validator.IsType( "boolean", Plugin.DefaultConfig.Elo.Debug ))
     Validator:AddFieldRule( "Elo.Restriction.Time",  Validator.IsType( "number", Plugin.DefaultConfig.Elo.Restriction.Time ))
@@ -78,6 +87,8 @@ local kReputationGainColorTable = { 235, 152, 78 }
 local kRageQuitColorTable = { 236, 112, 99 }
 function Plugin:Initialise()
     self.MemberInfos = { }
+    self.serverAttacked = false
+    self.disconnectTimestamps = {}
     self:CreateMessageCommands()
 	return true
 end
@@ -146,11 +157,15 @@ end
 
 function Plugin:ResetState()
     table.Empty(self.MemberInfos)
+    self.serverAttacked = false
+    self.disconnectTimestamps = {}
     ReadPersistent(self)
 end
 
 function Plugin:Cleanup()
     table.Empty(self.MemberInfos)
+    self.serverAttacked = false
+    self.disconnectTimestamps = {}
     return self.BaseClass.Cleanup( self )
 end
 
@@ -190,7 +205,7 @@ end
 function Plugin:ClientDisconnect( _client )
     local player = _client:GetControllingPlayer()
     local teamNumber = player:GetPlayerInfo().teamNumber
-    self:RageQuitValidate(player,teamNumber,kTeamReadyRoom)
+    self:RageQuitValidate(player,teamNumber,kTeamReadyRoom, true)
 end
 
 local function GetUserGroup(Client)
@@ -582,7 +597,11 @@ end
 
 local kRageQuitType = enum({ 'None','Quit','Cover' })
 local kRageQuitTracker = { }
+
 function Plugin:OnReputationRoundStart()
+    self.serverAttacked = false
+    self.disconnectTimestamps = {}
+
     for Client in Shine.IterateClients() do
         local player = Client:GetControllingPlayer()
         local steamId = Client:GetUserId()
@@ -597,7 +616,7 @@ function Plugin:OnReputationRoundStart()
     end
 end
 
-function Plugin:RageQuitValidate(Player,OldTeam,NewTeam)
+function Plugin:RageQuitValidate(Player,OldTeam,NewTeam,_isDisconnect)
     if Player:GetIsVirtual() then return end
     
     if not ReputationEnabled(self)
@@ -607,6 +626,27 @@ function Plugin:RageQuitValidate(Player,OldTeam,NewTeam)
     local state = GetGamerules():GetGameState()
     local validState = state == kGameState.Countdown or state == kGameState.Started
     if not validState then return end
+
+    if _isDisconnect then
+        local config = self.Config.Reputation.RageQuit.AttackDetection
+        if config and config.Enabled then
+            local currentTime = Shared.GetTime()
+            local timeWindow = config.TimeWindow or 10
+            table.insert(self.disconnectTimestamps, currentTime)
+            local count = 0
+            for i = #self.disconnectTimestamps, 1, -1 do
+                if currentTime - self.disconnectTimestamps[i] <= timeWindow then
+                    count = count + 1
+                else
+                    table.remove(self.disconnectTimestamps, i)
+                end
+            end
+            if count >= (config.DisconnectThreshold or 4) then
+                self.serverAttacked = true
+                ReputationDebugMessage(self, "[CNCR] Attack detected - rage quit penalties will be suppressed at settlement")
+            end
+        end
+    end
     
     local oldInTeam = OldTeam == kTeam1Index or OldTeam == kTeam2Index
     local newInTeam =  NewTeam == kTeam1Index or NewTeam == kTeam2Index
@@ -638,6 +678,14 @@ end
 local kRoundFinishNormalizedTime = 0.9
 function Plugin:EndGameReputation(lastRoundData)
     if not ReputationEnabled(self) then return end
+
+    if self.serverAttacked then
+        ReputationDebugMessage(self, "[CNCR] Server was under attack - skipping rage quit penalties")
+        self.serverAttacked = false
+        table.clear(self.disconnectTimestamps)
+        table.clear(kRageQuitTracker)
+        return
+    end
 
     if table.count(kRageQuitTracker) > 0 then
         ReputationDebugMessage(self,string.format("Rage quitters:"))
@@ -694,6 +742,8 @@ function Plugin:EndGameReputation(lastRoundData)
     end
 
     table.clear(kRageQuitTracker)
+    self.serverAttacked = false
+    self.disconnectTimestamps = {}
 end
 
 function Plugin:RecordResolveData(data,rawData)

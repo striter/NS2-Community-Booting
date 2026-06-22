@@ -530,12 +530,14 @@ function Plugin:DispatchEndGameCredit(lastRoundData)
                 local client = Shine.GetClientByNS2ID(steamId)
                 if client and not client:GetIsVirtual() then
                     local data = GetPlayerData(self, steamId)
-                    data.credit = (data.credit or 0) + commanderCredit
-                    local player = client:GetControllingPlayer()
-                    player:SetPrewarmData(data)
-                    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
-                            string.format("感谢你本局担任指挥,已获得%s[预热点],当前拥有%s[预热点].", commanderCredit, data.credit) )
-                    Shared.Message(string.format("[CNCP] Commander Reward: ID:%s Team:%s CommTime:%s Credit:+%s", steamId, teamIdx, topCommTime[teamIdx], commanderCredit))
+                    if not data.tier or data.tier <= 0 then
+                        data.credit = (data.credit or 0) + commanderCredit
+                        local player = client:GetControllingPlayer()
+                        player:SetPrewarmData(data)
+                        Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
+                                string.format("感谢你本局担任指挥,已获得%s[预热点],当前拥有%s[预热点].", commanderCredit, data.credit) )
+                        Shared.Message(string.format("[CNCP] Commander Reward: ID:%s Team:%s CommTime:%s Credit:+%s", steamId, teamIdx, topCommTime[teamIdx], commanderCredit))
+                    end
                 end
             end
         end
