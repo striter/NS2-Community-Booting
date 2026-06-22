@@ -680,6 +680,7 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
     
     local credit = 0
     local title = nil
+    local isReturning = false
     if not data.lastSeenTimeStamp then
         credit = self.Config.ReturnReward.CreditFirstJoin
         title = "首次加入社区"
@@ -689,6 +690,7 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
         if dayOffset >= self.Config.ReturnReward.DayOffset then
             credit = self.Config.ReturnReward.CreditReturn
             title = "回归玩家激励"
+            isReturning = true
         end
     end
 
@@ -697,6 +699,10 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
         
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("%s,今天可自由入场,欢迎加入NS2CN!",title) )
+        
+        if isReturning then
+            Shine:RunCommand(nil, "sh_member_set", false, clientID, 2, 3)
+        end
     end
 end
 
