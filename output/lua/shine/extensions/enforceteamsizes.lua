@@ -133,6 +133,9 @@ function Plugin:Notify(Player, Message,colors, data)
 end
 
 function Plugin:GetPlayerLimit(Gamerules,Team)
+	local cpEnabled, cp = Shine:IsExtensionEnabled( "communityprewarm" )
+	if cpEnabled and cp:ShouldBypassTeamSizeRestriction() then return 99 end
+
 	if Team == kSpectatorIndex and self.Constrains.BlockSpectators then
 		local leastPlayersInGame = self.Constrains.Team[kTeam1Index] + self.Constrains.Team[kTeam2Index]
 		local inTeamPlayers = Shine.GetPlayingPlayersCount()

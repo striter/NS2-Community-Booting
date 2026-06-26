@@ -31,7 +31,7 @@ end
 Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
     Plugin.playerCommunityData = Message
     --Shared.Message(string.format("[CNCT] Tier Set %i|%i|%i|%i|%i|%i|%i",
-    --        Message.Tier,Message.TimePlayed,Message.RoundWin,Message.TimePlayedCommander,Message.RoundWinCommander,Message.MemberLevel,Message.MemberExpireDate ))
+    --        Message.Tier,Message.TimePlayed,Message.RoundWin,Message.TimePlayedCommander,Message.RoundWinCommander,Message.MemberLevel,Message.MemberDaysLeft ))
 
     local skillTierIcon = GetMainMenu().navBar.playerScreen.skillTierIcon
     local isRookie = skillTierIcon:GetIsRookie()
@@ -48,7 +48,7 @@ Shine.HookNetworkMessage( "Shine_CommunityTier", function( Message )
 
     if(Message.MemberLevel > 0) then
         tooltip = tooltip .. "\n\n" .. string.format(Locale.ResolveString("COMMUNITY_MEMBER_LEVEL"),Locale.ResolveString(string.format("COMMUNITY_MEMBER_LEVEL%i",Message.MemberLevel)))
-        tooltip = tooltip .. string.format(Locale.ResolveString("COMMUNITY_MEMBER_LEVEL_DATETIME"),FormatDateTimeString(Message.MemberExpireDate))
+        tooltip = tooltip .. string.format(Locale.ResolveString("COMMUNITY_MEMBER_LEVEL_DATETIME"),Message.MemberDaysLeft)
     end
     
     skillTierIcon:GetIconObject():SetTooltip(tooltip)

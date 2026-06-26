@@ -48,7 +48,7 @@ if Locale.kTranslateMessage then
     Locale.kTranslateMessage["RANK_LIVER"] = "(C3):<Vokex>"
     Locale.kTranslateMessage["RANK_INVALID"] = "(C?):<未知>"
     Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL"]="昌吉重工 %s"
-    Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL_DATETIME"]="\n    (到期时间:%s)"
+    Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL_DATETIME"]="\n    (剩余%s天)"
     
     Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL0"]=""
     Locale.kTranslateMessage["COMMUNITY_MEMBER_LEVEL1"]="(S1):昌吉社员"
@@ -123,7 +123,7 @@ if Locale.kLocales then
     Locale.kLocales["COMMUNITY_MEMBER_LEVEL0"]=""
     Locale.kLocales["COMMUNITY_MEMBER_LEVEL1"]=":Recruit (S1)"
     Locale.kLocales["COMMUNITY_MEMBER_LEVEL2"]=":Comrade (S2)"
-    Locale.kLocales["COMMUNITY_MEMBER_LEVEL_DATETIME"]="\n    (Time Expires:%s)"
+    Locale.kLocales["COMMUNITY_MEMBER_LEVEL_DATETIME"]="\n    (%s days left)"
     Locale.kLocales["COMMUNITY_REPUTATION_POSITIVE"]="Reputation: %s"
     Locale.kLocales["COMMUNITY_REPUTATION_NEGATIVE"]="Toxicity: %s"
     Locale.kLocales["STATUS_QUEUE"]="Queue %i"

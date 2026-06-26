@@ -7,7 +7,7 @@ Shared.RegisterNetworkMessage( "Shine_CommunityTier", {
     TimePlayed = "integer (0 to 16777216)",
     TimePlayedCommander = "integer (0 to 16777216)",
     MemberLevel = "integer (0 to 8)",
-    MemberExpireDate = "integer"
+    MemberDaysLeft = "integer (0 to 365)"
 } )
 Shared.RegisterNetworkMessage( "Shine_CommunityGadgets", {
     ItemID = "integer (0 to 16777216)",

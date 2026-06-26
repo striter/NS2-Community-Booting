@@ -93,21 +93,19 @@ function Plugin:Initialise()
 	return true
 end
 
-local function ReadPersistent(self)
-    --for k,v in pairs(self.Config.UserData) do
-    --    self.MemberInfos[tonumber(k)] = v
-    --end
-end
-
-local function SavePersistent(self)
-
+local function SavePersistent(self, steamId)
+    if steamId then
+        local v = self.MemberInfos[steamId]
+        if v and not v.fakeData then
+            Shine.PlayerInfoHub:SetCommunityData(steamId, v)
+        end
+        return
+    end
     for k,v in pairs(self.MemberInfos) do
         if not v.fakeData then
             Shine.PlayerInfoHub:SetCommunityData(k,v)
         end
-        --self.Config.UserData[tostring(k)] = v
     end
-    --self:SaveConfig()
 end
 
 local function GetPlayerData(self,steamId)
@@ -159,7 +157,6 @@ function Plugin:ResetState()
     table.Empty(self.MemberInfos)
     self.serverAttacked = false
     self.disconnectTimestamps = {}
-    ReadPersistent(self)
 end
 
 function Plugin:Cleanup()
@@ -171,7 +168,6 @@ end
 
 -- Triggers
 function Plugin:OnFirstThink()
-    ReadPersistent(self)
     Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
 end
 
@@ -188,18 +184,19 @@ function Plugin:OnEndGame(_winningTeam)
     self:EndGameReputation(lastRoundData)
     self:EndGameRecord(lastRoundData)
     self:EndGameLastSeenName(lastRoundData)
-    self:EndGameMember(lastRoundData)
     SavePersistent(self)
 end
 
 function Plugin:SetGameState( Gamerules, State, OldState )
-    if State == kGameState.Countdown then
+    if State == kGameState.Started then
         self:OnReputationRoundStart()
+        self:MemberExpireCleanup()
     end
 end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
     self:RageQuitValidate(Player,OldTeam,NewTeam)
+    self:MemberValidate(Player, NewTeam)
 end
 
 function Plugin:ClientDisconnect( _client )
@@ -345,7 +342,7 @@ function Plugin:UpdateClientData(_client, _clientId)        --Split cause connec
         TimePlayedCommander = communityData.timePlayedCommander or 0,
         RoundWinCommander = communityData.roundWinCommander or 0,
         MemberLevel = communityData.memberLevel or 0,
-        MemberExpireDate = communityData.memberExpireDate or 0,
+        MemberDaysLeft = communityData.memberDaysLeft or 0,
     }
 
     local hourPlayed = math.floor(syncData.TimePlayed / 60.0)
@@ -365,10 +362,34 @@ function Plugin:UpdateClientData(_client, _clientId)        --Split cause connec
 end
 
 
+local function MigrateMemberData(self, _client, data)
+    if data.fakeData or not data.memberExpireDate then return end
+    local player = _client:GetControllingPlayer()
+    local migrationBase = os.time({year = 2026, month = 6, day = 26})
+    if data.memberExpireDate > migrationBase then
+        local daysLeft = math.ceil((data.memberExpireDate - migrationBase) / 86400)
+        data.memberDaysLeft = daysLeft
+        Shine:NotifyDualColour(player, 236, 112, 99,
+            "[昌吉社员]", 255, 255, 255,
+            string.format("社员系统已更新, 剩余%d天已转为货币天数", daysLeft))
+    else
+        data.memberDaysLeft = 3
+        Shine:NotifyDualColour(player, 236, 112, 99,
+            "[昌吉社员]", 255, 255, 255, "社员系统已更新, 赠送你3天体验天数")
+    end
+    data.memberExpireDate = nil
+    data.memberActiveDate = nil
+    player:SetPlayerExtraData(data)
+    SavePersistent(self)
+end
+
 function Plugin:ClientConfirmConnect(_client)
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
-    
+
+    local data = GetPlayerData(self, clientID)
+    MigrateMemberData(self, _client, data)
+
     self:UpdateClientData(_client,clientID)
     Shine:NotifyDualColour( _client:GetControllingPlayer(),
             kReputationGainColorTable[1], kReputationGainColorTable[2], kReputationGainColorTable[3],kPrefix,
@@ -756,9 +777,32 @@ function Plugin:RecordResolveData(data,rawData)
     data.roundWinCommander = GetNumber(rawData.roundWinCommander)
 end
 
+function Plugin:MemberValidate(Player, NewTeam)
+    if NewTeam ~= kTeam1Index and NewTeam ~= kTeam2Index then return end
+
+    local client = Player:GetClient()
+    if not client or client:GetIsVirtual() then return end
+
+    local clientID = client:GetUserId()
+    local data = GetPlayerData(self, clientID)
+    if not data.memberDaysLeft or data.memberDaysLeft <= 0 then return end
+    if data.memberActiveDate == kCurrentTimeStampDay then return end
+    if Shine.GetHumanPlayerCount() <= 24 then return end
+
+    data.memberDaysLeft = data.memberDaysLeft - 1
+    data.memberActiveDate = kCurrentTimeStampDay
+    Shine:NotifyDualColour(Player, 236, 112, 99, "[昌吉社员]", 255, 255, 255,
+        string.format("已消耗1日社员资格, 尚余%d日", data.memberDaysLeft))
+    Player:SetPlayerExtraData(data)
+    self:UpdateClientData(client, clientID)
+    SavePersistent(self)
+end
+
 function Plugin:MemberResolveData(data,rawData)
-    data.memberExpireDate = GetNumber(rawData.memberExpireDate)
+    data.memberDaysLeft = GetNumber(rawData.memberDaysLeft)
+    data.memberActiveDate = GetNumber(rawData.memberActiveDate)
     data.memberLevel = GetNumber(rawData.memberLevel)
+    data.memberExpireDate = GetNumber(rawData.memberExpireDate) -- 保留用于迁移检测
 end
 
 function Plugin:GetMemberLevel(clientID)
@@ -766,21 +810,25 @@ function Plugin:GetMemberLevel(clientID)
     return data.memberLevel or 0
 end
 
-function Plugin:EndGameMember(lastRoundData)
-    for steamId , playerStat in pairs( lastRoundData.PlayerStats ) do
-        
-        local data = GetPlayerData(self,steamId)
-
-        if data.memberExpireDate ~= nil and kCurrentTimeStamp > data.memberExpireDate then
-            data.memberExpireDate = nil
-            data.memberLevel = nil
-
-            local target = Shine.GetClientByNS2ID(steamId)
-            if target then
-                Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉社员]", 255,255,255, string.format("你的昌吉社员已到期,感谢您对社区的支持."  ))
+function Plugin:MemberExpireCleanup()
+    local changed = false
+    for client in Shine.IterateClients() do
+        local clientID = client:GetUserId()
+        if clientID > 0 and not client:GetIsVirtual() then
+            local data = GetPlayerData(self, clientID)
+            if data.memberDaysLeft ~= nil and data.memberDaysLeft == 0
+               and data.memberActiveDate ~= kCurrentTimeStampDay then
+                data.memberLevel = nil
+                data.memberDaysLeft = nil
+                data.memberActiveDate = nil
+                Shine:NotifyDualColour(client:GetControllingPlayer(), 236, 112, 99, "[昌吉社员]", 255, 255, 255,
+                    "你的昌吉社员已到期, 感谢您对社区的支持.")
+                self:UpdateClientData(client, clientID)
+                changed = true
             end
         end
     end
+    if changed then SavePersistent(self) end
 end
 
 function Plugin:EndGameRecord(lastRoundData)
@@ -862,7 +910,7 @@ function Plugin:ValidatePlayerRecord(_notifyClient, _targetClient)
             data.roundFinishedCommander or 0, data.roundWinCommander or 0,math.floor((data.timePlayedCommander or 0)/60))
 
     if data.memberLevel then
-        queries = queries .. string.format("\n昌吉社员: %d级 到期时间:%s",data.memberLevel,FormatDateTimeString(data.memberExpireDate))
+        queries = queries .. string.format("\n昌吉社员: %d级 剩余%d天", data.memberLevel, data.memberDaysLeft or 0)
     end
     
     Shine:NotifyDualColour( _notifyClient:GetControllingPlayer(),  236, 112, 99 ,"[社区记录]",
@@ -1013,22 +1061,24 @@ function Plugin:CreateMessageCommands()
 
         local data = GetPlayerData(self,_id)
         data.memberLevel = _level ~= 0 and _level or nil
-        data.memberExpireDate = data.memberLevel == nil and nil
-                or os.time({ year = kCurrentYear, month = kCurrentMonth, day = kCurrentDay + 1 + _days, hour = 3, min = 0, sec = 0 })
+        data.memberDaysLeft = data.memberLevel and _days or nil
+        data.memberActiveDate = nil
+        data.memberExpireDate = nil
         
         if data.memberLevel then
             Shine:NotifyDualColour( target:GetControllingPlayer(),  236, 112, 99 ,"[昌吉社员]", 255,255,255,
-                    string.format("你已成为[昌吉社员|等级%s]\n到期时间%s,感谢您对社区的支持!",data.memberLevel,FormatDateTimeString(data.memberExpireDate)))
+                    string.format("你已成为[昌吉社员|等级%s], 剩余%d天,感谢您对社区的支持!",data.memberLevel, data.memberDaysLeft))
         end
         target:GetControllingPlayer():SetPlayerExtraData(data)
         self:UpdateClientData(target,_id)
+        SavePersistent(self, _id)
     end
 
     self:BindCommand( "sh_member_set", "member_set", SetMemberLevel)
         :AddParam{ Type = "steamid" }
         :AddParam{ Type = "number", Round = true, Min = 0, Max = 3,  Default = 0 }
         :AddParam{ Type = "number", Round = true, Min = 0, Max = 360,Optional = true,  Default = 0 }
-        :Help( "设置玩家的昌吉社员. 如!member_set 55022511 1 30 设置55022511 为30天的1期社员(次日计算),若level为0清空状态" )
+        :Help( "设置玩家的昌吉社员. 如!member_set 55022511 1 30 设置55022511 为30天货币天数的1期社员,若level为0清空状态" )
     
     --Hide Rank
     local function HideRankSwitchID(_client,_id)
