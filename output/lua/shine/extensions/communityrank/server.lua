@@ -196,7 +196,6 @@ end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
     self:RageQuitValidate(Player,OldTeam,NewTeam)
-    self:MemberValidate(Player, NewTeam)
 end
 
 function Plugin:ClientDisconnect( _client )
@@ -380,7 +379,7 @@ local function MigrateMemberData(self, _client, data)
     data.memberExpireDate = nil
     data.memberActiveDate = nil
     player:SetPlayerExtraData(data)
-    SavePersistent(self)
+    SavePersistent(self, _client:GetUserId())
 end
 
 function Plugin:ClientConfirmConnect(_client)
@@ -787,7 +786,6 @@ function Plugin:MemberValidate(Player, NewTeam)
     local data = GetPlayerData(self, clientID)
     if not data.memberDaysLeft or data.memberDaysLeft <= 0 then return end
     if data.memberActiveDate == kCurrentTimeStampDay then return end
-    if Shine.GetHumanPlayerCount() <= 24 then return end
 
     data.memberDaysLeft = data.memberDaysLeft - 1
     data.memberActiveDate = kCurrentTimeStampDay
@@ -795,7 +793,7 @@ function Plugin:MemberValidate(Player, NewTeam)
         string.format("已消耗1日社员资格, 尚余%d日", data.memberDaysLeft))
     Player:SetPlayerExtraData(data)
     self:UpdateClientData(client, clientID)
-    SavePersistent(self)
+    SavePersistent(self, clientID)
 end
 
 function Plugin:MemberResolveData(data,rawData)
@@ -811,7 +809,6 @@ function Plugin:GetMemberLevel(clientID)
 end
 
 function Plugin:MemberExpireCleanup()
-    local changed = false
     for client in Shine.IterateClients() do
         local clientID = client:GetUserId()
         if clientID > 0 and not client:GetIsVirtual() then
@@ -824,11 +821,10 @@ function Plugin:MemberExpireCleanup()
                 Shine:NotifyDualColour(client:GetControllingPlayer(), 236, 112, 99, "[昌吉社员]", 255, 255, 255,
                     "你的昌吉社员已到期, 感谢您对社区的支持.")
                 self:UpdateClientData(client, clientID)
-                changed = true
+                SavePersistent(self, clientID)
             end
         end
     end
-    if changed then SavePersistent(self) end
 end
 
 function Plugin:EndGameRecord(lastRoundData)

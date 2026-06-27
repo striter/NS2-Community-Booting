@@ -26,10 +26,10 @@ Plugin.DefaultConfig = {
         CommanderMinMinute = 5,
     },
     ["Tier"] = {
-        [1] = { Count = 1, Credit = 15, Inform = true },
-        [2] = { Count = 2, Credit = 8, Inform = true },
-        [3] = { Count = 5, Credit = 5 },
-        [4] = { Count = 9, Credit = 3 },
+        [1] = { Count = 1, Credit = 15, Inform = true, Member = 0 },
+        [2] = { Count = 2, Credit = 8, Inform = true, Member = 0 },
+        [3] = { Count = 5, Credit = 5, Member = 0 },
+        [4] = { Count = 9, Credit = 3, Member = 0 },
     },
     LateGameAward = {
         Hour = 22.5,
@@ -67,6 +67,9 @@ do
     Validator:AddFieldRule( "LateGameAward.ActiveDurationNormalized",  Validator.IsType( "number", Plugin.DefaultConfig.LateGameAward.ActiveDurationNormalized))
     Validator:AddFieldRule( "PrewarmScoreInField",  Validator.IsType( "number", Plugin.DefaultConfig.PrewarmScoreInField))
     Validator:AddFieldRule( "FloorCredit",  Validator.IsType( "number", Plugin.DefaultConfig.FloorCredit))
+    for i, tierData in ipairs(Plugin.DefaultConfig.Tier) do
+        Validator:AddFieldRule( string.format("Tier.%d.Member", i),  Validator.IsType( "number", 0 ))
+    end
     Plugin.ConfigValidator = Validator
 end
 
@@ -324,6 +327,14 @@ local function PrewarmValidate(self)
         local clientID = prewarmClient.clientID
         if curTierData then
             ValidateClient(self, clientID, prewarmClient.data,curTier, curTierData.Credit,curTierData.Rank)
+            if curTierData.Member and curTierData.Member > 0 then
+                local client = Shine.GetClientByNS2ID(clientID)
+                if client and not client:GetIsVirtual() then
+                    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
+                            string.format("预热奖励:已获得[%d]天社员资格.", curTierData.Member) )
+                    Shine:RunCommand(nil, "sh_member_set", false, clientID, 2, curTierData.Member)
+                end
+            end
             if curTierData.Inform then
                 nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60))
             end

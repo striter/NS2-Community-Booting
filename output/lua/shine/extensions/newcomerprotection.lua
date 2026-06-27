@@ -151,10 +151,10 @@ local function CheckPlayerForcePurchase(self, player, purchaseTech,validate)
                     player:AddResources(-cost)
                     player.lastUpgradeList = {}
                     Shine:NotifyDualColour( player, 88, 214, 141, string.format("[新兵保护]",tier),
-                            234, 250, 241, string.format("个人资源即将溢出,已消耗[%d*]个人资源(+%d额外资源),并转化为对应科技.",cost, additionalCost))
+                            234, 250, 241, string.format("个人资源即将溢出,已消耗[%d*]资源(+%d额外资源)并转化为对应科技.",cost, additionalCost))
                 end
 				Shine:NotifyDualColour( player, 88, 214, 141, "[提示]",
-						234, 250, 241, "积攒个人资源将导致您和您的队伍团队处于劣势!请积极寻找自己的职能定位." )
+						234, 250, 241, "您的资源储备充足,建议购买高级装备以增强战力." )
 				return true
 			end
 		end
@@ -233,7 +233,7 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 		if restrictions.MinHourToCommand > 0 and playHour < restrictions.MinHourToCommand then
 			Shine:NotifyDualColour(client,
 					88, 214, 141, "[新兵保护]",
-					213, 245, 227, string.format("由于当前服务器强度,游戏时长需要达到[%d]小时,才能成为该队的指挥,您当前的游戏时长为[%d]!", restrictions.MinHourToCommand,playHour))
+					213, 245, 227, string.format("当前服务器强度较高,指挥需游戏时长达到[%d]小时,您当前时长为[%d]小时.", restrictions.MinHourToCommand,playHour))
 
 			Shared.ConsoleCommand(string.format("sh_setteam %s %s true", clientId,_player:GetTeamNumber()))
 			return false
@@ -243,7 +243,7 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 	if self:CommanderRoundRestricted(clientId) then
 		Shine:NotifyDualColour(client,
 				88, 214, 141, "[新兵保护]",
-				213, 245, 227, "您近期已多次登录指挥站,请小沁一会.给他人些机会.")
+				213, 245, 227, "当前处于指挥轮换期,您可在下局重新登录指挥站.")
 		Shared.ConsoleCommand(string.format("sh_setteam %s %s true", clientId,_player:GetTeamNumber()))
 		return false
 	end
@@ -260,7 +260,7 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 	if restrictions.MaxSkillAverageDiffToCommand > 0 and skillDiff > restrictions.MaxSkillAverageDiffToCommand then
 		Shine:NotifyDualColour(client,
 				88, 214, 141, "[新兵保护]",
-				213, 245, 227, string.format("你的指挥分数[%i]与预期分数[%i]差距过大[>%i],请选择适当的游玩场所!",commanderSkill,compareSkill, restrictions.MaxSkillAverageDiffToCommand))
+				213, 245, 227, string.format("您的指挥分数[%i]与对方指挥[%i]差距较大[>%i],建议选择匹配自身强度的对局.",commanderSkill,compareSkill, restrictions.MaxSkillAverageDiffToCommand))
 
 		Shared.ConsoleCommand(string.format("sh_setteam %s %s true", clientId,_player:GetTeamNumber()))
 		return false
@@ -380,8 +380,8 @@ function Plugin:OnPlayerKill(player,attacker, doer, point, direction)
 
 	refund = player:AddResources(refund)
 	Shine:NotifyDualColour( player,
-			88, 214, 141, string.format("[阵亡补偿]",tier),
-			234, 250, 241, string.format("已转入<%.2f>资源.",refund) )
+			88, 214, 141, string.format("[阵亡回收]",tier),
+			234, 250, 241, string.format("已回收装备资源<%.2f>,请继续投入战斗.",refund) )
 
 	local team = player:GetTeamNumber()
 	local messages = self.Config.Messages[team]
@@ -432,8 +432,8 @@ function Plugin:OnDropAllWeapons(player)
 		local refund = cost * refundPercentage
 		player:AddResources(refund)
 		Shine:NotifyDualColour( player,
-				88, 214, 141, string.format("[武器回收补偿]",tier),
-				234, 250, 241, string.format("已转入<%.2f>个人资源.",refund) )
+				88, 214, 141, string.format("[武器回收]",tier),
+				234, 250, 241, string.format("已回收武器资源<%.2f>.",refund) )
 	end
 
 end

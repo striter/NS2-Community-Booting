@@ -403,6 +403,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
         local memberLevel = crEnabled and cr:GetMemberLevel(clientID) or 0
         if bypassCredit ~= nil then
             if memberLevel == 2 then
+				cr:MemberValidate(_player, _newTeam)
                 self:Notify(_player, "[昌吉大会员]特权启用.",priorColorTable,nil)
                 return
             end
