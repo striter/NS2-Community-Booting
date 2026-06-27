@@ -402,9 +402,19 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
         
         local memberLevel = crEnabled and cr:GetMemberLevel(clientID) or 0
         if bypassCredit ~= nil then
-            if memberLevel == 2 then
+			if cpEnabled and communityPrewarm:GetPrewarmPrivilege(client, bypassCredit,forcePrivilegeTitle,true) then
+				return
+			end
+			
+			if memberLevel == 1 then
+				if cpEnabled and communityPrewarm:GetPrewarmPrivilege(client, bypassCredit - 10,forcePrivilegeTitle,true) then
+					cr:MemberValidate(_player, _newTeam)
+					self:Notify(_player, "[昌吉社员]特权启用(预热需求-10).",priorColorTable,nil)
+					return
+				end
+			elseif memberLevel == 2 then
 				cr:MemberValidate(_player, _newTeam)
-                self:Notify(_player, "[昌吉大会员]特权启用.",priorColorTable,nil)
+                self:Notify(_player, "[昌吉大社员]特权启用(无段位需求).",priorColorTable,nil)
                 return
             end
 
@@ -412,12 +422,8 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
                 self:Notify(_player, "[高级预留玩家]特权启用.",priorColorTable,nil)
                 return
             end
-
-            if communityPrewarm and communityPrewarm:GetPrewarmPrivilege(client, bypassCredit,forcePrivilegeTitle,true) then
-                return
-            end
         else
-            if communityPrewarm and communityPrewarm:IsPrewarmPlayer(clientID) and communityPrewarm:GetPrewarmPrivilege(client, 2, "预热中途入场") then
+            if cpEnabled and communityPrewarm:IsPrewarmPlayer(clientID) and communityPrewarm:GetPrewarmPrivilege(client, 2, "预热中途入场") then
                 table.insert(kTeamJoinTracker,clientID)
                 return
             end 
@@ -570,7 +576,7 @@ function Plugin:CreateCommands()
         local memberLevel = cr:GetMemberLevel(clientID) or 0
         local reputationConfig = self.Config.ReputationBypass
         local cost = reputationConfig.Cost
-        if memberLevel == 1 then
+        if memberLevel >= 1 then
             cost = math.floor(cost / 2)
         end
         if cr:UseCommunityReputation(_client:GetControllingPlayer(),reputationConfig.Limit,cost) then

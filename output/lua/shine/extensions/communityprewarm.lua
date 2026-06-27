@@ -7,7 +7,7 @@ Plugin.HasConfig = true
 Plugin.ConfigName = "CommunityPrewarm.json"
 Plugin.DefaultConfig = {
     Restriction = {
-        Hour = 4,           --Greater than this hour
+        Hour = 4,
         Player = 12,
     },
     ScoreMultiplier = {
@@ -84,6 +84,14 @@ function Plugin:Initialise()
     self.PrewarmTracker = {}
     self.MemberInfos = {}
     self:CreateMessageCommands()
+
+    if self.Config and self.Config.Tier then
+        local normalized = {}
+        for k, v in pairs(self.Config.Tier) do
+            normalized[tonumber(k) or k] = v
+        end
+        self.Config.Tier = normalized
+    end
 
     self.PrewarmData = Shine.LoadJSONFile(kPrewarmFile) or {
         ValidationDay = 0,
@@ -248,7 +256,6 @@ local function ValidateClient(self, _clientID, _data, _tier, _credit,_scoreOverr
     _data.tier = _tier
     _data.credit = _credit
     _data.score = _scoreOverride and _scoreOverride or _data.score
-    self:Print(string.format("Validate %s %s %s %s",_clientID,_data.tier,_data.credit,_data.score ))
 
     local client = Shine.GetClientByNS2ID(_clientID)
     if not client then return end
@@ -271,13 +278,13 @@ local function Reset(self)
     self.PrewarmData.Validated = false
 end
 
-local function PrewarmdScoreEnable(self)
+local function PrewarmScoreEnable(self)
     if kCurrentHour < self.Config.Restriction.Hour then return false end
     return true
 end
 
 local function PrewarmValidate(self)
-    if not PrewarmdScoreEnable(self) then return end
+    if not PrewarmScoreEnable(self) then return end
     if not table.contains(Shine.kRankGameMode,GetGamemode()) then return end
     if Shine.GetPlayingPlayersCount() < self.Config.Restriction.Player then return end
     
@@ -285,7 +292,6 @@ local function PrewarmValidate(self)
     self.PrewarmData.Validated = true
     GetCurrentRecordTable(self).PrewarmTime = tostring(os.time())
 
-    -- 校验成功后给所有场内玩家增加 PrewarmScoreInField
     local scoreInField = self.Config.PrewarmScoreInField or 10
     for client in Shine.IterateClients() do
         if not client:GetIsVirtual() then
@@ -326,14 +332,9 @@ local function PrewarmValidate(self)
 
         local clientID = prewarmClient.clientID
         if curTierData then
-            ValidateClient(self, clientID, prewarmClient.data,curTier, curTierData.Credit,curTierData.Rank)
+            ValidateClient(self, clientID, prewarmClient.data, curTier, curTierData.Credit)
             if curTierData.Member and curTierData.Member > 0 then
-                local client = Shine.GetClientByNS2ID(clientID)
-                if client and not client:GetIsVirtual() then
-                    Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
-                            string.format("预热奖励:已获得[%d]天社员资格.", curTierData.Member) )
-                    Shine:RunCommand(nil, "sh_member_delta", false, clientID, 2, curTierData.Member)
-                end
+                Shine:RunCommand(nil, "sh_member_delta", false, clientID, 2, curTierData.Member, "预热贡献奖励")
             end
             if curTierData.Inform then
                 nameList = nameList .. string.format("%s(%i分)|", prewarmClient.data.name, math.floor(prewarmClient.data.score / 60))
@@ -417,7 +418,7 @@ function Plugin:IsPrewarmPlayer(_clientID)
 end
 
 function Plugin:ShouldBypassTeamSizeRestriction()
-    return not self.PrewarmData.Validated and PrewarmdScoreEnable(self)
+    return not self.PrewarmData.Validated and PrewarmScoreEnable(self)
 end
 
 function Plugin:IsLateGameSeeder(_clientID)
@@ -440,7 +441,7 @@ end
 
 local function BroadcastPrewarmStatus(self)
     if self.PrewarmData.Validated then return end
-    if not PrewarmdScoreEnable(self) then return end
+    if not PrewarmScoreEnable(self) then return end
 
     local prewarmClients = {}
     for clientID, prewarmData in pairs(self.MemberInfos) do
@@ -486,7 +487,7 @@ function Plugin:TrackWithInterval()
 end
 
 function Plugin:SetGameState( Gamerules, State, OldState )
-    if State == kGameState.Countdown and PrewarmdScoreEnable(self) and not self.PrewarmData.Validated then
+    if State == kGameState.Countdown and PrewarmScoreEnable(self) and not self.PrewarmData.Validated then
         local result = PrewarmValidate(self)
         if not result then
             local playingCount = Shine.GetPlayingPlayersCount()
@@ -699,7 +700,7 @@ function Plugin:ClientConfirmConnect( _client )
     local player = _client:GetControllingPlayer()
     data.name = player:GetName()
 
-    if PrewarmdScoreEnable(self) then
+    if PrewarmScoreEnable(self) then
         if self.PrewarmData.Validated then
             NotifyClient(self,_client,_client:GetUserId())
             self:QueryLateGameAward(_client)
@@ -753,7 +754,7 @@ function Plugin:OnPlayerCommunityDataReceived(_client, data)
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("%s,今天可自由入场,欢迎加入NS2CN!", title) )
         if isReturning then
-            Shine:RunCommand(nil, "sh_member_delta", false, clientID, 2, 3)
+            Shine:RunCommand(nil, "sh_member_delta", false, clientID, 2, 3, "回归玩家激励")
         end
     end
 end

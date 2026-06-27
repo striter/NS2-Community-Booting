@@ -1076,7 +1076,7 @@ function Plugin:CreateMessageCommands()
         :AddParam{ Type = "number", Round = true, Min = 0, Max = 360, Optional = true,  Default = 0 }
         :Help( "设置玩家的昌吉社员. 如!member_set 55022511 1 30 设置55022511 为30天货币天数的1期社员,若level为0清空状态" )
 
-    local function MemberDelta(_client, _id, _level, _days)
+    local function MemberDelta(_client, _id, _level, _days, _reason)
         local target = Shine.AdminGetClientByNS2ID(_client,_id)
         if not target then return end
 
@@ -1085,22 +1085,24 @@ function Plugin:CreateMessageCommands()
         local data = GetPlayerData(self,_id)
         local currentLevel = data.memberLevel or 0
         local currentDays = data.memberDaysLeft or 0
+        local maxDays = _client and 90 or 15
 
-        if currentDays > 15 then
+        if currentDays > maxDays then
             Shine:NotifyDualColour( target:GetControllingPlayer(), 236, 112, 99, "[昌吉社员]", 255, 255, 255,
                 string.format("你的昌吉社员剩余%d天,已超过上限,无法累加.", currentDays) )
             return
         end
 
         local newLevel = math.max(currentLevel, _level)
-        local newDays = math.min(currentDays + _days, 15)
+        local newDays = math.min(currentDays + _days, maxDays)
 
         data.memberLevel = math.min(newLevel, 3)
         data.memberDaysLeft = newDays
         data.memberExpireDate = nil
 
+        local reasonText = _reason and _reason ~= "" and string.format("(%s)", _reason) or ""
         Shine:NotifyDualColour( target:GetControllingPlayer(), 236, 112, 99, "[昌吉社员]", 255, 255, 255,
-            string.format("你的昌吉社员已调整, 当前等级%s, 剩余%d天.", data.memberLevel, data.memberDaysLeft) )
+            string.format("你的昌吉社员已调整%s, 当前等级%s, 剩余%d天.", reasonText, data.memberLevel, data.memberDaysLeft) )
 
         target:GetControllingPlayer():SetPlayerExtraData(data)
         self:UpdateClientData(target,_id)
@@ -1111,7 +1113,8 @@ function Plugin:CreateMessageCommands()
         :AddParam{ Type = "steamid" }
         :AddParam{ Type = "number", Round = true, Min = 1, Max = 3, Default = 2 }
         :AddParam{ Type = "number", Round = true, Min = 1, Max = 15, Optional = true, Default = 3 }
-        :Help( "授予/提升玩家的昌吉社员,等级取较高值,天数累加(总上限15天,已有超过15天则不变). 如!member_delta 55022511 2 15" )
+        :AddParam{ Type = "string", Optional = true, TakeRestOfLine = true, Default = "" }
+        :Help( "授予/提升玩家的昌吉社员,等级取较高值,天数累加(服务器调用上限15天,管理员调用上限90天). 如!member_delta 55022511 2 15 预热奖励" )
     
     --Hide Rank
     local function HideRankSwitchID(_client,_id)
