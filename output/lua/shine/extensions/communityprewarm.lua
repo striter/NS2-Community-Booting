@@ -311,7 +311,7 @@ local function PrewarmValidate(self)
 
     local nameList = ""
     local currentIndex = 0
-    for _, prewarmClient in pairs(prewarmClients) do
+    for _, prewarmClient in ipairs(prewarmClients) do
         local curTier = 0
         local curTierData = nil
         local tierValidator = 0
