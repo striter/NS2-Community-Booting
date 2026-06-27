@@ -332,7 +332,7 @@ local function PrewarmValidate(self)
                 if client and not client:GetIsVirtual() then
                     Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
                             string.format("预热奖励:已获得[%d]天社员资格.", curTierData.Member) )
-                    Shine:RunCommand(nil, "sh_member_set", false, clientID, 2, curTierData.Member)
+                    Shine:RunCommand(nil, "sh_member_delta", false, clientID, 2, curTierData.Member)
                 end
             end
             if curTierData.Inform then
@@ -753,7 +753,7 @@ function Plugin:OnPlayerCommunityDataReceived(_client, data)
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("%s,今天可自由入场,欢迎加入NS2CN!", title) )
         if isReturning then
-            Shine:RunCommand(nil, "sh_member_set", false, clientID, 2, 3)
+            Shine:RunCommand(nil, "sh_member_delta", false, clientID, 2, 3)
         end
     end
 end
