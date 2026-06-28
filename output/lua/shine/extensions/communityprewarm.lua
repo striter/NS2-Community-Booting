@@ -215,26 +215,24 @@ local function TrackClient(self, _client, _clientID)
             end
         end
         
-        prewarmData.score = math.max(0, prewarmData.score + trackTimeMultiplier * trackTime)
+        local scoreGained = trackTimeMultiplier * trackTime
+        prewarmData.score = math.max(0, prewarmData.score + scoreGained)
+        
+        -- 每次加分时通知玩家
+        if scoreGained > 0 then
+            local rank, total = GetPlayerRank(self, _clientID)
+            local prevRank = prevData.lastNotifyRank or rank
+            local rankChange = prevRank - rank
+            local rankHint = rankChange > 0 and string.format(" 排名上升%d位!", rankChange)
+                    or (rankChange < 0 and string.format(" 排名下降%d位", -rankChange) or "")
+            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
+                    string.format("预热分+%d,当前[%d]分(第%d/%d名)%s",
+                            scoreGained, math.floor(prewarmData.score / 60), rank, total, rankHint) )
+            prevData.lastNotifyRank = rank
+        end
     end
     
     prewarmData.time = prewarmData.time + trackTime
-
-    -- 每累积5分钟预热分(300分)时通知玩家
-    local lastNotifyScore = prevData.lastNotifyScore or 0
-    local scoreGain = prewarmData.score - lastNotifyScore
-    if scoreGain >= 300 then
-        local rank, total = GetPlayerRank(self, _clientID)
-        local prevRank = prevData.lastNotifyRank or rank
-        local rankChange = prevRank - rank
-        local rankHint = rankChange > 0 and string.format(" 排名上升%d位!", rankChange)
-                or (rankChange < 0 and string.format(" 排名下降%d位", -rankChange) or "")
-        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
-                string.format("预热分累积+%d,当前[%d]分(第%d/%d名)%s",
-                        math.floor(scoreGain / 60), math.floor(prewarmData.score / 60), rank, total, rankHint) )
-        prevData.lastNotifyScore = prewarmData.score
-        prevData.lastNotifyRank = rank
-    end
 
     self.PrewarmTracker[_clientID] = curData
     player:SetPrewarmData(prewarmData)
@@ -733,6 +731,10 @@ function Plugin:OnPlayerCommunityDataReceived(_client, data)
     local targetData = GetPlayerData(self,clientID)
     if targetData.credit > 0 then return end
 
+    -- 检查今天是否已经领取过回归奖励
+    local today = math.floor(kCurrentTimeStamp / 86400)
+    if targetData.lastReturnRewardDay == today then return end
+
     local credit = 0
     local title = nil
     local isReturning = false
@@ -751,8 +753,10 @@ function Plugin:OnPlayerCommunityDataReceived(_client, data)
 
     if credit > 0 then
         targetData.tier = 5
-        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("%s,今天可自由入场,欢迎加入NS2CN!", title) )
+        targetData.credit = (targetData.credit or 0) + credit
+        targetData.lastReturnRewardDay = today
+        Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
+                string.format("%s,获得[%d]预热点,今天可自由入场,欢迎加入NS2CN!", title, credit) )
         if isReturning then
             Shine:RunCommand(nil, "sh_member_delta", false, clientID, 2, 3, "回归玩家激励")
         end

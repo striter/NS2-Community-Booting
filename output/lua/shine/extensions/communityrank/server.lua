@@ -259,6 +259,7 @@ function Plugin:OnCommunityDBReceived()
             local rawData = Shine.PlayerInfoHub:GetCommunityData(clientID)
             self:OnClientDBReceived(client,clientID, rawData)
             self:UpdateClientData(client,clientID)
+            Shine.Hook.Broadcast("OnPlayerCommunityDataReceived",client,GetPlayerData(self,clientID))
         end
     end
 end
@@ -357,7 +358,6 @@ function Plugin:UpdateClientData(_client, _clientId)        --Split cause connec
     end
     
     Shine.SendNetworkMessage(_client,"Shine_CommunityTier" ,syncData,true)
-    Shine.Hook.Broadcast("OnPlayerCommunityDataReceived",_client,communityData)
 end
 
 
