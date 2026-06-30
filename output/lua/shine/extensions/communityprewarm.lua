@@ -666,9 +666,13 @@ function Plugin:QueryLateGameAward(_client)
             lateGameAwardData.time == kCurrentTimeStampDay then
         return
     end
+    local targetData = GetPlayerData(self,id)
+    if targetData.tier and targetData.tier > 0 then
+        lateGameAwardData.time = kCurrentTimeStampDay
+        return
+    end
     Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, lateGameAwardData.credit,"尾声对局参与激励"))
     self.PrewarmAwardFile[stringId] = nil
-    local targetData = GetPlayerData(self,id)
     targetData.isLateGameSeeder = true
 end
 
