@@ -38,6 +38,7 @@ Plugin.DefaultConfig = {
 		SlotDelta = 2,
 	},
     MaxHourByPass = -1,
+    ServerStayReservedSeconds = 600,
 }
 
 Plugin.CheckConfig = true
@@ -118,7 +119,7 @@ do
         for Client in Shine.IterateClients() do
             local clientID = Client:GetUserId()
             if (clientID > 0 and crEnabled and cr:GetMemberLevel(clientID) > 0)
-                or Shine:HasAccess( Client, "sh_reservedslot" )
+                    or Shine:HasAccess( Client, "sh_reservedslot" )
             then
                 Count = Count + 1
             end
@@ -190,24 +191,61 @@ function Plugin:GetMaxSpectatorSlots()
 	return GetMaxSpectators()
 end
 
-function Plugin:HasReservedSlotAccess( Client )
-    
-	if self.Config.MaxHourByPass >= 0 then
-        local hourRecord = self.ValidatePlayHour[tostring(Client)]
-        if not hourRecord or self.Config.MaxHourByPass >= hourRecord then
-            return true
-        end
-	end
-    
+function Plugin:HasReservedSlotAccess( Client ,Validate)
     local cpEnabled, communityPrewarm = Shine:IsExtensionEnabled( "communityprewarm" )
-    if communityPrewarm then
-        local clientID = Client
-        if communityPrewarm:IsPrewarmPlayer(clientID) or communityPrewarm:IsLateGameSeeder(clientID) then
-            return true
+    if cpEnabled then
+        local clientID = type(Client) == "userdata" and Client:GetUserId() or Client
+        if communityPrewarm:HasPrewarmTier(clientID) then
+            return true, "预热贡献者"
+        end
+        if communityPrewarm:GetOnlineTime(clientID) >= self.Config.ServerStayReservedSeconds then
+            return true, "累计在线预留"
         end
     end
 
-	return Shine:HasAccess( Client, "sh_reservedslot" )
+	if self.Config.MaxHourByPass >= 0 then
+        local hourRecord = self.ValidatePlayHour[tostring(Client)]
+        if not hourRecord or self.Config.MaxHourByPass >= hourRecord then
+
+            if Validate then
+                local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+                if crEnabled and cr then
+                    local clientID = type(Client) == "userdata" and Client:GetUserId() or Client
+                    if cr:GetMemberLevel(clientID) > 0 then
+                        local data = cr:GetCommunityData(clientID)
+                        if data and (data.memberDaysLeft or 0) > 0 then
+                            return true, "社员预留位"
+                        end
+                    end
+                end
+            end
+            
+            return true
+        end
+	end
+
+    if Shine:HasAccess( Client, "sh_reservedslot" ) then
+        return true, "预留位权限"
+    end
+
+	return false
+end
+
+function Plugin:ClientConfirmConnect( Client )
+	if not Client or Client:GetIsVirtual() then return end
+	local clientID = Client:GetUserId()
+	if clientID <= 0 then return end
+
+	local currentPlayers = GetNumPlayersTotal() - 1
+	local freeSlots = self:GetFreeReservedSlots()
+	local threshold = GetMaxPlayers() - freeSlots
+	if currentPlayers < threshold then return end
+
+	local hasAccess, reason = self:HasReservedSlotAccess( clientID,true )
+	if hasAccess and reason then
+		Shine:NotifyDualColour( Client, 235, 152, 78, "[预留位]", 255, 255, 255,
+			string.format("你因[%s]获得了预留位.", reason) )
+	end
 end
 
 function Plugin:ClientConnect( Client )

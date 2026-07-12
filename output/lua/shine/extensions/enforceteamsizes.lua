@@ -307,7 +307,7 @@ local function GetForceJoinCredit(self, _client, _communityPrewarm)
 	
 	local endFix = matched and string.format("(前%s名)",count) or "(最大值)"
 	local title = string.format("当局入场通道%s", endFix)
-	if _communityPrewarm and _communityPrewarm:IsPrewarmPlayer(_client:GetUserId()) then
+	if _communityPrewarm and _communityPrewarm:HasPrewarmTier(_client:GetUserId()) then
 		credit = 0
 		title = string.format("预热玩家通道%s", endFix)
 	end
@@ -423,7 +423,7 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
                 return
             end
         else
-            if cpEnabled and communityPrewarm:IsPrewarmPlayer(clientID) and communityPrewarm:GetPrewarmPrivilege(client, 2, "预热中途入场") then
+            if cpEnabled and communityPrewarm:HasPrewarmTier(clientID) and communityPrewarm:GetPrewarmPrivilege(client, 2, "预热中途入场") then
                 table.insert(kTeamJoinTracker,clientID)
                 return
             end 

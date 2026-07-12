@@ -410,21 +410,18 @@ function Plugin:GetPrewarmCredit(_client)
     return data.credit or 0
 end
 
-function Plugin:IsPrewarmPlayer(_clientID)
-    local data = GetPlayerData(self, _clientID)
-    return data.tier and data.tier > 0
-end
-
 function Plugin:ShouldBypassTeamSizeRestriction()
     return not self.PrewarmData.Validated and PrewarmScoreEnable(self)
 end
 
-function Plugin:IsLateGameSeeder(_clientID)
-    local targetData = GetPlayerData(self,_clientID)
-    if self.PrewarmAwardFile[tostring(_clientID)] then
-        return true
-    end
-    return targetData.isLateGameSeeder
+function Plugin:HasPrewarmTier(_clientID)
+    local data = GetPlayerData(self, _clientID)
+    return (data.tier or 0) > 0
+end
+
+function Plugin:GetOnlineTime(_clientID)
+    local targetData = GetPlayerData(self, _clientID)
+    return targetData.time or 0
 end
 
 function Plugin:OnFirstThink()
@@ -657,7 +654,7 @@ function Plugin:QueryLateGameAward(_client)
     local id = _client:GetUserId()
     if kCurrentHour > self.Config.LateGameAward.Hour then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                string.format("当前处于尾声对局激励.当参与人数小于[%d]的有效战局结束后,完整参与对局的所有玩家将获得次日的[%d]预热点.", self.Config.LateGameAward.MaxPlayers,self.Config.LateGameAward.Credit) )
+                string.format("当前处于尾声对局激励.当参与人数小于[%d]的有效战局结束后,完整参与对局的所有玩家将获得次日的[预留位]以及[%d]预热点.", self.Config.LateGameAward.MaxPlayers,self.Config.LateGameAward.Credit) )
     end
 
     local stringId = tostring(id)
@@ -673,7 +670,6 @@ function Plugin:QueryLateGameAward(_client)
     end
     Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, lateGameAwardData.credit,"尾声对局参与激励"))
     self.PrewarmAwardFile[stringId] = nil
-    targetData.isLateGameSeeder = true
 end
 
 function Plugin:MapChange()
