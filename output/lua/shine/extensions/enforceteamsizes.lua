@@ -408,13 +408,13 @@ function Plugin:JoinTeam(_gamerules, _player, _newTeam, _, _shineForce)
 			
 			if memberLevel == 1 then
 				if cpEnabled and communityPrewarm:GetPrewarmPrivilege(client, bypassCredit - 10,forcePrivilegeTitle,true) then
-					cr:MemberValidate(_player, _newTeam)
+					cr:MemberValidate(_player)
 					self:Notify(_player, "[昌吉社员]特权启用(预热需求-10).",priorColorTable,nil)
 					return
 				end
 			elseif memberLevel == 2 then
-				cr:MemberValidate(_player, _newTeam)
-                self:Notify(_player, "[昌吉大社员]特权启用(无段位需求).",priorColorTable,nil)
+				cr:MemberValidate(_player)
+                self:Notify(_player, "[昌吉大社员]特权启用.",priorColorTable,nil)
                 return
             end
 

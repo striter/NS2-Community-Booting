@@ -62,7 +62,6 @@ function BoomBoxLocalPlay(category, trackIndex)
     end
 
     local asset = tracks[trackIndex].asset
-    Shared.Message("[BoomBox] BoomBoxLocalPlay cat=" .. tostring(category) .. " idx=" .. tostring(trackIndex) .. " asset=" .. tostring(asset))
     DoPlaySound(asset)
     localSoundEffect = { _path = asset, Stop = function(self)
         local p = Client.GetLocalPlayer()

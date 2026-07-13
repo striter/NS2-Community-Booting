@@ -9,9 +9,9 @@ gBoomBoxDefine = {
 }
 kBoomBoxDefaultValue = 0.8
 
--- Global track list; all assets PrecacheAsset'd here at FileHooks load time
 gBoomBoxTracks = {
     [EBoomBoxTrack.CUSTOM]  =  {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WutheringWaves"),             name = "玄翎谣" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Beats"),             name = "My Soul, Your Beats!" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Farewell"),          name = "远航星的告别" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/SoundHorizon"),      name = "恋人を射ち堕とした日" },
@@ -53,6 +53,7 @@ gBoomBoxTracks = {
     },
     [EBoomBoxTrack.JP] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/Ame"),            name = "Ame(A)" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/LightBlueRain"),  name = "みずいろの雨" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/MoonAfterglow"),  name = "三日月サンセット" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/LightDance"),     name = "ライトダンス" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/JP/BluSwing"),       name = "満ちていく体温" },
@@ -72,7 +73,10 @@ gBoomBoxTracks = {
     },
     [EBoomBoxTrack.EN] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"),              name = "Slumlord" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Attention"),             name = "Attention" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LowRider"),              name = "Low Rider" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Preach"),                name = "Preach" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Sabotage"),              name = "Sabotage" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/UnaMattina"),            name = "Una Mattina" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/StopDrop"),              name = "Stop Drop Smile and Roll" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/SmoothCriminal"),        name = "Smooth Criminal" },
@@ -84,7 +88,7 @@ gBoomBoxTracks = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/IRemember"),             name = "I Remember" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/BlackBetty"),            name = "Black Betty" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Origami"),               name = "Origami" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/SevenDaysInSundayJune"), name = "Seven Days In Sunday June" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/SevenDaysInSundayJune"),  name = "Seven Days In Sunday June" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LastCall"),               name = "Last Call" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Metamodernity"),          name = "Metamodernity" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/NoGood"),                 name = "No Good" },
@@ -98,6 +102,9 @@ gBoomBoxTracks = {
     },
     [EBoomBoxTrack.Calm] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/MoonLightSlow"),     name = "三日月サンセット -Rearrange 2020-" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/Redbone"),           name = "Redbone" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/OutofTime"),         name = "Out of Time" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/JubanDistrict"),     name = "Juban District" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/NewSlow"),           name = "New Slow" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/Fabulous"),          name = "FABULOUS -Glow our vibes-" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/BusinessSolutions"), name = "Business Solutions" },

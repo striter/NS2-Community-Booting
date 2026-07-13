@@ -776,8 +776,7 @@ function Plugin:RecordResolveData(data,rawData)
     data.roundWinCommander = GetNumber(rawData.roundWinCommander)
 end
 
-function Plugin:MemberValidate(Player, NewTeam)
-    if NewTeam ~= kTeam1Index and NewTeam ~= kTeam2Index then return end
+function Plugin:MemberValidate(Player)
 
     local client = Player:GetClient()
     if not client or client:GetIsVirtual() then return end
