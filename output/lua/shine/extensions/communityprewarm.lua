@@ -9,6 +9,7 @@ Plugin.DefaultConfig = {
     Restriction = {
         Hour = 4,
         Player = 12,
+        MaxNotifyHour = 20.5,
     },
     ScoreMultiplier = {
         Restricted = 0.5,
@@ -60,6 +61,7 @@ do
     Validator:AddFieldRule( "ScoreMultiplier.RestrictedActive",  Validator.IsType( "number", Plugin.DefaultConfig.ScoreMultiplier.RestrictedActive ))
     Validator:AddFieldRule( "ScoreMultiplier.Dead",  Validator.IsType( "number", Plugin.DefaultConfig.ScoreMultiplier.Dead ))
     Validator:AddFieldRule( "Restriction.Hour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Hour ))
+    Validator:AddFieldRule( "Restriction.MaxNotifyHour",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.MaxNotifyHour ))
     Validator:AddFieldRule( "Restriction.Player",  Validator.IsType( "number", Plugin.DefaultConfig.Restriction.Player ))
     Validator:AddFieldRule( "Tier",  Validator.IsType( "table", Plugin.DefaultConfig.Tier))
     Validator:AddFieldRule( "ReturnReward", Validator.IsType("table",Plugin.DefaultConfig.ReturnReward))
@@ -193,6 +195,8 @@ local function TrackClient(self, _client, _clientID)
     local prevData = self.PrewarmTracker[_clientID]
     local trackTime = math.floor(curData.time - prevData.time)
     if not self.PrewarmData.Validated then
+        local silentAfterMax = self:IsAfterMaxNotifyHour()
+
         local activePrewarm = kCurrentHour >= self.Config.Restriction.Hour
 
         local activePlayed = false
@@ -219,7 +223,7 @@ local function TrackClient(self, _client, _clientID)
         prewarmData.score = math.max(0, prewarmData.score + scoreGained)
         
         -- 每次加分时通知玩家
-        if scoreGained > 0 then
+        if scoreGained > 0 and not silentAfterMax then
             local rank, total = GetPlayerRank(self, _clientID)
             local prevRank = prevData.lastNotifyRank or rank
             local rankChange = prevRank - rank
@@ -279,6 +283,10 @@ end
 local function PrewarmScoreEnable(self)
     if kCurrentHour < self.Config.Restriction.Hour then return false end
     return true
+end
+
+function Plugin:IsAfterMaxNotifyHour()
+    return kCurrentHour >= (self.Config.Restriction.MaxNotifyHour or 20.5)
 end
 
 local function PrewarmValidate(self)
@@ -437,6 +445,7 @@ end
 local function BroadcastPrewarmStatus(self)
     if self.PrewarmData.Validated then return end
     if not PrewarmScoreEnable(self) then return end
+    if self:IsAfterMaxNotifyHour() then return end
 
     local prewarmClients = {}
     for clientID, prewarmData in pairs(self.MemberInfos) do
@@ -485,12 +494,14 @@ function Plugin:SetGameState( Gamerules, State, OldState )
     if State == kGameState.Countdown and PrewarmScoreEnable(self) and not self.PrewarmData.Validated then
         local result = PrewarmValidate(self)
         if not result then
-            local playingCount = Shine.GetPlayingPlayersCount()
-            local required = self.Config.Restriction.Player
-            for client in Shine.IterateClients() do
-                Shine:NotifyDualColour( client, kErrorColor[1], kErrorColor[2], kErrorColor[3], self.kPrefix,
-                        255, 255, 255,
-                        string.format("预热校验未通过:当前场内人数[%d/%d],尚缺%d人.", playingCount, required, required - playingCount) )
+            if not self:IsAfterMaxNotifyHour() then
+                local playingCount = Shine.GetPlayingPlayersCount()
+                local required = self.Config.Restriction.Player
+                for client in Shine.IterateClients() do
+                    Shine:NotifyDualColour( client, kErrorColor[1], kErrorColor[2], kErrorColor[3], self.kPrefix,
+                            255, 255, 255,
+                            string.format("预热校验未通过:当前场内人数[%d/%d],尚缺%d人.", playingCount, required, required - playingCount) )
+                end
             end
         end
 
@@ -698,28 +709,31 @@ function Plugin:ClientConfirmConnect( _client )
     local player = _client:GetControllingPlayer()
     data.name = player:GetName()
 
-    if PrewarmScoreEnable(self) then
-        if self.PrewarmData.Validated then
-            NotifyClient(self,_client,_client:GetUserId())
-            self:QueryLateGameAward(_client)
-            self:QueryGroupAward(_client)
-        else
-            local playerCount = Shine.GetHumanPlayerCount()
-            local rank, total = GetPlayerRank(self, clientID)
-            local scoreMinutes = math.floor((data.score or 0) / 60)
-            local required = self.Config.Restriction.Player
-            Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                    string.format("服务器为预热状态(在线%d人/需%d人). 你的预热分:%d分钟,排名:%d/%d.",
-                            playerCount, required, scoreMinutes, rank, total) )
-            -- 初始化通知基准,避免连接瞬间触发累积通知
-            local tracker = self.PrewarmTracker[clientID]
-            if tracker then
-                tracker.lastNotifyScore = data.score or 0
-                tracker.lastNotifyRank = rank
-            end
-        end
+    if not PrewarmScoreEnable(self) then return end
+
+
+    if self.PrewarmData.Validated then
+        NotifyClient(self, _client, _client:GetUserId())
+        self:QueryLateGameAward(_client)
+        self:QueryGroupAward(_client)
         return
     end
+
+    local rank, total = GetPlayerRank(self, clientID)
+    local tracker = self.PrewarmTracker[clientID]
+    if tracker then
+        tracker.lastNotifyScore = data.score or 0
+        tracker.lastNotifyRank = rank
+    end
+    
+    if self:IsAfterMaxNotifyHour() then return end
+
+    local playerCount = Shine.GetHumanPlayerCount()
+    local scoreMinutes = math.floor((data.score or 0) / 60)
+    local required = self.Config.Restriction.Player
+    Shine:NotifyDualColour(_client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
+            string.format("服务器为预热状态(在线%d人/需%d人). 你的预热分:%d分钟,排名:%d/%d.",
+                    playerCount, required, scoreMinutes, rank, total))
 end
 
 function Plugin:OnPlayerCommunityDataReceived(_client, data)
