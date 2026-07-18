@@ -73,7 +73,20 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
         hourPlayed = 0
     end
     
-    self.ValidatePlayHour[tostring(_client:GetUserId())] = hourPlayed
+    local clientID = _client:GetUserId()
+    self.ValidatePlayHour[tostring(clientID)] = hourPlayed
+
+    if _client:GetIsVirtual() or clientID <= 0 then return end
+
+    local currentClients = GetNumClientsTotal() - 1
+    local publicSlots = GetMaxPlayers() - self.Config.Slots
+    if currentClients < publicSlots then return end
+
+    local hasAccess, reason = self:HasReservedSlotAccess( clientID )
+    if hasAccess and reason then
+        Shine:NotifyDualColour( _client, 235, 152, 78, "[预留位]", 255, 255, 255,
+                string.format("你因[%s]获得了预留位.", reason) )
+    end
 end
 
 function Plugin:MapChange()
@@ -119,7 +132,7 @@ do
         for Client in Shine.IterateClients() do
             local clientID = Client:GetUserId()
             if (clientID > 0 and crEnabled and cr:GetMemberLevel(clientID) > 0)
-                    or Shine:HasAccess( Client, "sh_reservedslot" )
+                or Shine:HasAccess( Client, "sh_reservedslot" )
             then
                 Count = Count + 1
             end
@@ -224,21 +237,6 @@ function Plugin:HasReservedSlotAccess(_clientID)
 end
 
 function Plugin:ClientConfirmConnect( Client )
-    if not Client or Client:GetIsVirtual() then return end
-    local clientID = Client:GetUserId()
-    if clientID <= 0 then return end
-
-    local currentClients = GetNumClientsTotal() - 1
-    local freeSlots = self:GetFreeReservedSlots()
-    local maxClients = GetMaxPlayers() + GetMaxSpectators()
-    local threshold = maxClients - freeSlots
-    if currentClients < threshold then return end
-
-    local hasAccess, reason = self:HasReservedSlotAccess( clientID )
-    if hasAccess and reason then
-        Shine:NotifyDualColour( Client, 235, 152, 78, "[预留位]", 255, 255, 255,
-                string.format("你因[%s]获得了预留位.", reason) )
-    end
 end
 
 function Plugin:ClientConnect( Client )
