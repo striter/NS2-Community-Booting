@@ -43,7 +43,8 @@ Plugin.DefaultConfig = {
 		ActiveTier = {true,true,true},
 		kSkillDiffThreshold = 1000,
 		kSkillDiffStep = 500,
-		kSkillDiffDamageScalarEachStep = 0.05
+		kSkillDiffDamageScalarEachStep = 0.05,
+		RookieScorePerMinute = 10,
 	},
 	RefundForcePurchase = 80,
 	BelowSkillNotify = 100,
@@ -74,6 +75,7 @@ do
 	Validator:AddFieldRule( "RefundAdditive",  Validator.IsType( "table", Plugin.DefaultConfig.RefundAdditive ))
 	Validator:AddFieldRule( "RefundForcePurchase",  Validator.IsType( "number", Plugin.DefaultConfig.RefundForcePurchase ))
 	Validator:AddFieldRule( "DamageProtection",  Validator.IsType( "table", Plugin.DefaultConfig.DamageProtection ))
+	Validator:AddFieldRule( "DamageProtection.RookieScorePerMinute",  Validator.IsType( "number", Plugin.DefaultConfig.DamageProtection.RookieScorePerMinute ))
 	Validator:AddFieldRule( "NewcomerEstimateSkill",  Validator.IsType( "number", Plugin.DefaultConfig.NewcomerEstimateSkill ))
 	Plugin.ConfigValidator = Validator
 end
@@ -107,6 +109,7 @@ function Plugin:OnFirstThink()
 	Shine.Hook.SetupClassHook("TeamSpectator", "Replace", "OnMarineReplace", "ActivePre")
 	Shine.Hook.SetupClassHook("MarineTeam", "RespawnPlayer", "OnMarineRespawn", "PassivePost")
 	Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
+	Shine.Hook.SetupClassHook("PlayerInfoEntity", "UpdateScore", "OnUpdateScore", "PassivePost")
 end
 
 local function GetClientAndTier(player)
@@ -284,7 +287,7 @@ function Plugin:OnMarineRespawn(team,player, origin, angles)
 	end
 end
 
-local function UpdateRookie(self,_player)
+local function UpdateRookie(self, _player)
 	local client,tier, estimateSkill = GetClientAndTier(_player)
 	if not client or client:GetIsVirtual() then return end
 
@@ -293,9 +296,19 @@ local function UpdateRookie(self,_player)
 
 	local isRookie = self.Config.NewcomerEstimateSkill > estimateSkill
 	if playingTeam then
-		isRookie = isRookie and _player:GetKills() < _player:GetDeaths()
+		local gamerules = GetGamerules()
+		local elapsedMinutes = math.max(1, gamerules and gamerules:GetGameStarted() and (Shared.GetTime() - gamerules:GetGameStartTime()) / 60 or 0)
+		local scorePerMinute = _player:GetScore() / elapsedMinutes
+		isRookie = isRookie and _player:GetKills() <= _player:GetDeaths() and scorePerMinute < self.Config.DamageProtection.RookieScorePerMinute
 	end
 	_player:SetRookie(isRookie)
+end
+
+function Plugin:OnUpdateScore(pie)
+	if not Server then return end
+	local scorePlayer = Shared.GetEntity(pie.playerId)
+	if not scorePlayer or not scorePlayer:isa("Player") then return end
+	pie.isRookie = scorePlayer:GetIsRookie()
 end
 
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force )
@@ -461,30 +474,21 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 	if self.GetPlayerTeamSkill and attacker.GetPlayerTeamSkill then
 		local selfSkill = self:GetPlayerTeamSkill()
 		local targetSkill = attacker:GetPlayerTeamSkill()
-		--if self:GetIsVirtual() then
-		--    selfSkill = 2100
-		--end
-		--if attacker:GetIsVirtual() then
-		--    targetSkill = 2100
-		--end
 
 		local skillOffset = (selfSkill - targetSkill)
 		local value = math.max(math.abs(skillOffset) - Config.kSkillDiffThreshold,0)
 
 		local sign = skillOffset >= 0 and 1 or -1
-		if value > 0
-				and sign == -1
-				and self:GetKills() < self:GetDeaths()
+		if sign == -1
+				and self:GetIsRookie()
 		then
 			local _,selfTier = GetClientAndTier(self)
 			local _,targetTier = GetClientAndTier(attacker)
 
 			local available = true
 			if sign < 0 and not Config.ActiveTier[selfTier] then
-				--Shared.Message(tostring(selfTier))
 				available = false
 			elseif sign > 0 and not Config.ActiveTier[targetTier] then
-				--Shared.Message("Target" .. tostring(targetTier))
 				available = false
 			end
 

@@ -73,6 +73,8 @@ gBoomBoxTracks = {
     },
     [EBoomBoxTrack.EN] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Slumlord"),              name = "Slumlord" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/TheOtherSideOfParadise"),name = "The Other Side Of Paradise" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/EasyLover"),             name = "Easy Lover" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Attention"),             name = "Attention" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/LowRider"),              name = "Low Rider" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Preach"),                name = "Preach" },
@@ -99,12 +101,12 @@ gBoomBoxTracks = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/AfterTheDisco"),          name = "After the Disco" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/PolishGirl"),             name = "Polish Girl" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Valkyrie"),               name = "Valkyrie" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/OutofTime"),            name = "Out of Time" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/JubanDistrict"),        name = "Juban District" },
     },
     [EBoomBoxTrack.Calm] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/MoonLightSlow"),     name = "三日月サンセット -Rearrange 2020-" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/Redbone"),           name = "Redbone" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/OutofTime"),         name = "Out of Time" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/JubanDistrict"),     name = "Juban District" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/NewSlow"),           name = "New Slow" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/Fabulous"),          name = "FABULOUS -Glow our vibes-" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/BusinessSolutions"), name = "Business Solutions" },
