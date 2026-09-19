@@ -51,7 +51,6 @@ do
     Validator:AddFieldRule( "MaxHourByPass",  Validator.IsType( "number", Plugin.DefaultConfig.MaxHourByPass  ))
 	Plugin.ConfigValidator = Validator
 end
-local kLocalFilePath = "config://shine/temp/resslotsHistory.json"
 
 function Plugin:Initialise()
 	self.Config.Slots = Max( Floor( tonumber( self.Config.Slots ) or 0 ), 0 )
@@ -60,22 +59,11 @@ function Plugin:Initialise()
 	self:CreateCommands()
 	self.Enabled = true
 
-	local File, Err = Shine.LoadJSONFile(kLocalFilePath)
-	self.ValidatePlayHour = File or {}
-
 	return true
 end
 
 function Plugin:OnPlayerCommunityDataReceived(_client,data)
-    local hourPlayed = math.floor((data.timePlayed or 0) / 60.0)
-    
-    if data.memberLevel and data.memberLevel > 0 then
-        hourPlayed = 0
-    end
-    
     local clientID = _client:GetUserId()
-    self.ValidatePlayHour[tostring(clientID)] = hourPlayed
-
     if _client:GetIsVirtual() or clientID <= 0 then return end
 
     local currentClients = GetNumClientsTotal() - 1
@@ -88,14 +76,6 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
                 string.format("你因[%s]获得了预留位.", reason) )
     end
 end
-
-function Plugin:MapChange()
-    local Success, Err = Shine.SaveJSONFile( self.ValidatePlayHour, kLocalFilePath)
-    if not Success then
-        Shared.Message( "Error saving history rank file: "..Err )
-    end
-end
-
 
 function Plugin:OnFirstThink()
 	self:SetReservedSlotCount( self:GetFreeReservedSlots() )
@@ -216,9 +196,9 @@ function Plugin:HasReservedSlotAccess(_clientID)
     end
 
 	if self.Config.MaxHourByPass >= 0 then
-        local hourRecord = self.ValidatePlayHour[tostring(_clientID)]
-        if not hourRecord or self.Config.MaxHourByPass >= hourRecord then
-            local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+        local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+        local hourRecord = crEnabled and cr and cr:GetCommunityPlayHour(_clientID) or 0
+        if self.Config.MaxHourByPass >= hourRecord then
             if crEnabled and cr then
                 if cr:GetMemberLevel(_clientID) > 0 then
                     return true, "社员预留位"

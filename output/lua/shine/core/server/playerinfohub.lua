@@ -57,8 +57,8 @@ local function AddToHTTPQueue( Address, OnSuccess, OnTimeout)
 	if not working then ProcessQueue() end
 end
 
-function PlayerInfoHub:Query(url,callBack)
-	AddToHTTPQueue(url,callBack)
+function PlayerInfoHub:Query(url,callBack,onTimeout)
+	AddToHTTPQueue(url,callBack,onTimeout)
 end
 
 Shine.Hook.Add( "ClientConnect", "QueryDB", function(Client)
@@ -69,22 +69,54 @@ Shine.Hook.Add( "ClientConnect", "QueryDB", function(Client)
 	PlayerInfoHub:QueryDB()
 end )
 
+local kRetryInterval = 30
+local requesting = false
+local triedOnce = false
+local nextRetry = 0
+
+local function QueryFailed()
+	PlayerInfoHub.queried = false
+	requesting = false
+	Shared.Message("[CNPIH] Query Failed")
+end
+
 function PlayerInfoHub:QueryDB()
+	if requesting then return end
+	requesting = true
+	triedOnce = true
 	Shared.Message("[CNPIH] TryQuery")
 	--Query from DB
-	PlayerInfoHub:Query( Shine.Config.PlayerInfoURL, function( response,errorCode )
-		if not response or #response == 0 then return end
+	PlayerInfoHub:Query( Shine.Config.PlayerInfoURL, function( response )
+		requesting = false
+		if not response or #response == 0 then
+			QueryFailed()
+			return
+		end
+
+		local receive = JsonDecode(response)
+		if not receive then
+			QueryFailed()
+			return
+		end
 
 		PlayerInfoHub.CommunityData = { }
-		local receive = JsonDecode(response)
 		for _,v in pairs(receive) do
 			local id = tonumber(v.id)
 			PlayerInfoHub.CommunityData[id] = v
 		end
 		Shared.Message("[CNPIH] Query Finished: Length" .. tostring(#response))
+		Shine.Hook.Remove( "Think", "PlayerInfoHubRetry" )
 		Shine.Hook.Broadcast("OnCommunityDBReceived",PlayerInfoHub.CommunityData)
-	end )
+	end, QueryFailed )
 end
+
+Shine.Hook.Add( "Think", "PlayerInfoHubRetry", function()
+	local now = Shared.GetTime()
+	if now < nextRetry then return end
+	nextRetry = now + kRetryInterval
+	if PlayerInfoHub.CommunityData or not triedOnce or requesting then return end
+	PlayerInfoHub:QueryDB()
+end )
 
 function PlayerInfoHub:GetCommunityData(_steamId)
 

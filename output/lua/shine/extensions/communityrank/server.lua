@@ -119,7 +119,14 @@ local function GetPlayerData(self,steamId)
 end
 
 function Plugin:GetCommunityData(steamId)
-    return GetPlayerData(self,steamId)
+    local data = GetPlayerData(self,steamId)
+    if data.fakeData and steamId and steamId > 0 then
+        local rawData = Shine.PlayerInfoHub:GetCommunityData(steamId)
+        if rawData then
+            self:ApplyRawCommunityData(data, rawData)
+        end
+    end
+    return data
 end
 
 function Plugin:GetCommunityPlayHour(_steamId)
@@ -223,19 +230,16 @@ local function GetBoolean(_value)
 end
 
 
-function Plugin:OnClientDBReceived(client, clientID, rawData)
-    local player = client:GetControllingPlayer()
-    local data = GetPlayerData(self,clientID)
-    --Resolve Data 
+function Plugin:ApplyRawCommunityData(data, rawData)
     data.fakeData = nil
-    
+
     data.rank = GetNumber(rawData.rank)
     data.rankOffset = GetNumber(rawData.rankOffset)
     data.rankComm = GetNumber(rawData.rankComm)
     data.rankCommOffset = GetNumber(rawData.rankCommOffset)
     data.reputation = GetNumber(rawData.reputation)
     data.reputationPenaltyLog = rawData.reputationPenaltyLog
-    
+
     data.lastSeenNameTimes = GetNumber(rawData.lastSeenNameTimes)
     data.lastSeenName = rawData.lastSeenName
     data.lastSeenTimeStamp = GetNumber(rawData.lastSeenTimeStamp)
@@ -246,20 +250,27 @@ function Plugin:OnClientDBReceived(client, clientID, rawData)
     data.emblem = GetNumber(rawData.emblem)
     data.fakeBot = GetBoolean(rawData.fakeBot)
     data.hideRank = GetBoolean(rawData.hideRank)
-    
+
     self:RecordResolveData(data,rawData)
     self:MemberResolveData(data,rawData)
-    player:SetPlayerExtraData(data)
+end
+
+function Plugin:BroadcastPlayerCommunityData(_client)
+    local clientID = _client:GetUserId()
+    if clientID <= 0 then return end
+    local data = GetPlayerData(self, clientID)
+    if data.fakeData then return end
+    Shine.Hook.Broadcast("OnPlayerCommunityDataReceived", _client, data)
 end
 
 function Plugin:OnCommunityDBReceived()
     for client in Shine.IterateClients() do
         local clientID = client:GetUserId()
         if clientID > 0 then
-            local rawData = Shine.PlayerInfoHub:GetCommunityData(clientID)
-            self:OnClientDBReceived(client,clientID, rawData)
+            local data = self:GetCommunityData(clientID)
+            client:GetControllingPlayer():SetPlayerExtraData(data)
             self:UpdateClientData(client,clientID)
-            Shine.Hook.Broadcast("OnPlayerCommunityDataReceived",client,GetPlayerData(self,clientID))
+            self:BroadcastPlayerCommunityData(client)
         end
     end
 end
@@ -268,19 +279,11 @@ function Plugin:ClientConnect( _client )
     local clientID = _client:GetUserId()
     if clientID <= 0 then return end
 
-    local player = _client:GetControllingPlayer()
-
-    local playerData = GetPlayerData(self,clientID)
+    local playerData = self:GetCommunityData(clientID)
     playerData.lastSeenIP = IPAddressToString(Server.GetClientAddress(_client))
-    if not playerData.fakeData then      --Already resolved
-        player:SetPlayerExtraData(playerData)
-        return 
-    end
-    
-    local rawData = Shine.PlayerInfoHub:GetCommunityData(clientID)
-    if not rawData then return end
-    self:OnClientDBReceived(_client,clientID, rawData)
-    --Shared.Message("[CNCR] Client Rank:" .. tostring(clientID))
+    if playerData.fakeData then return end
+
+    _client:GetControllingPlayer():SetPlayerExtraData(playerData)
 end
 
 Plugin.kTDBadgesHourRequirement = {
@@ -393,6 +396,8 @@ function Plugin:ClientConfirmConnect(_client)
     Shine:NotifyDualColour( _client:GetControllingPlayer(),
             kReputationGainColorTable[1], kReputationGainColorTable[2], kReputationGainColorTable[3],kPrefix,
             255, 255, 255,string.format("当前服务器信誉值上限[%s],赢得获胜[+%s],完成比赛[+%s]",self.Config.Reputation.RageQuit.DeltaMax,self.Config.Reputation.RageQuit.DeltaWin,self.Config.Reputation.RageQuit.DeltaLost),true, data )
+
+    self:BroadcastPlayerCommunityData(_client)
 end
 
 ----Elo
@@ -803,7 +808,7 @@ function Plugin:MemberResolveData(data,rawData)
 end
 
 function Plugin:GetMemberLevel(clientID)
-    local data = GetPlayerData(self,clientID)
+    local data = self:GetCommunityData(clientID)
     return data.memberLevel or 0
 end
 
