@@ -66,12 +66,10 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
     local clientID = _client:GetUserId()
     if _client:GetIsVirtual() or clientID <= 0 then return end
 
-    local currentClients = GetNumClientsTotal() - 1
-    local publicSlots = GetMaxPlayers() - self.Config.Slots
-    if currentClients < publicSlots then return end
+    if self:GetRealPlayerCount() < GetMaxPlayers() - self.Config.Slots then return end
 
-    local hasAccess, reason = self:HasReservedSlotAccess( clientID )
-    if hasAccess and reason then
+    local _, reason = self:HasReservedSlotAccess( clientID )
+    if reason then
         Shine:NotifyDualColour( _client, 235, 152, 78, "[预留位]", 255, 255, 255,
                 string.format("你因[%s]获得了预留位.", reason) )
     end
@@ -195,16 +193,14 @@ function Plugin:HasReservedSlotAccess(_clientID)
         end
     end
 
+	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+	if crEnabled and cr and cr:GetMemberLevel(_clientID) > 0 then
+		return true, "社员预留位"
+	end
+
 	if self.Config.MaxHourByPass >= 0 then
-        local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
         local hourRecord = crEnabled and cr and cr:GetCommunityPlayHour(_clientID) or 0
         if self.Config.MaxHourByPass >= hourRecord then
-            if crEnabled and cr then
-                if cr:GetMemberLevel(_clientID) > 0 then
-                    return true, "社员预留位"
-                end
-            end
-            
             return true
         end
 	end
