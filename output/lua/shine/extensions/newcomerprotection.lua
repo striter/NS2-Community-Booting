@@ -27,6 +27,7 @@ Plugin.DefaultConfig = {
 			MaxPlaytime = 3,
 			MaxWinTime = 2,
 			ForbidLastRoundWinner = true,
+			ForbidConsecutiveSameTeam = true,
 		},
 	},
 	["Tier"] ={100,300,500},
@@ -243,10 +244,11 @@ function Plugin:ValidateCommanderLogin(_gameRules, _commandStructure, _player)
 		end
 	end
 
-	if self:CommanderRoundRestricted(clientId) then
+	local restricted, restrictedMsg = self:CommanderRoundRestricted(clientId, _player:GetTeamNumber())
+	if restricted then
 		Shine:NotifyDualColour(client,
 				88, 214, 141, "[新兵保护]",
-				213, 245, 227, "当前处于指挥轮换期,您可在下局重新登录指挥站.")
+				213, 245, 227, restrictedMsg or "当前处于指挥轮换期,您可在下局重新登录指挥站.")
 		Shared.ConsoleCommand(string.format("sh_setteam %s %s true", clientId,_player:GetTeamNumber()))
 		return false
 	end
@@ -561,9 +563,19 @@ function Plugin:OnEndGame()
 	end
 end
 
-function Plugin:CommanderRoundRestricted(clientId)
+function Plugin:CommanderRoundRestricted(clientId, teamNumber)
 
 	local data = self.Config.CommandRestrictions.RoundValidate
+
+	if data.ForbidConsecutiveSameTeam and teamNumber then
+		local lastRound = self.kCommanderHistory[1]
+		if lastRound then
+			local lastTeamComm = teamNumber == kTeam1Index and lastRound.team1CommData or lastRound.team2CommData
+			if lastTeamComm.playerId == clientId then
+				return true, "您上局已连续担任该阵营指挥,请更换阵营继续指挥."
+			end
+		end
+	end
 
 	if not data.Enable then return false end
 

@@ -223,19 +223,17 @@ function Plugin:SetupAdminMenuCommands()
 	}, self:GetPhrase( "KICK_TIP" ) )
 
 	local GagTimes = {
-		5 * 60, 10 * 60, 15 * 60, 20 * 60, 30 * 60
+		1, 3, 7, 30
 	}
 	local GagLabels = {}
 	for i = 1, #GagTimes do
 		local Time = GagTimes[ i ]
-		local TimeString = StringTimeToString( Time )
+		local TimeString = StringTimeToString( Time * 86400 )
 
 		GagLabels[ i * 2 - 1 ] = TimeString
 		GagLabels[ i * 2 ] = tostring( Time )
 	end
 
-	GagLabels[ #GagLabels + 1 ] = self:GetPhrase( "GAG_UNTIL_MAP_CHANGE" )
-	GagLabels[ #GagLabels + 1 ] = ""
 	GagLabels[ #GagLabels + 1 ] = self:GetPhrase( "PERMANENTLY" )
 	GagLabels[ #GagLabels + 1 ] = function( Args )
 		if not StringMatch( Args, "^\"%d+\"$" ) then
@@ -243,7 +241,7 @@ function Plugin:SetupAdminMenuCommands()
 			return
 		end
 
-		Shine.AdminMenu:RunCommand( "sh_gagid", Args )
+		Shine.AdminMenu:RunCommand( "sh_gag", Args .. " 0" )
 	end
 
 	self:AddAdminMenuCommand( Category, self:GetPhrase( "GAG" ), "sh_gag", false, GagLabels,

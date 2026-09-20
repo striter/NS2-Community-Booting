@@ -74,7 +74,7 @@ function Plugin:SetupDataTable()
 		},
 		Gagged = {
 			TargetName = self:GetNameNetworkField(),
-			Duration = "integer (0 to 1800)"
+			Duration = "integer (0 to 2592000)"
 		},
 		FloatRate = {
 			Rate = "float (0 to 1000 by 0.01)"
@@ -83,9 +83,16 @@ function Plugin:SetupDataTable()
 			Rate = "integer (0 to 1000)"
 		}
 	}
-    self:AddTranslatedNotify( "ERROR_BE_GAGGED_ROUNDS", {
+    self:AddTranslatedError( "ERROR_BE_GAGGED_ROUNDS", {
         TargetCount = "integer (0 to 256)"
     } )
+    self:AddTranslatedError( "ERROR_BE_GAGGED", {
+        Duration = "integer (0 to 2592000)"
+    } )
+    self:AddTranslatedError( "ERROR_BE_GAGGED_PERMANENT", {} )
+    self:AddTranslatedError( "ERROR_BE_GAGGED_EXPIRING", {} )
+    self:AddTranslatedNotify( "GAG_EXPIRED", {} )
+    self:AddTranslatedNotify( "GAG_LIFTED", {} )
 	self:AddNetworkMessages( "AddTranslatedMessage", {
 		[ MessageTypes.Empty ] = {
 			"RESET_GAME", "HIVE_TEAMS", "FORCE_START", "VOTE_STOPPED"

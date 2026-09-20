@@ -21,6 +21,7 @@ local TableEmpty = table.Empty
 local TableShuffle = table.Shuffle
 local TableSort = table.sort
 local tostring = tostring
+local OSTime = os.time
 
 local Plugin, PluginName = ...
 Plugin.Version = "1.6"
@@ -311,8 +312,9 @@ function Plugin:LoadGaggedPlayers()
 	local GaggedPlayers = {}
 
 	for ID, Gagged in pairs( self.Config.GaggedPlayers ) do
-		if Gagged and tonumber( ID ) then
-			GaggedPlayers[ tonumber( ID ) ] = true
+		local NumID = tonumber( ID )
+		if NumID and Gagged then
+			GaggedPlayers[ NumID ] = Gagged
 		end
 	end
 
@@ -1488,58 +1490,59 @@ function Plugin:CreateMessageCommands()
 		MaxLength = 128, Help = "message" }
 	CSayCommand:Help( "Displays a message in the centre of all player's screens." )
 
+	local function ApplyGag( Client, TargetID, Duration )
+		if not TargetID or TargetID <= 0 then return end
+
+		local Target = Shine.GetClientByNS2ID( TargetID )
+		local TargetPlayer = Target and Target:GetControllingPlayer()
+		local TargetName = TargetPlayer and TargetPlayer:GetName() or tostring( TargetID )
+
+		local DurationInSeconds = math.floor( Duration * 86400 + 0.5 )
+		local IDAsString = tostring( TargetID )
+
+		if Duration == 0 then
+			self.Gagged[ TargetID ] = true
+			self.Config.GaggedPlayers[ IDAsString ] = true
+		else
+			local Expiry = OSTime() + DurationInSeconds
+			self.Gagged[ TargetID ] = Expiry
+			self.Config.GaggedPlayers[ IDAsString ] = Expiry
+		end
+		self:SaveConfig()
+
+		Shine:AdminPrint( nil, "%s gagged %s%s", true,
+			Shine.GetClientInfo( Client ),
+			Target and Shine.GetClientInfo( Target ) or TargetName,
+			Duration == 0 and " permanently" or " for "..string.TimeToString( DurationInSeconds ) )
+
+		if Duration == 0 then
+			self:SendTranslatedMessage( Client, "PLAYER_GAGGED_PERMANENTLY", {
+				TargetName = TargetName
+			} )
+		else
+			self:SendTranslatedMessage( Client, "PLAYER_GAGGED", {
+				TargetName = TargetName,
+				Duration = DurationInSeconds
+			} )
+		end
+
+		if Target then
+			self:NotifyGagStatus( Target )
+		end
+	end
+
 	local function GagPlayer( Client, Target, Duration )
 		if Target:GetIsVirtual() then
 			NotifyError( Client, "ERROR_GAG_BOT", nil, "Bots cannot be gagged" )
 			return
 		end
 
-		self.Gagged[ Target:GetUserId() ] = Duration == 0 and true or SharedTime() + Duration
-
-		local TargetPlayer = Target:GetControllingPlayer()
-		local TargetName = TargetPlayer and TargetPlayer:GetName() or "<unknown>"
-		local DurationString = string.TimeToString( Duration )
-
-		self:NotifyGagStatus(Target)
-		Shine:AdminPrint( nil, "%s gagged %s%s", true,
-			Shine.GetClientInfo( Client ),
-			Shine.GetClientInfo( Target ),
-			Duration == 0 and "" or " for "..DurationString )
-
-		self:SendTranslatedMessage( Client, "PLAYER_GAGGED", {
-			TargetName = TargetName,
-			Duration = Duration
-		} )
+		ApplyGag( Client, Target:GetUserId(), Duration )
 	end
 	local GagCommand = self:BindCommand( "sh_gag", "gag", GagPlayer )
 	GagCommand:AddParam{ Type = "client" }
-	GagCommand:AddParam{ Type = "time", Round = true, Min = 0, Max = 1800, Optional = true, Default = 0 }
-	GagCommand:Help( "Silences the given player's chat. If no duration is given, it will hold for the remainder of the map." )
-
-	local function GagID( Client, ID )
-		self.Config.GaggedPlayers[ tostring( ID ) ] = true
-		self:SaveConfig()
-
-		self.Gagged[ ID ] = true
-
-		Shine:AdminPrint( nil, "%s gagged %s permanently.", true,
-			Shine.GetClientInfo( Client ), ID )
-
-		local Target = Shine.GetClientByNS2ID( ID )
-		if Target then
-			self:SendTranslatedMessage( Client, "PLAYER_GAGGED_PERMANENTLY", {
-				TargetName = Shine.GetClientName( Target )
-			} )
-		end
-		
-		local TargetClient = Shine.GetClientByNS2ID( ID )
-		if TargetClient then
-			self:NotifyGagStatus(TargetClient)
-		end
-	end
-	self:BindCommand( "sh_gagid", "gagid", GagID )
-		:AddParam{ Type = "steamid" }
-		:Help( "Silences the given Steam ID's chat permanently until ungagged, persisting between map changes." )
+	GagCommand:AddParam{ Type = "number", Min = 0, Max = 30, Optional = true, Default = 1 }
+	GagCommand:Help( "Silences the given player's chat. Duration in days, supports decimals, defaults to 1 day. Temporary gags are lifted at the end of a round once expired, requiring the player to be online. 0 is permanent, persisting between map changes." )
 
 	local function UngagID( Client, ID )
 		local IDAsString = tostring( ID )
@@ -1555,12 +1558,17 @@ function Plugin:CreateMessageCommands()
 		self.Config.GaggedPlayers[ IDAsString ] = nil
 		self:SaveConfig()
 
+		local Target = Shine.GetClientByNS2ID( ID )
+		if Target and not Target:GetIsVirtual() then
+			self:SendTranslatedNotify( Target, "GAG_LIFTED" )
+		end
+
 		Shine:AdminPrint( nil, "%s ungagged %s.", true,
 			Shine.GetClientInfo( Client ), IDAsString )
 	end
 	self:BindCommand( "sh_ungagid", "ungagid", UngagID )
 		:AddParam{ Type = "steamid" }
-		:Help( "Stops silencing the given Steam ID's chat if they have been gagged with sh_gagid." )
+		:Help( "Stops silencing the given Steam ID's chat if they have been gagged with sh_gag." )
 
 	local function UngagPlayer( Client, Target )
 		local TargetPlayer = Target:GetControllingPlayer()
@@ -1590,6 +1598,10 @@ function Plugin:CreateMessageCommands()
 		self:SendTranslatedMessage( Client, "PLAYER_UNGAGGED", {
 			TargetName = TargetName
 		} )
+
+		if Target and not Target:GetIsVirtual() then
+			self:SendTranslatedNotify( Target, "GAG_LIFTED" )
+		end
 	end
 	local UngagCommand = self:BindCommand( "sh_ungag", "ungag", UngagPlayer )
 	UngagCommand:AddParam{ Type = "client" }
@@ -1601,10 +1613,9 @@ function Plugin:CreateMessageCommands()
 			return
 		end
 
-		local Now = SharedTime()
+		local Now = OSTime()
 
 		local ClientsByNS2ID = Shine.GetAllClientsByNS2ID()
-		local GaggedPlayers = self.Config.GaggedPlayers
 		local Columns = {
 			{
 				Name = "Name"
@@ -1616,12 +1627,13 @@ function Plugin:CreateMessageCommands()
 				Name = "Remaining Time",
 				Getter = function( Entry )
 					if Entry.Expiry == math.huge then
-						if GaggedPlayers[ Entry.NS2ID ] then
-							return "Permanent"
-						end
-						return "Until the end of the current map"
+						return "Permanent"
 					end
-					return string.TimeToString( Entry.Expiry - Now )
+					local Remaining = Entry.Expiry - Now
+					if Remaining <= 0 then
+						return "Expired, lifted at round end"
+					end
+					return string.TimeToString( Remaining )
 				end
 			}
 		}
@@ -1629,26 +1641,18 @@ function Plugin:CreateMessageCommands()
 		local Data = {}
 		for ID, Expiry in pairs( self.Gagged ) do
 			local IsTemporary = IsType( Expiry, "number" )
-			if not IsTemporary or Expiry > Now then
-				local Client = ClientsByNS2ID[ ID ]
-				local Player = Client and Client:GetControllingPlayer()
+			local Client = ClientsByNS2ID[ ID ]
+			local Player = Client and Client:GetControllingPlayer()
 
-				Data[ #Data + 1 ] = {
-					Name = Player and Player.GetName and Player:GetName() or "",
-					NS2ID = tostring( ID ),
-					Expiry = IsTemporary and Expiry or math.huge
-				}
-			end
+			Data[ #Data + 1 ] = {
+				Name = Player and Player.GetName and Player:GetName() or "",
+				NS2ID = tostring( ID ),
+				Expiry = IsTemporary and Expiry or math.huge
+			}
 		end
 
 		TableSort( Data, function( A, B )
-			if A.Expiry == B.Expiry and A.Expiry == math.huge then
-				if GaggedPlayers[ A.NS2ID ] and not GaggedPlayers[ B.NS2ID ] then
-					return false
-				end
-				if GaggedPlayers[ B.NS2ID ] and not GaggedPlayers[ A.NS2ID ] then
-					return true
-				end
+			if A.Expiry == B.Expiry then
 				return A.NS2ID < B.NS2ID
 			end
 			return A.Expiry < B.Expiry
@@ -1857,12 +1861,29 @@ function Plugin:IsClientGagged( Client )
 
 	if not GagData then return false end
 
-	if GagData == true then return true end
-	if GagData > SharedTime() then return true end
+	return true
+end
 
-	self.Gagged[ ID ] = nil
+function Plugin:ReleaseExpiredGags()
+	local Now = OSTime()
+	local Changed = false
 
-	return false
+	for ID, GagData in pairs( self.Gagged ) do
+		if GagData ~= true and GagData <= Now then
+			local Client = Shine.GetClientByNS2ID( ID )
+			if Client and not Client:GetIsVirtual() then
+				self.Gagged[ ID ] = nil
+				self.Config.GaggedPlayers[ tostring( ID ) ] = nil
+				Changed = true
+
+				self:SendTranslatedNotify( Client, "GAG_EXPIRED" )
+			end
+		end
+	end
+
+	if Changed then
+		self:SaveConfig()
+	end
 end
 
 --[[
@@ -1887,17 +1908,27 @@ function Plugin:NotifyGagStatus(_client)
     end
     
 	local GagData = self.Gagged[ clientID ]
-	if not GagData then return  end
-	local gagPermanent = self.Config.GaggedPlayers[tostring(clientID)]
-	if gagPermanent then Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED_PERMANENT" ) end
-	if GagData then Plugin:NotifyTranslatedError( _client, "ERROR_BE_GAGGED" ) end
+	if not GagData then return end
+
+	if GagData == true then
+		Plugin:SendTranslatedNotify( _client, "ERROR_BE_GAGGED_PERMANENT" )
+		return
+	end
+
+	local Remaining = GagData - OSTime()
+	if Remaining > 0 then
+		Plugin:SendTranslatedNotify( _client, "ERROR_BE_GAGGED", {
+			Duration = math.floor( Remaining )
+		} )
+	else
+		Plugin:SendTranslatedNotify( _client, "ERROR_BE_GAGGED_EXPIRING" )
+	end
 end
 
---function Plugin:ClientConfirmConnect(_client,data)
---    self:NotifyGagStatus(_client)
---end
-function Plugin:OnPlayerCommunityDataReceived(_client,data)
-	self:NotifyGagStatus(_client)
+function Plugin:ClientConfirmConnect( _client )
+	if _client:GetIsVirtual() then return end
+
+	self:NotifyGagStatus( _client )
 end
 
 function Plugin:PlayerSay( Client, Message )

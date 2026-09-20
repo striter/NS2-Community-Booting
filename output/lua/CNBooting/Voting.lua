@@ -703,7 +703,7 @@ if Server then
     SetVoteSuccessfulCallback("VoteFuckPolitican", 1, function( msg )
         local client = Server.GetClientById(msg.targetClient)
         if not client then return end
-        Shared.ConsoleCommand(string.format("sh_gagid %s", client:GetUserId()))
+        Shared.ConsoleCommand(string.format("sh_gag %s 0", client:GetUserId()))
         Shared.ConsoleCommand(string.format("sh_renameid %s %s", client:GetUserId(), "Transgender"))
     end)
 

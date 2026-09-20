@@ -78,13 +78,19 @@ local kPlayerVoiceChatIconSize = 20
 local kPlayerBadgeIconSize = 20
 local kPlayerBadgeRightPadding = 4
 
-local kPlayerSkillIconSize = Vector(62, 20, 0)
+local kPlayerSkillIconSize = Vector(68, 22, 0)
 local kPlayerSkillIconTexture = PrecacheAsset("ui/skill_tier_icons.dds")
-local kPlayerSkillIconSizeOverride = Vector(58, 20, 0) -- slightly smaller so it doesn't overlap.
+local kPlayerSkillIconSizeOverride = Vector(64, 22, 0) -- slightly smaller so it doesn't overlap.
 
 ---------------
 local kCommunityRankIconSize = Vector(20,20,0)
 local kCommunityRankIconTexture = PrecacheAsset("ui/CommunityRankIcons.dds")
+
+local kMemberIconSize = Vector(18, 18, 0)
+local kMemberIconRowByLevel = {
+    [1] = 12,
+    [2] = 13,
+}
 
 local kCommunityRankBGs = PrecacheAsset("ui/CommunityRankBGs.dds")
 
@@ -988,6 +994,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         if fakeBot then
             playerName = "[BOT] " .. playerName
         end
+        local lastSeenName = playerRecord.lastSeenName
+        if lastSeenName and lastSeenName ~= "" and lastSeenName ~= playerRecord.Name then
+            playerName = string.format("%s (%s)", playerName, lastSeenName)
+        end
         player["Name"]:SetText(playerName)
 
         -- Needed to determine who to (un)mute when voice icon is clicked.
@@ -1151,6 +1161,15 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local prewarmIconIndex = (playerRecord.prewarmTier and playerRecord.prewarmTier > 0) and (playerRecord.prewarmTier + 6) or 0
         player["CommunityPrewarmIcon"]:SetTexturePixelCoordinates(0, prewarmIconIndex * 80, 80 ,(prewarmIconIndex +1) * 80)
         player["CommunityPrewarmIcon"]:SetIsVisible(not fakeBot and prewarmIconIndex > 0)
+
+        local memberLevel = playerRecord.memberLevel or 0
+        local memberIconRow = kMemberIconRowByLevel[memberLevel] or 0
+        player["MemberIcon"]:SetIsVisible(not fakeBot and memberIconRow > 0)
+        if player["MemberIcon"]:GetIsVisible() then
+            player["MemberIcon"]:SetTexturePixelCoordinates(0, memberIconRow * 80, 80, (memberIconRow + 1) * 80)
+            local skillColumnX = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth, teamItemWidth - GUIScoreboard.kTeamColumnSpacingX * 10)
+            player["MemberIcon"]:SetPosition(Vector((skillColumnX + kPlayerSkillIconSize.x - kMemberIconSize.x - 1) * GUIScoreboard.kScalingFactor, -15 * GUIScoreboard.kScalingFactor, 0))
+        end
 
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
@@ -1571,6 +1590,14 @@ function GUIScoreboard:CreatePlayerItem()
     communityPrewarmIcon:SetTexture(kCommunityRankIconTexture)
     communityPrewarmIcon:SetTexturePixelCoordinates(0, 80, 80, 160)
     playerItem:AddChild(communityPrewarmIcon)
+
+    local memberIcon = GUIManager:CreateGraphicItem()
+    memberIcon:SetSize(kMemberIconSize * GUIScoreboard.kScalingFactor)
+    memberIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
+    memberIcon:SetStencilFunc(GUIItem.NotEqual)
+    memberIcon:SetTexture(kCommunityRankIconTexture)
+    memberIcon:SetIsVisible(false)
+    playerItem:AddChild(memberIcon)
     
     -- Let's do a table here to easily handle the highlighting/clicking of icons
     -- It also makes it easy for other mods to add icons afterwards
@@ -1585,7 +1612,7 @@ function GUIScoreboard:CreatePlayerItem()
              Voice = playerVoiceIcon, Status = statusItem, SkillIcon = playerSkillIcon, Score = scoreItem, Kills = killsItem,
              Assists = assistsItem, Deaths = deathsItem, Resources = resItem, Ping = pingItem,
              BadgeItems = badgeItems, Text = playerTextIcon,
-             SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon , CommunityPrewarmIcon = communityPrewarmIcon,
+             SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon , CommunityPrewarmIcon = communityPrewarmIcon, MemberIcon = memberIcon,
     }
 
 end

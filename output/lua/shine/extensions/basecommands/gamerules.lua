@@ -28,6 +28,10 @@ function Plugin:SetGameState( Gamerules, NewState, OldState )
 		-- Forget all commander logins when not in a round.
 		TableEmpty( self.CommanderLogins )
 	end
+
+	if NewState == kGameState.Team1Won or NewState == kGameState.Team2Won or NewState == kGameState.Draw then
+		self:ReleaseExpiredGags()
+	end
 end
 
 function Plugin:GetCommanderForTeam( TeamNumber )
