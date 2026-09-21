@@ -64,6 +64,7 @@ GUIScoreboard.kTeamItemHeight = GUIScoreboard.kTeamNameFontSize + GUIScoreboard.
 GUIScoreboard.kTeamSpacing = 32
 GUIScoreboard.kTeamScoreColumnStartX = 200
 GUIScoreboard.kTeamColumnSpacingX = ConditionalValue(Client.GetScreenWidth() < 1280, 30, 40)
+GUIScoreboard.kColumnCompactX = 0
 
 -- Player constants.
 GUIScoreboard.kPlayerStatsFontSize = 16
@@ -262,7 +263,7 @@ local function CreateTeamBackground(self, teamNumber)
     statusItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(statusItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 33
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 33 - GUIScoreboard.kColumnCompactX
 
     -- Score text item.
     local scoreItem = GUIManager:CreateTextItem()
@@ -278,7 +279,7 @@ local function CreateTeamBackground(self, teamNumber)
     scoreItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(scoreItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 40
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 40 - GUIScoreboard.kColumnCompactX
 
     -- Kill text item.
     local killsItem = GUIManager:CreateTextItem()
@@ -294,7 +295,7 @@ local function CreateTeamBackground(self, teamNumber)
     killsItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(killsItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
+    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
 
     -- Assist text item.
     local assistsItem = GUIManager:CreateTextItem()
@@ -310,7 +311,7 @@ local function CreateTeamBackground(self, teamNumber)
     assistsItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(assistsItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
+    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
 
     -- Deaths text item.
     local deathsItem = GUIManager:CreateTextItem()
@@ -326,7 +327,7 @@ local function CreateTeamBackground(self, teamNumber)
     deathsItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(deathsItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
+    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
 
     -- Resources text item.
     local resItem = GUIManager:CreateGraphicItem()
@@ -337,7 +338,7 @@ local function CreateTeamBackground(self, teamNumber)
     resItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(resItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
+    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
 
     -- Ping text item.
     local pingItem = GUIManager:CreateTextItem()
@@ -1164,11 +1165,11 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
         local memberLevel = playerRecord.memberLevel or 0
         local memberIconRow = kMemberIconRowByLevel[memberLevel] or 0
-        player["MemberIcon"]:SetIsVisible(not fakeBot and memberIconRow > 0)
+        player["MemberIcon"]:SetIsVisible(not fakeBot and memberIconRow > 0 and playerStatus == "")
         if player["MemberIcon"]:GetIsVisible() then
             player["MemberIcon"]:SetTexturePixelCoordinates(0, memberIconRow * 80, 80, (memberIconRow + 1) * 80)
             local skillColumnX = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth, teamItemWidth - GUIScoreboard.kTeamColumnSpacingX * 10)
-            player["MemberIcon"]:SetPosition(Vector((skillColumnX + kPlayerSkillIconSize.x - kMemberIconSize.x - 1) * GUIScoreboard.kScalingFactor, -15 * GUIScoreboard.kScalingFactor, 0))
+            player["MemberIcon"]:SetPosition(Vector((skillColumnX + (ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 60) + GUIScoreboard.kTeamColumnSpacingX * 2 + 35) / 2 - kMemberIconSize.x / 2) * GUIScoreboard.kScalingFactor, -kMemberIconSize.y / 2 * GUIScoreboard.kScalingFactor, 0))
         end
 
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
@@ -1467,7 +1468,7 @@ function GUIScoreboard:CreatePlayerItem()
     statusItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(statusItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 35
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 35 - GUIScoreboard.kColumnCompactX
 
     -- Score text item.
     local scoreItem = GUIManager:CreateTextItem()
@@ -1482,7 +1483,7 @@ function GUIScoreboard:CreatePlayerItem()
     scoreItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(scoreItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 30
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 30 - GUIScoreboard.kColumnCompactX
 
     -- Kill text item.
     local killsItem = GUIManager:CreateTextItem()
@@ -1497,7 +1498,7 @@ function GUIScoreboard:CreatePlayerItem()
     killsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(killsItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
+    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
 
     -- assists text item.
     local assistsItem = GUIManager:CreateTextItem()
@@ -1512,7 +1513,7 @@ function GUIScoreboard:CreatePlayerItem()
     assistsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(assistsItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
+    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
 
     -- Deaths text item.
     local deathsItem = GUIManager:CreateTextItem()
@@ -1527,7 +1528,7 @@ function GUIScoreboard:CreatePlayerItem()
     deathsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(deathsItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
+    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
 
     -- Resources text item.
     local resItem = GUIManager:CreateTextItem()
@@ -1542,7 +1543,7 @@ function GUIScoreboard:CreatePlayerItem()
     resItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(resItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
+    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
 
     -- Ping text item.
     local pingItem = GUIManager:CreateTextItem()
