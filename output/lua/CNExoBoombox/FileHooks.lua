@@ -11,7 +11,7 @@ kBoomBoxDefaultValue = 0.8
 
 gBoomBoxTracks = {
     [EBoomBoxTrack.CUSTOM]  =  {
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WutheringWaves"),             name = "玄翎谣" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WutheringWaves"),    name = "玄翎谣" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Beats"),             name = "My Soul, Your Beats!" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Farewell"),          name = "远航星的告别" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/SoundHorizon"),      name = "恋人を射ち堕とした日" },
@@ -101,8 +101,8 @@ gBoomBoxTracks = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/AfterTheDisco"),          name = "After the Disco" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/PolishGirl"),             name = "Polish Girl" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/Valkyrie"),               name = "Valkyrie" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/OutofTime"),            name = "Out of Time" },
-        { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/JubanDistrict"),        name = "Juban District" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/OutofTime"),            name = "Out of Time" },
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/EN/JubanDistrict"),        name = "Juban District" },
     },
     [EBoomBoxTrack.Calm] = {
         { asset = PrecacheAsset("sound/CNBoomBox.fev/Calm/MoonLightSlow"),     name = "三日月サンセット -Rearrange 2020-" },

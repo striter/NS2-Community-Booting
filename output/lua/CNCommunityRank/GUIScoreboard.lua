@@ -1168,8 +1168,9 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["MemberIcon"]:SetIsVisible(not fakeBot and memberIconRow > 0 and playerStatus == "")
         if player["MemberIcon"]:GetIsVisible() then
             player["MemberIcon"]:SetTexturePixelCoordinates(0, memberIconRow * 80, 80, (memberIconRow + 1) * 80)
-            local skillColumnX = ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth, teamItemWidth - GUIScoreboard.kTeamColumnSpacingX * 10)
-            player["MemberIcon"]:SetPosition(Vector((skillColumnX + (ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 60) + GUIScoreboard.kTeamColumnSpacingX * 2 + 35) / 2 - kMemberIconSize.x / 2) * GUIScoreboard.kScalingFactor, -kMemberIconSize.y / 2 * GUIScoreboard.kScalingFactor, 0))
+            local skillIconPos = player.SkillIcon:GetPosition()
+            local skillIconSize = player.SkillIcon:GetSize()
+            player["MemberIcon"]:SetPosition(Vector(skillIconPos.x + skillIconSize.x + GUIScale(-12), -kMemberIconSize.y / 2 * GUIScoreboard.kScalingFactor, 0))
         end
 
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)

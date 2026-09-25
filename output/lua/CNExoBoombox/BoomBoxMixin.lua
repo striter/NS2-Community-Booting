@@ -49,9 +49,9 @@ if Server then
 
         local tracks = BoomBoxMixin.kTracks[self.selectedTrack]
         local track = tracks[self.selectedTrackIndex]
-        local asset = PrecacheAsset(track.asset)
+        local asset = track.asset
         if track.assetBattle and self.GetIsInCombat and self:GetIsInCombat() then
-            asset = PrecacheAsset(track.assetBattle)
+            asset = track.assetBattle
         end
         local music = StartSoundEffectOnEntity(asset,self,1)
         self.musicId = music:GetId()
