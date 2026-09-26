@@ -39,6 +39,7 @@ debug.appendtoenum(kVoiceId,'ottoDown')
 debug.appendtoenum(kVoiceId,'laugh')
 debug.appendtoenum(kVoiceId,'chicken')
 debug.appendtoenum(kVoiceId,'nllaugh')
+debug.appendtoenum(kVoiceId,'lw')
 
 kAdditionalSoundData = {
     [kVoiceId.Disease] = { Sound = "sound/CNTaunts.fev/ma/Laugh", Description = "REQUEST_DISEASE", Interval = 2, AlertTechId = kTechId.None },
@@ -81,7 +82,8 @@ kAdditionalSoundData = {
     [kVoiceId.ottoDown] = { Sound = "sound/CNTaunts.fev/Otto/down", Description = "唐笑", Interval = 2, AlertTechId = kTechId.None },
     [kVoiceId.laugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/laugh", Description = "笑", Interval = 2, AlertTechId = kTechId.None },
     [kVoiceId.chicken] = { Sound = "sound/CNTaunts.fev/CUSTOM/chicken", Description = "鸡", Interval = 0.8, AlertTechId = kTechId.None },
-    [kVoiceId.nllaugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/nllaugh", Description = "奶龙大笑", Interval = 15, AlertTechId = kTechId.None },
+    [kVoiceId.nllaugh] = { Sound = "sound/CNTaunts.fev/CUSTOM/nllaugh", Description = "大笑", Interval = 15, AlertTechId = kTechId.None },
+    [kVoiceId.lw] = { Sound = "sound/CNTaunts.fev/CUSTOM/lw", Description = "《老吴》", Interval = 60, AlertTechId = kTechId.None },
 }
 
 for _, data in pairs(kAdditionalSoundData) do
@@ -125,7 +127,7 @@ local function BuildRandomizedSpectatorMenu()
     for i = length + 1, length * 2 do
         table.insert(rightMenu, shuffled[i])
     end
-
+    --leftMenu[1] = kVoiceId.lw
     return {
         [LEFT_MENU] = leftMenu,
         [RIGHT_MENU] = rightMenu
