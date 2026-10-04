@@ -464,6 +464,8 @@ local function RankPlayerDelta(self, _steamId, _marineDelta, _alienDelta, _marin
     EloDataSanityCheck(data,client and client:GetControllingPlayer())
 end
 
+local kEloSelfWeight  = 2.00
+local kEloCrossWeight = 0.00
 function Plugin:EndGameElo(lastRoundData)
 
     if not self.Config.Elo.Check then return end
@@ -565,9 +567,9 @@ function Plugin:EndGameElo(lastRoundData)
     local estimateA = 0.5 -- 1.0 / (1 + math.pow(10,(team2AverageSkill - team1AverageSkill) / 400))     --What it should be...
     
     local rankTable = {}
-    ApplyRankTable(rankTable,team1Table,team1S - estimateA,1.25,0.75)     
+    ApplyRankTable(rankTable,team1Table,team1S - estimateA,kEloSelfWeight,kEloCrossWeight)
     EloDebugMessage(self,"Team1:" .. tostring(team1AverageSkill))
-    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA),0.75,1.25)     
+    ApplyRankTable(rankTable,team2Table,team2S - (1-estimateA),kEloCrossWeight,kEloSelfWeight)
     EloDebugMessage(self,"Team2:" .. tostring(team2AverageSkill))
 
     for steamId, rankOffset in pairs(rankTable) do
