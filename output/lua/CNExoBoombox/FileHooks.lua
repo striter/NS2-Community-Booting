@@ -11,6 +11,7 @@ kBoomBoxDefaultValue = 0.8
 
 gBoomBoxTracks = {
     [EBoomBoxTrack.CUSTOM]  =  {
+        { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/moqing"),    name = "阿黛 - 雨爱 (DJ版) " },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/WutheringWaves"),    name = "玄翎谣" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Beats"),             name = "My Soul, Your Beats!" },
         { asset = PrecacheAsset("sound/CNBoomBox.fev/CUSTOM/Farewell"),          name = "远航星的告别" },
