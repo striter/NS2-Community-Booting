@@ -78,6 +78,8 @@ local kPlayerNumberWidth = 20
 local kPlayerVoiceChatIconSize = 20
 local kPlayerBadgeIconSize = 20
 local kPlayerBadgeRightPadding = 4
+-- SkillIcon 左侧图标向左排布时使用的固定间距。
+local kPlayerLeftIconSpacing = 4
 
 local kPlayerSkillIconSize = Vector(68, 22, 0)
 local kPlayerSkillIconTexture = PrecacheAsset("ui/skill_tier_icons.dds")
@@ -1175,21 +1177,28 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
-        pos = (statusPos - kPlayerBadgeRightPadding) * GUIScoreboard.kScalingFactor
+        -- SkillIcon 左侧的所有图标按 IconTable 的顺序，从右往左以固定间距统一排布。
+        local iconRightPos = (statusPos - kPlayerBadgeRightPadding) * GUIScoreboard.kScalingFactor
         if playerStatus ~= "" then
-            pos = (statusPos - kPlayerSkillIconSize.x + kPlayerItemLeftMargin) * GUIScoreboard.kScalingFactor
+            iconRightPos = (statusPos - kPlayerSkillIconSize.x + kPlayerItemLeftMargin) * GUIScoreboard.kScalingFactor
             if icon then
-                pos =  pos - kPlayerBadgeIconSize * GUIScoreboard.kScalingFactor
+                iconRightPos =  iconRightPos - kPlayerBadgeIconSize * GUIScoreboard.kScalingFactor
             end
         end
 
+        local leftIconSpacing = kPlayerLeftIconSpacing * GUIScoreboard.kScalingFactor
+        local leftIconPos = iconRightPos
         for _, icon in ipairs(player["IconTable"]) do
             if icon:GetIsVisible() then
                 local iconSize = icon:GetSize()
-                pos = pos - iconSize.x
-                icon:SetPosition(Vector(pos, (-iconSize.y/2), 0))
+                leftIconPos = leftIconPos - iconSize.x
+                icon:SetPosition(Vector(leftIconPos, (-iconSize.y/2), 0))
+                leftIconPos = leftIconPos - leftIconSpacing
             end
         end
+
+        -- 下方名字截断所使用的左边界。
+        pos = ConditionalValue(leftIconPos < iconRightPos, leftIconPos + leftIconSpacing, iconRightPos)
 
         local finalName = player["Name"]:GetText()
         local finalNameWidth = player["Name"]:GetTextWidth(finalName) * GUIScoreboard.kScalingFactor
@@ -1604,6 +1613,7 @@ function GUIScoreboard:CreatePlayerItem()
     -- Let's do a table here to easily handle the highlighting/clicking of icons
     -- It also makes it easy for other mods to add icons afterwards
     local iconTable = {}
+    -- 表中顺序即排布顺序：越靠前的图标越靠近 SkillIcon。
     table.insert(iconTable, communityPrewarmIcon)
     table.insert(iconTable, communityRankIcon)
     table.insert(iconTable, steamFriendIcon)
