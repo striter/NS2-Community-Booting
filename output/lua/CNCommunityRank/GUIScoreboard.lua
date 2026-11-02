@@ -1177,28 +1177,29 @@ function GUIScoreboard:UpdateTeam(updateTeam)
 
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
-        -- SkillIcon 左侧的所有图标按 IconTable 的顺序，从右往左以固定间距统一排布。
-        local iconRightPos = (statusPos - kPlayerBadgeRightPadding) * GUIScoreboard.kScalingFactor
-        if playerStatus ~= "" then
-            iconRightPos = (statusPos - kPlayerSkillIconSize.x + kPlayerItemLeftMargin) * GUIScoreboard.kScalingFactor
-            if icon then
-                iconRightPos =  iconRightPos - kPlayerBadgeIconSize * GUIScoreboard.kScalingFactor
-            end
-        end
-
+        -- SkillIcon 左侧的图标带以 SkillIcon 左边缘为固定起点（与状态文字、特殊徽章无关），
+        -- 每个图标始终占据 IconTable 下标对应的列，保证所有行的同一图标纵向对齐。
         local leftIconSpacing = kPlayerLeftIconSpacing * GUIScoreboard.kScalingFactor
-        local leftIconPos = iconRightPos
+        -- 起点沿用多图标时的原点：状态列基准位置让出一个技能图标宽度后加左边距，
+        -- 以 SkillIcon 左边缘换算，不受状态文字有无导致的 statusPos 右移影响。
+        local columnRight = player.SkillIcon:GetPosition().x
+                            + (ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 60) - kPlayerSkillIconSize.x + kPlayerItemLeftMargin) * GUIScoreboard.kScalingFactor
+        if icon then
+            columnRight = columnRight - kPlayerBadgeIconSize * GUIScoreboard.kScalingFactor
+        end
+        local bandLeft = columnRight
         for _, icon in ipairs(player["IconTable"]) do
+            local iconSize = icon:GetSize()
+            local columnLeft = columnRight - iconSize.x
+            icon:SetPosition(Vector(columnLeft, (-iconSize.y/2), 0))
             if icon:GetIsVisible() then
-                local iconSize = icon:GetSize()
-                leftIconPos = leftIconPos - iconSize.x
-                icon:SetPosition(Vector(leftIconPos, (-iconSize.y/2), 0))
-                leftIconPos = leftIconPos - leftIconSpacing
+                bandLeft = columnLeft
             end
+            columnRight = columnLeft - leftIconSpacing
         end
 
-        -- 下方名字截断所使用的左边界。
-        pos = ConditionalValue(leftIconPos < iconRightPos, leftIconPos + leftIconSpacing, iconRightPos)
+        -- 下方名字截断所使用的左边界：取最靠左的那个可见图标。
+        pos = bandLeft
 
         local finalName = player["Name"]:GetText()
         local finalNameWidth = player["Name"]:GetTextWidth(finalName) * GUIScoreboard.kScalingFactor
