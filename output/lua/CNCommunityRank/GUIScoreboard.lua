@@ -64,7 +64,6 @@ GUIScoreboard.kTeamItemHeight = GUIScoreboard.kTeamNameFontSize + GUIScoreboard.
 GUIScoreboard.kTeamSpacing = 32
 GUIScoreboard.kTeamScoreColumnStartX = 200
 GUIScoreboard.kTeamColumnSpacingX = ConditionalValue(Client.GetScreenWidth() < 1280, 30, 40)
-GUIScoreboard.kColumnCompactX = 0
 
 -- Player constants.
 GUIScoreboard.kPlayerStatsFontSize = 16
@@ -78,22 +77,16 @@ local kPlayerNumberWidth = 20
 local kPlayerVoiceChatIconSize = 20
 local kPlayerBadgeIconSize = 20
 local kPlayerBadgeRightPadding = 4
--- SkillIcon 左侧图标向左排布时使用的固定间距。
-local kPlayerLeftIconSpacing = 4
+-- Fixed gap used when laying out icons to the left of the SkillIcon.
+local kPlayerLeftIconSpacing = 6
 
-local kPlayerSkillIconSize = Vector(68, 22, 0)
+local kPlayerSkillIconSize = Vector(62, 20, 0)
 local kPlayerSkillIconTexture = PrecacheAsset("ui/skill_tier_icons.dds")
-local kPlayerSkillIconSizeOverride = Vector(64, 22, 0) -- slightly smaller so it doesn't overlap.
+local kPlayerSkillIconSizeOverride = Vector(58, 20, 0) -- slightly smaller so it doesn't overlap.
 
 ---------------
 local kCommunityRankIconSize = Vector(20,20,0)
 local kCommunityRankIconTexture = PrecacheAsset("ui/CommunityRankIcons.dds")
-
-local kMemberIconSize = Vector(18, 18, 0)
-local kMemberIconRowByLevel = {
-    [1] = 12,
-    [2] = 13,
-}
 
 local kCommunityRankBGs = PrecacheAsset("ui/CommunityRankBGs.dds")
 
@@ -265,7 +258,7 @@ local function CreateTeamBackground(self, teamNumber)
     statusItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(statusItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 33 - GUIScoreboard.kColumnCompactX
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 33
 
     -- Score text item.
     local scoreItem = GUIManager:CreateTextItem()
@@ -281,7 +274,7 @@ local function CreateTeamBackground(self, teamNumber)
     scoreItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(scoreItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 40 - GUIScoreboard.kColumnCompactX
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 40
 
     -- Kill text item.
     local killsItem = GUIManager:CreateTextItem()
@@ -297,7 +290,7 @@ local function CreateTeamBackground(self, teamNumber)
     killsItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(killsItem)
 
-    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- Assist text item.
     local assistsItem = GUIManager:CreateTextItem()
@@ -313,7 +306,7 @@ local function CreateTeamBackground(self, teamNumber)
     assistsItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(assistsItem)
 
-    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- Deaths text item.
     local deathsItem = GUIManager:CreateTextItem()
@@ -329,7 +322,7 @@ local function CreateTeamBackground(self, teamNumber)
     deathsItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(deathsItem)
 
-    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- Resources text item.
     local resItem = GUIManager:CreateGraphicItem()
@@ -340,7 +333,7 @@ local function CreateTeamBackground(self, teamNumber)
     resItem:SetStencilFunc(GUIItem.NotEqual)
     teamItem:AddChild(resItem)
 
-    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- Ping text item.
     local pingItem = GUIManager:CreateTextItem()
@@ -997,10 +990,6 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         if fakeBot then
             playerName = "[BOT] " .. playerName
         end
-        local lastSeenName = playerRecord.lastSeenName
-        if lastSeenName and lastSeenName ~= "" and lastSeenName ~= playerRecord.Name then
-            playerName = string.format("%s (%s)", playerName, lastSeenName)
-        end
         player["Name"]:SetText(playerName)
 
         -- Needed to determine who to (un)mute when voice icon is clicked.
@@ -1165,40 +1154,29 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["CommunityPrewarmIcon"]:SetTexturePixelCoordinates(0, prewarmIconIndex * 80, 80 ,(prewarmIconIndex +1) * 80)
         player["CommunityPrewarmIcon"]:SetIsVisible(not fakeBot and prewarmIconIndex > 0)
 
-        local memberLevel = playerRecord.memberLevel or 0
-        local memberIconRow = kMemberIconRowByLevel[memberLevel] or 0
-        player["MemberIcon"]:SetIsVisible(not fakeBot and memberIconRow > 0 and playerStatus == "")
-        if player["MemberIcon"]:GetIsVisible() then
-            player["MemberIcon"]:SetTexturePixelCoordinates(0, memberIconRow * 80, 80, (memberIconRow + 1) * 80)
-            local skillIconPos = player.SkillIcon:GetPosition()
-            local skillIconSize = player.SkillIcon:GetSize()
-            player["MemberIcon"]:SetPosition(Vector(skillIconPos.x + skillIconSize.x + GUIScale(-12), -kMemberIconSize.y / 2 * GUIScoreboard.kScalingFactor, 0))
-        end
-
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
-        -- SkillIcon 左侧的图标带以 SkillIcon 左边缘为固定起点（与状态文字、特殊徽章无关），
-        -- 每个图标始终占据 IconTable 下标对应的列，保证所有行的同一图标纵向对齐。
+        -- The icon band left of the SkillIcon uses the SkillIcon's left edge as a fixed
+        -- origin (independent of status text and special badges); only visible icons take
+        -- a column, so hidden icons leave no gap.
         local leftIconSpacing = kPlayerLeftIconSpacing * GUIScoreboard.kScalingFactor
-        -- 起点沿用多图标时的原点：状态列基准位置让出一个技能图标宽度后加左边距，
-        -- 以 SkillIcon 左边缘换算，不受状态文字有无导致的 statusPos 右移影响。
         local columnRight = player.SkillIcon:GetPosition().x
                             + (ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 60) - kPlayerSkillIconSize.x + kPlayerItemLeftMargin) * GUIScoreboard.kScalingFactor
         if icon then
             columnRight = columnRight - kPlayerBadgeIconSize * GUIScoreboard.kScalingFactor
         end
         local bandLeft = columnRight
-        for _, icon in ipairs(player["IconTable"]) do
-            local iconSize = icon:GetSize()
-            local columnLeft = columnRight - iconSize.x
-            icon:SetPosition(Vector(columnLeft, (-iconSize.y/2), 0))
-            if icon:GetIsVisible() then
+        for _, leftIcon in ipairs(player["IconTable"]) do
+            if leftIcon:GetIsVisible() then
+                local iconSize = leftIcon:GetSize()
+                local columnLeft = columnRight - iconSize.x
+                leftIcon:SetPosition(Vector(columnLeft, (-iconSize.y/2), 0))
                 bandLeft = columnLeft
+                columnRight = columnLeft - leftIconSpacing
             end
-            columnRight = columnLeft - leftIconSpacing
         end
 
-        -- 下方名字截断所使用的左边界：取最靠左的那个可见图标。
+        -- Left bound for name truncation below: the leftmost visible icon.
         pos = bandLeft
 
         local finalName = player["Name"]:GetText()
@@ -1479,7 +1457,7 @@ function GUIScoreboard:CreatePlayerItem()
     statusItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(statusItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 35 - GUIScoreboard.kColumnCompactX
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 35
 
     -- Score text item.
     local scoreItem = GUIManager:CreateTextItem()
@@ -1494,7 +1472,7 @@ function GUIScoreboard:CreatePlayerItem()
     scoreItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(scoreItem)
 
-    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 30 - GUIScoreboard.kColumnCompactX
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX + 30
 
     -- Kill text item.
     local killsItem = GUIManager:CreateTextItem()
@@ -1509,7 +1487,7 @@ function GUIScoreboard:CreatePlayerItem()
     killsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(killsItem)
 
-    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- assists text item.
     local assistsItem = GUIManager:CreateTextItem()
@@ -1524,7 +1502,7 @@ function GUIScoreboard:CreatePlayerItem()
     assistsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(assistsItem)
 
-    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- Deaths text item.
     local deathsItem = GUIManager:CreateTextItem()
@@ -1539,7 +1517,7 @@ function GUIScoreboard:CreatePlayerItem()
     deathsItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(deathsItem)
 
-    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- Resources text item.
     local resItem = GUIManager:CreateTextItem()
@@ -1554,7 +1532,7 @@ function GUIScoreboard:CreatePlayerItem()
     resItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(resItem)
 
-    currentColumnX = currentColumnX + (GUIScoreboard.kTeamColumnSpacingX - GUIScoreboard.kColumnCompactX)
+    currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX
 
     -- Ping text item.
     local pingItem = GUIManager:CreateTextItem()
@@ -1603,18 +1581,10 @@ function GUIScoreboard:CreatePlayerItem()
     communityPrewarmIcon:SetTexturePixelCoordinates(0, 80, 80, 160)
     playerItem:AddChild(communityPrewarmIcon)
 
-    local memberIcon = GUIManager:CreateGraphicItem()
-    memberIcon:SetSize(kMemberIconSize * GUIScoreboard.kScalingFactor)
-    memberIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
-    memberIcon:SetStencilFunc(GUIItem.NotEqual)
-    memberIcon:SetTexture(kCommunityRankIconTexture)
-    memberIcon:SetIsVisible(false)
-    playerItem:AddChild(memberIcon)
-    
     -- Let's do a table here to easily handle the highlighting/clicking of icons
     -- It also makes it easy for other mods to add icons afterwards
     local iconTable = {}
-    -- 表中顺序即排布顺序：越靠前的图标越靠近 SkillIcon。
+    -- Table order is layout order: earlier icons sit closer to the SkillIcon.
     table.insert(iconTable, communityPrewarmIcon)
     table.insert(iconTable, communityRankIcon)
     table.insert(iconTable, steamFriendIcon)
@@ -1625,7 +1595,7 @@ function GUIScoreboard:CreatePlayerItem()
              Voice = playerVoiceIcon, Status = statusItem, SkillIcon = playerSkillIcon, Score = scoreItem, Kills = killsItem,
              Assists = assistsItem, Deaths = deathsItem, Resources = resItem, Ping = pingItem,
              BadgeItems = badgeItems, Text = playerTextIcon,
-             SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon , CommunityPrewarmIcon = communityPrewarmIcon, MemberIcon = memberIcon,
+             SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon , CommunityPrewarmIcon = communityPrewarmIcon,
     }
 
 end
