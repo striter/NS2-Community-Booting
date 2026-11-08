@@ -58,6 +58,7 @@ function Plugin:Initialise()
 
 	self:CreateCommands()
 	self.Enabled = true
+	self.MemberSlotPending = {}
 
 	return true
 end
@@ -195,7 +196,7 @@ function Plugin:HasReservedSlotAccess(_clientID)
 
 	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
 	if crEnabled and cr and cr:GetMemberLevel(_clientID) > 0 then
-		return true, "社员预留位"
+		return true, "社员预留位", true
 	end
 
 	if self.Config.MaxHourByPass >= 0 then
@@ -213,6 +214,20 @@ function Plugin:HasReservedSlotAccess(_clientID)
 end
 
 function Plugin:ClientConfirmConnect( Client )
+	local clientID = Client:GetUserId()
+	if clientID <= 0 then return end
+
+	local pendingTime = self.MemberSlotPending[clientID]
+	self.MemberSlotPending[clientID] = nil
+	if not pendingTime or Shared.GetTime() - pendingTime > 300 then return end
+
+	local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+	if not crEnabled or not cr then return end
+
+	local player = Client:GetControllingPlayer()
+	if player then
+		cr:MemberValidate( player )
+	end
 end
 
 function Plugin:ClientConnect( Client )
@@ -220,6 +235,7 @@ function Plugin:ClientConnect( Client )
 end
 
 function Plugin:ClientDisconnect( Client )
+	self.MemberSlotPending[Client:GetUserId()] = nil
 	self:SetReservedSlotCount( self:GetFreeReservedSlots() )
 end
 
@@ -246,8 +262,14 @@ Plugin.ConnectionHandlers = {
 		end
 
 		-- Allow if they have reserved access and we're not full.
-		if NumPlayers < MaxPlayers and self:HasReservedSlotAccess( ID ) then
-			return true
+		if NumPlayers < MaxPlayers then
+			local HasAccess, _, ByMember = self:HasReservedSlotAccess( ID )
+			if HasAccess then
+				if ByMember then
+					self.MemberSlotPending[ID] = Shared.GetTime()
+				end
+				return true
+			end
 		end
 
 		-- Here either they have reserved slot access but the server is full,
@@ -284,8 +306,14 @@ Plugin.ConnectionHandlers = {
 
 		-- Allow if they have reserved access and we're not full.
 		local HasSlots = NumClients < MaxClients
-		if HasSlots and self:HasReservedSlotAccess( ID ) then
-			return ALLOWED
+		if HasSlots then
+			local HasAccess, _, ByMember = self:HasReservedSlotAccess( ID )
+			if HasAccess then
+				if ByMember then
+					self.MemberSlotPending[ID] = Shared.GetTime()
+				end
+				return ALLOWED
+			end
 		end
 
 		-- Deny entirely if the server is completely full or they have no
