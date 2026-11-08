@@ -771,7 +771,7 @@ function Plugin:OnPlayerCommunityDataReceived(_client, data)
         targetData.lastReturnRewardDay = today
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3], self.kPrefix, 255, 255, 255,
                 string.format("%s,获得[%d]预热点,今天可自由入场,欢迎加入NS2CN!", title, credit) )
-        if isReturning then
+        if isReturning and (data.memberLevel or 0) <= 0 then
             Shine:RunCommand(nil, "sh_member_delta", false, clientID, 2, 3, "回归玩家激励")
         end
     end

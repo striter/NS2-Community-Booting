@@ -815,8 +815,7 @@ local function SetPlayerItemBadges( item ,numberSize , teamItemWidth, badgeTextu
             item.BadgeItems[i]:SetIsVisible( true )
 
             if badgeColumns[i] == 10 then
-                icon = true
-                item.BadgeItems[i]:SetPosition(Vector(ConditionalValue(GUIScoreboard.screenWidth < 1280, GUIScoreboard.kPlayerItemWidth, teamItemWidth - GUIScoreboard.kTeamColumnSpacingX * 10-kPlayerBadgeIconSize / 2), -kPlayerBadgeIconSize/2, 0) * GUIScoreboard.kScalingFactor)
+                icon = item.BadgeItems[i]
             else
                 item.BadgeItems[i]:SetPosition(Vector(numberSize + kPlayerItemLeftMargin + (i-1) * kPlayerVoiceChatIconSize + (i-1) * kPlayerBadgeRightPadding, -kPlayerVoiceChatIconSize/2, 0) * GUIScoreboard.kScalingFactor)
             end
@@ -1162,10 +1161,14 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local leftIconSpacing = kPlayerLeftIconSpacing * GUIScoreboard.kScalingFactor
         local columnRight = player.SkillIcon:GetPosition().x
                             + (ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 60) - kPlayerSkillIconSize.x + kPlayerItemLeftMargin) * GUIScoreboard.kScalingFactor
-        if icon then
-            columnRight = columnRight - kPlayerBadgeIconSize * GUIScoreboard.kScalingFactor
-        end
         local bandLeft = columnRight
+        if icon then
+            local iconSize = icon:GetSize()
+            local columnLeft = columnRight - iconSize.x
+            icon:SetPosition(Vector(columnLeft, -iconSize.y/2, 0))
+            bandLeft = columnLeft
+            columnRight = columnLeft - leftIconSpacing
+        end
         for _, leftIcon in ipairs(player["IconTable"]) do
             if leftIcon:GetIsVisible() then
                 local iconSize = leftIcon:GetSize()
