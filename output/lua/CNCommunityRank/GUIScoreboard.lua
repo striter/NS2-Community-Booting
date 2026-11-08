@@ -805,6 +805,7 @@ end
 local function SetPlayerItemBadges( item ,numberSize , teamItemWidth, badgeTextures , badgeNames , badgeColumns)
 
     assert( #badgeTextures <= #item.BadgeItems )
+    badgeColumns = badgeColumns or {}
 
     local icon = false
 
@@ -1130,9 +1131,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
             statusPos = statusPos + GUIScoreboard.kTeamColumnSpacingX * ConditionalValue(GUIScoreboard.screenWidth < 1280, 2.75, 1.75)
         end
 
-        local icon = SetPlayerItemBadges( player, numberSize , teamItemWidth, Badges_GetBadgeTextures(clientIndex, "scoreboard") )
+        local badgeTextures, badgeNames, badgeColumns = Badges_GetBadgeTextures(clientIndex, "scoreboard")
+        local icon = SetPlayerItemBadges( player, numberSize , teamItemWidth, badgeTextures, badgeNames, badgeColumns )
 
-        local numBadges = math.min(#Badges_GetBadgeTextures(clientIndex, "scoreboard"), #player["BadgeItems"])
+        local numBadges = math.min(#badgeTextures, #player["BadgeItems"])
         if icon then
             numBadges = numBadges - 1
         end
