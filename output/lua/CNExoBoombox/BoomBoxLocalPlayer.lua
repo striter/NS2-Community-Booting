@@ -27,6 +27,17 @@ local function DoPlaySound(asset)
     end
 end
 
+local function SaveSelection()
+    if not (gBoomBoxDefine and Client.SetOptionString) then return end
+    local def = gBoomBoxDefine[g_BoomBoxLocalPlayingCategory or g_BoomBoxLocalCategory]
+    if def then
+        Client.SetOptionString("BB_Last_Category", def.key)
+    end
+    if Client.SetOptionFloat then
+        Client.SetOptionFloat("BB_Last_Index", g_BoomBoxLocalPlayingIndex or 1)
+    end
+end
+
 local function StopLocalMusic()
     if localSoundEffect then
         if localSoundEffect.Stop then
@@ -35,12 +46,11 @@ local function StopLocalMusic()
         localSoundEffect = nil
     end
     g_BoomBoxLocalPlaying = false
-    g_BoomBoxLocalPlayingCategory = nil
-    g_BoomBoxLocalPlayingIndex = nil
 end
 
-function BoomBoxLocalApplyVolume()
-    -- Re-play with new volume for immediate effect
+local volumeUpdateAt = 0
+
+local function ReplayLocalMusic()
     if g_BoomBoxLocalPlaying and localSoundEffect then
         local path = localSoundEffect._path
         local player = Client.GetLocalPlayer()
@@ -49,6 +59,12 @@ function BoomBoxLocalApplyVolume()
             Shared.PlaySound(player, path, GetLocalVolume())
             _lastLocalPlayer = player
         end
+    end
+end
+
+function BoomBoxLocalApplyVolume()
+    if g_BoomBoxLocalPlaying and localSoundEffect then
+        volumeUpdateAt = Shared.GetTime() + 0.4
     end
 end
 
@@ -70,6 +86,8 @@ function BoomBoxLocalPlay(category, trackIndex)
     g_BoomBoxLocalPlaying = true
     g_BoomBoxLocalPlayingCategory = category
     g_BoomBoxLocalPlayingIndex = trackIndex
+    g_BoomBoxLocalCategory = category
+    SaveSelection()
 end
 
 function BoomBoxLocalStop()
@@ -80,14 +98,14 @@ end
 g_BoomBoxLocalCategory = EBoomBoxTrack.OST
 
 function BoomBoxLocalPlayCurrent()
-    local tracks = (BoomBoxMixin and BoomBoxMixin.kTracks or GetBoomBoxTracks())[g_BoomBoxLocalCategory]
+    local cat = g_BoomBoxLocalCategory
+    local tracks = (BoomBoxMixin and BoomBoxMixin.kTracks or GetBoomBoxTracks())[cat]
     if not tracks then return end
-    local idx = g_BoomBoxLocalPlayingIndex
-    if g_BoomBoxLocalPlayingCategory ~= g_BoomBoxLocalCategory then
-        idx = 1
+    local idx = 1
+    if g_BoomBoxLocalPlayingCategory == cat and g_BoomBoxLocalPlayingIndex then
+        idx = math.min(g_BoomBoxLocalPlayingIndex, #tracks)
     end
-    idx = idx or 1
-    BoomBoxLocalPlay(g_BoomBoxLocalCategory, idx)
+    BoomBoxLocalPlay(cat, idx)
 end
 
 function BoomBoxLocalRandom()
@@ -136,7 +154,32 @@ function BoomBoxLocalGetNowPlayingName()
     return nil
 end
 
+local function RestoreSelection()
+    if not (gBoomBoxDefine and Client.GetOptionString) then return end
+    local key = Client.GetOptionString("BB_Last_Category", "OST")
+    for cat, def in pairs(gBoomBoxDefine) do
+        if def.key == key then
+            g_BoomBoxLocalCategory = cat
+            break
+        end
+    end
+    local idx = Client.GetOptionFloat and Client.GetOptionFloat("BB_Last_Index", 1) or 1
+    idx = math.floor(idx + 0.5)
+    local tracks = GetBoomBoxTracks()[g_BoomBoxLocalCategory]
+    if tracks then
+        idx = math.max(1, math.min(idx, #tracks))
+    end
+    g_BoomBoxLocalPlayingIndex = idx
+    g_BoomBoxLocalPlayingCategory = g_BoomBoxLocalCategory
+end
+
+RestoreSelection()
+
 function BoomBoxLocalUpdate()
+    if volumeUpdateAt > 0 and Shared.GetTime() >= volumeUpdateAt then
+        volumeUpdateAt = 0
+        ReplayLocalMusic()
+    end
     if g_BoomBoxLocalPlaying and localSoundEffect then
         local cur = Client.GetLocalPlayer()
         if cur ~= _lastLocalPlayer then
