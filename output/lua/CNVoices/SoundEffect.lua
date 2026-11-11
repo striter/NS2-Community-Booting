@@ -16,6 +16,7 @@ if Client then
 
     function SoundEffect:UpdateVoiceOverVolume()
         if not self.voiceOverSound then return end
+        if not self.playing or not self.soundEffectInstance then return end
 
         local volume = OptionsDialogUI_GetSoundVolume() / 100
         volume = volume * Client.GetOptionFloat(kCNVoiceOverConfig.VolumePath,kCNVoiceOverConfig.VolumeDefault)

@@ -88,6 +88,12 @@ local kPlayerSkillIconSizeOverride = Vector(58, 20, 0) -- slightly smaller so it
 local kCommunityRankIconSize = Vector(20,20,0)
 local kCommunityRankIconTexture = PrecacheAsset("ui/CommunityRankIcons.dds")
 
+local kMemberIconSize = Vector(18, 18, 0)
+local kMemberIconRowByLevel = {
+    [1] = 12,
+    [2] = 13,
+}
+
 local kCommunityRankBGs = PrecacheAsset("ui/CommunityRankBGs.dds")
 
 local kCommunityRankIndex =
@@ -1155,6 +1161,10 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         player["CommunityPrewarmIcon"]:SetTexturePixelCoordinates(0, prewarmIconIndex * 80, 80 ,(prewarmIconIndex +1) * 80)
         player["CommunityPrewarmIcon"]:SetIsVisible(not fakeBot and prewarmIconIndex > 0)
 
+        local memberIconRow = kMemberIconRowByLevel[playerRecord.memberLevel or 0] or 0
+        player["MemberIcon"]:SetTexturePixelCoordinates(0, memberIconRow * 80, 80, (memberIconRow + 1) * 80)
+        player["MemberIcon"]:SetIsVisible(not fakeBot and memberIconRow > 0)
+
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
         -- The icon band left of the SkillIcon uses the SkillIcon's left edge as a fixed
@@ -1449,6 +1459,15 @@ function GUIScoreboard:CreatePlayerItem()
     playerSkillIcon:SetTexturePixelCoordinates(0, 0, 100, 31)
     playerItem:AddChild(playerSkillIcon)
 
+    local memberIcon = GUIManager:CreateGraphicItem()
+    memberIcon:SetSize(kMemberIconSize * GUIScoreboard.kScalingFactor)
+    memberIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
+    memberIcon:SetStencilFunc(GUIItem.NotEqual)
+    memberIcon:SetTexture(kCommunityRankIconTexture)
+    memberIcon:SetPosition(Vector(currentColumnX + kPlayerSkillIconSize.x - kMemberIconSize.x - 1, -kMemberIconSize.y/2, 0) * GUIScoreboard.kScalingFactor)
+    memberIcon:SetIsVisible(false)
+    playerItem:AddChild(memberIcon)
+
     -- Status text item.
     local statusItem = GUIManager:CreateTextItem()
     statusItem:SetFontName(GUIScoreboard.kPlayerStatsFontName)
@@ -1601,6 +1620,7 @@ function GUIScoreboard:CreatePlayerItem()
              Assists = assistsItem, Deaths = deathsItem, Resources = resItem, Ping = pingItem,
              BadgeItems = badgeItems, Text = playerTextIcon,
              SteamFriend = steamFriendIcon, IconTable = iconTable , CommunityRankIcon = communityRankIcon , CommunityPrewarmIcon = communityPrewarmIcon,
+             MemberIcon = memberIcon,
     }
 
 end

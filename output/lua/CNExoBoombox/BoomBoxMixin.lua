@@ -5,7 +5,7 @@ BoomBoxMixin.networkVars =
 {
     musicId = "private entityid",
     selectedTrack  = "enum EBoomBoxTrack",
-    selectedTrackIndex = "integer (0 to 16)",
+    selectedTrackIndex = "integer (0 to 64)",
     volume = "integer (0 to 16)",
 }
 

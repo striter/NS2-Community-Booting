@@ -88,6 +88,12 @@
 -1
 /EN/Slumlord
 -1
+/EN/Gaslight
+-1
+/EN/SoulIsAStar
+-1
+/EN/Belong
+-1
 /EN/WashingMachine
 -1
 /EN/HideAway
@@ -161,6 +167,8 @@
 /JP/RageOfDust
 -1
 /JP/DevilmanOld
+-1
+/JP/DevilmanNoUta
 -1
 /JP/BloodyStream
 -1
@@ -262,7 +270,7 @@
 -1
 /Calm/Redbone
 -1
-/Calm/OutofTime
+/EN/OutOfTime
 -1
-/Calm/JubanDistrict
+/EN/JubanDistinct
 -1

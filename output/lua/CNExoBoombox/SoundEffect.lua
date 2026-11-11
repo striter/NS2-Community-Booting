@@ -17,6 +17,7 @@ if Client then
     
     function SoundEffect:UpdateBoomBoxVolume()
         if not self.boomBoxSound then return end
+        if not self.playing or not self.soundEffectInstance then return end
         
         local assetName = Shared.GetSoundName(self.assetIndex)
         local volumeConfigPath = nil
