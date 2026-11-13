@@ -20,7 +20,7 @@ local kTrackRowVerticalPadding = 5
 local kTrackScrollBarWidth = 14
 local kTrackScrollBarPadding = 3
 local kTrackPaneRightGutter = 40
-local kTrackNameMaxChars = 44
+local kTrackNameMaxChars = 56
 local kFallbackRowHeight = 78
 local kTrackFontFamily = "BBTrack"
 local kTrackFontActualSize = 33
@@ -49,6 +49,8 @@ local g_BBTrackRowWidth = nil
 local g_BBUIRefs = {
 	localHeader = nil,
 	stopBtn = nil,
+	battleBtn = nil,
+	transportRow = nil,
 	catBtns = {},
 }
 
@@ -58,8 +60,10 @@ local g_BBTrackList = nil
 local g_BBTrackBtns = {}
 local g_BBShownCategory = nil
 local g_BBMarkedIndex = nil
+local g_BBBattleShown = nil
 local RenderTrackList
 local RefreshBBUI
+local SyncBattleButton
 
 local function GetTracks(category)
 	local all = BoomBoxMixin and BoomBoxMixin.kTracks or GetBoomBoxTracks()
@@ -121,6 +125,32 @@ local function MakeIconButton(name, label, font, onPressed, onInit)
 	}
 end
 
+-- Only shown for tracks that ship a battle variant
+function SyncBattleButton(arrange)
+	local button = g_BBUIRefs.battleBtn
+	if not button then
+		return
+	end
+	local tracks = GetTracks(g_BoomBoxLocalCategory)
+	local track = g_BoomBoxLocalPlayingIndex
+	if g_BoomBoxLocalPlayingCategory == g_BoomBoxLocalCategory and track then
+		track = tracks and tracks[track]
+	else
+		track = nil
+	end
+	local supported = track ~= nil and track.assetBattle ~= nil
+	button:SetLabel(g_BoomBoxLocalBattle and "◆" or "◇")
+	button.text:ClearPropertyAnimations("Color")
+	button.text:SetColor(g_BoomBoxLocalBattle and MenuStyle.kPopupTitleColor or MenuStyle.kOptionHeadingColor)
+	if supported ~= g_BBBattleShown then
+		g_BBBattleShown = supported
+		button:SetVisible(supported)
+		if arrange and g_BBUIRefs.transportRow then
+			g_BBUIRefs.transportRow:ArrangeNow()
+		end
+	end
+end
+
 local function TruncateUtf8(text, maxChars)
 	local count = 0
 	local i = 1
@@ -144,7 +174,12 @@ local function TruncateUtf8(text, maxChars)
 end
 
 local function GetTrackLabel(index, track, marked)
-	return string.format("%s%2d. %s", marked and "> " or "  ", index, TruncateUtf8(track.name, kTrackNameMaxChars))
+	local text = track.name
+	local artist = track.artist
+	if artist and artist ~= "" then
+		text = string.format("%s - %s", track.name, artist)
+	end
+	return string.format("%s%2d. %s", marked and "> " or "  ", index, TruncateUtf8(text, kTrackNameMaxChars))
 end
 
 -- Walk up from a widget until the scroll pane of the page that holds it
@@ -423,6 +458,7 @@ function RefreshBBUI(followPlaying)
 	if g_BBUIRefs.stopBtn then
 		g_BBUIRefs.stopBtn:SetLabel(g_BoomBoxLocalPlaying and "■" or "▶")
 	end
+	SyncBattleButton(true)
 	for cat, btn in pairs(g_BBUIRefs.catBtns) do
 		local catLabel = Locale.ResolveString(gBoomBoxDefine[cat].titleKey)
 		local selected = g_BoomBoxLocalCategory == cat
@@ -610,22 +646,27 @@ local function GetContent()
 				self._Arrange = function(layout, items)
 					local slot = kStopIconWidth + kStopIconSpacing
 					local iconSize = kStopIconWidth / kStopIconScale
-					local iconCount = #items - 1
-					for index = 1, iconCount do
+					local iconLeft = 0
+					for index = 1, #items - 1 do
 						local icon = GetOwningGUIObject(items[index]) or items[index]
 						icon:SetAnchor(0, 0)
 						icon:SetHotSpot(0, 0)
-						icon:SetPosition((index - 1) * slot, 0)
 						icon:SetSize(iconSize, iconSize)
+						if icon:GetVisible() then
+							icon:SetPosition(iconLeft, 0)
+							iconLeft = iconLeft + slot
+						end
 					end
 					local volume = GetOwningGUIObject(items[#items]) or items[#items]
 					volume:SetAnchor(0, 0)
 					volume:SetHotSpot(0, 0)
-					volume:SetPosition(iconCount * slot + kLocalVolumeGroupGap, 0)
+					volume:SetPosition(iconLeft + kLocalVolumeGroupGap, 0)
 					local volumeWidth = kLocalVolumeWidth + kLocalVolumeIconWidth
 					volume:SetSize(volumeWidth, kLocalVolumeHeight)
-					layout:SetSize(iconCount * slot + kLocalVolumeGroupGap + volumeWidth, kLocalVolumeHeight)
+					layout:SetSize(iconLeft + kLocalVolumeGroupGap + volumeWidth, kLocalVolumeHeight)
 				end
+				g_BBUIRefs.transportRow = self
+				SyncBattleButton()
 			end
 		},
 		children = {
@@ -646,6 +687,13 @@ local function GetContent()
 			MakeIconButton("bbLocalNext", "▶▶", kSkipIconFont, function()
 				BoomBoxLocalNext()
 				RefreshBBUI(true)
+			end),
+			MakeIconButton("bbLocalBattle", g_BoomBoxLocalBattle and "◆" or "◇", kStopIconFont, function()
+				BoomBoxLocalToggleBattle()
+				RefreshBBUI()
+			end, function(btn)
+				g_BBUIRefs.battleBtn = btn
+				SyncBattleButton()
 			end),
 			{
 				name = "boomboxLocalVolume",

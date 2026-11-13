@@ -125,6 +125,33 @@ local kCommunityRankIconSize = Vector(20,20,0)
 local kCommunityRankIconTexture = PrecacheAsset("ui/CommunityRankIcons.dds")
 
 local kMemberIconSize = Vector(18, 18, 0)
+-- The skill bar artwork is inset inside its 100px atlas cell, so the icons flanking it are spaced off the visible
+-- artwork rather than off the edge of its transparent box (measured on ui/skill_tier_icons.dds: 25px left, 27px
+-- right of a 100px cell).
+local kPlayerSkillGlyphInset = 16
+-- The member emblem and the icons left of the skill bar are inset in their own cells as well: the
+-- CommunityRankIcons emblems sit 12px inside an 80px cell, which is 3px once drawn at 20px.
+local kPlayerMemberGlyphInset = 3
+local kPlayerLeftIconGlyphInset = 3
+
+-- The visible left and right edges of the skill bar artwork, in screen space. A special badge recipient swaps the
+-- bar for an animation that fills its box, so only the atlas version carries the inset.
+local function GetSkillGlyphEdges(_skillIcon)
+    local boxWidth = _skillIcon:GetSize().x / GUIScoreboard.kScalingFactor
+    local inset = ConditionalValue(boxWidth < kPlayerSkillIconSize.x, 0, kPlayerSkillGlyphInset) * GUIScoreboard.kScalingFactor
+    local boxLeft = _skillIcon:GetPosition().x
+    return boxLeft + inset, boxLeft + boxWidth * GUIScoreboard.kScalingFactor - inset
+end
+
+-- The member emblem and the status column trail the right edge of the skill bar artwork, one left icon spacing past
+-- it, which mirrors the gap the icon band keeps on its left side. The position is refreshed on every update because
+-- the animation variant of the bar is a different width.
+local function PlaceSkillRowTail(_player)
+    local _, glyphRight = GetSkillGlyphEdges(_player.SkillIcon)
+    local memberIconX = glyphRight + (kPlayerLeftIconSpacing - kPlayerMemberGlyphInset) * GUIScoreboard.kScalingFactor
+    _player.MemberIcon:SetPosition(Vector(memberIconX, -kMemberIconSize.y/2 * GUIScoreboard.kScalingFactor, 0))
+    _player.Status:SetPosition(Vector(memberIconX + (kMemberIconSize.x + kPlayerLeftIconSpacing) * GUIScoreboard.kScalingFactor, 0, 0))
+end
 local kMemberIconRowByLevel = {
     [1] = 12,
     [2] = 13,
@@ -1662,15 +1689,16 @@ function GUIScoreboard:UpdateTeam(updateTeam)
         local memberIconRow = kMemberIconRowByLevel[playerRecord.memberLevel or 0] or 0
         player["MemberIcon"]:SetTexturePixelCoordinates(0, memberIconRow * 80, 80, (memberIconRow + 1) * 80)
         player["MemberIcon"]:SetIsVisible(not fakeBot and memberIconRow > 0 and playerStatus == "")
+        PlaceSkillRowTail(player)
 
         local nameRightPos = pos + (kPlayerBadgeRightPadding * GUIScoreboard.kScalingFactor)
 
-        -- The icon band left of the SkillIcon uses the SkillIcon's left edge as a fixed
-        -- origin (independent of status text and special badges); only visible icons take
-        -- a column, so hidden icons leave no gap.
+        -- The icon band left of the SkillIcon grows leftwards from the visible edge of its artwork, so the gap it
+        -- leaves matches the one the member emblem leaves on the right (independent of status text and special
+        -- badges); only visible icons take a column, so hidden icons leave no gap.
         local leftIconSpacing = kPlayerLeftIconSpacing * GUIScoreboard.kScalingFactor
-        local columnRight = player.SkillIcon:GetPosition().x
-                            + (ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 60) - kPlayerSkillIconSize.x + kPlayerItemLeftMargin) * GUIScoreboard.kScalingFactor
+        local skillGlyphLeft = GetSkillGlyphEdges(player.SkillIcon)
+        local columnRight = skillGlyphLeft + (kPlayerLeftIconGlyphInset - kPlayerLeftIconSpacing) * GUIScoreboard.kScalingFactor
         local bandLeft = columnRight
         if icon then
             local iconSize = icon:GetSize()
@@ -1962,7 +1990,6 @@ function GUIScoreboard:CreatePlayerItem()
     memberIcon:SetAnchor(GUIItem.Left, GUIItem.Center)
     memberIcon:SetStencilFunc(GUIItem.NotEqual)
     memberIcon:SetTexture(kCommunityRankIconTexture)
-    memberIcon:SetPosition(Vector(currentColumnX + kPlayerSkillIconSize.x + kPlayerLeftIconSpacing, -kMemberIconSize.y/2, 0) * GUIScoreboard.kScalingFactor)
     memberIcon:SetIsVisible(false)
     playerItem:AddChild(memberIcon)
 
@@ -1974,10 +2001,12 @@ function GUIScoreboard:CreatePlayerItem()
     statusItem:SetAnchor(GUIItem.Left, GUIItem.Center)
     statusItem:SetTextAlignmentX(GUIItem.Align_Min)
     statusItem:SetTextAlignmentY(GUIItem.Align_Center)
-    statusItem:SetPosition(Vector(currentColumnX + ConditionalValue(GUIScoreboard.screenWidth < 1280, 30, 60), 0, 0) * GUIScoreboard.kScalingFactor)
     statusItem:SetColor(Color(1, 1, 1, 1))
     statusItem:SetStencilFunc(GUIItem.NotEqual)
     playerItem:AddChild(statusItem)
+
+    -- Both trail the skill bar, so they are placed from its visible artwork edge instead of from currentColumnX.
+    PlaceSkillRowTail({ SkillIcon = playerSkillIcon, MemberIcon = memberIcon, Status = statusItem })
 
     currentColumnX = currentColumnX + GUIScoreboard.kTeamColumnSpacingX * 2 + 35
 

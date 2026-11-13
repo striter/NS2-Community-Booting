@@ -10,6 +10,7 @@ g_BoomBoxLocalPlaying = false
 g_BoomBoxLocalPlayingCategory = nil
 g_BoomBoxLocalPlayingIndex = nil
 g_BoomBoxLocalVolume = 0.5
+g_BoomBoxLocalBattle = false
 
 local _lastLocalPlayer = nil
 
@@ -77,7 +78,11 @@ function BoomBoxLocalPlay(category, trackIndex)
         return
     end
 
-    local asset = tracks[trackIndex].asset
+    local track = tracks[trackIndex]
+    local asset = track.asset
+    if g_BoomBoxLocalBattle and track.assetBattle then
+        asset = track.assetBattle
+    end
     DoPlaySound(asset)
     localSoundEffect = { _path = asset, Stop = function(self)
         local p = Client.GetLocalPlayer()
@@ -92,6 +97,13 @@ end
 
 function BoomBoxLocalStop()
     StopLocalMusic()
+end
+
+function BoomBoxLocalToggleBattle()
+    g_BoomBoxLocalBattle = not g_BoomBoxLocalBattle
+    if g_BoomBoxLocalPlaying and g_BoomBoxLocalPlayingCategory and g_BoomBoxLocalPlayingIndex then
+        BoomBoxLocalPlay(g_BoomBoxLocalPlayingCategory, g_BoomBoxLocalPlayingIndex)
+    end
 end
 
 -- Selected category for the menu UI (persisted in runtime)

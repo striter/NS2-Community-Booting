@@ -310,7 +310,9 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                         table.insert(rows, { text = displayName, align = "left", textScale = kTooltipTitleScale,
                             icons = { GetSkillTierIcon(pr, playerSkill, pr.IsCommander) }, iconsAlign = "right",
                             leadingBadge = featuredBadge })
-                        AddTooltipTitle(rows, "COMMUNITY_SB_TITLE_SCORE", skillIcon.tooltipText)
+                        -- The section title already names the skill tier, so the note carries the grade alone.
+                        local _, tierName = GetPlayerSkillTier(playerSkill, pr.IsRookie, pr.AdagradSum, false)
+                        AddTooltipTitle(rows, "COMMUNITY_SB_TITLE_SCORE", Locale.ResolveString(tierName))
 
                         if pr.CommSkill > 0 then
                             local commMarineValue = math.max(0, pr.CommSkill + (pr.CommSkillOffset or 0))
