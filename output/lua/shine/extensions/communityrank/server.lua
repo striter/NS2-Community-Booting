@@ -1192,6 +1192,11 @@ function Plugin:CreateMessageCommands()
 
     local function SetSignature(_client,_signature)
         if not _client then return end
+        -- An empty argument clears the signature, so it is trimmed and quoted empty strings are dropped too.
+        _signature = (_signature or ""):match("^%s*(.-)%s*$")
+        if _signature == '""' or _signature == "''" then
+            _signature = ""
+        end
         local data = GetPlayerData(self,_client:GetUserId())
         data.signature = _signature
         local player = _client:GetControllingPlayer()
@@ -1199,8 +1204,8 @@ function Plugin:CreateMessageCommands()
     end
     
     self:BindCommand( "sh_signature", "signature", SetSignature,true )
-        :AddParam{ Type = "string", TakeRestOfLine = true, Default = "这个人很懒没有设置个性签名" }
-        :Help( "设置我的个性签名. 示例!signature 在吗" )
+        :AddParam{ Type = "string", Optional = true, TakeRestOfLine = true, Default = "" }
+        :Help( "设置我的个性签名, 留空则清除. 示例!signature 在吗" )
     
     local function EloCheck(_client,_id)
         local target = Shine.AdminGetClientByNS2ID(_client,_id)
