@@ -174,15 +174,19 @@ local kMemberIconRowByLevel = {
     [2] = 13,
 }
 
+-- A text line keeps a descender slot under its glyphs, so an emblem centred on the whole line box reads low next
+-- to the numbers and the names; the emblems are lifted by this many pixels to sit on the visual centre instead.
+local kEmblemRise = 2
+-- The emblem is centred in its row like every other icon of the tooltip, so it shares the baseline of the text.
 local function GetCommunityRankIcon(_row)
-    return { texture = kCommunityRankIconTexture, x1 = 0, y1 = _row * 80, x2 = 80, y2 = (_row + 1) * 80, width = kCommunityIconSize, height = kCommunityIconSize }
+    return { texture = kCommunityRankIconTexture, x1 = 0, y1 = _row * 80, x2 = 80, y2 = (_row + 1) * 80, width = kCommunityIconSize, height = kCommunityIconSize, riseY = kEmblemRise }
 end
 
 -- The tier emblems live in rows of the skill atlas, the same rows the scoreboard SkillIcon draws.
 local function GetTierIcon(_row, _scale)
     local scale = _scale or 1
     return { texture = kSkillTierIconTexture, x1 = 0, y1 = _row * 32, x2 = 100, y2 = (_row + 1) * 32 - 1,
-        width = 56 * scale, height = 18 * scale }
+        width = 56 * scale, height = 18 * scale, riseY = kEmblemRise }
 end
 
 local function GetSkillTierIcon(_playerRecord, _skill, _isCommander)
@@ -323,7 +327,8 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                         AddFactionScoreRows(rows, "COMMUNITY_SB_SKILL_MARINE", "COMMUNITY_SB_SKILL_ALIEN", math.max(0,pr.Skill + (pr.SkillOffset or 0)), math.max(0,pr.Skill - (pr.SkillOffset or 0)), kMarineFieldIcon, kAlienFieldIcon)
 
                         -- The community group sits on the section header's right edge together with its badges; the
-                        -- prewarm tier rides just left of the rank badge instead of taking a row of its own.
+                        -- prewarm tier rides just left of the rank badge instead of taking a row of its own. Both
+                        -- emblems stay centred on the header line.
                         local communityStart = #rows + 1
                         local rankIconRow = kCommunityRankIndex[pr.Group] or 0
                         local titleIcons = {}
@@ -350,19 +355,22 @@ Plugin.GUIScoreboardUpdateTeam = function(scoreboard, updateTeam)
                         if pr.prewarmTime > 0 and pr.prewarmScore > 0 then
                             table.insert(stats, string.format( Locale.ResolveString("COMMUNITY_PREWARM"), pr.prewarmScore))
                         end
-                        if pr.memberLevel ~= 0 then
-                            local memberIconRow = kMemberIconRowByLevel[pr.memberLevel] or 0
-                            table.insert(rows, {
-                                text = string.format(Locale.ResolveString("COMMUNITY_MEMBER_LEVEL"),Locale.ResolveString(string.format("COMMUNITY_MEMBER_LEVEL%i",pr.memberLevel))),
-                                icons = memberIconRow > 0 and { GetCommunityRankIcon(memberIconRow) } or nil })
-                        end
-                        -- The previous nickname sits under the member row so it never crowds the name row.
+                        -- The free text data opens the block below the community header.
+                        AddTooltipStatsLine(rows, stats)
+                        -- The previous nickname closes that block so it never crowds the name row.
                         if pr.lastSeenName ~= "" and pr.lastSeenName ~= nil and pr.lastSeenName ~= displayName then
                             table.insert(rows, { text = Locale.ResolveString("LAST_SEEN_NAME") .. " " .. pr.lastSeenName,
                                 textColor = kSecondaryTextColor, align = "right" })
                         end
-                        -- The free text data closes the section, below the previous nickname.
-                        AddTooltipStatsLine(rows, stats)
+
+                        -- The member row closes the community block, under the previous nickname.
+                        if pr.memberLevel ~= 0 then
+                            local memberIconRow = kMemberIconRowByLevel[pr.memberLevel] or 0
+                            -- The member emblem is centred on its row like every other row icon.
+                            table.insert(rows, {
+                                text = string.format(Locale.ResolveString("COMMUNITY_MEMBER_LEVEL"),Locale.ResolveString(string.format("COMMUNITY_MEMBER_LEVEL%i",pr.memberLevel))),
+                                icons = memberIconRow > 0 and { GetCommunityRankIcon(memberIconRow) } or nil })
+                        end
 
                         -- The remaining badges close the tooltip as a strip on the signature header.
                         local signature = pr.signature

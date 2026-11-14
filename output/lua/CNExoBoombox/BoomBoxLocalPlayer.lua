@@ -14,18 +14,45 @@ g_BoomBoxLocalBattle = false
 
 local _lastLocalPlayer = nil
 
-local localSoundEffect = nil
+local localSoundMain = nil
+local localSoundBattle = nil
 
 local function GetLocalVolume()
     return Client.GetOptionFloat("BB_Local_Volume", 0.5)
 end
 
-local function DoPlaySound(asset)
-    local player = Client.GetLocalPlayer()
-    _lastLocalPlayer = player
-    if player then
-        Shared.PlaySound(player, asset, GetLocalVolume())
+-- Both variants run in parallel and cross-fade; only one is fully audible at rest
+local kBattleFadeTime = 0.4
+local battleMix = 0
+
+local function GetTargetMix()
+    return (g_BoomBoxLocalBattle and localSoundBattle ~= nil) and 1 or 0
+end
+
+local function ApplyLocalVolumes()
+    local volume = GetLocalVolume()
+    if localSoundMain then
+        localSoundMain:SetVolume(volume * (1 - battleMix))
     end
+    if localSoundBattle then
+        localSoundBattle:SetVolume(volume * battleMix)
+    end
+end
+
+local function StartSoundInstance(player, asset, volume)
+    if not asset then
+        return nil
+    end
+    local index = Shared.GetSoundIndex(asset)
+    if index == 0 then
+        Shared.Message("[BoomBox] sound not precached: " .. tostring(asset))
+        return nil
+    end
+    local instance = Client.CreateSoundEffect(index)
+    instance:SetParent(player:GetId())
+    instance:Start()
+    instance:SetVolume(volume)
+    return instance
 end
 
 local function SaveSelection()
@@ -39,34 +66,24 @@ local function SaveSelection()
     end
 end
 
-local function StopLocalMusic()
-    if localSoundEffect then
-        if localSoundEffect.Stop then
-            localSoundEffect:Stop()
-        end
-        localSoundEffect = nil
+local function StopInstance(instance)
+    if not instance then
+        return
     end
+    instance:Stop()
+    Client.DestroySoundEffect(instance)
+end
+
+local function StopLocalMusic()
+    StopInstance(localSoundMain)
+    StopInstance(localSoundBattle)
+    localSoundMain = nil
+    localSoundBattle = nil
     g_BoomBoxLocalPlaying = false
 end
 
-local volumeUpdateAt = 0
-
-local function ReplayLocalMusic()
-    if g_BoomBoxLocalPlaying and localSoundEffect then
-        local path = localSoundEffect._path
-        local player = Client.GetLocalPlayer()
-        if player then
-            Shared.StopSound(player, path)
-            Shared.PlaySound(player, path, GetLocalVolume())
-            _lastLocalPlayer = player
-        end
-    end
-end
-
 function BoomBoxLocalApplyVolume()
-    if g_BoomBoxLocalPlaying and localSoundEffect then
-        volumeUpdateAt = Shared.GetTime() + 0.4
-    end
+    ApplyLocalVolumes()
 end
 
 function BoomBoxLocalPlay(category, trackIndex)
@@ -79,16 +96,18 @@ function BoomBoxLocalPlay(category, trackIndex)
     end
 
     local track = tracks[trackIndex]
-    local asset = track.asset
-    if g_BoomBoxLocalBattle and track.assetBattle then
-        asset = track.assetBattle
+    local player = Client.GetLocalPlayer()
+    if not player then
+        return
     end
-    DoPlaySound(asset)
-    localSoundEffect = { _path = asset, Stop = function(self)
-        local p = Client.GetLocalPlayer()
-        if p then Shared.StopSound(p, self._path) end
-    end }
-    g_BoomBoxLocalPlaying = true
+    _lastLocalPlayer = player
+    localSoundMain = StartSoundInstance(player, track.asset, 0)
+    if track.assetBattle then
+        localSoundBattle = StartSoundInstance(player, track.assetBattle, 0)
+    end
+    battleMix = GetTargetMix()
+    ApplyLocalVolumes()
+    g_BoomBoxLocalPlaying = localSoundMain ~= nil
     g_BoomBoxLocalPlayingCategory = category
     g_BoomBoxLocalPlayingIndex = trackIndex
     g_BoomBoxLocalCategory = category
@@ -99,10 +118,11 @@ function BoomBoxLocalStop()
     StopLocalMusic()
 end
 
+-- Only flips the target; the update loop ramps the mix without restarting playback
 function BoomBoxLocalToggleBattle()
     g_BoomBoxLocalBattle = not g_BoomBoxLocalBattle
-    if g_BoomBoxLocalPlaying and g_BoomBoxLocalPlayingCategory and g_BoomBoxLocalPlayingIndex then
-        BoomBoxLocalPlay(g_BoomBoxLocalPlayingCategory, g_BoomBoxLocalPlayingIndex)
+    if not localSoundMain then
+        battleMix = GetTargetMix()
     end
 end
 
@@ -187,21 +207,31 @@ end
 
 RestoreSelection()
 
-function BoomBoxLocalUpdate()
-    if volumeUpdateAt > 0 and Shared.GetTime() >= volumeUpdateAt then
-        volumeUpdateAt = 0
-        ReplayLocalMusic()
+function BoomBoxLocalUpdate(deltaTime)
+    local target = GetTargetMix()
+    if battleMix ~= target then
+        if not localSoundMain then
+            battleMix = target
+        else
+            local step = (deltaTime or 0) / kBattleFadeTime
+            if step <= 0 then
+                battleMix = target
+            elseif battleMix < target then
+                battleMix = math.min(target, battleMix + step)
+            else
+                battleMix = math.max(target, battleMix - step)
+            end
+            ApplyLocalVolumes()
+        end
     end
-    if g_BoomBoxLocalPlaying and localSoundEffect then
+    if g_BoomBoxLocalPlaying and (localSoundMain or localSoundBattle) then
         local cur = Client.GetLocalPlayer()
         if cur ~= _lastLocalPlayer then
-            local path = localSoundEffect._path
-            if _lastLocalPlayer then
-                Shared.StopSound(_lastLocalPlayer, path)
-            end
             _lastLocalPlayer = cur
-            if cur then
-                Shared.PlaySound(cur, path, GetLocalVolume())
+            if cur and g_BoomBoxLocalPlayingCategory and g_BoomBoxLocalPlayingIndex then
+                BoomBoxLocalPlay(g_BoomBoxLocalPlayingCategory, g_BoomBoxLocalPlayingIndex)
+            else
+                StopLocalMusic()
             end
         end
     else
@@ -214,8 +244,8 @@ Event.Hook("Console_boombox", function()
     BoomBoxLocalToggle()
 end)
 
-Event.Hook("UpdateClient", function()
-    BoomBoxLocalUpdate()
+Event.Hook("UpdateClient", function(deltaTime)
+    BoomBoxLocalUpdate(deltaTime)
 end)
 
 -- Override the stub from FileHooks
