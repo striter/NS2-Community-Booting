@@ -1,9 +1,9 @@
---Script.Load("lua/CNLocalize/GUI/GUIMenuCommunityGuide.lua")
---Script.Load("lua/CNLocalize/GUI/GUIMenuCommunityGroup.lua")
+Script.Load("lua/CNLocalize/GUI/GUIMenuCommunityForm.lua")
+Script.Load("lua/CNLocalize/GUI/GUIMenuCommunityQQ.lua")
 
 function GUIMainMenu:CreateLinksButtons()
 
-    --CreateGUIObject("guideButton", GuiMenuCommunityGuideButton, self.linkButtonsHolder)
-    --CreateGUIObject("groupButton", GuiMenuCommunityGroupButton, self.linkButtonsHolder)
+    CreateGUIObject("formButton", GuiMenuCommunityFormButton, self.linkButtonsHolder)
+    CreateGUIObject("qqButton", GuiMenuCommunityQQButton, self.linkButtonsHolder)
 
 end

@@ -46,6 +46,7 @@ Plugin.DefaultConfig = {
 		kSkillDiffStep = 500,
 		kSkillDiffDamageScalarEachStep = 0.05,
 		RookieScorePerMinute = 10,
+		ExemptIds = Shine.IgnoreWhenChecking( {} ),
 	},
 	RefundForcePurchase = 80,
 	BelowSkillNotify = 100,
@@ -77,6 +78,7 @@ do
 	Validator:AddFieldRule( "RefundForcePurchase",  Validator.IsType( "number", Plugin.DefaultConfig.RefundForcePurchase ))
 	Validator:AddFieldRule( "DamageProtection",  Validator.IsType( "table", Plugin.DefaultConfig.DamageProtection ))
 	Validator:AddFieldRule( "DamageProtection.RookieScorePerMinute",  Validator.IsType( "number", Plugin.DefaultConfig.DamageProtection.RookieScorePerMinute ))
+	Validator:AddFieldRule( "DamageProtection.ExemptIds",  Validator.IsType( "table", Plugin.DefaultConfig.DamageProtection.ExemptIds ))
 	Validator:AddFieldRule( "NewcomerEstimateSkill",  Validator.IsType( "number", Plugin.DefaultConfig.NewcomerEstimateSkill ))
 	Plugin.ConfigValidator = Validator
 end
@@ -84,7 +86,39 @@ end
 Plugin.EnabledGamemodes = Shine.kNS2EnabledGameMode
 
 local kCommanderHistoryFile = "config://shine/temp/CommanderHistory.json"
+
+local kNewcomerCommand = "sh_newcomer"
+
+local function IsNewcomerExempt( Player )
+	if not Server then return false end
+
+	local Client = Player.GetClient and Player:GetClient()
+	if not Client or Client:GetIsVirtual() then return false end
+
+	local ExemptIds = Plugin.Config.DamageProtection.ExemptIds
+	if ExemptIds and ExemptIds[ tostring( Client:GetUserId() ) ] then
+		return true
+	end
+
+	return Shine:GetPermission( Client, kNewcomerCommand ) and true or false
+end
+
+local function NotifyNewcomerStatus( Client )
+	local Player = Client and Client:GetControllingPlayer()
+	if not Player then return end
+
+	local Skill = Player.GetPlayerTeamSkill and Player:GetPlayerTeamSkill() or 0
+
+	Shine:NotifyDualColour( Client,
+			88, 214, 141, "[新兵保护]",
+			234, 250, 241, string.format( "已跳过时长与分数判定,当前强度[%i].", math.floor( Skill ) ) )
+end
+
 function Plugin:Initialise()
+	if Server then
+		self:BindCommand( kNewcomerCommand, "newcomer", NotifyNewcomerStatus )
+	end
+
 	return true
 end
 
@@ -473,6 +507,8 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 
 	local Config = Plugin.Config.DamageProtection
 	if #Config.ActiveTier == 0 then return end
+	if IsNewcomerExempt( self ) then return end
+
 	if self.GetPlayerTeamSkill and attacker.GetPlayerTeamSkill then
 		local selfSkill = self:GetPlayerTeamSkill()
 		local targetSkill = attacker:GetPlayerTeamSkill()

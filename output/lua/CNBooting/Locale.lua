@@ -71,9 +71,6 @@ if Locale.kTranslateMessage then
 
     Locale.kTranslateMessage["COMMUNITY_PLAYTIME"]="在线: %s分钟"
     Locale.kTranslateMessage["COMMUNITY_PREWARM"]="预热: %s分"
-
-    Locale.kTranslateMessage["COMMUNITY_GUI_BUTTON"]="点击查看社区指南"
-    Locale.kTranslateMessage["COMMUNITY_GROUP_BUTTON"]="加入我们的群聊"
 end
 
 if Locale.kLocales then
@@ -148,5 +145,8 @@ if Locale.kLocales then
 
     Locale.kLocales["COMMUNITY_GUI_BUTTON"]="Check Our [Community Guide]"
     Locale.kLocales["COMMUNITY_GROUP_BUTTON"]="Join our Q group"
+    Locale.kLocales["COMMUNITY_FORM_BUTTON"]="Fill in the feedback survey"
+    Locale.kLocales["COMMUNITY_QQ_BUTTON"]="Join our QQ group"
+    Locale.kLocales["COMMUNITY_QQ_MESSAGE"]="Scan with mobile QQ\nJoin us!\nGroup ID: 540422237"
     Locale.kLocales["COMMUNITY_WELCOME"]="欢迎来到<物竞天择2中国社区>"
 end
