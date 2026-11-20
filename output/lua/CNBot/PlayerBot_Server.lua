@@ -1,7 +1,19 @@
-﻿local kBotPersonalSettings = {
+local kBotPersonalSettings = {
     -- custom
     { name = "StriteR.", isMale = true },
-    
+
+    -- Chinese names, for checking CJK glyphs in the scoreboard, chat and name tags
+    { name = "老张", isMale = true },
+    { name = "铁锤", isMale = true },
+    { name = "夜枭", isMale = true },
+    { name = "阿蛮", isMale = true },
+    { name = "冷月", isMale = false },
+    { name = "小美", isMale = false },
+    { name = "沙暴", isMale = true },
+    { name = "医疗兵", isMale = true },
+    { name = "老兵 Kapisi", isMale = true },
+    { name = "前线指挥官", isMale = true },
+
     -- previous one
     { name = "The Salty Sea Captain", isMale = true },
     { name = "Ashton M", isMale = true },

@@ -45,7 +45,6 @@ Locale.kTranslateMessage["LOADING_TIP_GOODCOMM"] = "作为指挥官,你可以给
 Locale.kTranslateMessage["LOADING_TIP_GOTOALERT"] = "作为指挥官,按下[BIND_Jump]前往警报点."
 Locale.kTranslateMessage["LOADING_TIP_INFESTATION"] = "卡拉异形菌毯通过母巢向外延申. 如果被打断,前端的菌毯将逐渐掉血直至死亡,建筑物也随后消亡."
 Locale.kTranslateMessage["LOADING_TIP_MAP"] = "按下[BIND_ShowMap]打开地图,包含很多有用信息."
-Locale.kTranslateMessage["LOADING_TIP_MODS"] = "物竞天择2 完全插件定制化. 目前你进入的服务器以安装<社区强制汉化>插件,由@StriteR.提供以解决官方的汉化问题."
 Locale.kTranslateMessage["LOADING_TIP_MUTE"] = "对于让你糟心的玩家,按下[BIND_Scoreboard]打开积分面板,并左键此人可独立禁言/禁麦他."
 Locale.kTranslateMessage["LOADING_TIP_NEXT"] = "按下 SPACE 显示下一条提示"
 Locale.kTranslateMessage["LOADING_TIP_NOIINTEAM"] = "通过[BIND_VoiceChat]于你的队友沟通交流. 沟通更流畅的队伍迎面也越大!"
@@ -269,7 +268,6 @@ Locale.kTranslateMessage["OPTION_FOV_MARINE_TOOLTIP"] = "针对<边境拓荒者�
 Locale.kTranslateMessage["OPTION_FOV_ALIEN_TOOLTIP"] = "针对<卡拉异形>的FOV."
 Locale.kTranslateMessage["OPTION_FOV_ALIEN"] = "卡拉异形 FOV"
 
-Locale.kTranslateMessage["LANGUAGE"]="语言(正在使用强制汉化,请勿调整至中文!)"
 Locale.kTranslateMessage["NS2NICKNAME"]="使用自定昵称"
 Locale.kTranslateMessage["MENU_TOOLTIP_ALTERNATE_NICKNAME"] = "使用自定义名称以代替Steam名称."
 

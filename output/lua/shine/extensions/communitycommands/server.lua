@@ -38,12 +38,6 @@ function Plugin:CreateCommands()
     AddParam{ Type = "number", Help = "睡觉时间", Round = true, Min = 1, Max = 30, Optional = true, Default = 5 }:
     Help( "强制睡觉(仅陆战队可用)." )
 
-    local function SwitchLocalize(_client)
-        Server.SendNetworkMessage(_client, "SwitchLocalize", {},true)
-    end
-    self:BindCommand("sh_localize","localize",SwitchLocalize,true)
-        :Help( "Switch your localize mode,Rejoin required. 需要中文汉化的话请勿用(该操作将切换插件强制汉化状态)" )
-    
     local function WarnPopup(_client,_target,_message)
         if not _target or _target:GetIsVirtual() then return end
         Shine.SendNetworkMessage(_target, "Shine_PopupWarning", {Message = _message},true)

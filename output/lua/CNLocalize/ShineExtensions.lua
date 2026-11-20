@@ -4,9 +4,17 @@ Script.Load("lua/CNLocalize/ShineStrings.lua")
 
 local baseGetLocalisedString = Shine.Locale.GetLocalisedString
 
+local isChineseLocalization
+local function IsChineseLocalization()
+    if isChineseLocalization == nil and Client and Client.GetOptionString then
+        isChineseLocalization = Client.GetOptionString("locale", "enUS") == "zhCN"
+    end
+    return isChineseLocalization == true
+end
+
 function Shine.Locale:GetLocalisedString( Source, Lang, Key )
     
-    if not Locale.kForceLocalize then return baseGetLocalisedString(self,Source,Lang,Key) end
+    if not IsChineseLocalization() then return baseGetLocalisedString(self,Source,Lang,Key) end
     
     local finalValue = rawget(Shine.Locale.kTranslations,Key)
     if finalValue then

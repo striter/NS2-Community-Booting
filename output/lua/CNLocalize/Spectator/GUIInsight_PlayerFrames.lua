@@ -12,8 +12,19 @@ class 'GUIInsight_PlayerFrames' (GUIScript)
 
 local isVisible
 
+-- Player names switch to the localised CJK build of the insight face when it is
+-- present, so Chinese names stop falling back to the plain engine font. The
+-- black edge is drawn as offset copies: this atlas only carries glyph coverage
+-- and its strokes are too thin for a dilated outline atlas to stay readable.
 local kNameFontName = Fonts.kInsight
+local kNameAtlasPath = "fontsOverride/insight.fnt"
+if GetFileExists(kNameAtlasPath) then
+    kNameFontName = PrecacheAsset(kNameAtlasPath)
+end
 local kInfoFontName = Fonts.kInsight
+
+local kNameOutlineDirections = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 } }
+local kNameOutlineOffset = 1
 local kMarineTexture = "ui/marine_sheet.dds"
 local kAlienTexture = "ui/alien_sheet.dds"
 local kBackgroundTexture = "ui/player.dds"
@@ -51,6 +62,36 @@ local rightTopCoords = {256,0,512,64}
 local rightBottomCoords = {256,128,512,256}
 
 local keysDisableAutoFollow = { "Weapon1", "Weapon2", "Weapon3", "Jump", "MoveForward", "MoveLeft", "MoveBackward", "MoveRight"}
+
+-- The name text and its offset copies share one setup so the copies always track
+-- the face, scale, anchors and alignment of the text they sit under.
+local function SetupNameItem(item, fontName, fontScale, anchorX, anchorY, alignX, alignY)
+
+    item:SetFontName(fontName)
+    item:SetScale(fontScale)
+    item:SetAnchor(anchorX, anchorY)
+    item:SetTextAlignmentX(alignX)
+    item:SetTextAlignmentY(alignY)
+    GUIMakeFontScale(item)
+
+end
+
+local function CreateNameOutlineItems(background, fontScale, anchorX, anchorY, alignX, alignY)
+
+    local outlines = { }
+
+    for _, direction in ipairs(kNameOutlineDirections) do
+        local item = GUIManager:CreateTextItem()
+        SetupNameItem(item, kNameFontName, fontScale, anchorX, anchorY, alignX, alignY)
+        item:SetColor(Color(0, 0, 0, 1))
+        item:SetPosition(GUIScale(Vector(direction[1] * kNameOutlineOffset, direction[2] * kNameOutlineOffset, 0)))
+        background:AddChild(item)
+        table.insert(outlines, { item = item, direction = direction })
+    end
+
+    return outlines
+
+end
 
 local iconSize = Vector(32,32,0)
 local kIconCoords = {
@@ -352,6 +393,15 @@ function GUIInsight_PlayerFrames:UpdatePlayer(player, playerRecord, team, yPosit
     name:SetText(playerName)
     name:SetColor(kWhite)
 
+    -- The offset copies only follow the text when it actually changes, so the
+    -- per-frame cost stays at the single original assignment.
+    if player.nameText ~= playerName then
+        player.nameText = playerName
+        for _, outline in ipairs(player.NameOutlines) do
+            outline.item:SetText(playerName)
+        end
+    end
+
     -- Health bar
     local healthBar = player["HealthBar"]
     local barSize = 0
@@ -541,14 +591,11 @@ function GUIInsight_PlayerFrames:CreateMarineBackground()
     background:AddChild(typeIcon)
 
     -- Name text item. (Player Name / Structure Location)
+    local nameOutlines = CreateNameOutlineItems(background, kNameFontScale, GUIItem.Left, GUIItem.Top, GUIItem.Align_Min, GUIItem.Align_Max)
+
     local nameItem = GUIManager:CreateTextItem()
-    nameItem:SetFontName(kNameFontName)
-    nameItem:SetScale(kNameFontScale)
-    nameItem:SetAnchor(GUIItem.Left, GUIItem.Top)
-    nameItem:SetTextAlignmentX(GUIItem.Align_Min)
-    nameItem:SetTextAlignmentY(GUIItem.Align_Max)
+    SetupNameItem(nameItem, kNameFontName, kNameFontScale, GUIItem.Left, GUIItem.Top, GUIItem.Align_Min, GUIItem.Align_Max)
     nameItem:SetColor(kInfoColor)
-    GUIMakeFontScale(nameItem)
     background:AddChild(nameItem)
 
     -- KDR text item.
@@ -606,7 +653,7 @@ function GUIInsight_PlayerFrames:CreateMarineBackground()
     frame:SetTexturePixelCoordinates(GUIUnpackCoords(leftFrameCoords))
     background:AddChild(frame)
 
-    return { Background = background, Frame = frame, Name = nameItem, Type = typeIcon, Detail = detailItem, KDR = KDRitem, HealthBar = healthBar, Upgrades = upgrades }
+    return { Background = background, Frame = frame, Name = nameItem, NameOutlines = nameOutlines, Type = typeIcon, Detail = detailItem, KDR = KDRitem, HealthBar = healthBar, Upgrades = upgrades }
 
 end
 
@@ -629,14 +676,11 @@ function GUIInsight_PlayerFrames:CreateAlienBackground()
     background:AddChild(typeIcon)
 
     -- Name text item. (Player Name / Structure Location)
+    local nameOutlines = CreateNameOutlineItems(background, kNameFontScale, GUIItem.Right, GUIItem.Top, GUIItem.Align_Max, GUIItem.Align_Max)
+
     local nameItem = GUIManager:CreateTextItem()
-    nameItem:SetFontName(kNameFontName)
-    nameItem:SetScale(kNameFontScale)
-    nameItem:SetAnchor(GUIItem.Right, GUIItem.Top)
-    nameItem:SetTextAlignmentX(GUIItem.Align_Max)
-    nameItem:SetTextAlignmentY(GUIItem.Align_Max)
+    SetupNameItem(nameItem, kNameFontName, kNameFontScale, GUIItem.Right, GUIItem.Top, GUIItem.Align_Max, GUIItem.Align_Max)
     nameItem:SetColor(kInfoColor)
-    GUIMakeFontScale(nameItem)
     background:AddChild(nameItem)
 
     -- KDR text item.
@@ -695,6 +739,6 @@ function GUIInsight_PlayerFrames:CreateAlienBackground()
     frame:SetTexturePixelCoordinates(GUIUnpackCoords(rightFrameCoords))
     background:AddChild(frame)
 
-    return { Background = background, Frame = frame, Name = nameItem, Type = typeIcon, Detail = detailItem, KDR = KDRitem, HealthBar = healthBar, Upgrades = upgrades }
+    return { Background = background, Frame = frame, Name = nameItem, NameOutlines = nameOutlines, Type = typeIcon, Detail = detailItem, KDR = KDRitem, HealthBar = healthBar, Upgrades = upgrades }
 
 end

@@ -1,6 +1,4 @@
 
-Shared.RegisterNetworkMessage("SwitchLocalize", {})
-
 if Client then
 
     --local function OnConsoleHttp(url)
@@ -18,69 +16,54 @@ if Client then
         Locale.kTranslateMessage = {}
         Locale.kLocales = {}
     end
-    Locale.kForceLocalize = true
-    if CNPersistent and CNPersistent.forceLocalize ~= nil then
-        Locale.kForceLocalize = CNPersistent.forceLocalize
+    -- The official zhCN strings ship nearly complete, so the tables below only fill its gaps.
+    local isChineseLocalization
+    local function IsChineseLocalization()
+        if isChineseLocalization == nil and Client.GetOptionString then
+            isChineseLocalization = Client.GetOptionString("locale", "enUS") == "zhCN"
+        end
+        return isChineseLocalization == true
     end
-    if Locale.kForceLocalize then
-        Locale.kCommunityGuideTable = {
+
+    local kCommunityGuides = {
+        zhCN = {
             mainPulloutTitle = "欢迎来到<物竞天择2中国社区>",
             subPulloutTitle = "点击查看指南",
 
             urlTitle = "物竞天择2中国社区 - 指南",
             url = "https://docs.qq.com/doc/DUFlBR0ZJeFRiRnRi",
-        }
-    else
-        Locale.kCommunityGuideTable = {
+        },
+        enUS = {
             mainPulloutTitle = "Welcome to <NS2CN>",
             subPulloutTitle = "Click to read Guide",
 
             urlTitle = "<NS2CN> Community Guide",
             url = "https://docs.qq.com/doc/DUFVkbnBiSlVMb3Nx",
-        }
-    end
-
-    -- Fonts Fix
-    local hasFontAssetsPatched = GetFileExists("CNFontAssets.readme")
-    if not hasFontAssetsPatched then
-        ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/GUIAssets.lua", "replace")
-        ModLoader.SetupFileHook("lua/GUI/FontGlobals.lua", "lua/CNLocalize/FontGlobals.lua", "replace")
-    end
+        },
+    }
+    Locale.kCommunityGuideTable = setmetatable({}, {
+        __index = function(_, key)
+            return (IsChineseLocalization() and kCommunityGuides.zhCN or kCommunityGuides.enUS)[key]
+        end,
+    })
 
     Script.Load("lua/CNLocalize/CNStringsMenu.lua")
     ModLoader.SetupFileHook("lua/Locale.lua", "lua/CNLocalize/CNStrings.lua", "post")
-    local baseGetCurrentLanguage = Locale.GetCurrentLanguage
-    local function CNGetCurrentLanguage()
-        return Locale.kForceLocalize and "zhCN" or baseGetCurrentLanguage(self)
-    end
-    Locale.GetCurrentLanguage = CNGetCurrentLanguage
 
     --Locations
     Locale.kTranslateLocations = {}
     ModLoader.SetupFileHook("lua/Locale.lua", "lua/CNLocalize/CNLocations.lua", "post")
     function Locale.ResolveLocation(input)
-        if not Locale.kForceLocalize then return input end
+        if not IsChineseLocalization() then return input end
         return Locale.kTranslateLocations[input] or input
-    end
-
-    Client.HookNetworkMessage("SwitchLocalize", function(message)
-        Locale.SetLocalize(not Locale.kForceLocalize)
-    end )
-
-    function Locale.SetLocalize(_value)
-        Locale.kForceLocalize = _value
-        if CNPersistent then
-            CNPersistent.forceLocalize = Locale.kForceLocalize
-            CNPersistentSave()
-        end
     end
 
     local baseResolveString = Locale.ResolveString
     local function CNLocalizeResolve(input)
         if not input then return "" end
 
-        local resolvedString = Locale.kForceLocalize and rawget(Locale.kTranslateMessage,input) or nil
-        resolvedString = resolvedString or rawget(Locale.kLocales,input)
+        local resolvedString = IsChineseLocalization() and rawget(Locale.kTranslateMessage, input) or nil
+        resolvedString = resolvedString or rawget(Locale.kLocales, input)
         return resolvedString or baseResolveString(input)
     end
     Locale.ResolveString = CNLocalizeResolve

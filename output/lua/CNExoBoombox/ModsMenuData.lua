@@ -76,7 +76,7 @@ local function EnsureTrackFont()
 		return
 	end
 	RegisterFontFamily(kTrackFontFamily, {
-		{ font = PrecacheAsset("fontsOverride/AgencyFB_medium.fnt"), size = kTrackFontActualSize },
+		{ font = PrecacheAsset("fonts/AgencyFB_medium.fnt"), size = kTrackFontActualSize },
 	})
 	g_BBTrackFontReady = true
 end
