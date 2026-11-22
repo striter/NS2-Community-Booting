@@ -16,9 +16,6 @@ if Locale.kTranslateMessage then
     Locale.kTranslateMessage["VOTE_MUTE_PLAYER"] = "玩家处理 - [禁言]"
     Locale.kTranslateMessage["VOTE_MUTE_PLAYER_QUERY"] = "将<%s>禁言一局?"
 
-    Locale.kTranslateMessage["VOTE_FUCK_POLITICAN"] = "玩家处理 - [禁言+改名] (仅政治自爆处理)"
-    Locale.kTranslateMessage["VOTE_FUCK_POLITICAN_QUERY"] = "将<%s>变成没有感情的暖服机器."
-    
     Locale.kTranslateMessage["VOTE_FORCE_SPECTATE"] = "玩家处理 - [强制观战]"
     Locale.kTranslateMessage["VOTE_FORCE_SPECTATE_QUERY"] = "将<%s>强制移到观战?"
 
@@ -90,9 +87,6 @@ if Locale.kLocales then
     Locale.kLocales["VOTE_MUTE_PLAYER"] = "Vote Mute player"
     Locale.kLocales["VOTE_MUTE_PLAYER_QUERY"] = "Mute <%s> for 10min?"
 
-    Locale.kLocales["VOTE_FUCK_POLITICAN"] = "Vote f**k politican"
-    Locale.kLocales["VOTE_FUCK_POLITICAN_QUERY"] = "<%s> likes big booty fat thick lips black muslim transgender."
-    
     Locale.kLocales["VOTE_FORCE_SPECTATE"] = "Vote Force Spectate"
     Locale.kLocales["VOTE_FORCE_SPECTATE_QUERY"] = "Move <%s> to spectator?"
 

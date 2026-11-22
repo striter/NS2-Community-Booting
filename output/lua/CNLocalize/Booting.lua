@@ -106,6 +106,7 @@ if Client then
 
 
     --Spectator
+    ModLoader.SetupFileHook("lua/GUIAssets.lua", "lua/CNLocalize/InsightFont.lua", "post")
     ModLoader.SetupFileHook("lua/GUIInsight_Location.lua", "lua/CNLocalize/Spectator/GUIInsight_Location.lua", "post")
     ModLoader.SetupFileHook("lua/GUIInsight_TechPoints.lua", "lua/CNLocalize/Spectator/GUIInsight_TechPoints.lua", "replace")
     ModLoader.SetupFileHook("lua/GUIInsight_PlayerFrames.lua", "lua/CNLocalize/Spectator/GUIInsight_PlayerFrames.lua", "replace")

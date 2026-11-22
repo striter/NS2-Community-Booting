@@ -59,6 +59,7 @@ function Plugin:Initialise()
 	self:CreateCommands()
 	self.Enabled = true
 	self.MemberSlotPending = {}
+	self.SlotNoticeSent = {}
 
 	return true
 end
@@ -69,8 +70,13 @@ function Plugin:OnPlayerCommunityDataReceived(_client,data)
 
     if self:GetRealPlayerCount() < GetMaxPlayers() - self.Config.Slots then return end
 
+    -- The community data is broadcast again every time the database is received, so the notice is
+    -- limited to once per connection.
+    if self.SlotNoticeSent[clientID] then return end
+
     local _, reason = self:HasReservedSlotAccess( clientID )
     if reason then
+        self.SlotNoticeSent[clientID] = true
         Shine:NotifyDualColour( _client, 235, 152, 78, "[预留位]", 255, 255, 255,
                 string.format("你因[%s]获得了预留位.", reason) )
     end
@@ -112,6 +118,7 @@ do
             local clientID = Client:GetUserId()
             if (clientID > 0 and crEnabled and cr:GetMemberLevel(clientID) > 0)
                 or Shine:HasAccess( Client, "sh_reservedslot" )
+                or self:IsLongInactive( clientID )
             then
                 Count = Count + 1
             end
@@ -183,7 +190,33 @@ function Plugin:GetMaxSpectatorSlots()
 	return GetMaxSpectators()
 end
 
+function Plugin:IsLongInactive(_clientID)
+    if not _clientID or _clientID <= 0 then return false end
+
+    local cpEnabled, communityPrewarm = Shine:IsExtensionEnabled( "communityprewarm" )
+    if not cpEnabled or not communityPrewarm or not communityPrewarm.Config then return false end
+
+    local returnReward = communityPrewarm.Config.ReturnReward
+    if not returnReward or not returnReward.Enabled then return false end
+
+    local days = tonumber( returnReward.DayOffset ) or 0
+    if days <= 0 then return false end
+
+    local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
+    if not crEnabled or not cr then return false end
+
+    local communityData = cr:GetCommunityData( _clientID )
+    local lastSeen = communityData and communityData.lastSeenTimeStamp
+    if not lastSeen or lastSeen <= 0 then return false end
+
+    return ( os.time() - lastSeen ) >= days * 86400
+end
+
 function Plugin:HasReservedSlotAccess(_clientID)
+    if self:IsLongInactive( _clientID ) then
+        return true, "回归预留位"
+    end
+
     local cpEnabled, communityPrewarm = Shine:IsExtensionEnabled( "communityprewarm" )
     if cpEnabled then
         if communityPrewarm:HasPrewarmTier(_clientID) then
@@ -236,6 +269,7 @@ end
 
 function Plugin:ClientDisconnect( Client )
 	self.MemberSlotPending[Client:GetUserId()] = nil
+	self.SlotNoticeSent[Client:GetUserId()] = nil
 	self:SetReservedSlotCount( self:GetFreeReservedSlots() )
 end
 
