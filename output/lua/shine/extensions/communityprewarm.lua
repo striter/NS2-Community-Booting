@@ -82,6 +82,16 @@ local kPrewarmFile = "config://shine/temp/prewarm.json"
 local kPrewarmAward = "config://shine/temp/prewarmLastDay.json"
 local kPrewarmRecord = "config://shine/temp/prewarmRecord.json"
 
+local function GetDayKey(_offsetSeconds)
+    local restriction = (Plugin.Config and Plugin.Config.Restriction) or Plugin.DefaultConfig.Restriction
+    return os.date("%Y%m%d", Shared.GetSystemTime() - restriction.Hour * 3600 + (_offsetSeconds or 0))
+end
+
+local function GetLiveHour()
+    local clock = os.date("*t", Shared.GetSystemTime())
+    return clock.hour + clock.min / 60
+end
+
 function Plugin:Initialise()
     self.PrewarmTracker = {}
     self.MemberInfos = {}
@@ -108,7 +118,7 @@ function Plugin:Initialise()
 end
 
 local function GetCurrentRecordTable(self)
-    local key = tostring(kCurrentTimeStampDay)
+    local key = GetDayKey()
     if not self.PrewarmRecordFile[key] then
         self.PrewarmRecordFile[key] = {}
     end
@@ -197,7 +207,7 @@ local function TrackClient(self, _client, _clientID)
     if not self.PrewarmData.Validated then
         local silentAfterMax = self:IsAfterMaxNotifyHour()
 
-        local activePrewarm = kCurrentHour >= self.Config.Restriction.Hour
+        local activePrewarm = GetLiveHour() >= self.Config.Restriction.Hour
 
         local activePlayed = false
         local gameMode = Shine.GetGamemode()
@@ -276,17 +286,17 @@ end
 local function Reset(self)
     table.Empty(self.PrewarmData.UserData)
     table.Empty(self.MemberInfos)
-    self.PrewarmData.ValidationDay = kCurrentDay
+    self.PrewarmData.ValidationDay = GetDayKey()
     self.PrewarmData.Validated = false
 end
 
 local function PrewarmScoreEnable(self)
-    if kCurrentHour < self.Config.Restriction.Hour then return false end
+    if GetLiveHour() < self.Config.Restriction.Hour then return false end
     return true
 end
 
 function Plugin:IsAfterMaxNotifyHour()
-    return kCurrentHour >= (self.Config.Restriction.MaxNotifyHour or 20.5)
+    return GetLiveHour() >= (self.Config.Restriction.MaxNotifyHour or 20.5)
 end
 
 local function PrewarmValidate(self)
@@ -375,6 +385,12 @@ local function PrewarmValidate(self)
                 255, 255, 255, informMessage)
     end
 
+    for client in Shine.IterateClients() do
+        if not client:GetIsVirtual() then
+            self:QueryLateGameAward(client)
+        end
+    end
+
     return true
 end
 
@@ -435,10 +451,6 @@ end
 function Plugin:OnFirstThink()
     ReadPersistent(self)
     Shine.Hook.SetupClassHook("NS2Gamerules", "EndGame", "OnEndGame", "PassivePost")
-    if self.PrewarmData.ValidationDay ~= kCurrentDay then
-        Reset(self)
-    end
-
     self:TrackWithInterval()
 end
 
@@ -486,6 +498,10 @@ local function BroadcastPrewarmStatus(self)
 end
 
 function Plugin:TrackWithInterval()
+    if self.PrewarmData.ValidationDay ~= GetDayKey() then
+        Reset(self)
+        SavePersistent(self)
+    end
     TrackAllClients(self)
     self:SimpleTimer(60, function() self:TrackWithInterval() end)
 end
@@ -606,7 +622,7 @@ function Plugin:IsActiveLateGameRound(_lastRoundData)
 end
 
 function Plugin:DispatchLateGameAward(_lastRoundData)
-    if kCurrentHour < self.Config.LateGameAward.Hour then return end
+    if GetLiveHour() < self.Config.LateGameAward.Hour then return end
     local playerCount = table.Count(_lastRoundData.PlayerStats)
     if playerCount >= self.Config.LateGameAward.MaxPlayers then return end
 
@@ -632,12 +648,13 @@ function Plugin:DispatchLateGameAward(_lastRoundData)
                 local steamIdString = tostring(steamId)
                 local lateGameAwardData = self.PrewarmAwardFile[steamIdString]
                 if not lateGameAwardData then
-                    lateGameAwardData = { credit = 0, time = kCurrentTimeStampDay }
+                    lateGameAwardData = { credit = 0 }
                     self.PrewarmAwardFile[steamIdString] = lateGameAwardData
                 end
-                lateGameAwardData.credit = lateGameAwardData.credit + self.Config.LateGameAward.Credit
+                lateGameAwardData.day = GetDayKey()
+                lateGameAwardData.credit = (lateGameAwardData.credit or 0) + self.Config.LateGameAward.Credit
                 Shine:NotifyDualColour( client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
-                        string.format("尾声对局已结束,明日预热结束后您将获得额外[%d(+%d)]预热点.", lateGameAwardData.credit,self.Config.LateGameAward.Credit))
+                        string.format("尾声对局已结束,明日您将获得[预留位]及额外[%d(+%d)]预热点.", lateGameAwardData.credit,self.Config.LateGameAward.Credit))
             else
                 Shine:NotifyDualColour( client, kErrorColor[1], kErrorColor[2], kErrorColor[3],self.kPrefix,255, 255, 255, 
                         "尾声对局已结束,由于您的对局时长不足,暂未获得尾声对局特权,请于下局保持活跃.")
@@ -661,26 +678,29 @@ function Plugin:QueryGroupAward(_client)
     end
 end
 
+function Plugin:HasLateGameAward(_clientID)
+    if not _clientID or _clientID <= 0 then return false end
+
+    local awardData = self.PrewarmAwardFile[tostring(_clientID)]
+    return awardData ~= nil and awardData.day == GetDayKey(-86400)
+end
+
 function Plugin:QueryLateGameAward(_client)
     local id = _client:GetUserId()
-    if kCurrentHour > self.Config.LateGameAward.Hour then
+    if GetLiveHour() > self.Config.LateGameAward.Hour then
         Shine:NotifyDualColour( _client, kPrewarmColor[1], kPrewarmColor[2], kPrewarmColor[3],self.kPrefix,255, 255, 255,
                 string.format("当前处于尾声对局激励.当参与人数小于[%d]的有效战局结束后,完整参与对局的所有玩家将获得次日的[预留位]以及[%d]预热点.", self.Config.LateGameAward.MaxPlayers,self.Config.LateGameAward.Credit) )
     end
 
-    local stringId = tostring(id)
-    local lateGameAwardData = self.PrewarmAwardFile[stringId]
-    if not lateGameAwardData or 
-            lateGameAwardData.time == kCurrentTimeStampDay then
-        return
-    end
+    local lateGameAwardData = self.PrewarmAwardFile[tostring(id)]
+    if not lateGameAwardData or lateGameAwardData.day ~= GetDayKey(-86400) then return end
+    if (lateGameAwardData.credit or 0) <= 0 then return end
+
     local targetData = GetPlayerData(self,id)
-    if targetData.tier and targetData.tier > 0 then
-        lateGameAwardData.time = kCurrentTimeStampDay
-        return
-    end
+    if targetData.tier and targetData.tier > 0 then return end
+
     Shared.ConsoleCommand(string.format("sh_prewarm_delta %s %s %s",id, lateGameAwardData.credit,"尾声对局参与激励"))
-    self.PrewarmAwardFile[stringId] = nil
+    lateGameAwardData.credit = 0
 end
 
 function Plugin:MapChange()
@@ -746,7 +766,7 @@ function Plugin:OnPlayerCommunityDataReceived(_client, data)
     if targetData.credit > 0 then return end
 
     -- 检查今天是否已经领取过回归奖励
-    local today = math.floor(kCurrentTimeStamp / 86400)
+    local today = math.floor(Shared.GetSystemTime() / 86400)
     if targetData.lastReturnRewardDay == today then return end
 
     local credit = 0
@@ -756,7 +776,7 @@ function Plugin:OnPlayerCommunityDataReceived(_client, data)
         credit = self.Config.ReturnReward.CreditFirstJoin
         title = "首次加入社区"
     else
-        local secOffset = kCurrentTimeStamp - data.lastSeenTimeStamp
+        local secOffset = Shared.GetSystemTime() - data.lastSeenTimeStamp
         local dayOffset = math.floor(secOffset / 86400)
         if dayOffset >= self.Config.ReturnReward.DayOffset then
             credit = self.Config.ReturnReward.CreditReturn

@@ -222,6 +222,9 @@ function Plugin:HasReservedSlotAccess(_clientID)
         if communityPrewarm:HasPrewarmTier(_clientID) then
             return true, "预热贡献者"
         end
+        if communityPrewarm:HasLateGameAward(_clientID) then
+            return true, "尾声对局预留位"
+        end
         if communityPrewarm:GetOnlineTime(_clientID) >= self.Config.ServerStayReservedSeconds then
             return true, "累计在线预留"
         end
