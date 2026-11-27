@@ -46,7 +46,6 @@ Plugin.DefaultConfig = {
 		kSkillDiffStep = 500,
 		kSkillDiffDamageScalarEachStep = 0.05,
 		RookieScorePerMinute = 10,
-		ExemptIds = Shine.IgnoreWhenChecking( {} ),
 	},
 	RefundForcePurchase = 80,
 	BelowSkillNotify = 100,
@@ -78,7 +77,6 @@ do
 	Validator:AddFieldRule( "RefundForcePurchase",  Validator.IsType( "number", Plugin.DefaultConfig.RefundForcePurchase ))
 	Validator:AddFieldRule( "DamageProtection",  Validator.IsType( "table", Plugin.DefaultConfig.DamageProtection ))
 	Validator:AddFieldRule( "DamageProtection.RookieScorePerMinute",  Validator.IsType( "number", Plugin.DefaultConfig.DamageProtection.RookieScorePerMinute ))
-	Validator:AddFieldRule( "DamageProtection.ExemptIds",  Validator.IsType( "table", Plugin.DefaultConfig.DamageProtection.ExemptIds ))
 	Validator:AddFieldRule( "NewcomerEstimateSkill",  Validator.IsType( "number", Plugin.DefaultConfig.NewcomerEstimateSkill ))
 	Plugin.ConfigValidator = Validator
 end
@@ -87,39 +85,15 @@ Plugin.EnabledGamemodes = Shine.kNS2EnabledGameMode
 
 local kCommanderHistoryFile = "config://shine/temp/CommanderHistory.json"
 
-local kNewcomerCommand = "sh_newcomer"
+local kNewcomerBypassCommand = "sh_newcomerbypass"
 
-local function IsNewcomerExempt( Player )
+local function HasNewcomerBypass( Player )
 	if not Server then return false end
 
 	local Client = Player.GetClient and Player:GetClient()
 	if not Client or Client:GetIsVirtual() then return false end
 
-	local ExemptIds = Plugin.Config.DamageProtection.ExemptIds
-	if ExemptIds and ExemptIds[ tostring( Client:GetUserId() ) ] then
-		return true
-	end
-
-	return Shine:GetPermission( Client, kNewcomerCommand ) and true or false
-end
-
-local function NotifyNewcomerStatus( Client )
-	local Player = Client and Client:GetControllingPlayer()
-	if not Player then return end
-
-	local Skill = Player.GetPlayerTeamSkill and Player:GetPlayerTeamSkill() or 0
-
-	Shine:NotifyDualColour( Client,
-			88, 214, 141, "[新兵保护]",
-			234, 250, 241, string.format( "已跳过时长与分数判定,当前强度[%i].", math.floor( Skill ) ) )
-end
-
-function Plugin:Initialise()
-	if Server then
-		self:BindCommand( kNewcomerCommand, "newcomer", NotifyNewcomerStatus )
-	end
-
-	return true
+	return Shine:HasAccess( Client, kNewcomerBypassCommand, false ) and true or false
 end
 
 function Plugin:OnFirstThink()
@@ -147,7 +121,7 @@ function Plugin:OnFirstThink()
 	Shine.Hook.SetupClassHook("PlayerInfoEntity", "UpdateScore", "OnUpdateScore", "PassivePost")
 end
 
-local function GetClientAndTier(player)
+local function GetClientAndTier(player, ignoreHour)
 	--return nil,1
 	local client = player:GetClient()
 	if client and client:GetIsVirtual() then
@@ -158,7 +132,7 @@ local function GetClientAndTier(player)
 	local verifySkill = player:GetPlayerTeamSkill()
 	if client then
 		local crEnabled, cr = Shine:IsExtensionEnabled( "communityrank" )
-		if crEnabled then
+		if crEnabled and not ignoreHour then
 			local userId = client:GetUserId()
 			local playHour = cr:GetCommunityPlayHour(userId)
 			verifySkill = math.max(verifySkill, math.min(Plugin.Config.TierHourMaxSkill,  playHour * Plugin.Config.TierHourMultiplier))
@@ -323,21 +297,26 @@ function Plugin:OnMarineRespawn(team,player, origin, angles)
 	end
 end
 
-local function UpdateRookie(self, _player)
-	local client,tier, estimateSkill = GetClientAndTier(_player)
-	if not client or client:GetIsVirtual() then return end
+local function IsRookieByRules(self, _player, estimateSkill)
+	local isRookie = self.Config.NewcomerEstimateSkill > estimateSkill
 
 	local team = _player:GetTeamNumber()
 	local playingTeam = (team == kTeam1Index or team == kTeam2Index)
-
-	local isRookie = self.Config.NewcomerEstimateSkill > estimateSkill
 	if playingTeam then
 		local gamerules = GetGamerules()
 		local elapsedMinutes = math.max(1, gamerules and gamerules:GetGameStarted() and (Shared.GetTime() - gamerules:GetGameStartTime()) / 60 or 0)
 		local scorePerMinute = _player:GetScore() / elapsedMinutes
 		isRookie = isRookie and _player:GetKills() <= _player:GetDeaths() and scorePerMinute < self.Config.DamageProtection.RookieScorePerMinute
 	end
-	_player:SetRookie(isRookie)
+
+	return isRookie
+end
+
+local function UpdateRookie(self, _player)
+	local client,tier, estimateSkill = GetClientAndTier(_player)
+	if not client or client:GetIsVirtual() then return end
+
+	_player:SetRookie(IsRookieByRules(self, _player, estimateSkill))
 end
 
 function Plugin:OnUpdateScore(pie)
@@ -507,7 +486,8 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 
 	local Config = Plugin.Config.DamageProtection
 	if #Config.ActiveTier == 0 then return end
-	if IsNewcomerExempt( self ) then return end
+
+	local bypass = HasNewcomerBypass( self )
 
 	if self.GetPlayerTeamSkill and attacker.GetPlayerTeamSkill then
 		local selfSkill = self:GetPlayerTeamSkill()
@@ -516,11 +496,16 @@ function Plugin:OnModifyDamageTaken(self,damageTable, attacker, doer, damageType
 		local skillOffset = (selfSkill - targetSkill)
 		local value = math.max(math.abs(skillOffset) - Config.kSkillDiffThreshold,0)
 
+		local isRookie = self:GetIsRookie()
+		if bypass then
+			isRookie = isRookie or IsRookieByRules( Plugin, self, selfSkill )
+		end
+
 		local sign = skillOffset >= 0 and 1 or -1
 		if sign == -1
-				and self:GetIsRookie()
+				and isRookie
 		then
-			local _,selfTier = GetClientAndTier(self)
+			local _,selfTier = GetClientAndTier(self, bypass)
 			local _,targetTier = GetClientAndTier(attacker)
 
 			local available = true
